@@ -25,7 +25,7 @@
 				; make sure that the host header is not included on the second try (empty first response)
 			} Else {
 				headers .= "-H """ val """ "	
-			}		
+			}			
 			
 			If (RegExMatch(val, "i)^Cookie:(.*)", cookie)) {
 				cookies .= cookie1 " "		
@@ -35,7 +35,6 @@
 		
 		redirect := "L"
 		PreventErrorMsg := false
-		validateResponse := 1
 		If (StrLen(options)) {
 			Loop, Parse, options, `n 
 			{
@@ -57,11 +56,6 @@
 				}
 				If (RegExMatch(A_LoopField, "i)TimeOut:(.*)", match)) {
 					timeout := Trim(match1)
-				}
-				If (RegExMatch(A_LoopField, "i)ValidateResponse:(.*)", match)) {
-					If (Trim(match1) = "false") {
-						validateResponse := 0
-					}				
 				}	
 			}			
 		}
@@ -148,9 +142,9 @@
 			
 		}
 		
-		If ((Strlen(ioHdr) and goodStatusCode) or (StrLen(ioHdr) and isJSON) or not validateResponse) {		
-			Break	; only go into the second loop if the respone is empty or has a bad status code (possible problem with the added host header)
-		}
+		If ((Strlen(ioHdr) and goodStatusCode) or (StrLen(ioHdr) and isJSON)) {
+			Break	; only go into the second loop if the respone is empty or has a bad status code (possible problem with the added host header)			
+		}	
 	}
 
 	;goodStatusCode := RegExMatch(ioHdr, "i)HTTP\/1.1 (200 OK|302 Found)")
@@ -196,7 +190,7 @@
 			If (size != sizeOnDisk) {
 				html := "Error: Different Size"
 			}
-		}
+		}		
 	} Else {
 		ThrowError(e, false, ioHdr, PreventErrorMsg)
 	}

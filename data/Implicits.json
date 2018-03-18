@@ -1,772 +1,2279 @@
-п»ї{
-"Amethyst Ring":{"Implicit":"+(9-13)% to Chaos Resistance"},
-"Breach Ring":{"Implicit":"Properties are doubled while in a Breach"},
-"Coral Ring":{"Implicit":"+(20-30) to maximum Life"},
-"Diamond Ring":{"Implicit":"(20-30)% increased Global Critical Strike Chance"},
-"Gold Ring":{"Implicit":"(6-15)% increased Rarity of Items found"},
-"Golden Hoop":{"Implicit":"+(8-12) to all Attributes"},
-"Iron Ring":{"Implicit":"Adds 1 to 4 Physical Damage to Attacks"},
-"Jet Ring":{"Implicit":"(5-10)% increased Global Defences"},
-"Moonstone Ring":{"Implicit":"+(15-25) to maximum Energy Shield"},
-"Opal Ring":{"Implicit":"(15-25)% increased Elemental Damage"},
-"Paua Ring":{"Implicit":"+(20-25) to maximum Mana"},
-"Prismatic Ring":{"Implicit":"+(8-10)% to all Elemental Resistances"},
-"Ruby Ring":{"Implicit":"+(20-30)% to Fire Resistance"},
-"Sapphire Ring":{"Implicit":"+(20-30)% to Cold Resistance"},
-"Steel Ring":{"Implicit":"Adds (3-4) to (10-14) Physical Damage to Attacks"},
-"Topaz Ring":{"Implicit":"+(20-30)% to Lightning Resistance"},
-"Two-Stone Ring":{"Implicit":"+(12-16)% to Fire and Cold Resistances"},
-"Two-Stone Ring":{"Implicit":"+(12-16)% to Fire and Lightning Resistances"},
-"Two-Stone Ring":{"Implicit":"+(12-16)% to Cold and Lightning Resistances"},
-"Unset Ring":{"Implicit":"Has 1 Socket"},
-"Agate Amulet":{"Implicit":"+(16-24) to Strength and Intelligence"},
-"Amber Amulet":{"Implicit":"+(20-30) to Strength"},
-"Ashscale Talisman":{"Implicit":"(20-30)% increased Fire Damage"},
-"Avian Twins Talisman":{"Implicit":"50% of Cold Damage taken as Fire Damage"},
-"Avian Twins Talisman":{"Implicit":"50% of Cold Damage taken as Lightning Damage"},
-"Avian Twins Talisman":{"Implicit":"50% of Fire Damage taken as Cold Damage"},
-"Avian Twins Talisman":{"Implicit":"50% of Fire Damage taken as Lightning Damage"},
-"Avian Twins Talisman":{"Implicit":"50% of Lightning Damage taken as Cold Damage"},
-"Avian Twins Talisman":{"Implicit":"50% of Lightning Damage taken as Fire Damage"},
-"Black Maw Talisman":{"Implicit":"Has 1 Socket"},
-"Blue Pearl Amulet":{"Implicit":"(48-56)% increased Mana Regeneration Rate"},
-"Bonespire Talisman":{"Implicit":"(20-30)% increased maximum Mana"},
-"Breakrib Talisman":{"Implicit":"(20-30)% increased Physical Damage"},
-"Chrysalis Talisman":{"Implicit":"(20-30)% increased Spell Damage"},
-"Citrine Amulet":{"Implicit":"+(16-24) to Strength and Dexterity"},
-"Clutching Talisman":{"Implicit":"(15-25)% increased Global Defences"},
-"Coral Amulet":{"Implicit":"(2-4) Life Regenerated per second"},
-"Deadhand Talisman":{"Implicit":"(19-31)% increased Chaos Damage"},
-"Deep One Talisman":{"Implicit":"(20-30)% increased Cold Damage"},
-"Fangjaw Talisman":{"Implicit":"(8-12)% increased maximum Life"},
-"Gold Amulet":{"Implicit":"(12-20)% increased Rarity of Items found"},
-"Greatwolf Talisman":{"Implicit":"<Two random talisman implicit modifiers>"},
-"Hexclaw Talisman":{"Implicit":"(40-50)% increased Global Critical Strike Chance"},
-"Horned Talisman":{"Implicit":"Projectiles Pierce (2-3) additional Targets"},
-"Jade Amulet":{"Implicit":"+(20-30) to Dexterity"},
-"Jet Amulet":{"Implicit":"+(8-12)% to all Elemental Resistances"},
-"Lapis Amulet":{"Implicit":"+(20-30) to Intelligence"},
-"Lone Antler Talisman":{"Implicit":"(20-30)% increased Lightning Damage"},
-"Longtooth Talisman":{"Implicit":"(4-6)% additional Physical Damage Reduction"},
-"Mandible Talisman":{"Implicit":"(6-10)% increased Attack and Cast Speed"},
-"Marble Amulet":{"Implicit":"(1.2-1.6)% of Life Regenerated per second"},
-"Monkey Paw Talisman":{"Implicit":"10% chance to gain an Endurance Charge on Kill"},
-"Monkey Paw Talisman":{"Implicit":"10% chance to gain a Frenzy Charge on Kill"},
-"Monkey Paw Talisman":{"Implicit":"10% chance to gain a Power Charge on Kill"},
-"Monkey Twins Talisman":{"Implicit":"(5-8)% increased Area of Effect of Area Skills"},
-"Onyx Amulet":{"Implicit":"+(10-16) to all Attributes"},
-"Paua Amulet":{"Implicit":"(20-30)% increased Mana Regeneration Rate"},
-"Primal Skull Talisman":{"Implicit":"2% of Life Regenerated per second"},
-"Rot Head Talisman":{"Implicit":"(30-40)% increased Fish Bite Sensitivity"},
-"Rotfeather Talisman":{"Implicit":"(25-35)% increased Damage"},
-"Ruby Amulet":{"Implicit":"+(20-30)% to Fire Resistance"},
-"Spinefuse Talisman":{"Implicit":"(6-10)% increased Quantity of Items found"},
-"Splitnewt Talisman":{"Implicit":"(4-6)% chance to Freeze, Shock and Ignite"},
-"Three Hands Talisman":{"Implicit":"Gain (6-12)% of Physical Damage as Extra Damage of a random Element"},
-"Three Rat Talisman":{"Implicit":"(12-16)% increased Attributes"},
-"Turquoise Amulet":{"Implicit":"+(16-24) to Dexterity and Intelligence"},
-"Undying Flesh Talisman":{"Implicit":"+1 to maximum number of Zombies"},
-"Wereclaw Talisman":{"Implicit":"+(24-36)% to Global Critical Strike Multiplier"},
-"Writhing Talisman":{"Implicit":"(20-30)% increased Attack Damage"},
-"Chain Belt":{"Implicit":"+(9-20) to maximum Energy Shield"},
-"Cloth Belt":{"Implicit":"(15-25)% increased Stun and Block Recovery"},
-"Crystal Belt":{"Implicit":"+(60-80) to maximum Energy Shield"},
-"Golden Obi":{"Implicit":"(20-30)% increased Rarity of Items found"},
-"Heavy Belt":{"Implicit":"+(25-35) to Strength"},
-"Leather Belt":{"Implicit":"+(25-40) to maximum Life"},
-"Rustic Sash":{"Implicit":"(12-24)% increased Physical Damage"},
-"Studded Belt":{"Implicit":"(20-30)% increased Stun Duration on Enemies"},
-"Vanguard Belt":{"Implicit":"+(260-320) to Armour and Evasion Rating"},
-"Blunt Arrow Quiver":{"Implicit":"(25-35)% increased Stun Duration on Enemies"},
-"Broadhead Arrow Quiver":{"Implicit":"Adds 6 to 12 Physical Damage to Attacks with Bows"},
-"Conductive Quiver":{"Implicit":"Adds 1 to 5 Lightning Damage to Attacks"},
-"Cured Quiver":{"Implicit":"Adds 2 to 4 Fire Damage to Attacks"},
-"Fire Arrow Quiver":{"Implicit":"Adds 4 to 8 Fire Damage to Attacks with Bows"},
-"Heavy Quiver":{"Implicit":"Adds 1 to 4 Physical Damage to Attacks"},
-"Light Quiver":{"Implicit":"+(30-40) to Dexterity"},
-"Penetrating Arrow Quiver":{"Implicit":"Arrows Pierce an additional Target"},
-"Rugged Quiver":{"Implicit":"Adds 2 to 3 Cold Damage to Attacks"},
-"Serrated Arrow Quiver":{"Implicit":"Adds 1 to 4 Physical Damage to Attacks with Bows"},
-"Sharktooth Arrow Quiver":{"Implicit":"+(3-4) Life gained for each Enemy hit by your Attacks"},
-"Spike-Point Arrow Quiver":{"Implicit":"(20-30)% increased Global Critical Strike Chance"},
-"Two-Point Arrow Quiver":{"Implicit":"(20-30)% increased Accuracy Rating"},
-"Abyssal Axe":{"Implicit":""},
-"Abyssal Sceptre":{"Implicit":"30% increased Elemental Damage"},
-"Ambusher":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Ancestral Club":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Ancient Sword":{"Implicit":"+165 to Accuracy Rating"},
-"Antique Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Apex Rapier":{"Implicit":"+35% to Global Critical Strike Multiplier"},
-"Arming Axe":{"Implicit":""},
-"Assassin Bow":{"Implicit":""},
-"Auric Mace":{"Implicit":"15% reduced Enemy Stun Threshold"},
-"Awl":{"Implicit":"+7 Life gained for each Enemy hit by Attacks"},
-"Barbed Club":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Baselard":{"Implicit":"40% increased Accuracy Rating"},
-"Basket Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Bastard Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Battered Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Battle Hammer":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Battle Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Behemoth Mace":{"Implicit":"6% increased Attack Speed"},
-"Bladed Mace":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Blinder":{"Implicit":"+12 Life gained for each Enemy hit by Attacks"},
-"Blood Sceptre":{"Implicit":"24% increased Elemental Damage"},
-"Boarding Axe":{"Implicit":""},
-"Bone Bow":{"Implicit":""},
-"Boot Blade":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Boot Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Brass Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Broad Axe":{"Implicit":""},
-"Broad Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Bronze Sceptre":{"Implicit":"12% increased Elemental Damage"},
-"Burnished Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Butcher Axe":{"Implicit":""},
-"Butcher Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Butcher Sword":{"Implicit":"+250 to Accuracy Rating"},
-"Carnal Sceptre":{"Implicit":"32% increased Elemental Damage"},
-"Carved Wand":{"Implicit":"(11-15)% increased Spell Damage"},
-"Carving Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Cat's Paw":{"Implicit":"+8 Life gained for each Enemy hit by Attacks"},
-"Ceremonial Axe":{"Implicit":""},
-"Ceremonial Mace":{"Implicit":"15% reduced Enemy Stun Threshold"},
-"Chest Splitter":{"Implicit":""},
-"Citadel Bow":{"Implicit":""},
-"Cleaver":{"Implicit":""},
-"Coiled Staff":{"Implicit":"20% Chance to Block"},
-"Colossus Mallet":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Composite Bow":{"Implicit":""},
-"Compound Bow":{"Implicit":""},
-"Copper Kris":{"Implicit":"50% increased Global Critical Strike Chance"},
-"Copper Sword":{"Implicit":"+45 to Accuracy Rating"},
-"Coronal Maul":{"Implicit":"6% increased Area of Effect of Area Skills"},
-"Corroded Blade":{"Implicit":"40% increased Accuracy Rating"},
-"Corsair Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Courtesan Sword":{"Implicit":"15% chance to cause Bleeding on Hit"},
-"Crescent Staff":{"Implicit":"80% increased Global Critical Strike Chance"},
-"Crude Bow":{"Implicit":""},
-"Crystal Sceptre":{"Implicit":"30% increased Elemental Damage"},
-"Crystal Wand":{"Implicit":"(29-33)% increased Spell Damage"},
-"Curved Blade":{"Implicit":"+40% to Global Critical Strike Multiplier"},
-"Cutlass":{"Implicit":"40% increased Accuracy Rating"},
-"Dagger Axe":{"Implicit":"50% increased Critical Strike Chance"},
-"Darkwood Sceptre":{"Implicit":"12% increased Elemental Damage"},
-"Death Bow":{"Implicit":"(30-50)% increased Critical Strike Chance"},
-"Decimation Bow":{"Implicit":"(30-50)% increased Critical Strike Chance"},
-"Decorative Axe":{"Implicit":""},
-"Decurve Bow":{"Implicit":""},
-"Demon Dagger":{"Implicit":"40% increased Global Critical Strike Chance"},
-"Demon's Horn":{"Implicit":"(31-35)% increased Spell Damage"},
-"Despot Axe":{"Implicit":""},
-"Double Axe":{"Implicit":""},
-"Double Claw":{"Implicit":"+6 Mana gained for each Enemy hit by Attacks, +15 Life gained for each Enemy hit by Attacks"},
-"Dragon Mace":{"Implicit":"4% increased Attack Speed"},
-"Dragonbone Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Dragoon Sword":{"Implicit":"20% chance to cause Bleeding on Hit"},
-"Dread Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Dream Mace":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Driftwood Club":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Driftwood Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Driftwood Sceptre":{"Implicit":"10% increased Elemental Damage"},
-"Driftwood Wand":{"Implicit":"(8-12)% increased Spell Damage"},
-"Dusk Blade":{"Implicit":"40% increased Accuracy Rating"},
-"Eagle Claw":{"Implicit":"2% of Physical Attack Damage Leeched as Life"},
-"Eclipse Staff":{"Implicit":"100% increased Global Critical Strike Chance"},
-"Elder Sword":{"Implicit":"+330 to Accuracy Rating"},
-"Elegant Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Elegant Sword":{"Implicit":"+190 to Accuracy Rating"},
-"Engraved Greatsword":{"Implicit":"40% increased Accuracy Rating"},
-"Engraved Hatchet":{"Implicit":"8% increased Physical Damage"},
-"Engraved Wand":{"Implicit":"(22-26)% increased Spell Damage"},
-"Estoc":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Etched Greatsword":{"Implicit":"40% increased Accuracy Rating"},
-"Etched Hatchet":{"Implicit":"8% increased Physical Damage"},
-"Eternal Sword":{"Implicit":"+475 to Accuracy Rating"},
-"Exquisite Blade":{"Implicit":"+60% to Global Critical Strike Multiplier"},
-"Eye Gouger":{"Implicit":"+50 Life gained for each Enemy hit by Attacks"},
-"Ezomyte Axe":{"Implicit":""},
-"Ezomyte Blade":{"Implicit":"+435 to Accuracy Rating"},
-"Ezomyte Dagger":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Ezomyte Staff":{"Implicit":"18% Chance to Block"},
-"Fancy Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Faun's Horn":{"Implicit":"(20-24)% increased Spell Damage"},
-"Fiend Dagger":{"Implicit":"40% increased Global Critical Strike Chance"},
-"Fishing Rod":{"Implicit":""},
-"Flanged Mace":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Flaying Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Fleshripper":{"Implicit":"50% increased Critical Strike Chance"},
-"Footman Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Foul Staff":{"Implicit":"18% Chance to Block"},
-"Fright Claw":{"Implicit":"+20 Life gained for each Enemy hit by Attacks"},
-"Fright Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Gavel":{"Implicit":"15% reduced Enemy Stun Threshold"},
-"Gemini Claw":{"Implicit":"+14 Mana gained for each Enemy hit by Attacks, +38 Life gained for each Enemy hit by Attacks"},
-"Gemstone Sword":{"Implicit":"+400 to Accuracy Rating"},
-"Gilded Axe":{"Implicit":""},
-"Gladius":{"Implicit":"40% increased Accuracy Rating"},
-"Glass Shank":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Gnarled Branch":{"Implicit":"18% Chance to Block"},
-"Goat's Horn":{"Implicit":"(10-14)% increased Spell Damage"},
-"Golden Kris":{"Implicit":"50% increased Global Critical Strike Chance"},
-"Gouger":{"Implicit":"+24 Life gained for each Enemy hit by Attacks"},
-"Graceful Sword":{"Implicit":"+350 to Accuracy Rating"},
-"Grappler":{"Implicit":"4% chance to Dodge Attacks"},
-"Great Mallet":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Great White Claw":{"Implicit":"+46 Life gained for each Enemy hit by Attacks"},
-"Grinning Fetish":{"Implicit":"18% increased Elemental Damage"},
-"Grove Bow":{"Implicit":""},
-"Gut Ripper":{"Implicit":"+44 Life gained for each Enemy hit by Attacks"},
-"Gutting Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Harbinger Bow":{"Implicit":"(30-50)% increased Critical Strike Chance"},
-"Harpy Rapier":{"Implicit":"+35% to Global Critical Strike Multiplier"},
-"Headman's Sword":{"Implicit":"+400 to Accuracy Rating"},
-"Headsman Axe":{"Implicit":""},
-"Heathen Wand":{"Implicit":"10% increased Cast Speed"},
-"Hellion's Paw":{"Implicit":"1.6% of Physical Attack Damage Leeched as Life"},
-"Highborn Bow":{"Implicit":"(20-24)% increased Elemental Damage with Attack Skills"},
-"Highborn Staff":{"Implicit":"18% Chance to Block"},
-"Highland Blade":{"Implicit":"+305 to Accuracy Rating"},
-"Hook Sword":{"Implicit":"4% chance to Dodge Attacks"},
-"Horned Sceptre":{"Implicit":"Damage Penetrates 4% Elemental Resistances"},
-"Imbued Wand":{"Implicit":"(33-37)% increased Spell Damage"},
-"Imp Dagger":{"Implicit":"40% increased Global Critical Strike Chance"},
-"Imperial Bow":{"Implicit":"(20-24)% increased Elemental Damage with Attack Skills"},
-"Imperial Claw":{"Implicit":"+46 Life gained for each Enemy hit by Attacks"},
-"Imperial Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Imperial Skean":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Imperial Staff":{"Implicit":"18% Chance to Block"},
-"Infernal Axe":{"Implicit":""},
-"Infernal Sword":{"Implicit":"30% increased Accuracy Rating"},
-"Iron Sceptre":{"Implicit":"14% increased Elemental Damage"},
-"Iron Staff":{"Implicit":"18% Chance to Block"},
-"Ivory Bow":{"Implicit":""},
-"Jade Chopper":{"Implicit":""},
-"Jade Hatchet":{"Implicit":""},
-"Jagged Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Jagged Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Jasper Axe":{"Implicit":""},
-"Jasper Chopper":{"Implicit":""},
-"Jewelled Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Judgement Staff":{"Implicit":"18% Chance to Block"},
-"Karui Axe":{"Implicit":""},
-"Karui Chopper":{"Implicit":""},
-"Karui Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Karui Sceptre":{"Implicit":"26% increased Elemental Damage"},
-"Keyblade":{"Implicit":""},
-"Labrys":{"Implicit":""},
-"Lathi":{"Implicit":"18% Chance to Block"},
-"Lead Sceptre":{"Implicit":"22% increased Elemental Damage"},
-"Legion Hammer":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Legion Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Lion Sword":{"Implicit":"+470 to Accuracy Rating"},
-"Lithe Blade":{"Implicit":"+40% to Global Critical Strike Multiplier"},
-"Long Bow":{"Implicit":""},
-"Long Staff":{"Implicit":"18% Chance to Block"},
-"Longsword":{"Implicit":"+60 to Accuracy Rating"},
-"Maelstr\u00f6m Staff":{"Implicit":"20% Chance to Block"},
-"Mallet":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Maraketh Bow":{"Implicit":"6% increased Movement Speed"},
-"Meatgrinder":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Midnight Blade":{"Implicit":"40% increased Accuracy Rating"},
-"Military Staff":{"Implicit":"18% Chance to Block"},
-"Moon Staff":{"Implicit":"80% increased Global Critical Strike Chance"},
-"Morning Star":{"Implicit":"4% increased Area of Effect of Area Skills"},
-"Nailed Fist":{"Implicit":"+3 Life gained for each Enemy hit by Attacks"},
-"Nightmare Mace":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Noble Axe":{"Implicit":""},
-"Noble Claw":{"Implicit":"+40 Life gained for each Enemy hit by Attacks"},
-"Ochre Sceptre":{"Implicit":"16% increased Elemental Damage"},
-"Omen Wand":{"Implicit":"(27-31)% increased Spell Damage"},
-"Opal Sceptre":{"Implicit":"40% increased Elemental Damage"},
-"Opal Wand":{"Implicit":"(38-42)% increased Spell Damage"},
-"Ornate Mace":{"Implicit":"15% reduced Enemy Stun Threshold"},
-"Ornate Sword":{"Implicit":"+185 to Accuracy Rating"},
-"Pagan Wand":{"Implicit":"10% increased Cast Speed"},
-"Pecoraro":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Pernarch":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Petrified Club":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Phantom Mace":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Piledriver":{"Implicit":"45% increased Stun Duration on Enemies"},
-"Plated Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Platinum Kris":{"Implicit":"50% increased Global Critical Strike Chance"},
-"Platinum Sceptre":{"Implicit":"30% increased Elemental Damage"},
-"Poignard":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Poleaxe":{"Implicit":""},
-"Prehistoric Claw":{"Implicit":"2% of Physical Attack Damage Leeched as Life"},
-"Primeval Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Primitive Staff":{"Implicit":"18% Chance to Block"},
-"Primordial Staff":{"Implicit":"18% Chance to Block"},
-"Profane Wand":{"Implicit":"14% increased Cast Speed"},
-"Prong Dagger":{"Implicit":"4% Chance to Block"},
-"Prophecy Wand":{"Implicit":"(36-40)% increased Spell Damage"},
-"Quarterstaff":{"Implicit":"18% Chance to Block"},
-"Quartz Sceptre":{"Implicit":"20% increased Elemental Damage"},
-"Quartz Wand":{"Implicit":"(18-22)% increased Spell Damage"},
-"Ranger Bow":{"Implicit":""},
-"Reaver Axe":{"Implicit":""},
-"Reaver Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Recurve Bow":{"Implicit":""},
-"Reflex Bow":{"Implicit":"4% increased Movement Speed"},
-"Ritual Sceptre":{"Implicit":"16% increased Elemental Damage"},
-"Rock Breaker":{"Implicit":"15% reduced Enemy Stun Threshold"},
-"Royal Axe":{"Implicit":""},
-"Royal Bow":{"Implicit":"(20-24)% increased Elemental Damage with Attack Skills"},
-"Royal Sceptre":{"Implicit":"24% increased Elemental Damage"},
-"Royal Skean":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Royal Staff":{"Implicit":"18% Chance to Block"},
-"Runic Hatchet":{"Implicit":"12% increased Physical Damage"},
-"Rusted Hatchet":{"Implicit":""},
-"Rusted Spike":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Rusted Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Sabre":{"Implicit":"40% increased Accuracy Rating"},
-"Sage Wand":{"Implicit":"(17-21)% increased Spell Damage"},
-"Sai":{"Implicit":"6% Chance to Block"},
-"Sambar Sceptre":{"Implicit":"Damage Penetrates 6% Elemental Resistances"},
-"Sekhem":{"Implicit":"18% increased Elemental Damage"},
-"Serpent Wand":{"Implicit":"(26-30)% increased Spell Damage"},
-"Serpentine Staff":{"Implicit":"20% Chance to Block"},
-"Serrated Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Shadow Axe":{"Implicit":""},
-"Shadow Sceptre":{"Implicit":"22% increased Elemental Damage"},
-"Sharktooth Claw":{"Implicit":"+6 Life gained for each Enemy hit by Attacks"},
-"Short Bow":{"Implicit":""},
-"Siege Axe":{"Implicit":""},
-"Skean":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Skinning Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Slaughter Knife":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Sledgehammer":{"Implicit":"45% increased Stun Duration on Enemies"},
-"Smallsword":{"Implicit":"15% chance to cause Bleeding on Hit"},
-"Sniper Bow":{"Implicit":""},
-"Solar Maul":{"Implicit":"4% increased Area of Effect of Area Skills"},
-"Sparkling Claw":{"Implicit":"+15 Life gained for each Enemy hit by Attacks"},
-"Spectral Axe":{"Implicit":""},
-"Spectral Sword":{"Implicit":"30% increased Accuracy Rating"},
-"Spiked Club":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Spine Bow":{"Implicit":""},
-"Spiny Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Spiraled Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Spiraled Wand":{"Implicit":"(15-19)% increased Spell Damage"},
-"Stag Sceptre":{"Implicit":"Damage Penetrates 4% Elemental Resistances"},
-"Steelhead":{"Implicit":"45% increased Stun Duration on Enemies"},
-"Steelwood Bow":{"Implicit":"4% increased Movement Speed"},
-"Stiletto":{"Implicit":"30% increased Global Critical Strike Chance"},
-"Stone Axe":{"Implicit":""},
-"Stone Hammer":{"Implicit":"15% reduced Enemy Stun Threshold"},
-"Sundering Axe":{"Implicit":""},
-"Talon Axe":{"Implicit":"50% increased Critical Strike Chance"},
-"Tempered Foil":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Tenderizer":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Terror Claw":{"Implicit":"2% of Physical Attack Damage Leeched as Life"},
-"Terror Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Thicket Bow":{"Implicit":""},
-"Thorn Rapier":{"Implicit":"+35% to Global Critical Strike Multiplier"},
-"Thresher Claw":{"Implicit":"+25 Life gained for each Enemy hit by Attacks"},
-"Throat Stabber":{"Implicit":"+40 Life gained for each Enemy hit by Attacks"},
-"Tiger Hook":{"Implicit":"6% chance to Dodge Attacks"},
-"Tiger Sword":{"Implicit":"+360 to Accuracy Rating"},
-"Tiger's Paw":{"Implicit":"1.6% of Physical Attack Damage Leeched as Life"},
-"Timber Axe":{"Implicit":""},
-"Timeworn Claw":{"Implicit":"+19 Life gained for each Enemy hit by Attacks"},
-"Tomahawk":{"Implicit":""},
-"Tornado Wand":{"Implicit":"(35-39)% increased Spell Damage"},
-"Totemic Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Tribal Club":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"Tribal Maul":{"Implicit":"30% increased Stun Duration on Enemies"},
-"Trisula":{"Implicit":"4% Chance to Block"},
-"Twilight Blade":{"Implicit":"40% increased Accuracy Rating"},
-"Twin Claw":{"Implicit":"+10 Mana gained for each Enemy hit by Attacks, +28 Life gained for each Enemy hit by Attacks"},
-"Two-Handed Sword":{"Implicit":"+120 to Accuracy Rating"},
-"Tyrant's Sekhem":{"Implicit":"26% increased Elemental Damage"},
-"Vaal Axe":{"Implicit":""},
-"Vaal Blade":{"Implicit":"+460 to Accuracy Rating"},
-"Vaal Claw":{"Implicit":"2% of Physical Attack Damage Leeched as Life"},
-"Vaal Greatsword":{"Implicit":"40% increased Accuracy Rating"},
-"Vaal Hatchet":{"Implicit":""},
-"Vaal Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Vaal Sceptre":{"Implicit":"32% increased Elemental Damage"},
-"Variscite Blade":{"Implicit":"+240 to Accuracy Rating"},
-"Vile Staff":{"Implicit":"18% Chance to Block"},
-"Void Axe":{"Implicit":""},
-"Void Sceptre":{"Implicit":"40% increased Elemental Damage"},
-"War Axe":{"Implicit":""},
-"War Hammer":{"Implicit":"10% reduced Enemy Stun Threshold"},
-"War Sword":{"Implicit":"40% increased Accuracy Rating"},
-"Whalebone Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Woodful Staff":{"Implicit":"18% Chance to Block"},
-"Woodsplitter":{"Implicit":""},
-"Wraith Axe":{"Implicit":""},
-"Wraith Sword":{"Implicit":"30% increased Accuracy Rating"},
-"Wrist Chopper":{"Implicit":""},
-"Wyrm Mace":{"Implicit":"4% increased Attack Speed"},
-"Wyrmbone Rapier":{"Implicit":"+25% to Global Critical Strike Multiplier"},
-"Alder Spiked Shield":{"Implicit":"2% chance to Dodge Attacks"},
-"Alloyed Spiked Shield":{"Implicit":"2% chance to Dodge Spell Damage"},
-"Ambush Boots":{"Implicit":""},
-"Ambush Mitts":{"Implicit":""},
-"Ancient Gauntlets":{"Implicit":""},
-"Ancient Greaves":{"Implicit":""},
-"Ancient Spirit Shield":{"Implicit":"(5-10)% increased Spell Damage"},
-"Angelic Kite Shield":{"Implicit":"+12% to all Elemental Resistances"},
-"Antique Gauntlets":{"Implicit":""},
-"Antique Greaves":{"Implicit":""},
-"Arcanist Gloves":{"Implicit":""},
-"Arcanist Slippers":{"Implicit":""},
-"Archon Kite Shield":{"Implicit":"+12% to all Elemental Resistances"},
-"Arena Plate":{"Implicit":""},
-"Assassin's Boots":{"Implicit":""},
-"Assassin's Garb":{"Implicit":"3% increased Movement Speed"},
-"Assassin's Mitts":{"Implicit":""},
-"Astral Plate":{"Implicit":"+(8-12)% to all Elemental Resistances"},
-"Aventail Helmet":{"Implicit":""},
-"Avian Slippers":{"Implicit":"10% increased Movement Speed"},
-"Barbute Helmet":{"Implicit":""},
-"Baroque Round Shield":{"Implicit":"120% increased Block Recovery"},
-"Battered Helm":{"Implicit":""},
-"Battle Buckler":{"Implicit":"9% increased Movement Speed"},
-"Battle Lamellar":{"Implicit":""},
-"Battle Plate":{"Implicit":""},
-"Blood Raiment":{"Implicit":""},
-"Bone Armour":{"Implicit":""},
-"Bone Circlet":{"Implicit":""},
-"Bone Helmet":{"Implicit":"Minions deal (30-40)% increased Damage"},
-"Bone Spirit Shield":{"Implicit":"(15-20)% increased Spell Damage"},
-"Branded Kite Shield":{"Implicit":"+4% to all Elemental Resistances"},
-"Brass Spirit Shield":{"Implicit":""},
-"Bronze Gauntlets":{"Implicit":""},
-"Bronze Plate":{"Implicit":""},
-"Bronze Tower Shield":{"Implicit":"+(30-40) to maximum Life"},
-"Bronzescale Boots":{"Implicit":""},
-"Bronzescale Gauntlets":{"Implicit":""},
-"Buckskin Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Buckskin Tunic":{"Implicit":""},
-"Burnished Spiked Shield":{"Implicit":"4% chance to Dodge Attacks"},
-"Cabalist Regalia":{"Implicit":""},
-"Callous Mask":{"Implicit":""},
-"Cardinal Round Shield":{"Implicit":""},
-"Carnal Armour":{"Implicit":"+(20-25) to maximum Mana"},
-"Carnal Boots":{"Implicit":""},
-"Carnal Mitts":{"Implicit":""},
-"Cedar Tower Shield":{"Implicit":"+(20-30) to maximum Life"},
-"Ceremonial Kite Shield":{"Implicit":"+12% to all Elemental Resistances"},
-"Chain Boots":{"Implicit":""},
-"Chain Gloves":{"Implicit":""},
-"Chain Hauberk":{"Implicit":""},
-"Chainmail Doublet":{"Implicit":""},
-"Chainmail Tunic":{"Implicit":""},
-"Chainmail Vest":{"Implicit":""},
-"Champion Kite Shield":{"Implicit":""},
-"Chestplate":{"Implicit":""},
-"Chiming Spirit Shield":{"Implicit":"(10-15)% increased Spell Damage"},
-"Clasped Boots":{"Implicit":""},
-"Clasped Mitts":{"Implicit":""},
-"Close Helmet":{"Implicit":""},
-"Colossal Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Colosseum Plate":{"Implicit":""},
-"Commander's Brigandine":{"Implicit":""},
-"Compound Spiked Shield":{"Implicit":"2% chance to Dodge Spell Damage"},
-"Cone Helmet":{"Implicit":""},
-"Conjurer Boots":{"Implicit":""},
-"Conjurer Gloves":{"Implicit":""},
-"Conjurer's Vestment":{"Implicit":""},
-"Conquest Chainmail":{"Implicit":""},
-"Copper Plate":{"Implicit":""},
-"Copper Tower Shield":{"Implicit":"+(30-40) to maximum Life"},
-"Coronal Leather":{"Implicit":""},
-"Corroded Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Corrugated Buckler":{"Implicit":"3% increased Movement Speed"},
-"Crested Tower Shield":{"Implicit":"+(20-30) to maximum Life"},
-"Crimson Raiment":{"Implicit":""},
-"Crimson Round Shield":{"Implicit":""},
-"Crusader Boots":{"Implicit":""},
-"Crusader Buckler":{"Implicit":"9% increased Movement Speed"},
-"Crusader Chainmail":{"Implicit":""},
-"Crusader Gloves":{"Implicit":""},
-"Crusader Helmet":{"Implicit":""},
-"Crusader Plate":{"Implicit":""},
-"Crypt Armour":{"Implicit":""},
-"Cutthroat's Garb":{"Implicit":""},
-"Deerskin Boots":{"Implicit":""},
-"Deerskin Gloves":{"Implicit":""},
-"Deicide Mask":{"Implicit":""},
-"Desert Brigandine":{"Implicit":""},
-"Destiny Leather":{"Implicit":""},
-"Destroyer Regalia":{"Implicit":""},
-"Devout Chainmail":{"Implicit":""},
-"Dragonscale Boots":{"Implicit":""},
-"Dragonscale Doublet":{"Implicit":""},
-"Dragonscale Gauntlets":{"Implicit":""},
-"Driftwood Spiked Shield":{"Implicit":"2% chance to Dodge Attacks"},
-"Ebony Tower Shield":{"Implicit":"+(20-30) to maximum Life"},
-"Eelskin Boots":{"Implicit":""},
-"Eelskin Gloves":{"Implicit":""},
-"Eelskin Tunic":{"Implicit":""},
-"Elegant Ringmail":{"Implicit":""},
-"Elegant Round Shield":{"Implicit":"120% increased Block Recovery"},
-"Embroidered Gloves":{"Implicit":""},
-"Enameled Buckler":{"Implicit":"6% increased Movement Speed"},
-"Etched Kite Shield":{"Implicit":"+4% to all Elemental Resistances"},
-"Eternal Burgonet":{"Implicit":""},
-"Exquisite Leather":{"Implicit":""},
-"Ezomyte Burgonet":{"Implicit":""},
-"Ezomyte Spiked Shield":{"Implicit":"2% chance to Dodge Spell Damage"},
-"Ezomyte Tower Shield":{"Implicit":"+(30-40) to maximum Life"},
-"Fencer Helm":{"Implicit":""},
-"Festival Mask":{"Implicit":""},
-"Field Lamellar":{"Implicit":""},
-"Fingerless Silk Gloves":{"Implicit":"(12-16)% increased Spell Damage"},
-"Fir Round Shield":{"Implicit":"180% increased Block Recovery"},
-"Fishscale Gauntlets":{"Implicit":""},
-"Fluted Bascinet":{"Implicit":""},
-"Fossilised Spirit Shield":{"Implicit":"(15-20)% increased Spell Damage"},
-"Frontier Leather":{"Implicit":""},
-"Full Chainmail":{"Implicit":""},
-"Full Dragonscale":{"Implicit":""},
-"Full Leather":{"Implicit":""},
-"Full Plate":{"Implicit":""},
-"Full Ringmail":{"Implicit":""},
-"Full Scale Armour":{"Implicit":""},
-"Full Wyrmscale":{"Implicit":""},
-"General's Brigandine":{"Implicit":""},
-"Gilded Buckler":{"Implicit":"6% increased Movement Speed"},
-"Gilded Sallet":{"Implicit":""},
-"Girded Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Gladiator Helmet":{"Implicit":""},
-"Gladiator Plate":{"Implicit":""},
-"Glorious Leather":{"Implicit":""},
-"Glorious Plate":{"Implicit":""},
-"Goathide Boots":{"Implicit":""},
-"Goathide Buckler":{"Implicit":"3% increased Movement Speed"},
-"Goathide Gloves":{"Implicit":""},
-"Golden Bracers":{"Implicit":"+(20-30) to maximum Life"},
-"Golden Buckler":{"Implicit":"6% increased Movement Speed"},
-"Golden Caligae":{"Implicit":"+(8-16)% to all Elemental Resistances"},
-"Golden Flame":{"Implicit":"+(11-19)% to Chaos Resistance"},
-"Golden Mantle":{"Implicit":"+(15-25)% to all Elemental Resistances"},
-"Golden Mask":{"Implicit":""},
-"Golden Plate":{"Implicit":""},
-"Golden Wreath":{"Implicit":"+(16-24) to all Attributes"},
-"Goliath Gauntlets":{"Implicit":""},
-"Goliath Greaves":{"Implicit":""},
-"Great Crown":{"Implicit":""},
-"Great Helmet":{"Implicit":""},
-"Gripped Gloves":{"Implicit":"(14-18)% increased Projectile Attack Damage"},
-"Hammered Buckler":{"Implicit":"3% increased Movement Speed"},
-"Harlequin Mask":{"Implicit":""},
-"Harmonic Spirit Shield":{"Implicit":"(10-15)% increased Spell Damage"},
-"Holy Chainmail":{"Implicit":""},
-"Hubris Circlet":{"Implicit":""},
-"Hunter Hood":{"Implicit":""},
-"Hussar Brigandine":{"Implicit":""},
-"Hydrascale Boots":{"Implicit":""},
-"Hydrascale Gauntlets":{"Implicit":""},
-"Imperial Buckler":{"Implicit":"6% increased Movement Speed"},
-"Infantry Brigandine":{"Implicit":""},
-"Iron Circlet":{"Implicit":""},
-"Iron Gauntlets":{"Implicit":""},
-"Iron Greaves":{"Implicit":""},
-"Iron Hat":{"Implicit":""},
-"Iron Mask":{"Implicit":""},
-"Ironscale Boots":{"Implicit":""},
-"Ironscale Gauntlets":{"Implicit":""},
-"Ironwood Buckler":{"Implicit":"3% increased Movement Speed"},
-"Ivory Spirit Shield":{"Implicit":"(15-20)% increased Spell Damage"},
-"Jingling Spirit Shield":{"Implicit":"(10-15)% increased Spell Damage"},
-"Lacewood Spirit Shield":{"Implicit":"(5-10)% increased Spell Damage"},
-"Lacquered Buckler":{"Implicit":"6% increased Movement Speed"},
-"Lacquered Garb":{"Implicit":""},
-"Lacquered Helmet":{"Implicit":""},
-"Laminated Kite Shield":{"Implicit":"+8% to all Elemental Resistances"},
-"Latticed Ringmail":{"Implicit":""},
-"Layered Kite Shield":{"Implicit":"+8% to all Elemental Resistances"},
-"Leather Cap":{"Implicit":""},
-"Leather Hood":{"Implicit":""},
-"Leatherscale Boots":{"Implicit":""},
-"Legion Boots":{"Implicit":""},
-"Legion Gloves":{"Implicit":""},
-"Light Brigandine":{"Implicit":""},
-"Linden Kite Shield":{"Implicit":"+4% to all Elemental Resistances"},
-"Lion Pelt":{"Implicit":""},
-"Lordly Plate":{"Implicit":""},
-"Loricated Ringmail":{"Implicit":""},
-"Lunaris Circlet":{"Implicit":""},
-"Mage's Vestment":{"Implicit":""},
-"Magistrate Crown":{"Implicit":""},
-"Mahogany Tower Shield":{"Implicit":"+(20-30) to maximum Life"},
-"Majestic Plate":{"Implicit":""},
-"Maple Round Shield":{"Implicit":"180% increased Block Recovery"},
-"Mesh Boots":{"Implicit":""},
-"Mesh Gloves":{"Implicit":""},
-"Mind Cage":{"Implicit":""},
-"Mirrored Spiked Shield":{"Implicit":"4% chance to Dodge Attacks"},
-"Mosaic Kite Shield":{"Implicit":"+8% to all Elemental Resistances"},
-"Murder Boots":{"Implicit":""},
-"Murder Mitts":{"Implicit":""},
-"Necromancer Circlet":{"Implicit":""},
-"Necromancer Silks":{"Implicit":""},
-"Nightmare Bascinet":{"Implicit":""},
-"Noble Tricorne":{"Implicit":""},
-"Nubuck Boots":{"Implicit":""},
-"Nubuck Gloves":{"Implicit":""},
-"Oak Buckler":{"Implicit":"3% increased Movement Speed"},
-"Occultist's Vestment":{"Implicit":"(3-10)% increased Spell Damage"},
-"Oiled Coat":{"Implicit":""},
-"Oiled Vest":{"Implicit":""},
-"Ornate Ringmail":{"Implicit":""},
-"Ornate Spiked Shield":{"Implicit":"4% chance to Dodge Spell Damage"},
-"Padded Jacket":{"Implicit":""},
-"Padded Vest":{"Implicit":""},
-"Painted Buckler":{"Implicit":"6% increased Movement Speed"},
-"Painted Tower Shield":{"Implicit":"+(20-30) to maximum Life"},
-"Pig-Faced Bascinet":{"Implicit":""},
-"Pine Buckler":{"Implicit":"3% increased Movement Speed"},
-"Pinnacle Tower Shield":{"Implicit":"+(20-30) to maximum Life"},
-"Plague Mask":{"Implicit":""},
-"Plank Kite Shield":{"Implicit":"+4% to all Elemental Resistances"},
-"Plate Vest":{"Implicit":""},
-"Plated Gauntlets":{"Implicit":""},
-"Plated Greaves":{"Implicit":""},
-"Polished Spiked Shield":{"Implicit":"4% chance to Dodge Attacks"},
-"Praetor Crown":{"Implicit":""},
-"Prophet Crown":{"Implicit":""},
-"Quilted Jacket":{"Implicit":""},
-"Raven Mask":{"Implicit":""},
-"Rawhide Boots":{"Implicit":""},
-"Rawhide Gloves":{"Implicit":""},
-"Rawhide Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Reaver Helmet":{"Implicit":""},
-"Redwood Spiked Shield":{"Implicit":"2% chance to Dodge Attacks"},
-"Regicide Mask":{"Implicit":""},
-"Reinforced Greaves":{"Implicit":""},
-"Reinforced Kite Shield":{"Implicit":""},
-"Reinforced Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Ringmail Boots":{"Implicit":""},
-"Ringmail Coat":{"Implicit":""},
-"Ringmail Gloves":{"Implicit":""},
-"Riveted Boots":{"Implicit":""},
-"Riveted Gloves":{"Implicit":""},
-"Rotted Round Shield":{"Implicit":"60% increased Block Recovery"},
-"Royal Burgonet":{"Implicit":""},
-"Rusted Coif":{"Implicit":""},
-"Sacrificial Garb":{"Implicit":""},
-"Sadist Garb":{"Implicit":""},
-"Sage's Robe":{"Implicit":""},
-"Saint's Hauberk":{"Implicit":""},
-"Saintly Chainmail":{"Implicit":""},
-"Sallet":{"Implicit":""},
-"Samite Gloves":{"Implicit":""},
-"Samite Helmet":{"Implicit":""},
-"Samite Slippers":{"Implicit":""},
-"Satin Gloves":{"Implicit":""},
-"Satin Slippers":{"Implicit":""},
-"Savant's Robe":{"Implicit":""},
-"Scale Doublet":{"Implicit":""},
-"Scale Vest":{"Implicit":""},
-"Scare Mask":{"Implicit":""},
-"Scarlet Raiment":{"Implicit":""},
-"Scarlet Round Shield":{"Implicit":""},
-"Scholar Boots":{"Implicit":""},
-"Scholar's Robe":{"Implicit":""},
-"Secutor Helm":{"Implicit":""},
-"Sentinel Jacket":{"Implicit":""},
-"Serpentscale Boots":{"Implicit":""},
-"Serpentscale Gauntlets":{"Implicit":""},
-"Shabby Jerkin":{"Implicit":""},
-"Shackled Boots":{"Implicit":""},
-"Shagreen Boots":{"Implicit":""},
-"Shagreen Gloves":{"Implicit":""},
-"Shagreen Tower Shield":{"Implicit":"+(10-20) to maximum Life"},
-"Sharkskin Boots":{"Implicit":""},
-"Sharkskin Gloves":{"Implicit":""},
-"Sharkskin Tunic":{"Implicit":""},
-"Siege Helmet":{"Implicit":""},
-"Silk Gloves":{"Implicit":""},
-"Silk Robe":{"Implicit":""},
-"Silk Slippers":{"Implicit":""},
-"Silken Garb":{"Implicit":""},
-"Silken Hood":{"Implicit":""},
-"Silken Vest":{"Implicit":""},
-"Silken Wrap":{"Implicit":""},
-"Simple Robe":{"Implicit":""},
-"Sinner Tricorne":{"Implicit":""},
-"Sleek Coat":{"Implicit":""},
-"Slink Boots":{"Implicit":""},
-"Slink Gloves":{"Implicit":""},
-"Solaris Circlet":{"Implicit":""},
-"Soldier Boots":{"Implicit":""},
-"Soldier Gloves":{"Implicit":""},
-"Soldier Helmet":{"Implicit":""},
-"Soldier's Brigandine":{"Implicit":""},
-"Sorcerer Boots":{"Implicit":""},
-"Sorcerer Gloves":{"Implicit":""},
-"Sovereign Spiked Shield":{"Implicit":"4% chance to Dodge Spell Damage"},
-"Spidersilk Robe":{"Implicit":""},
-"Spiked Bundle":{"Implicit":"2% chance to Dodge Attacks"},
-"Spiked Gloves":{"Implicit":"(16-20)% increased Melee Damage"},
-"Spiked Round Shield":{"Implicit":"60% increased Block Recovery"},
-"Spiny Round Shield":{"Implicit":"60% increased Block Recovery"},
-"Splendid Round Shield":{"Implicit":"120% increased Block Recovery"},
-"Splintered Tower Shield":{"Implicit":""},
-"Stealth Boots":{"Implicit":""},
-"Stealth Gloves":{"Implicit":""},
-"Steel Circlet":{"Implicit":""},
-"Steel Gauntlets":{"Implicit":""},
-"Steel Greaves":{"Implicit":""},
-"Steel Kite Shield":{"Implicit":""},
-"Steelscale Boots":{"Implicit":""},
-"Steelscale Gauntlets":{"Implicit":""},
-"Strapped Boots":{"Implicit":""},
-"Strapped Leather":{"Implicit":""},
-"Strapped Mitts":{"Implicit":""},
-"Studded Round Shield":{"Implicit":"60% increased Block Recovery"},
-"Sun Leather":{"Implicit":""},
-"Sun Plate":{"Implicit":""},
-"Supreme Spiked Shield":{"Implicit":"4% chance to Dodge Spell Damage"},
-"Tarnished Spirit Shield":{"Implicit":"(5-10)% increased Spell Damage"},
-"Teak Round Shield":{"Implicit":"180% increased Block Recovery"},
-"Thief's Garb":{"Implicit":""},
-"Thorium Spirit Shield":{"Implicit":""},
-"Titan Gauntlets":{"Implicit":""},
-"Titan Greaves":{"Implicit":""},
-"Titanium Spirit Shield":{"Implicit":""},
-"Torture Cage":{"Implicit":""},
-"Trapper Boots":{"Implicit":""},
-"Trapper Mitts":{"Implicit":""},
-"Tribal Circlet":{"Implicit":""},
-"Tricorne":{"Implicit":""},
-"Triumphant Lamellar":{"Implicit":""},
-"Twig Spirit Shield":{"Implicit":"(10-15)% increased Spell Damage"},
-"Two-Toned Boots":{"Implicit":"+(15-20)% to Cold and Lightning Resistances"},
-"Two-Toned Boots":{"Implicit":"+(15-20)% to Fire and Cold Resistances"},
-"Two-Toned Boots":{"Implicit":"+(15-20)% to Fire and Lightning Resistances"},
-"Ursine Pelt":{"Implicit":""},
-"Vaal Buckler":{"Implicit":"3% increased Movement Speed"},
-"Vaal Gauntlets":{"Implicit":""},
-"Vaal Greaves":{"Implicit":""},
-"Vaal Mask":{"Implicit":""},
-"Vaal Regalia":{"Implicit":""},
-"Vaal Spirit Shield":{"Implicit":"(5-10)% increased Spell Damage"},
-"Varnished Coat":{"Implicit":""},
-"Velvet Gloves":{"Implicit":""},
-"Velvet Slippers":{"Implicit":""},
-"Vine Circlet":{"Implicit":""},
-"Visored Sallet":{"Implicit":""},
-"Walnut Spirit Shield":{"Implicit":"(5-10)% increased Spell Damage"},
-"War Buckler":{"Implicit":"9% increased Movement Speed"},
-"War Plate":{"Implicit":""},
-"Waxed Garb":{"Implicit":""},
-"Widowsilk Robe":{"Implicit":""},
-"Wild Leather":{"Implicit":""},
-"Wolf Pelt":{"Implicit":""},
-"Wool Gloves":{"Implicit":""},
-"Wool Shoes":{"Implicit":""},
-"Wrapped Boots":{"Implicit":""},
-"Wrapped Mitts":{"Implicit":""},
-"Wyrmscale Boots":{"Implicit":""},
-"Wyrmscale Doublet":{"Implicit":""},
-"Wyrmscale Gauntlets":{"Implicit":""},
-"Yew Spirit Shield":{"Implicit":"(5-10)% increased Spell Damage"},
-"Zealot Boots":{"Implicit":""},
-"Zealot Gloves":{"Implicit":""},
-"Zealot Helmet":{"Implicit":""},
-"Zodiac Leather":{"Implicit":""}
+{
+ "Посох вихрей": {
+  "Implicit":"20% Chance to Block"
+ },
+ "Абордажная сабля": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Абордажный топор": {
+  "Implicit": ""
+ },
+ "Адамантиевый щит духа": {
+  "Implicit": ""
+ },
+ "Акулий полукафтан": {
+  "Implicit": ""
+ },
+ "Акульи ботинки": {
+  "Implicit": ""
+ },
+ "Акульи перчатки": {
+  "Implicit": ""
+ },
+ "Алебарда": {
+  "Implicit": ""
+ },
+ "Алый камзол": {
+  "Implicit": ""
+ },
+ "Алый круглый щит": {
+  "Implicit": ""
+ },
+ "Амулет из ракушек": {
+  "Implicit": "(20-30)% increased Mana Regeneration Rate"
+ },
+ "Амулет с агатом": {
+  "Implicit": "+(16-24) to Strength and Intelligence"
+ },
+ "Амулет с бирюзой": {
+  "Implicit": "+(16-24) to Dexterity and Intelligence"
+ },
+ "Амулет с голубой жемчужиной": {
+  "Implicit": "(48-56)% increased Mana Regeneration Rate"
+ },
+ "Амулет с кораллом": {
+  "Implicit": "(2-4) Life Regenerated per second"
+ },
+ "Амулет с лазуритом": {
+  "Implicit": "+(20-30) to Intelligence"
+ },
+ "Амулет с нефритом": {
+  "Implicit": "+(20-30) to Dexterity"
+ },
+ "Амулет с ониксом": {
+  "Implicit": "+(10-16) to all Attributes"
+ },
+ "Амулет с рубином": {
+  "Implicit": "+(20-30)% to Fire Resistance"
+ },
+ "Амулет с цитрином": {
+  "Implicit": "+(16-24) to Strength and Dexterity"
+ },
+ "Амулет с черной яшмой": {
+  "Implicit": "+(8-12)% to all Elemental Resistances"
+ },
+ "Амулет с янтарем": {
+  "Implicit": "+(20-30) to Strength"
+ },
+ "Атласные перчатки": {
+  "Implicit": ""
+ },
+ "Атласные сапоги": {
+  "Implicit": ""
+ },
+ "Багряный камзол": {
+  "Implicit": ""
+ },
+ "Багряный круглый щит": {
+  "Implicit": ""
+ },
+ "Багряный скипетр": {
+  "Implicit": "24% increased Elemental Damage"
+ },
+ "Байдана": {
+  "Implicit": ""
+ },
+ "Баклер ваал": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Баклер подвижника": {
+  "Implicit": "9% increased Movement Speed"
+ },
+ "Бамбуковый посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Барбют": {
+  "Implicit": ""
+ },
+ "Бархатные перчатки": {
+  "Implicit": ""
+ },
+ "Бархатные тапочки": {
+  "Implicit": ""
+ },
+ "Башмаки из вареной кожи": {
+  "Implicit": ""
+ },
+ "Бесовской топор": {
+  "Implicit": ""
+ },
+ "Блестящий коготь": {
+  "Implicit": "+15 Life gained for each Enemy hit by Attacks"
+ },
+ "Боевой баклер": {
+  "Implicit": "9% increased Movement Speed"
+ },
+ "Боевой меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Боевой молот": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Боевой пластинчатый доспех": {
+  "Implicit": ""
+ },
+ "Боевой посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Боевой топор": {
+  "Implicit": ""
+ },
+ "Большая колотушка": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Большая корона": {
+  "Implicit": ""
+ },
+ "Большой белый коготь": {
+  "Implicit": "+46 Life gained for each Enemy hit by Attacks"
+ },
+ "Большой меч ваал": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Большой меч с травлением": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Большой меч с чеканкой": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Большой шлем": {
+  "Implicit": ""
+ },
+ "Ботинки из чешуи гадюки": {
+  "Implicit": ""
+ },
+ "Ботинки из чешуи гидры": {
+  "Implicit": ""
+ },
+ "Ботинки из чешуи дракона": {
+  "Implicit": ""
+ },
+ "Ботинки из чешуи змея": {
+  "Implicit": ""
+ },
+ "Ботинки капканщика": {
+  "Implicit": ""
+ },
+ "Бригандина ауксилария": {
+  "Implicit": ""
+ },
+ "Бригандина всадника": {
+  "Implicit": ""
+ },
+ "Бригандина командира": {
+  "Implicit": ""
+ },
+ "Бригандина кочевника": {
+  "Implicit": ""
+ },
+ "Бригандина легата": {
+  "Implicit": ""
+ },
+ "Бригандина солдата": {
+  "Implicit": ""
+ },
+ "Бронзовые ботинки": {
+  "Implicit": ""
+ },
+ "Бронзовые латы": {
+  "Implicit": ""
+ },
+ "Бронзовые перчатки": {
+  "Implicit": ""
+ },
+ "Бронзовый колючий щит": {
+  "Implicit": "2% chance to Dodge Spell Damage"
+ },
+ "Бронзовый ростовой щит": {
+  "Implicit": "+(30-40) to maximum Life"
+ },
+ "Бронзовый скипетр": {
+  "Implicit": "12% increased Elemental Damage"
+ },
+ "Бронзовый щит духа": {
+  "Implicit": ""
+ },
+ "Булава бегемота": {
+  "Implicit": "6% increased Attack Speed"
+ },
+ "Булава видений": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Булава дракона": {
+  "Implicit": "4% increased Attack Speed"
+ },
+ "Булава с пластинами": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Булава червя": {
+  "Implicit": "4% increased Attack Speed"
+ },
+ "Бурый скипетр": {
+  "Implicit": "16% increased Elemental Damage"
+ },
+ "Варисцитовый меч": {
+  "Implicit": "+240 to Accuracy Rating"
+ },
+ "Великолепные латы": {
+  "Implicit": ""
+ },
+ "Великолепный кожаный доспех": {
+  "Implicit": ""
+ },
+ "Величественные латы": {
+  "Implicit": ""
+ },
+ "Венец гордыни": {
+  "Implicit": ""
+ },
+ "Венечный молот": {
+  "Implicit": "6% increased Area of Effect of Area Skills"
+ },
+ "Венок из лозы": {
+  "Implicit": ""
+ },
+ "Витая шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Витой жезл": {
+  "Implicit": "(15-19)% increased Spell Damage"
+ },
+ "Воинский баклер": {
+  "Implicit": "9% increased Movement Speed"
+ },
+ "Воинский меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Воинский молот": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Воинский топор": {
+  "Implicit": ""
+ },
+ "Волнистый бацинет": {
+  "Implicit": ""
+ },
+ "Волчья морда": {
+  "Implicit": ""
+ },
+ "Волшебный жезл": {
+  "Implicit": "(33-37)% increased Spell Damage"
+ },
+ "Вороненый колючий щит": {
+  "Implicit": "4% chance to Dodge Attacks"
+ },
+ "Воронья маска": {
+  "Implicit": ""
+ },
+ "Вспарыватель": {
+  "Implicit": "+44 Life gained for each Enemy hit by Attacks"
+ },
+ "Выкалыватель": {
+  "Implicit": "+50 Life gained for each Enemy hit by Attacks"
+ },
+ "Вычурная шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Вычурный круглый щит": {
+  "Implicit": "120% increased Block Recovery"
+ },
+ "Гибкий клинок": {
+  "Implicit": "+40% to Global Critical Strike Multiplier"
+ },
+ "Гладиус": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Гравированный топорик": {
+  "Implicit": "8% increased Physical Damage"
+ },
+ "Громадная колотушка": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Грубый колчан": {
+  "Implicit": "Adds 2 to 3 Cold Damage to Attacks"
+ },
+ "Грубый лук": {
+  "Implicit": ""
+ },
+ "Гудящий колчан": {
+  "Implicit": "Adds 1 to 5 Lightning Damage to Attacks"
+ },
+ "Дага": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Двойной коготь": {
+  "Implicit": "+6 Mana gained for each Enemy hit by Attacks, +15 Life gained for each Enemy hit by Attacks"
+ },
+ "Двуручный меч": {
+  "Implicit": "+120 to Accuracy Rating"
+ },
+ "Двухцветные ботинки": {
+  "Implicit": "+(15-20)% to Fire and Lightning Resistances"
+ },
+ "Диадема Лунарис": {
+  "Implicit": ""
+ },
+ "Диадема Солярис": {
+  "Implicit": ""
+ },
+ "Длинный лук": {
+  "Implicit": ""
+ },
+ "Длинный меч": {
+  "Implicit": "+60 to Accuracy Rating"
+ },
+ "Длинный посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Доисторический кастет": {
+  "Implicit": "2% of Physical Attack Damage Leeched as Life"
+ },
+ "Доспех бойца": {
+  "Implicit": ""
+ },
+ "Доспех воина": {
+  "Implicit": ""
+ },
+ "Доспех гладиатора": {
+  "Implicit": ""
+ },
+ "Доспех драчуна": {
+  "Implicit": ""
+ },
+ "Доспех из дубленой кожи": {
+  "Implicit": ""
+ },
+ "Доспех поборника": {
+  "Implicit": ""
+ },
+ "Доспех поединщика": {
+  "Implicit": ""
+ },
+ "Дощатый каплевидный щит": {
+  "Implicit": "+4% to all Elemental Resistances"
+ },
+ "Древние перчатки": {
+  "Implicit": ""
+ },
+ "Древние поножи": {
+  "Implicit": ""
+ },
+ "Древний меч": {
+  "Implicit": "+165 to Accuracy Rating"
+ },
+ "Древний посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Древний щит духа": {
+  "Implicit": "(5-10)% increased Spell Damage"
+ },
+ "Древняя рапира": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Дубина аборигена": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Дубина из плавника": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Дубина каруи": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Дубинка аборигена": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Дубинка из плавника": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Дубинка предков": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Дубленый колчан": {
+  "Implicit": "Adds 2 to 4 Fire Damage to Attacks"
+ },
+ "Дублет из чешуи дракона": {
+  "Implicit": ""
+ },
+ "Дублет из чешуи змея": {
+  "Implicit": ""
+ },
+ "Дубовый баклер": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Жало": {
+  "Implicit": "4% Chance to Block"
+ },
+ "Жезл варвара": {
+  "Implicit": "10% increased Cast Speed"
+ },
+ "Жезл из плавника": {
+  "Implicit": "(8-12)% increased Spell Damage"
+ },
+ "Жезл отступника": {
+  "Implicit": "14% increased Cast Speed"
+ },
+ "Жезл предвестия": {
+  "Implicit": "(27-31)% increased Spell Damage"
+ },
+ "Жезл провидца": {
+  "Implicit": "(17-21)% increased Spell Damage"
+ },
+ "Жезл пророчества": {
+  "Implicit": "(36-40)% increased Spell Damage"
+ },
+ "Жезл торнадо": {
+  "Implicit": "(35-39)% increased Spell Damage"
+ },
+ "Жезл язычника": {
+  "Implicit": "10% increased Cast Speed"
+ },
+ "Железная маска": {
+  "Implicit": ""
+ },
+ "Железная шапка": {
+  "Implicit": ""
+ },
+ "Железное кольцо": {
+  "Implicit": "Adds 1 to 4 Physical Damage to Attacks"
+ },
+ "Железные ботинки": {
+  "Implicit": ""
+ },
+ "Железные поножи": {
+  "Implicit": ""
+ },
+ "Железные рукавицы": {
+  "Implicit": ""
+ },
+ "Железный баклер": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Железный лук": {
+  "Implicit": "4% increased Movement Speed"
+ },
+ "Железный обруч": {
+  "Implicit": ""
+ },
+ "Железный скипетр": {
+  "Implicit": "14% increased Elemental Damage"
+ },
+ "Жертвенное облачение": {
+  "Implicit": ""
+ },
+ "Жилет из дубленой кожи": {
+  "Implicit": ""
+ },
+ "Жуткий коготь": {
+  "Implicit": "2% of Physical Attack Damage Leeched as Life"
+ },
+ "Забиватель": {
+  "Implicit": "45% increased Stun Duration on Enemies"
+ },
+ "Загнутый лук": {
+  "Implicit": ""
+ },
+ "Зазубренная шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Закаленная шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Закатный клинок": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Закрытый шлем": {
+  "Implicit": ""
+ },
+ "Замшевые ботинки": {
+  "Implicit": ""
+ },
+ "Замшевые перчатки": {
+  "Implicit": ""
+ },
+ "Засапожный клинок": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Засапожный нож": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Затыкатель": {
+  "Implicit": "+40 Life gained for each Enemy hit by Attacks"
+ },
+ "Звездные латы": {
+  "Implicit": "+(8-12)% to all Elemental Resistances"
+ },
+ "Звенящий щит духа": {
+  "Implicit": "(10-15)% increased Spell Damage"
+ },
+ "Зеркальный колючий щит": {
+  "Implicit": "4% chance to Dodge Attacks"
+ },
+ "Змеиный жезл": {
+  "Implicit": "(26-30)% increased Spell Damage"
+ },
+ "Змеиный посох": {
+  "Implicit": "20% Chance to Block"
+ },
+ "Золотая булава": {
+  "Implicit": "15% reduced Enemy Stun Threshold"
+ },
+ "Золотая мантия": {
+  "Implicit": "+(15-25)% to all Elemental Resistances"
+ },
+ "Золотая маска": {
+  "Implicit": ""
+ },
+ "Золотое кольцо": {
+  "Implicit": "(6-15)% increased Rarity of Items found"
+ },
+ "Золотое пламя": {
+  "Implicit": "+(11-19)% to Chaos Resistance"
+ },
+ "Золотой амулет": {
+  "Implicit": "(12-20)% increased Rarity of Items found"
+ },
+ "Золотой баклер": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Золотой венок": {
+  "Implicit": "+(16-24) to all Attributes"
+ },
+ "Золотой крис": {
+  "Implicit": "50% increased Global Critical Strike Chance"
+ },
+ "Золотой обруч": {
+  "Implicit": "+(8-12) to all Attributes"
+ },
+ "Золотые калиги": {
+  "Implicit": "+(8-16)% to all Elemental Resistances"
+ },
+ "Золотые латы": {
+  "Implicit": ""
+ },
+ "Золотые перчатки": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Золоченый топор": {
+  "Implicit": ""
+ },
+ "Зубастый молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Изысканный клинок": {
+  "Implicit": "+60% to Global Critical Strike Multiplier"
+ },
+ "Изящный кольчатый доспех": {
+  "Implicit": ""
+ },
+ "Изящный меч": {
+  "Implicit": "+350 to Accuracy Rating"
+ },
+ "Императорский баклер": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Императорский колючий щит": {
+  "Implicit": "4% chance to Dodge Spell Damage"
+ },
+ "Императорский лук": {
+  "Implicit": "(20-24)% increased Elemental Damage with Attack Skills"
+ },
+ "Императорский молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Императорский посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Имперский коготь": {
+  "Implicit": "+46 Life gained for each Enemy hit by Attacks"
+ },
+ "Инкрустированная шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Истертый кастет": {
+  "Implicit": "+19 Life gained for each Enemy hit by Attacks"
+ },
+ "Кабассет": {
+  "Implicit": ""
+ },
+ "Калантарь": {
+  "Implicit": ""
+ },
+ "Калиги": {
+  "Implicit": ""
+ },
+ "Калиги убийцы": {
+  "Implicit": ""
+ },
+ "Каменный молот": {
+  "Implicit": "15% reduced Enemy Stun Threshold"
+ },
+ "Каменный топор": {
+  "Implicit": ""
+ },
+ "Камнедробитель": {
+  "Implicit": "15% reduced Enemy Stun Threshold"
+ },
+ "Камнетес": {
+  "Implicit": "15% reduced Enemy Stun Threshold"
+ },
+ "Каплевидный щит ангела": {
+  "Implicit": "+12% to all Elemental Resistances"
+ },
+ "Каплевидный щит архонта": {
+  "Implicit": "+12% to all Elemental Resistances"
+ },
+ "Каплевидный щит с рисунком": {
+  "Implicit": "+4% to all Elemental Resistances"
+ },
+ "Каплевидный щит с символом": {
+  "Implicit": "+4% to all Elemental Resistances"
+ },
+ "Каплевидный щит триумфатора": {
+  "Implicit": ""
+ },
+ "Капюшон охотника": {
+  "Implicit": ""
+ },
+ "Карнавальная маска": {
+  "Implicit": ""
+ },
+ "Кастет молотильщика": {
+  "Implicit": "+25 Life gained for each Enemy hit by Attacks"
+ },
+ "Кастет с зубами акулы": {
+  "Implicit": "+6 Life gained for each Enemy hit by Attacks"
+ },
+ "Кварцевый жезл": {
+  "Implicit": "(18-22)% increased Spell Damage"
+ },
+ "Кварцевый скипетр": {
+  "Implicit": "20% increased Elemental Damage"
+ },
+ "Кедровый ростовой щит": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Кинжал беса": {
+  "Implicit": "40% increased Global Critical Strike Chance"
+ },
+ "Кинжал демона": {
+  "Implicit": "40% increased Global Critical Strike Chance"
+ },
+ "Кинжал изверга": {
+  "Implicit": "40% increased Global Critical Strike Chance"
+ },
+ "Кинжал эзомита": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Кленовый круглый щит": {
+  "Implicit": "180% increased Block Recovery"
+ },
+ "Клепаные башмаки": {
+  "Implicit": ""
+ },
+ "Клепаные кольчужные перчатки": {
+  "Implicit": ""
+ },
+ "Клепаный круглый щит": {
+  "Implicit": "60% increased Block Recovery"
+ },
+ "Клепаный ремень": {
+  "Implicit": "(20-30)% increased Stun Duration on Enemies"
+ },
+ "Клеть мучений": {
+  "Implicit": ""
+ },
+ "Клеть разума": {
+  "Implicit": ""
+ },
+ "Клинок ваал": {
+  "Implicit": "+460 to Accuracy Rating"
+ },
+ "Клинок горца": {
+  "Implicit": "+305 to Accuracy Rating"
+ },
+ "Клинок из ключей": {
+  "Implicit": ""
+ },
+ "Клинок эзомита": {
+  "Implicit": "+435 to Accuracy Rating"
+ },
+ "Клювастый бацинет": {
+  "Implicit": ""
+ },
+ "Кованый баклер": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Коготь ваал": {
+  "Implicit": "2% of Physical Attack Damage Leeched as Life"
+ },
+ "Коготь патриция": {
+  "Implicit": "+40 Life gained for each Enemy hit by Attacks"
+ },
+ "Коготь-близнец": {
+  "Implicit": "+38 Life gained for each Enemy hit by Attacks, +14 Mana gained for each Enemy hit by Attacks"
+ },
+ "Кожанка призвания": {
+  "Implicit": ""
+ },
+ "Кожанка разведчика": {
+  "Implicit": ""
+ },
+ "Кожаный баклер": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Кожаный доспех зодиака": {
+  "Implicit": ""
+ },
+ "Кожаный доспех короны": {
+  "Implicit": ""
+ },
+ "Кожаный капюшон": {
+  "Implicit": ""
+ },
+ "Кожаный ростовой щит": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Кожаный чепец": {
+  "Implicit": ""
+ },
+ "Козий рог": {
+  "Implicit": "(10-14)% increased Spell Damage"
+ },
+ "Колотушка": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Колун": {
+  "Implicit": ""
+ },
+ "Колчан акульих стрел": {
+  "Implicit": "+(3-4) Life gained for each Enemy hit by your Attacks"
+ },
+ "Колчан боевых стрел": {
+  "Implicit": "Arrows Pierce an additional Target"
+ },
+ "Колчан двуглавых стрел": {
+  "Implicit": "(20-30)% increased Accuracy Rating"
+ },
+ "Колчан зазубренных стрел": {
+  "Implicit": "Adds 1 to 4 Physical Damage to Attacks with Bows"
+ },
+ "Колчан огненных стрел": {
+  "Implicit": "Adds 4 to 8 Fire Damage to Attacks with Bows"
+ },
+ "Колчан охотничьих стрел": {
+  "Implicit": "Adds 6 to 12 Physical Damage to Attacks with Bows"
+ },
+ "Колчан промысловых стрел": {
+  "Implicit": "(25-35)% increased Stun Duration on Enemies"
+ },
+ "Колчан точных стрел": {
+  "Implicit": "(20-30)% increased Global Critical Strike Chance"
+ },
+ "Кольцо Разлома": {
+  "Implicit": "Properties are doubled while in a Breach"
+ },
+ "Кольцо без камня": {
+  "Implicit": "Has 1 Socket"
+ },
+ "Кольцо с аметистом": {
+  "Implicit": "+(9-13)% to Chaos Resistance"
+ },
+ "Кольцо с бриллиантом": {
+  "Implicit": "(20-30)% increased Global Critical Strike Chance"
+ },
+ "Кольцо с двумя камнями": {
+  "Implicit": "+(12-16)% to Cold and Lightning Resistances"
+ },
+ "Кольцо с кораллом": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Кольцо с лунным камнем": {
+  "Implicit": "+(15-25) to maximum Energy Shield"
+ },
+ "Кольцо с опалом": {
+  "Implicit": "(15-25)% increased Elemental Damage"
+ },
+ "Кольцо с ракушкой": {
+  "Implicit": "+(20-25) to maximum Mana"
+ },
+ "Кольцо с рубином": {
+  "Implicit": "+(20-30)% to Fire Resistance"
+ },
+ "Кольцо с сапфиром": {
+  "Implicit": "+(20-30)% to Cold Resistance"
+ },
+ "Кольцо с топазом": {
+  "Implicit": "+(20-30)% to Lightning Resistance"
+ },
+ "Кольцо с черной яшмой": {
+  "Implicit": "(5-10)% increased Global Defences"
+ },
+ "Кольчатые перчатки": {
+  "Implicit": ""
+ },
+ "Кольчуга завоевателя": {
+  "Implicit": ""
+ },
+ "Кольчуга послушника": {
+  "Implicit": ""
+ },
+ "Кольчуга праведника": {
+  "Implicit": ""
+ },
+ "Кольчуга святого": {
+  "Implicit": ""
+ },
+ "Кольчуга святого воина": {
+  "Implicit": ""
+ },
+ "Кольчужные башмаки": {
+  "Implicit": ""
+ },
+ "Кольчужные перчатки": {
+  "Implicit": ""
+ },
+ "Кольчужные сапоги": {
+  "Implicit": ""
+ },
+ "Кольчужный дублет": {
+  "Implicit": ""
+ },
+ "Кольчужный жилет": {
+  "Implicit": ""
+ },
+ "Кольчужный жилет с пластинами": {
+  "Implicit": ""
+ },
+ "Колючая дубина": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Колючая дубинка": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Колючая повязка": {
+  "Implicit": "2% chance to Dodge Attacks"
+ },
+ "Колючая рапира": {
+  "Implicit": "+35% to Global Critical Strike Multiplier"
+ },
+ "Колючие перчатки": {
+  "Implicit": "(16-20)% increased Melee Damage"
+ },
+ "Колючий щит из плавника": {
+  "Implicit": "2% chance to Dodge Attacks"
+ },
+ "Колючий щит эзомита": {
+  "Implicit": "2% chance to Dodge Spell Damage"
+ },
+ "Корона правителя": {
+  "Implicit": ""
+ },
+ "Корона претора": {
+  "Implicit": ""
+ },
+ "Корона провидца": {
+  "Implicit": ""
+ },
+ "Короткая шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Короткий кинжал": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Короткий кинжал императора": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Короткий кинжал царя": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Короткий лук": {
+  "Implicit": ""
+ },
+ "Короткий меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Костяной доспех": {
+  "Implicit": ""
+ },
+ "Костяной лук": {
+  "Implicit": ""
+ },
+ "Костяной шлем": {
+  "Implicit": "Minions deal (30-40)% increased Damage"
+ },
+ "Кошачья лапа": {
+  "Implicit": "+8 Life gained for each Enemy hit by Attacks"
+ },
+ "Кошмарная булава": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Кошмарный бацинет": {
+  "Implicit": ""
+ },
+ "Крепкие перчатки": {
+  "Implicit": "(14-18)% increased Projectile Attack Damage"
+ },
+ "Крепкий посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Кривой клинок": {
+  "Implicit": "+40% to Global Critical Strike Multiplier"
+ },
+ "Кристальный жезл": {
+  "Implicit": "(29-33)% increased Spell Damage"
+ },
+ "Кристальный пояс": {
+  "Implicit": "+(60-80) to maximum Energy Shield"
+ },
+ "Кристальный скипетр": {
+  "Implicit": "30% increased Elemental Damage"
+ },
+ "Кровавый камзол": {
+  "Implicit": ""
+ },
+ "Кровавый скипетр": {
+  "Implicit": "32% increased Elemental Damage"
+ },
+ "Кровожадный доспех": {
+  "Implicit": "+(20-25) to maximum Mana"
+ },
+ "Крученый посох": {
+  "Implicit": "20% Chance to Block"
+ },
+ "Кувалда": {
+  "Implicit": "45% increased Stun Duration on Enemies"
+ },
+ "Куртка стража": {
+  "Implicit": ""
+ },
+ "Кушак": {
+  "Implicit": "(12-24)% increased Physical Damage"
+ },
+ "Лабрис": {
+  "Implicit": ""
+ },
+ "Лакированное облачение": {
+  "Implicit": ""
+ },
+ "Лапа волкодава": {
+  "Implicit": "1.6% of Physical Attack Damage Leeched as Life"
+ },
+ "Латные перчатки": {
+  "Implicit": ""
+ },
+ "Латные поножи": {
+  "Implicit": ""
+ },
+ "Латунный колючий щит": {
+  "Implicit": "2% chance to Dodge Spell Damage"
+ },
+ "Латунный молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Легкая бригандина": {
+  "Implicit": ""
+ },
+ "Легкий колчан": {
+  "Implicit": "+(30-40) to Dexterity"
+ },
+ "Лесной лук": {
+  "Implicit": ""
+ },
+ "Липовый каплевидный щит": {
+  "Implicit": "+4% to all Elemental Resistances"
+ },
+ "Лощеное облачение": {
+  "Implicit": ""
+ },
+ "Лук из бивня": {
+  "Implicit": ""
+ },
+ "Лук из рога": {
+  "Implicit": ""
+ },
+ "Лук маракета": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Лук охотника": {
+  "Implicit": ""
+ },
+ "Лук палача": {
+  "Implicit": "(30-50)% increased Critical Strike Chance"
+ },
+ "Лук патриция": {
+  "Implicit": "(20-24)% increased Elemental Damage with Attack Skills"
+ },
+ "Лук предвестника": {
+  "Implicit": "(30-50)% increased Critical Strike Chance"
+ },
+ "Лук прыти": {
+  "Implicit": "4% increased Movement Speed"
+ },
+ "Лук птицебоя": {
+  "Implicit": ""
+ },
+ "Лук смерти": {
+  "Implicit": "(30-50)% increased Critical Strike Chance"
+ },
+ "Лук убийцы": {
+  "Implicit": ""
+ },
+ "Лунный посох": {
+  "Implicit": "80% increased Global Critical Strike Chance"
+ },
+ "Лучший ростовой щит": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Львиная морда": {
+  "Implicit": ""
+ },
+ "Малый меч": {
+  "Implicit": "15% chance to cause Bleeding on Hit"
+ },
+ "Маска богоубийцы": {
+  "Implicit": ""
+ },
+ "Маска ваал": {
+  "Implicit": ""
+ },
+ "Маска равнодушия": {
+  "Implicit": ""
+ },
+ "Маска цареубийцы": {
+  "Implicit": ""
+ },
+ "Массивный ростовой щит": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Матерчатая безрукавка": {
+  "Implicit": ""
+ },
+ "Матерчатый пояс": {
+  "Implicit": "(15-25)% increased Stun and Block Recovery"
+ },
+ "Медвежья морда": {
+  "Implicit": ""
+ },
+ "Медные латы": {
+  "Implicit": ""
+ },
+ "Медный крис": {
+  "Implicit": "50% increased Global Critical Strike Chance"
+ },
+ "Медный меч": {
+  "Implicit": "+45 to Accuracy Rating"
+ },
+ "Медный ростовой щит": {
+  "Implicit": "+(30-40) to maximum Life"
+ },
+ "Мелодичный щит духа": {
+  "Implicit": "(10-15)% increased Spell Damage"
+ },
+ "Меч вечного": {
+  "Implicit": "+475 to Accuracy Rating"
+ },
+ "Меч всадника": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Меч кокотки": {
+  "Implicit": "15% chance to cause Bleeding on Hit"
+ },
+ "Меч льва": {
+  "Implicit": "+470 to Accuracy Rating"
+ },
+ "Меч мясника": {
+  "Implicit": "+250 to Accuracy Rating"
+ },
+ "Меч наемника": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Меч палача": {
+  "Implicit": "+400 to Accuracy Rating"
+ },
+ "Меч пехотинца": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Меч подземного царства": {
+  "Implicit": "30% increased Accuracy Rating"
+ },
+ "Меч старейшины": {
+  "Implicit": "+330 to Accuracy Rating"
+ },
+ "Меч тигра": {
+  "Implicit": "+360 to Accuracy Rating"
+ },
+ "Меч-крюк": {
+  "Implicit": "4% chance to Dodge Attacks"
+ },
+ "Многослойный баклер": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Многослойный каплевидный щит": {
+  "Implicit": "+8% to all Elemental Resistances"
+ },
+ "Могильный доспех": {
+  "Implicit": ""
+ },
+ "Модный жакет": {
+  "Implicit": ""
+ },
+ "Мозаичный каплевидный щит": {
+  "Implicit": "+8% to all Elemental Resistances"
+ },
+ "Молот легионера": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Молот светила": {
+  "Implicit": "4% increased Area of Effect of Area Skills"
+ },
+ "Моргенштерн": {
+  "Implicit": "4% increased Area of Effect of Area Skills"
+ },
+ "Мощный лук": {
+  "Implicit": ""
+ },
+ "Мраморный амулет": {
+  "Implicit": "(1.2-1.6)% of Life Regenerated per second"
+ },
+ "Мясодер": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Набивной доспех": {
+  "Implicit": ""
+ },
+ "Нагрудник": {
+  "Implicit": ""
+ },
+ "Наряд ваал": {
+  "Implicit": ""
+ },
+ "Наряд мистика": {
+  "Implicit": ""
+ },
+ "Наряд разрушителя": {
+  "Implicit": ""
+ },
+ "Нефритовое рубило": {
+  "Implicit": ""
+ },
+ "Нефритовый топор": {
+  "Implicit": ""
+ },
+ "Нож душегуба": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Нож мясника": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Нож потрошителя": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Нож резчика": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Нож свежевателя": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Нож скорняка": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Нубуковые ботинки": {
+  "Implicit": ""
+ },
+ "Нубуковые перчатки": {
+  "Implicit": ""
+ },
+ "Облачение вора": {
+  "Implicit": ""
+ },
+ "Облачение головореза": {
+  "Implicit": ""
+ },
+ "Облачение мучителя": {
+  "Implicit": ""
+ },
+ "Облачение убийцы": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Обруч аборигена": {
+  "Implicit": ""
+ },
+ "Обруч некроманта": {
+  "Implicit": ""
+ },
+ "Обруч с костью": {
+  "Implicit": ""
+ },
+ "Одеяние из паучьего шелка": {
+  "Implicit": ""
+ },
+ "Одеяние мудреца": {
+  "Implicit": ""
+ },
+ "Одеяние ученого": {
+  "Implicit": ""
+ },
+ "Одеяние черной вдовы": {
+  "Implicit": ""
+ },
+ "Одеяние эрудита": {
+  "Implicit": ""
+ },
+ "Окаменелая дубинка": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Окованный посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Олений скипетр": {
+  "Implicit": "Damage Penetrates 4% Elemental Resistances"
+ },
+ "Ольховый колючий щит": {
+  "Implicit": "2% chance to Dodge Attacks"
+ },
+ "Опаловый жезл": {
+  "Implicit": "(38-42)% increased Spell Damage"
+ },
+ "Опаловый скипетр": {
+  "Implicit": "40% increased Elemental Damage"
+ },
+ "Ореховый щит духа": {
+  "Implicit": "(5-10)% increased Spell Damage"
+ },
+ "Орихалковый щит духа": {
+  "Implicit": ""
+ },
+ "Орлиный коготь": {
+  "Implicit": "2% of Physical Attack Damage Leeched as Life"
+ },
+ "Осадный лук": {
+  "Implicit": ""
+ },
+ "Осадный топор": {
+  "Implicit": ""
+ },
+ "Осадный шлем": {
+  "Implicit": ""
+ },
+ "Оскаленый фетиш": {
+  "Implicit": "18% increased Elemental Damage"
+ },
+ "Осколок стекла": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Ослепитель": {
+  "Implicit": "+12 Life gained for each Enemy hit by Attacks"
+ },
+ "Острая рапира": {
+  "Implicit": "+35% to Global Critical Strike Multiplier"
+ },
+ "Оструганный жезл": {
+  "Implicit": "(11-15)% increased Spell Damage"
+ },
+ "Охотничья кожанка": {
+  "Implicit": ""
+ },
+ "Палисандровый ростовой щит": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Палица": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Панцирь": {
+  "Implicit": ""
+ },
+ "Парадная треуголка": {
+  "Implicit": ""
+ },
+ "Парадный кольчатый доспех": {
+  "Implicit": ""
+ },
+ "Парный коготь": {
+  "Implicit": "+28 Life gained for each Enemy hit by Attacks, +10 Mana gained for each Enemy hit by Attacks"
+ },
+ "Пернач": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Перчатки ауксилария": {
+  "Implicit": ""
+ },
+ "Перчатки ваал": {
+  "Implicit": ""
+ },
+ "Перчатки волшебника": {
+  "Implicit": ""
+ },
+ "Перчатки гиганта": {
+  "Implicit": ""
+ },
+ "Перчатки из чешуи гадюки": {
+  "Implicit": ""
+ },
+ "Перчатки из чешуи гидры": {
+  "Implicit": ""
+ },
+ "Перчатки из чешуи дракона": {
+  "Implicit": ""
+ },
+ "Перчатки из чешуи змея": {
+  "Implicit": ""
+ },
+ "Перчатки капканщика": {
+  "Implicit": ""
+ },
+ "Перчатки крови": {
+  "Implicit": ""
+ },
+ "Перчатки легионера": {
+  "Implicit": ""
+ },
+ "Перчатки оков": {
+  "Implicit": ""
+ },
+ "Перчатки поборника": {
+  "Implicit": ""
+ },
+ "Перчатки разбойника": {
+  "Implicit": ""
+ },
+ "Перчатки смерти": {
+  "Implicit": ""
+ },
+ "Перчатки тайнописца": {
+  "Implicit": ""
+ },
+ "Перчатки титана": {
+  "Implicit": ""
+ },
+ "Перчатки убийцы": {
+  "Implicit": ""
+ },
+ "Перчатки фанатика": {
+  "Implicit": ""
+ },
+ "Перчатки чародея": {
+  "Implicit": ""
+ },
+ "Пиратский тесак": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Пихтовый круглый щит": {
+  "Implicit": "180% increased Block Recovery"
+ },
+ "Пластинчатый доспех": {
+  "Implicit": ""
+ },
+ "Пластинчатый доспех триумфатора": {
+  "Implicit": ""
+ },
+ "Платановый щит духа": {
+  "Implicit": "(5-10)% increased Spell Damage"
+ },
+ "Платиновый крис": {
+  "Implicit": "50% increased Global Critical Strike Chance"
+ },
+ "Платиновый скипетр": {
+  "Implicit": "30% increased Elemental Damage"
+ },
+ "Плотничий топор": {
+  "Implicit": ""
+ },
+ "Позолоченный баклер": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Позолоченный молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Позолоченный салад": {
+  "Implicit": ""
+ },
+ "Полированная шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Полированный колючий щит": {
+  "Implicit": "4% chance to Dodge Attacks"
+ },
+ "Полная кольчуга": {
+  "Implicit": ""
+ },
+ "Полные латы": {
+  "Implicit": ""
+ },
+ "Полный доспех из чешуи дракона": {
+  "Implicit": ""
+ },
+ "Полный доспех из чешуи змея": {
+  "Implicit": ""
+ },
+ "Полный кожаный доспех": {
+  "Implicit": ""
+ },
+ "Полный кольчатый доспех": {
+  "Implicit": ""
+ },
+ "Полный чешуйчатый доспех": {
+  "Implicit": ""
+ },
+ "Полный шлем": {
+  "Implicit": ""
+ },
+ "Полный шлем вечного": {
+  "Implicit": ""
+ },
+ "Полный шлем царя": {
+  "Implicit": ""
+ },
+ "Полный шлем эзомита": {
+  "Implicit": ""
+ },
+ "Полукольчужные сапоги": {
+  "Implicit": ""
+ },
+ "Полуночный меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Полуторный меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Поножи ваал": {
+  "Implicit": ""
+ },
+ "Поножи великана": {
+  "Implicit": ""
+ },
+ "Поножи титана": {
+  "Implicit": ""
+ },
+ "Посох затмения": {
+  "Implicit": "100% increased Global Critical Strike Chance"
+ },
+ "Посох нечистого": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Посох падшего": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Посох патриция": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Посох с полумесяцем": {
+  "Implicit": "80% increased Global Critical Strike Chance"
+ },
+ "Посох судьи": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Посох эзомита": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Потертый щит духа": {
+  "Implicit": "(5-10)% increased Spell Damage"
+ },
+ "Потусторонний меч": {
+  "Implicit": "30% increased Accuracy Rating"
+ },
+ "Потусторонний топор": {
+  "Implicit": ""
+ },
+ "Поющий щит духа": {
+  "Implicit": "(10-15)% increased Spell Damage"
+ },
+ "Превосходный кожаный доспех": {
+  "Implicit": ""
+ },
+ "Призрачная булава": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Призрачный меч": {
+  "Implicit": "30% increased Accuracy Rating"
+ },
+ "Призрачный топор": {
+  "Implicit": ""
+ },
+ "Пробитый шлем": {
+  "Implicit": ""
+ },
+ "Прогнивший круглый щит": {
+  "Implicit": "60% increased Block Recovery"
+ },
+ "Прогнивший скипетр": {
+  "Implicit": "12% increased Elemental Damage"
+ },
+ "Проклеенный каплевидный щит": {
+  "Implicit": "+8% to all Elemental Resistances"
+ },
+ "Простейший посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Пугающая маска": {
+  "Implicit": ""
+ },
+ "Пугающий коготь": {
+  "Implicit": "+20 Life gained for each Enemy hit by Attacks"
+ },
+ "Пугающий молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Радужное кольцо": {
+  "Implicit": "+(8-10)% to all Elemental Resistances"
+ },
+ "Разбитый ростовой щит": {
+  "Implicit": ""
+ },
+ "Разбойничий топор": {
+  "Implicit": ""
+ },
+ "Раздиратель": {
+  "Implicit": "50% increased Critical Strike Chance"
+ },
+ "Рапира ваал": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Рапира гарпии": {
+  "Implicit": "+35% to Global Critical Strike Multiplier"
+ },
+ "Рапира из китовой кости": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Рапира из кости дракона": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Рапира из кости змея": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Рапира с чашей": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Раскалыватель": {
+  "Implicit": ""
+ },
+ "Расписной ростовой щит": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Рассекатель ребер": {
+  "Implicit": ""
+ },
+ "Расшитые перчатки": {
+  "Implicit": ""
+ },
+ "Рваная кожанка": {
+  "Implicit": ""
+ },
+ "Резной жезл": {
+  "Implicit": "(22-26)% increased Spell Damage"
+ },
+ "Ременной кожаный доспех": {
+  "Implicit": ""
+ },
+ "Ременные перчатки": {
+  "Implicit": ""
+ },
+ "Ремень": {
+  "Implicit": "+(25-40) to maximum Life"
+ },
+ "Ремень гастата": {
+  "Implicit": "+(260-320) to Armour and Evasion Rating"
+ },
+ "Ржавый клинок": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Ржавый койф": {
+  "Implicit": ""
+ },
+ "Ржавый меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Ржавый ростовой щит": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Ржавый топорик": {
+  "Implicit": ""
+ },
+ "Ржавый шип": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Ритуальный скипетр": {
+  "Implicit": "16% increased Elemental Damage"
+ },
+ "Рифленый баклер": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Рог демона": {
+  "Implicit": "(31-35)% increased Spell Damage"
+ },
+ "Рог фавна": {
+  "Implicit": "(20-24)% increased Spell Damage"
+ },
+ "Рогатый скипетр": {
+  "Implicit": "Damage Penetrates 4% Elemental Resistances"
+ },
+ "Рондел": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Роскошные латы": {
+  "Implicit": ""
+ },
+ "Ростовой щит из акульей кожи": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Ростовой щит с гербом": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Ростовой щит с умбоном": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Ростовой щит эзомита": {
+  "Implicit": "+(30-40) to maximum Life"
+ },
+ "Рубило каруи": {
+  "Implicit": ""
+ },
+ "Рукоруб": {
+  "Implicit": ""
+ },
+ "Рунический топорик": {
+  "Implicit": "12% increased Physical Damage"
+ },
+ "Сабля": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Сабля драгуна": {
+  "Implicit": "20% chance to cause Bleeding on Hit"
+ },
+ "Сабля пекораро": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Сай": {
+  "Implicit": "6% Chance to Block"
+ },
+ "Салад": {
+  "Implicit": ""
+ },
+ "Салад с забралом": {
+  "Implicit": ""
+ },
+ "Самоцветный меч": {
+  "Implicit": "+400 to Accuracy Rating"
+ },
+ "Самшитовый баклер": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Сандалеты": {
+  "Implicit": ""
+ },
+ "Сандалеты разбойника": {
+  "Implicit": ""
+ },
+ "Сандалии": {
+  "Implicit": ""
+ },
+ "Сандаловый колючий щит": {
+  "Implicit": "2% chance to Dodge Attacks"
+ },
+ "Сапоги ауксилария": {
+  "Implicit": ""
+ },
+ "Сапоги волшебника": {
+  "Implicit": ""
+ },
+ "Сапоги крови": {
+  "Implicit": ""
+ },
+ "Сапоги легионера": {
+  "Implicit": ""
+ },
+ "Сапоги оков": {
+  "Implicit": ""
+ },
+ "Сапоги ревнителя веры": {
+  "Implicit": ""
+ },
+ "Сапоги смерти": {
+  "Implicit": ""
+ },
+ "Сапоги тайнописца": {
+  "Implicit": ""
+ },
+ "Сапоги ученика": {
+  "Implicit": ""
+ },
+ "Сапоги фанатика": {
+  "Implicit": ""
+ },
+ "Сапоги чародея": {
+  "Implicit": ""
+ },
+ "Сатиновые перчатки": {
+  "Implicit": ""
+ },
+ "Сатиновые тапочки": {
+  "Implicit": ""
+ },
+ "Сафьяновые ботинки": {
+  "Implicit": ""
+ },
+ "Сафьяновые перчатки": {
+  "Implicit": ""
+ },
+ "Секач": {
+  "Implicit": ""
+ },
+ "Секира": {
+  "Implicit": ""
+ },
+ "Сехем": {
+  "Implicit": "18% increased Elemental Damage"
+ },
+ "Сехем тирана": {
+  "Implicit": "26% increased Elemental Damage"
+ },
+ "Сжимающий талисман": {
+  "Implicit": "(15-25)% increased Global Defences"
+ },
+ "Скипетр ваал": {
+  "Implicit": "32% increased Elemental Damage"
+ },
+ "Скипетр замбара": {
+  "Implicit": "Damage Penetrates 6% Elemental Resistances"
+ },
+ "Скипетр из плавника": {
+  "Implicit": "10% increased Elemental Damage"
+ },
+ "Скипетр каруи": {
+  "Implicit": "26% increased Elemental Damage"
+ },
+ "Скипетр командира": {
+  "Implicit": "22% increased Elemental Damage"
+ },
+ "Скипетр кромешной тьмы": {
+  "Implicit": "30% increased Elemental Damage"
+ },
+ "Скипетр пустоты": {
+  "Implicit": "40% increased Elemental Damage"
+ },
+ "Скипетр тени": {
+  "Implicit": "22% increased Elemental Damage"
+ },
+ "Сложный лук": {
+  "Implicit": ""
+ },
+ "Солнечные латы": {
+  "Implicit": ""
+ },
+ "Солнечный кожаный доспех": {
+  "Implicit": ""
+ },
+ "Сосновый баклер": {
+  "Implicit": "3% increased Movement Speed"
+ },
+ "Составной лук": {
+  "Implicit": ""
+ },
+ "Стальное кольцо": {
+  "Implicit": "Adds (3-4) to (10-14) Physical Damage to Attacks"
+ },
+ "Стальной баклер": {
+  "Implicit": "6% increased Movement Speed"
+ },
+ "Стальной каплевидный щит": {
+  "Implicit": ""
+ },
+ "Стальной молот": {
+  "Implicit": "45% increased Stun Duration on Enemies"
+ },
+ "Стальной обруч": {
+  "Implicit": ""
+ },
+ "Стальные башмаки": {
+  "Implicit": ""
+ },
+ "Стальные перчатки": {
+  "Implicit": ""
+ },
+ "Стальные поножи": {
+  "Implicit": ""
+ },
+ "Старинная рапира": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Старинные перчатки": {
+  "Implicit": ""
+ },
+ "Старинные поножи": {
+  "Implicit": ""
+ },
+ "Старинный посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Стеганая куртка": {
+  "Implicit": ""
+ },
+ "Стеганый доспех": {
+  "Implicit": ""
+ },
+ "Стилет": {
+  "Implicit": "30% increased Global Critical Strike Chance"
+ },
+ "Сумрачный клинок": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Сучковатая ветка": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Сучковатый щит духа": {
+  "Implicit": "(10-15)% increased Spell Damage"
+ },
+ "Сыромятные ботинки": {
+  "Implicit": ""
+ },
+ "Сыромятные перчатки": {
+  "Implicit": ""
+ },
+ "Сыромятный ростовой щит": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Талисман Великого волка": {
+  "Implicit": "<Two random talisman implicit modifiers>"
+ },
+ "Талисман бессмертной плоти": {
+  "Implicit": "+1 to maximum number of Zombies"
+ },
+ "Талисман близнецов-обезьян": {
+  "Implicit": "(5-8)% increased Area of Effect of Area Skills"
+ },
+ "Талисман ведьмокогтя": {
+  "Implicit": "(40-50)% increased Global Critical Strike Chance"
+ },
+ "Талисман глубинника": {
+  "Implicit": "(20-30)% increased Cold Damage"
+ },
+ "Талисман гнилой головы": {
+  "Implicit": "(30-40)% increased Fish Bite Sensitivity"
+ },
+ "Талисман длиннозуба": {
+  "Implicit": "(4-6)% additional Physical Damage Reduction"
+ },
+ "Талисман клыкастика": {
+  "Implicit": "(8-12)% increased maximum Life"
+ },
+ "Талисман когтистого оборотня": {
+  "Implicit": "+(24-36)% to Global Critical Strike Multiplier"
+ },
+ "Талисман кокона": {
+  "Implicit": "(20-30)% increased Spell Damage"
+ },
+ "Талисман колотритона": {
+  "Implicit": "(4-6)% chance to Freeze, Shock and Ignite"
+ },
+ "Талисман костешипа": {
+  "Implicit": "(20-30)% increased maximum Mana"
+ },
+ "Талисман личинок": {
+  "Implicit": "(20-30)% increased Attack Damage"
+ },
+ "Талисман мандибулы": {
+  "Implicit": "(6-10)% increased Attack and Cast Speed"
+ },
+ "Талисман обезьяньей лапки": {
+  "Implicit": "10% chance to gain a Power Charge on Kill"
+ },
+ "Талисман оленерога-одиночки": {
+  "Implicit": "(20-30)% increased Lightning Damage"
+ },
+ "Талисман пепельного чешуйника": {
+  "Implicit": "(20-30)% increased Fire Damage"
+ },
+ "Талисман первочерепа": {
+  "Implicit": "2% of Life Regenerated per second"
+ },
+ "Талисман пернатых близнецов": {
+  "Implicit": "50% of Lightning Damage taken as Fire Damage"
+ },
+ "Талисман перогнильца": {
+  "Implicit": "(25-35)% increased Damage"
+ },
+ "Талисман ребролома": {
+  "Implicit": "(20-30)% increased Physical Damage"
+ },
+ "Талисман рогов": {
+  "Implicit": "Projectiles Pierce (2-3) additional Targets"
+ },
+ "Талисман смерторука": {
+  "Implicit": "(19-31)% increased Chaos Damage"
+ },
+ "Талисман трёх крыс": {
+  "Implicit": "(12-16)% increased Attributes"
+ },
+ "Талисман трёх рук": {
+  "Implicit": "Gain (6-12)% of Physical Damage as Extra Damage of a random Element"
+ },
+ "Талисман хребтоплава": {
+  "Implicit": "(6-10)% increased Quantity of Items found"
+ },
+ "Талисман чёрной пасти": {
+  "Implicit": "Has 1 Socket"
+ },
+ "Тапочки проворства": {
+  "Implicit": "10% increased Movement Speed"
+ },
+ "Тигриная лапа": {
+  "Implicit": "1.6% of Physical Attack Damage Leeched as Life"
+ },
+ "Тигровый крюк": {
+  "Implicit": "6% chance to Dodge Attacks"
+ },
+ "Тиковый круглый щит": {
+  "Implicit": "180% increased Block Recovery"
+ },
+ "Тисовый щит духа": {
+  "Implicit": "(5-10)% increased Spell Damage"
+ },
+ "Тканевые перчатки": {
+  "Implicit": ""
+ },
+ "Томагавк": {
+  "Implicit": ""
+ },
+ "Топор ваал": {
+  "Implicit": ""
+ },
+ "Топор вельможи": {
+  "Implicit": ""
+ },
+ "Топор деспота": {
+  "Implicit": ""
+ },
+ "Топор каруи": {
+  "Implicit": ""
+ },
+ "Топор когтя": {
+  "Implicit": "50% increased Critical Strike Chance"
+ },
+ "Топор кромешной тьмы": {
+  "Implicit": ""
+ },
+ "Топор лесоруба": {
+  "Implicit": ""
+ },
+ "Топор мясника": {
+  "Implicit": ""
+ },
+ "Топор палача": {
+  "Implicit": ""
+ },
+ "Топор пустоты": {
+  "Implicit": ""
+ },
+ "Топор тени": {
+  "Implicit": ""
+ },
+ "Топор эзомита": {
+  "Implicit": ""
+ },
+ "Топор-кинжал": {
+  "Implicit": "50% increased Critical Strike Chance"
+ },
+ "Топорик ваал": {
+  "Implicit": ""
+ },
+ "Тотемная дубина": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Травлёный топорик": {
+  "Implicit": "8% increased Physical Damage"
+ },
+ "Трезубец": {
+  "Implicit": "4% Chance to Block"
+ },
+ "Треуголка": {
+  "Implicit": ""
+ },
+ "Треуголка грешника": {
+  "Implicit": ""
+ },
+ "Тупая шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Тычок": {
+  "Implicit": "+24 Life gained for each Enemy hit by Attacks"
+ },
+ "Тяжелый колчан": {
+  "Implicit": "Adds 1 to 4 Physical Damage to Attacks"
+ },
+ "Удочка": {
+  "Implicit": ""
+ },
+ "Ужасающий молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Украшенная булава": {
+  "Implicit": "15% reduced Enemy Stun Threshold"
+ },
+ "Украшенный колючий щит": {
+  "Implicit": "4% chance to Dodge Spell Damage"
+ },
+ "Украшенный круглый щит": {
+  "Implicit": "120% increased Block Recovery"
+ },
+ "Украшенный меч": {
+  "Implicit": "+185 to Accuracy Rating"
+ },
+ "Украшенный топор": {
+  "Implicit": ""
+ },
+ "Укрепленный каплевидный щит": {
+  "Implicit": ""
+ },
+ "Укрепленный круглый щит": {
+  "Implicit": "60% increased Block Recovery"
+ },
+ "Укрепленный ростовой щит": {
+  "Implicit": "+(10-20) to maximum Life"
+ },
+ "Усиленная байдана": {
+  "Implicit": ""
+ },
+ "Усиленные кольчужные перчатки": {
+  "Implicit": ""
+ },
+ "Усиленный круглый щит": {
+  "Implicit": "60% increased Block Recovery"
+ },
+ "Усиленые поножи": {
+  "Implicit": ""
+ },
+ "Франтоватый жакет": {
+  "Implicit": ""
+ },
+ "Халат волшебника": {
+  "Implicit": "(3-10)% increased Spell Damage"
+ },
+ "Халат мага": {
+  "Implicit": ""
+ },
+ "Халат чародея": {
+  "Implicit": ""
+ },
+ "Хауберг": {
+  "Implicit": ""
+ },
+ "Хауберг святого": {
+  "Implicit": ""
+ },
+ "Хвататель": {
+  "Implicit": "4% chance to Dodge Attacks"
+ },
+ "Царский колючий щит": {
+  "Implicit": "4% chance to Dodge Spell Damage"
+ },
+ "Царский лук": {
+  "Implicit": "(20-24)% increased Elemental Damage with Attack Skills"
+ },
+ "Царский посох": {
+  "Implicit": "18% Chance to Block"
+ },
+ "Царский скипетр": {
+  "Implicit": "24% increased Elemental Damage"
+ },
+ "Царский топор": {
+  "Implicit": ""
+ },
+ "Цепочка": {
+  "Implicit": "+(9-20) to maximum Energy Shield"
+ },
+ "Церемониальная булава": {
+  "Implicit": "15% reduced Enemy Stun Threshold"
+ },
+ "Церемониальный каплевидный щит": {
+  "Implicit": "+12% to all Elemental Resistances"
+ },
+ "Церемониальный топор": {
+  "Implicit": ""
+ },
+ "Чащобный лук": {
+  "Implicit": ""
+ },
+ "Червленый круглый щит": {
+  "Implicit": ""
+ },
+ "Чешуйчатые бронзовые перчатки": {
+  "Implicit": ""
+ },
+ "Чешуйчатые железные перчатки": {
+  "Implicit": ""
+ },
+ "Чешуйчатые перчатки": {
+  "Implicit": ""
+ },
+ "Чешуйчатые стальные перчатки": {
+  "Implicit": ""
+ },
+ "Чешуйчатый дублет": {
+  "Implicit": ""
+ },
+ "Чешуйчатый нагрудник": {
+  "Implicit": ""
+ },
+ "Чудовищный молот": {
+  "Implicit": "30% increased Stun Duration on Enemies"
+ },
+ "Чумная маска": {
+  "Implicit": ""
+ },
+ "Шагреневые ботинки": {
+  "Implicit": ""
+ },
+ "Шагреневые перчатки": {
+  "Implicit": ""
+ },
+ "Шевровые ботинки": {
+  "Implicit": ""
+ },
+ "Шевровые перчатки": {
+  "Implicit": ""
+ },
+ "Шелка некроманта": {
+  "Implicit": ""
+ },
+ "Шелковая одежда": {
+  "Implicit": ""
+ },
+ "Шелковое облачение": {
+  "Implicit": ""
+ },
+ "Шелковое одеяние": {
+  "Implicit": ""
+ },
+ "Шелковые митенки": {
+  "Implicit": "(12-16)% increased Spell Damage"
+ },
+ "Шелковые перчатки": {
+  "Implicit": ""
+ },
+ "Шелковые сапоги": {
+  "Implicit": ""
+ },
+ "Шелковый капюшон": {
+  "Implicit": ""
+ },
+ "Шелковый нагрудник": {
+  "Implicit": ""
+ },
+ "Шерстяной полукафтан": {
+  "Implicit": ""
+ },
+ "Шерстяные башмаки": {
+  "Implicit": ""
+ },
+ "Шерстяные перчатки": {
+  "Implicit": ""
+ },
+ "Шестопер": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Шило": {
+  "Implicit": "+7 Life gained for each Enemy hit by Attacks"
+ },
+ "Шипастая дубинка": {
+  "Implicit": "10% reduced Enemy Stun Threshold"
+ },
+ "Шипастый кулак": {
+  "Implicit": "+3 Life gained for each Enemy hit by Attacks"
+ },
+ "Широкий меч": {
+  "Implicit": "40% increased Accuracy Rating"
+ },
+ "Широкий ремень": {
+  "Implicit": "+(25-35) to Strength"
+ },
+ "Шитый золотом пояс": {
+  "Implicit": "(20-30)% increased Rarity of Items found"
+ },
+ "Шлем гладиатора": {
+  "Implicit": ""
+ },
+ "Шлем командира": {
+  "Implicit": ""
+ },
+ "Шлем подвижника": {
+  "Implicit": ""
+ },
+ "Шлем с бармицей": {
+  "Implicit": ""
+ },
+ "Шлем самнита": {
+  "Implicit": ""
+ },
+ "Шлем секутора": {
+  "Implicit": ""
+ },
+ "Шлем солдата": {
+  "Implicit": ""
+ },
+ "Шлем фанатика": {
+  "Implicit": ""
+ },
+ "Шлем фехтовальщика": {
+  "Implicit": ""
+ },
+ "Шпага с зубцами": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Шутовская маска": {
+  "Implicit": ""
+ },
+ "Щит духа ваал": {
+  "Implicit": "(5-10)% increased Spell Damage"
+ },
+ "Щит духа из костей": {
+  "Implicit": "(15-20)% increased Spell Damage"
+ },
+ "Щит духа из окаменелостей": {
+  "Implicit": "(15-20)% increased Spell Damage"
+ },
+ "Щит духа из старых костей": {
+  "Implicit": "(15-20)% increased Spell Damage"
+ },
+ "Щучий полукафтан": {
+  "Implicit": ""
+ },
+ "Щучьи ботинки": {
+  "Implicit": ""
+ },
+ "Щучьи перчатки": {
+  "Implicit": ""
+ },
+ "Эбеновый ростовой щит": {
+  "Implicit": "+(20-30) to maximum Life"
+ },
+ "Элегантная шпага": {
+  "Implicit": "+25% to Global Critical Strike Multiplier"
+ },
+ "Элегантный круглый щит": {
+  "Implicit": "120% increased Block Recovery"
+ },
+ "Элегантный меч": {
+  "Implicit": "+190 to Accuracy Rating"
+ },
+ "Юфтевые ботинки": {
+  "Implicit": ""
+ },
+ "Юфтевые перчатки": {
+  "Implicit": ""
+ },
+ "Яшмовое рубило": {
+  "Implicit": ""
+ },
+ "Яшмовый топор": {
+  "Implicit": ""
+ }
 }

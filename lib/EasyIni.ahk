@@ -81,7 +81,10 @@ class EasyIni
 					if (IsObject(this[sCurSec].EasyIni_ReservedFor_Comments))
 					{
 						if (this[sCurSec].EasyIni_ReservedFor_Comments.HasKey(sPrevKeyForThisSec))
-							this[sCurSec].EasyIni_ReservedFor_Comments[sPrevKeyForThisSec] .= "`n" LoopField
+							;this[sCurSec].EasyIni_ReservedFor_Comments[sPrevKeyForThisSec] .= "`n" LoopField
+							; в Win10 предыдущая строчка вызывает краш AutoHotkey при разборе ini-файлов, если встречается подряд идущие пустая строка и  строка начинающаяся с ; 
+							; развернутая запись предыдущей строки
+							this[sCurSec].EasyIni_ReservedFor_Comments[sPrevKeyForThisSec] := this[sCurSec].EasyIni_ReservedFor_Comments[sPrevKeyForThisSec] . "`n" . LoopField
 						else this[sCurSec].EasyIni_ReservedFor_Comments.Insert(sPrevKeyForThisSec, LoopField)
 					}
 					else

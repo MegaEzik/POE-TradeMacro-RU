@@ -61,6 +61,7 @@ IELoad(wb, ByRef loaded = false, path = "", visible = false)	;You need to send t
 		i++
 	}
 	Until ((ready = "Complete" and loaded or i = 2000))
+	;Until ((ready = "Complete" and loaded or i = 20))
 	
 	If (loaded and not FileExist(path "\IEComObjectCall.txt")) {
 		FileAppend, true, %path%\IEComObjectCall.txt

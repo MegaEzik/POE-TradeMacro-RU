@@ -1,663 +1,663 @@
-Rusted Hatchet|2
-Jade Hatchet|6
-Boarding Axe|11
-Cleaver|16
-Broad Axe|21
-Arming Axe|25
-Decorative Axe|29
-Spectral Axe|33
-Etched Hatchet|35
-Jasper Axe|36
-Tomahawk|39
-Wrist Chopper|42
-War Axe|45
-Chest Splitter|48
-Ceremonial Axe|51
-Wraith Axe|54
-Engraved Hatchet|56
-Karui Axe|57
-Siege Axe|59
-Reaver Axe|61
-Butcher Axe|63
-Vaal Hatchet|65
-Royal Axe|67
-Infernal Axe|69
-Runic Hatchet|71
-Stone Axe|4
-Jade Chopper|9
-Woodsplitter|13
-Poleaxe|18
-Double Axe|23
-Gilded Axe|28
-Shadow Axe|33
-Dagger Axe|36
-Jasper Chopper|37
-Timber Axe|41
-Headsman Axe|45
-Labrys|49
-Noble Axe|52
-Abyssal Axe|55
-Karui Chopper|58
-Talon Axe|60
-Sundering Axe|60
-Ezomyte Axe|62
-Vaal Axe|64
-Despot Axe|66
-Void Axe|68
-Fleshripper|70
-Crude Bow|1
-Short Bow|5
-Long Bow|10
-Composite Bow|15
-Recurve Bow|20
-Bone Bow|24
-Royal Bow|28
-Death Bow|32
-Grove Bow|35
-Reflex Bow|36
-Decurve Bow|38
-Compound Bow|41
-Sniper Bow|44
-Ivory Bow|47
-Highborn Bow|50
-Decimation Bow|53
-Thicket Bow|56
-Steelwood Bow|57
-Citadel Bow|58
-Ranger Bow|60
-Assassin Bow|62
-Spine Bow|64
-Imperial Bow|66
-Harbinger Bow|68
-Maraketh Bow|71
-Nailed Fist|3
-Sharktooth Claw|7
-Awl|12
-Cat's Paw|17
-Blinder|22
-Timeworn Claw|26
-Sparkling Claw|30
-Fright Claw|34
-Double Claw|36
-Thresher Claw|37
-Gouger|40
-Tiger's Paw|43
-Gut Ripper|46
-Prehistoric Claw|49
-Noble Claw|52
-Eagle Claw|55
-Twin Claw|57
-Great White Claw|58
-Throat Stabber|60
-Hellion's Paw|62
-Eye Gouger|64
-Vaal Claw|66
-Imperial Claw|68
-Terror Claw|70
-Gemini Claw|72
-Glass Shank|1
-Skinning Knife|5
-Carving Knife|10
-Stiletto|15
-Boot Knife|20
-Copper Kris|24
-Skean|28
-Imp Dagger|32
-Flaying Knife|35
-Prong Dagger|36
-Butcher Knife|38
-Poignard|41
-Boot Blade|44
-Golden Kris|47
-Royal Skean|50
-Fiend Dagger|53
-Trisula|55
-Gutting Knife|56
-Slaughter Knife|58
-Ambusher|60
-Ezomyte Dagger|62
-Platinum Kris|64
-Imperial Skean|66
-Demon Dagger|68
-Sai|70
-Driftwood Club|1
-Tribal Club|5
-Spiked Club|10
-Stone Hammer|15
-War Hammer|20
-Bladed Mace|24
-Ceremonial Mace|28
-Dream Mace|32
-Wyrm Mace|34
-Petrified Club|35
-Barbed Club|38
-Rock Breaker|41
-Battle Hammer|44
-Flanged Mace|47
-Ornate Mace|50
-Phantom Mace|53
-Dragon Mace|55
-Ancestral Club|56
-Tenderizer|58
-Gavel|60
-Legion Hammer|62
-Pernarch|64
-Auric Mace|66
-Nightmare Mace|68
-Behemoth Mace|70
-Driftwood Sceptre|1
-Darkwood Sceptre|5
-Bronze Sceptre|10
-Quartz Sceptre|15
-Iron Sceptre|20
-Ochre Sceptre|24
-Ritual Sceptre|28
-Shadow Sceptre|32
-Grinning Fetish|35
-Horned Sceptre|36
-Sekhem|38
-Crystal Sceptre|41
-Lead Sceptre|44
-Blood Sceptre|47
-Royal Sceptre|50
-Abyssal Sceptre|53
-Stag Sceptre|55
-Karui Sceptre|56
-Tyrant's Sekhem|58
-Opal Sceptre|60
-Platinum Sceptre|62
-Vaal Sceptre|64
-Carnal Sceptre|66
-Void Sceptre|68
-Sambar Sceptre|70
-Driftwood Maul|3
-Tribal Maul|8
-Mallet|12
-Sledgehammer|17
-Jagged Maul|22
-Brass Maul|27
-Fright Maul|32
-Morning Star|34
-Totemic Maul|36
-Great Mallet|40
-Steelhead|44
-Spiny Maul|48
-Plated Maul|51
-Dread Maul|54
-Solar Maul|56
-Karui Maul|57
-Colossus Mallet|59
-Piledriver|61
-Meatgrinder|63
-Imperial Maul|65
-Terror Maul|67
-Coronal Maul|69
-Gnarled Branch|4
-Primitive Staff|9
-Long Staff|13
-Iron Staff|18
-Coiled Staff|23
-Royal Staff|28
-Vile Staff|33
-Crescent Staff|36
-Woodful Staff|37
-Quarterstaff|41
-Military Staff|45
-Serpentine Staff|49
-Highborn Staff|52
-Foul Staff|55
-Moon Staff|57
-Primordial Staff|58
-Lathi|60
-Ezomyte Staff|62
-Maelstrцm Staff|64
-Imperial Staff|66
-Judgement Staff|68
-Eclipse Staff|70
-Rusted Sword|1
-Copper Sword|5
-Sabre|10
-Broad Sword|15
-War Sword|20
-Ancient Sword|24
-Elegant Sword|28
-Dusk Blade|32
-Hook Sword|34
-Variscite Blade|35
-Cutlass|38
-Baselard|41
-Battle Sword|44
-Elder Sword|47
-Graceful Sword|50
-Twilight Blade|53
-Grappler|55
-Gemstone Sword|56
-Corsair Sword|58
-Gladius|60
-Legion Sword|62
-Vaal Blade|64
-Eternal Sword|66
-Midnight Blade|68
-Tiger Hook|70
-Rusted Spike|3
-Whalebone Rapier|7
-Battered Foil|12
-Basket Rapier|17
-Jagged Foil|22
-Antique Rapier|26
-Elegant Foil|30
-Thorn Rapier|34
-Smallsword|36
-Wyrmbone Rapier|37
-Burnished Foil|40
-Estoc|43
-Serrated Foil|46
-Primeval Rapier|49
-Fancy Foil|52
-Apex Rapier|55
-Courtesan Sword|57
-Dragonbone Rapier|58
-Tempered Foil|60
-Pecoraro|62
-Spiraled Foil|64
-Vaal Rapier|66
-Jewelled Foil|68
-Harpy Rapier|70
-Dragoon Sword|72
-Corroded Blade|3
-Longsword|8
-Bastard Sword|12
-Two-Handed Sword|17
-Etched Greatsword|22
-Ornate Sword|27
-Spectral Sword|32
-Curved Blade|35
-Butcher Sword|36
-Footman Sword|40
-Highland Blade|44
-Engraved Greatsword|48
-Tiger Sword|51
-Wraith Sword|54
-Headman's Sword|57
-Reaver Sword|59
-Ezomyte Blade|61
-Vaal Greatsword|63
-Lion Sword|65
-Infernal Sword|67
-Exquisite Blade|70
-Driftwood Wand|1
-Goat's Horn|6
-Carved Wand|12
-Quartz Wand|18
-Spiraled Wand|24
-Sage Wand|30
-Pagan Wand|34
-Faun's Horn|35
-Engraved Wand|40
-Crystal Wand|45
-Serpent Wand|49
-Omen Wand|53
-Heathen Wand|55
-Demon's Horn|56
-Imbued Wand|59
-Opal Wand|62
-Tornado Wand|65
-Prophecy Wand|68
-Profane Wand|70
-Plate Vest|1
-Chestplate|6
-Copper Plate|17
-War Plate|21
-Full Plate|28
-Arena Plate|32
-Lordly Plate|35
-Bronze Plate|37
-Battle Plate|41
-Sun Plate|45
-Colosseum Plate|49
-Majestic Plate|53
-Golden Plate|56
-Crusader Plate|59
-Astral Plate|62
-Gladiator Plate|65
-Glorious Plate|68
-Shabby Jerkin|2
-Strapped Leather|9
-Buckskin Tunic|17
-Wild Leather|25
-Full Leather|28
-Sun Leather|32
-Thief's Garb|35
-Eelskin Tunic|37
-Frontier Leather|41
-Glorious Leather|45
-Coronal Leather|49
-Cutthroat's Garb|53
-Sharkskin Tunic|56
-Destiny Leather|59
-Exquisite Leather|62
-Zodiac Leather|65
-Assassin's Garb|68
-Simple Robe|3
-Silken Vest|11
-Scholar's Robe|18
-Silken Garb|25
-Mage's Vestment|28
-Silk Robe|32
-Cabalist Regalia|35
-Sage's Robe|37
-Silken Wrap|41
-Conjurer's Vestment|45
-Spidersilk Robe|49
-Destroyer Regalia|53
-Savant's Robe|56
-Necromancer Silks|59
-Occultist's Vestment|62
-Widowsilk Robe|65
-Vaal Regalia|68
-Scale Vest|4
-Light Brigandine|8
-Scale Doublet|17
-Infantry Brigandine|21
-Full Scale Armour|28
-Soldier's Brigandine|32
-Field Lamellar|35
-Wyrmscale Doublet|38
-Hussar Brigandine|42
-Full Wyrmscale|46
-Commander's Brigandine|50
-Battle Lamellar|54
-Dragonscale Doublet|57
-Desert Brigandine|60
-Full Dragonscale|63
-General's Brigandine|66
-Triumphant Lamellar|69
-Chainmail Vest|4
-Chainmail Tunic|8
-Ringmail Coat|17
-Chainmail Doublet|21
-Full Ringmail|28
-Full Chainmail|32
-Holy Chainmail|35
-Latticed Ringmail|39
-Crusader Chainmail|43
-Ornate Ringmail|47
-Chain Hauberk|51
-Devout Chainmail|55
-Loricated Ringmail|58
-Conquest Chainmail|61
-Elegant Ringmail|64
-Saint's Hauberk|67
-Saintly Chainmail|70
-Padded Vest|4
-Oiled Vest|9
-Padded Jacket|18
-Oiled Coat|22
-Scarlet Raiment|28
-Waxed Garb|32
-Bone Armour|35
-Quilted Jacket|40
-Sleek Coat|44
-Crimson Raiment|48
-Lacquered Garb|52
-Crypt Armour|56
-Sentinel Jacket|59
-Varnished Coat|62
-Blood Raiment|65
-Sadist Garb|68
-Carnal Armour|71
-Sacrificial Garb|72
-Iron Greaves|1
-Steel Greaves|9
-Plated Greaves|23
-Reinforced Greaves|33
-Antique Greaves|37
-Ancient Greaves|46
-Goliath Greaves|54
-Vaal Greaves|62
-Titan Greaves|68
-Rawhide Boots|3
-Goathide Boots|12
-Deerskin Boots|22
-Nubuck Boots|34
-Eelskin Boots|39
-Sharkskin Boots|44
-Shagreen Boots|55
-Stealth Boots|62
-Slink Boots|69
-Wool Shoes|3
-Velvet Slippers|9
-Silk Slippers|22
-Scholar Boots|32
-Satin Slippers|38
-Samite Slippers|44
-Conjurer Boots|53
-Arcanist Slippers|61
-Sorcerer Boots|67
-Leatherscale Boots|6
-Ironscale Boots|18
-Bronzescale Boots|30
-Steelscale Boots|36
-Serpentscale Boots|42
-Wyrmscale Boots|51
-Hydrascale Boots|59
-Dragonscale Boots|65
-Chain Boots|5
-Ringmail Boots|13
-Mesh Boots|28
-Riveted Boots|36
-Zealot Boots|40
-Soldier Boots|49
-Legion Boots|58
-Crusader Boots|64
-Wrapped Boots|6
-Strapped Boots|16
-Clasped Boots|27
-Shackled Boots|34
-Trapper Boots|41
-Ambush Boots|47
-Carnal Boots|55
-Assassin's Boots|63
-Murder Boots|69
-Iron Gauntlets|1
-Plated Gauntlets|11
-Bronze Gauntlets|23
-Steel Gauntlets|35
-Antique Gauntlets|39
-Ancient Gauntlets|47
-Goliath Gauntlets|53
-Vaal Gauntlets|63
-Titan Gauntlets|69
-Rawhide Gloves|3
-Goathide Gloves|9
-Deerskin Gloves|21
-Nubuck Gloves|33
-Eelskin Gloves|38
-Sharkskin Gloves|45
-Shagreen Gloves|54
-Stealth Gloves|62
-Slink Gloves|70
-Wool Gloves|3
-Velvet Gloves|12
-Silk Gloves|25
-Embroidered Gloves|36
-Satin Gloves|41
-Samite Gloves|47
-Conjurer Gloves|55
-Arcanist Gloves|60
-Sorcerer Gloves|69
-Fishscale Gauntlets|4
-Ironscale Gauntlets|15
-Bronzescale Gauntlets|27
-Steelscale Gauntlets|36
-Serpentscale Gauntlets|43
-Wyrmscale Gauntlets|49
-Hydrascale Gauntlets|59
-Dragonscale Gauntlets|67
-Chain Gloves|7
-Ringmail Gloves|19
-Mesh Gloves|32
-Riveted Gloves|37
-Zealot Gloves|43
-Soldier Gloves|51
-Legion Gloves|57
-Crusader Gloves|66
-Wrapped Mitts|5
-Strapped Mitts|16
-Clasped Mitts|31
-Trapper Mitts|36
-Ambush Mitts|45
-Carnal Mitts|50
-Assassin's Mitts|58
-Murder Mitts|67
-Iron Hat|1
-Cone Helmet|7
-Barbute Helmet|18
-Close Helmet|26
-Gladiator Helmet|35
-Reaver Helmet|40
-Siege Helmet|48
-Samite Helmet|55
-Ezomyte Burgonet|60
-Royal Burgonet|65
-Eternal Burgonet|69
-Leather Cap|3
-Tricorne|10
-Leather Hood|20
-Wolf Pelt|30
-Hunter Hood|41
-Noble Tricorne|47
-Ursine Pelt|55
-Silken Hood|60
-Sinner Tricorne|64
-Lion Pelt|70
-Vine Circlet|3
-Iron Circlet|8
-Torture Cage|17
-Tribal Circlet|26
-Bone Circlet|34
-Lunaris Circlet|39
-Steel Circlet|48
-Necromancer Circlet|54
-Solaris Circlet|59
-Mind Cage|65
-Hubris Circlet|69
-Battered Helm|4
-Sallet|13
-Visored Sallet|23
-Gilded Sallet|33
-Secutor Helm|36
-Fencer Helm|43
-Lacquered Helmet|51
-Fluted Bascinet|58
-Pig Faced Bascinet|63
-Nightmare Bascinet|67
-Rusted Coif|5
-Soldier Helmet|12
-Great Helmet|22
-Crusader Helmet|31
-Aventail Helmet|37
-Zealot Helmet|44
-Great Crown|53
-Magistrate Crown|58
-Prophet Crown|63
-Praetor Crown|68
-Scare Mask|4
-Plague Mask|10
-Iron Mask|17
-Festival Mask|28
-Golden Mask|35
-Raven Mask|38
-Callous Mask|45
-Regicide Mask|52
-Harlequin Mask|57
-Vaal Mask|62
-Deicide Mask|67
-Splintered Tower Shield|1
-Corroded Tower Shield|5
-Rawhide Tower Shield|11
-Cedar Tower Shield|17
-Copper Tower Shield|24
-Reinforced Tower Shield|30
-Painted Tower Shield|35
-Buckskin Tower Shield|39
-Mahogany Tower Shield|43
-Bronze Tower Shield|47
-Girded Tower Shield|51
-Crested Tower Shield|55
-Shagreen Tower Shield|58
-Ebony Tower Shield|61
-Ezomyte Tower Shield|64
-Colossal Tower Shield|67
-Pinnacle Tower Shield|70
-Goathide Buckler|2
-Pine Buckler|8
-Painted Buckler|16
-Hammered Buckler|23
-War Buckler|29
-Gilded Buckler|34
-Oak Buckler|38
-Enameled Buckler|42
-Corrugated Buckler|46
-Battle Buckler|50
-Golden Buckler|54
-Ironwood Buckler|57
-Lacquered Buckler|60
-Vaal Buckler|63
-Crusader Buckler|66
-Imperial Buckler|69
-Twig Spirit Shield|3
-Yew Spirit Shield|9
-Bone Spirit Shield|15
-Tarnished Spirit Shield|23
-Jingling Spirit Shield|28
-Brass Spirit Shield|33
-Walnut Spirit Shield|37
-Ivory Spirit Shield|41
-Ancient Spirit Shield|45
-Chiming Spirit Shield|49
-Thorium Spirit Shield|53
-Lacewood Spirit Shield|56
-Fossilised Spirit Shield|59
-Vaal Spirit Shield|62
-Harmonic Spirit Shield|65
-Titanium Spirit Shield|68
-Rotted Round Shield|5
-Fir Round Shield|12
-Studded Round Shield|20
-Scarlet Round Shield|27
-Splendid Round Shield|33
-Maple Round Shield|39
-Spiked Round Shield|45
-Crimson Round Shield|49
-Baroque Round Shield|54
-Teak Round Shield|58
-Spiny Round Shield|62
-Cardinal Round Shield|66
-Elegant Round Shield|70
-Plank Kite Shield|7
-Linden Kite Shield|13
-Reinforced Kite Shield|20
-Layered Kite Shield|27
-Ceremonial Kite Shield|34
-Etched Shield|40
-Steel Kite Shield|46
-Laminated Kite Shield|50
-Angelic Kite Shield|55
-Branded Kite Shield|59
-Champion Kite Shield|62
-Mosaic Kite Shield|65
-Archon Kite Shield|68
-Spiked Bundle|5
-Driftwood Spiked Shield|12
-Alloyed Spiked Shield|20
-Burnished Spiked Shield|27
-Ornate Spiked Shield|33
-Redwood Spiked Shield|39
-Compound Spiked Shield|45
-Polished Spiked Shield|49
-Sovereign Spiked Shield|54
-Alder Spiked Shield|58
-Ezomyte Spiked Shield|62
-Mirrored Spiked Shield|66
-Supreme Spiked Shield|70
+Ржавый топорик|2
+Нефритовый топор|6
+Абордажный топор|11
+Секач|16
+Плотничий топор|21
+Боевой топор|25
+Украшенный топор|29
+Призрачный топор|33
+Травлёный топорик|35
+Яшмовый топор|36
+Томагавк|39
+Рукоруб|42
+Воинский топор|45
+Рассекатель ребер|48
+Церемониальный топор|51
+Топор тени|54
+Гравированный топорик|56
+Топор каруи|57
+Осадный топор|59
+Разбойничий топор|61
+Топор мясника|63
+Топорик ваал|65
+Царский топор|67
+Треклятый топор|69
+Рунический топорик|71
+Каменный топор|4
+Нефритовое рубило|9
+Колун|13
+Алебарда|18
+Секира|23
+Золоченый топор|28
+Топор тени (двуручный топор)|33
+Топор-кинжал|36
+Яшмовое рубило|37
+Топор лесоруба|41
+Топор палача|45
+Лабрис|49
+Топор вельможи|52
+Топор кромешной тьмы|55
+Рубило каруи|58
+Топор когтя|60
+Раскалыватель|60
+Топор эзомита|62
+Топор ваал|64
+Топор деспота|66
+Топор пустоты|68
+Раздиратель|70
+Грубый лук|1
+Короткий лук|5
+Длинный лук|10
+Составной лук|15
+Загнутый лук|20
+Костяной лук|24
+Царский лук|28
+Лук смерти|32
+Лесной лук|35
+Лук прыти|36
+Мощный лук|38
+Сложный лук|41
+Лук птицебоя|44
+Лук из бивня|47
+Лук патриция|50
+Лук палача|53
+Чащобный лук|56
+Железный лук|57
+Осадный лук|58
+Лук охотника|60
+Лук убийцы|62
+Лук из рога|64
+Императорский лук|66
+Лук предвестника|68
+Лук маракета|71
+Шипастый кулак|3
+Кастет с зубами акулы|7
+Шило|12
+Кошачья лапа|17
+Ослепитель|22
+Истертый кастет|26
+Блестящий коготь|30
+Пугающий коготь|34
+Двойной коготь|36
+Кастет молотильщика|37
+Тычок|40
+Тигриная лапа|43
+Вспарыватель|46
+Доисторический кастет|49
+Коготь патриция|52
+Орлиный коготь|55
+Парный коготь|57
+Большой белый коготь|58
+Затыкатель|60
+Лапа волкодава|62
+Выкалыватель|64
+Коготь ваал|66
+Имперский коготь|68
+Жуткий коготь|70
+Коготь-близнец|72
+Осколок стекла|1
+Нож скорняка|5
+Нож резчика|10
+Стилет|15
+Засапожный нож|20
+Медный крис|24
+Короткий кинжал|28
+Кинжал беса|32
+Нож свежевателя|35
+Жало|36
+Нож мясника|38
+Дага|41
+Засапожный клинок|44
+Золотой крис|47
+Короткий кинжал царя|50
+Кинжал изверга|53
+Трезубец|55
+Нож потрошителя|56
+Нож душегуба|58
+Рондел|60
+Кинжал эзомита|62
+Платиновый крис|64
+Короткий кинжал императора|66
+Кинжал демона|68
+Сай|70
+Дубинка из плавника|1
+Дубинка аборигена|5
+Шипастая дубинка|10
+Каменный молот|15
+Воинский молот|20
+Булава с пластинами|24
+Церемониальная булава|28
+Булава видений|32
+Булава червя|34
+Окаменелая дубинка|35
+Колючая дубинка|38
+Камнедробитель|41
+Боевой молот|44
+Шестопер|47
+Украшенная булава|50
+Призрачная булава|53
+Булава дракона|55
+Дубинка предков|56
+Палица|58
+Камнетес|60
+Молот легионера|62
+Пернач|64
+Золотая булава|66
+Кошмарная булава|68
+Булава бегемота|70
+Скипетр из плавника|1
+Трухлявый скипетр|5
+Бронзовый скипетр|10
+Кварцевый скипетр|15
+Железный скипетр|20
+Бурый скипетр|24
+Ритуальный скипетр|28
+Скипетр тени|32
+Оскаленый фетиш|35
+Рогатый скипетр|36
+Сехем|38
+Кристальный скипетр|41
+Скипетр командира|44
+Кровавый скипетр|47
+Царский скипетр|50
+Скипетр кромешной тьмы|53
+Олений скипетр|55
+Скипетр каруи|56
+Тиранский сехем|58
+Опаловый скипетр|60
+Платиновый скипетр|62
+Скипетр ваал|64
+Багряный скипетр|66
+Скипетр пустоты|68
+Скипетр замбара|70
+Дубина из плавника|3
+Дубина аборигена|8
+Колотушка|12
+Кувалда|17
+Зубастый молот|22
+Латунный молот|27
+Пугающий молот|32
+Моргенштерн|34
+Тотемная дубина|36
+Большая колотушка|40
+Стальной молот|44
+Колючая дубина|48
+Позолоченный молот|51
+Ужасающий молот|54
+Молот светила|56
+Дубина каруи|57
+Громадная колотушка|59
+Забиватель|61
+Мясодер|63
+Императорский молот|65
+Чудовищный молот|67
+Венечный молот|69
+Сучковатая ветка|4
+Простейший посох|9
+Длинный посох|13
+Крепкий посох|18
+Крученый посох|23
+Царский посох|28
+Посох нечистого|33
+Посох с полумесяцем|36
+Старинный посох|37
+Окованный посох|41
+Боевой посох|45
+Змеиный посох|49
+Посох патриция|52
+Посох падшего|55
+Лунный посох|57
+Древний посох|58
+Бамбуковый посох|60
+Посох эзомита|62
+Посох вихрей|64
+Императорский посох|66
+Посох судьи|68
+Посох затмения|70
+Ржавый меч|1
+Медный меч|5
+Сабля|10
+Широкий меч|15
+Воинский меч|20
+Древний меч|24
+Элегантный меч|28
+Закатный клинок|32
+Меч-крюк|34
+Варисцитовый меч|35
+Абордажная сабля|38
+Короткий меч|41
+Боевой меч|44
+Меч старейшины|47
+Изящный меч|50
+Сумрачный клинок|53
+Хвататель|55
+Самоцветный меч|56
+Пиратский тесак|58
+Гладиус|60
+Меч всадника|62
+Клинок ваал|64
+Меч вечного|66
+Полуночный меч|68
+Тигровый крюк|70
+Ржавый шип|3
+Рапира из китовой кости|7
+Тупая шпага|12
+Рапира с чашей|17
+Зазубренная шпага|22
+Старинная рапира|26
+Элегантная шпага|30
+Колючая рапира|34
+Малый меч|36
+Рапира из кости змея|37
+Полированная шпага|40
+Короткая шпага|43
+Шпага с зубцами|46
+Древняя рапира|49
+Вычурная шпага|52
+Острая рапира|55
+Меч кокотки|57
+Рапира из кости дракона|58
+Закаленная шпага|60
+Сабля пекораро|62
+Витая шпага|64
+Рапира ваал|66
+Инкрустированная шпага|68
+Рапира гарпии|70
+Сабля драгуна|72
+Ржавый клинок|3
+Длинный меч|8
+Полуторный меч|12
+Двуручный меч|17
+Большой меч с травлением|22
+Украшенный меч|27
+Призрачный меч|32
+Кривой клинок|35
+Меч мясника|36
+Меч пехотинца|40
+Клинок горца|44
+Большой меч с чеканкой|48
+Меч тигра|51
+Потусторонний меч|54
+Меч палача|57
+Меч наемника|59
+Клинок эзомита|61
+Большой меч ваал|63
+Меч льва|65
+Меч подземного царства|67
+Изысканный клинок|70
+Жезл из плавника|1
+Козий рог|6
+Оструганный жезл|12
+Кварцевый жезл|18
+Витой жезл|24
+Жезл провидца|30
+Жезл язычника|34
+Рог фавна|35
+Резной жезл|40
+Кристальный жезл|45
+Змеиный жезл|49
+Жезл предвестия|53
+Жезл варвара|55
+Рог демона|56
+Волшебный жезл|59
+Опаловый жезл|62
+Жезл торнадо|65
+Жезл пророчества|68
+Жезл отступника|70
+Панцирь|1
+Нагрудник|6
+Медные латы|17
+Доспех бойца|21
+Полные латы|28
+Доспех драчуна|32
+Роскошные латы|35
+Бронзовые латы|37
+Доспех воина|41
+Солнечные латы|45
+Доспех поединщика|49
+Величественные латы|53
+Золотые латы|56
+Доспех поборника|59
+Звездные латы|62
+Доспех гладиатора|65
+Великолепные латы|68
+Рваная кожанка|2
+Ременной кожаный доспех|9
+Шерстяной полукафтан|17
+Охотничья кожанка|25
+Полный кожаный доспех|28
+Солнечный кожаный доспех|32
+Облачение вора|35
+Щучий полукафтан|37
+Кожанка разведчика|41
+Великолепный кожаный доспех|45
+Кожаный доспех короны|49
+Облачение головореза|53
+Акулий полукафтан|56
+Кожанка призвания|59
+Превосходный кожаный доспех|62
+Кожаный доспех зодиака|65
+Облачение убийцы|68
+Матерчатая безрукавка|3
+Шелковый нагрудник|11
+Одеяние ученого|18
+Шелковое облачение|25
+Халат мага|28
+Шелковое одеяние|32
+Наряд мистика|35
+Одеяние мудреца|37
+Шелковая одежда|41
+Халат чародея|45
+Одеяние из паучьего шелка|49
+Наряд разрушителя|53
+Одеяние эрудита|56
+Шелка некроманта|59
+Халат волшебника|62
+Одеяние черной вдовы|65
+Наряд ваал|68
+Чешуйчатый нагрудник|4
+Легкая бригандина|8
+Чешуйчатый дублет|17
+Бригандина ауксилария|21
+Полный чешуйчатый доспех|28
+Бригандина солдата|32
+Пластинчатый доспех|35
+Дублет из чешуи змея|38
+Бригандина всадника|42
+Полный доспех из чешуи змея|46
+Бригандина командира|50
+Боевой пластинчатый доспех|54
+Дублет из чешуи дракона|57
+Бригандина кочевника|60
+Полный доспех из чешуи дракона|63
+Бригандина легата|66
+Пластинчатый доспех триумфатора|69
+Кольчужный жилет|4
+Кольчужный жилет с пластинами|8
+Байдана|17
+Кольчужный дублет|21
+Полный кольчатый доспех|28
+Полная кольчуга|32
+Кольчуга послушника|35
+Усиленная байдана|39
+Кольчуга святого воина|43
+Парадный кольчатый доспех|47
+Хауберг|51
+Кольчуга праведника|55
+Калантарь|58
+Кольчуга завоевателя|61
+Изящный кольчатый доспех|64
+Хауберг святого|67
+Кольчуга святого|70
+Стеганый доспех|4
+Жилет из дубленой кожи|9
+Набивной доспех|18
+Доспех из дубленой кожи|22
+Алый камзол|28
+Лощеное облачение|32
+Костяной доспех|35
+Стеганая куртка|40
+Модный жакет|44
+Багряный камзол|48
+Лакированное облачение|52
+Могильный доспех|56
+Куртка охранника|59
+Франтоватый жакет|62
+Кровавый камзол|65
+Облачение мучителя|68
+Кровожадный доспех|71
+Жертвенное облачение|72
+Железные поножи|1
+Стальные поножи|9
+Латные поножи|23
+Усиленные поножи|33
+Старинные поножи|37
+Древние поножи|46
+Поножи великана|54
+Поножи ваал|62
+Поножи титана|68
+Сыромятные ботинки|3
+Сафьяновые ботинки|12
+Юфтевые ботинки|22
+Нубуковые ботинки|34
+Щучьи ботинки|39
+Акульи ботинки|44
+Шагреневые ботинки|55
+Шевровые ботинки|62
+Замшевые ботинки|69
+Шерстяные башмаки|3
+Бархатные тапочки|9
+Шелковые сапоги|22
+Сапоги ученика|32
+Сатиновые тапочки|38
+Атласные сапоги|44
+Сапоги чародея|53
+Сапоги тайнописца|61
+Сапоги волшебника|67
+Башмаки из вареной кожи|6
+Железные ботинки|18
+Бронзовые ботинки|30
+Стальные башмаки|36
+Ботинки из чешуи гадюки|42
+Ботинки из чешуи змея|51
+Ботинки из чешуи гидры|59
+Ботинки из чешуи дракона|65
+Кольчужные башмаки|5
+Кольчужные сапоги|13
+Полукольчужные сапоги|28
+Клепаные башмаки|36
+Сапоги фанатика|40
+Сапоги ауксилария|49
+Сапоги легионера|58
+Сапоги ревнителя веры|64
+Сандалии|6
+Сандалеты|16
+Калиги|27
+Сапоги оков|34
+Ботинки капканщика|41
+Сандалеты разбойника|47
+Сапоги крови|55
+Калиги убийцы|63
+Сапоги смерти|69
+Железные рукавицы|1
+Латные перчатки|11
+Бронзовые перчатки|23
+Стальные перчатки|35
+Старинные перчатки|39
+Древние перчатки|47
+Перчатки гиганта|53
+Перчатки ваал|63
+Перчатки титана|69
+Сыромятные перчатки|3
+Сафьяновые перчатки|9
+Юфтевые перчатки|21
+Нубуковые перчатки|33
+Щучьи перчатки|38
+Акульи перчатки|45
+Шагреневые перчатки|54
+Шевровые перчатки|62
+Замшевые перчатки|70
+Шерстяные перчатки|3
+Бархатные перчатки|12
+Шелковые перчатки|25
+Расшитые перчатки|36
+Сатиновые перчатки|41
+Атласные перчатки|47
+Перчатки чародея|55
+Перчатки тайнописца|60
+Перчатки волшебника|69
+Чешуйчатые перчатки|4
+Чешуйчатые железные перчатки|15
+Чешуйчатые бронзовые перчатки|27
+Чешуйчатые стальные перчатки|36
+Перчатки из чешуи гадюки|43
+Перчатки из чешуи змея|49
+Перчатки из чешуи гидры|59
+Перчатки из чешуи дракона|67
+Кольчужные перчатки|7
+Кольчатые перчатки|19
+Усиленные кольчужные перчатки|32
+Клепаные кольчужные перчатки|37
+Перчатки фанатика|43
+Перчатки ауксилария|51
+Перчатки легионера|57
+Перчатки поборника|66
+Тканевые перчатки|5
+Ременные перчатки|16
+Перчатки оков|31
+Перчатки капканщика|36
+Перчатки разбойника|45
+Перчатки крови|50
+Перчатки убийцы|58
+Перчатки смерти|67
+Железная шапка|1
+Кабассет|7
+Барбют|18
+Закрытый шлем|26
+Шлем гладиатора|35
+Полный шлем|40
+Осадный шлем|48
+Шлем самнита|55
+Полный шлем эзомита|60
+Полный шлем царя|65
+Полный шлем вечного|69
+Кожаный чепец|3
+Треуголка|10
+Кожаный капюшон|20
+Волчья морда|30
+Капюшон охотника|41
+Парадная треуголка|47
+Медвежья морда|55
+Шелковый капюшон|60
+Треуголка грешника|64
+Львиная морда|70
+Венок из лозы|3
+Железный обруч|8
+Клеть мучений|17
+Обруч аборигена|26
+Обруч с костью|34
+Диадема Лунарис|39
+Стальной обруч|48
+Обруч некроманта|54
+Диадема Соляриса|59
+Клеть разума|65
+Венец гордыни|69
+Пробитый шлем|4
+Салад|13
+Салад с забралом|23
+Позолоченный салад|33
+Шлем секутора|36
+Шлем фехтовальщика|43
+Шлем командира|51
+Волнистый бацинет|58
+Клювастый бацинет|63
+Кошмарный бацинет|67
+Ржавый койф|5
+Шлем солдата|12
+Большой шлем|22
+Шлем подвижника|31
+Шлем с бармицей|37
+Шлем фанатика|44
+Большая корона|53
+Корона правителя|58
+Корона провидца|63
+Корона претора|68
+Пугающая маска|4
+Чумная маска|10
+Железная маска|17
+Карнавальная маска|28
+Золотая маска|35
+Воронья маска|38
+Маска равнодушия|45
+Маска цареубийцы|52
+Шутовская маска|57
+Маска ваал|62
+Маска богоубийцы|67
+Разбитый ростовой щит|1
+Ржавый ростовой щит|5
+Сыромятный ростовой щит|11
+Кедровый ростовой щит|17
+Медный ростовой щит|24
+Укрепленный ростовой щит|30
+Расписной ростовой щит|35
+Кожаный ростовой щит|39
+Палисандровый ростовой щит|43
+Бронзовый ростовой щит|47
+Ростовой щит с умбоном|51
+Ростовой щит с гербом|55
+Ростовой щит из акульей кожи|58
+Эбеновый ростовой щит|61
+Ростовой щит эзомита|64
+Массивный ростовой щит|67
+Лучший ростовой щит|70
+Кожаный баклер|2
+Сосновый баклер|8
+Железный баклер|16
+Кованый баклер|23
+Воинский баклер|29
+Позолоченный баклер|34
+Дубовый баклер|38
+Стальной баклер|42
+Рифленый баклер|46
+Боевой баклер|50
+Золотой баклер|54
+Самшитовый баклер|57
+Многослойный баклер|60
+Баклер ваал|63
+Баклер подвижника|66
+Императорский баклер|69
+Сучковатый щит духа|3
+Тисовый щит духа|9
+Щит духа из костей|15
+Потертый щит духа|23
+Звенящий щит духа|28
+Бронзовый щит духа|33
+Ореховый щит духа|37
+Щит духа из старых костей|41
+Древний щит духа|45
+Мелодичный щит духа|49
+Орихалковый щит духа|53
+Платановый щит духа|56
+Щит духа из окаменелостей|59
+Щит духа ваал|62
+Поющий щит духа|65
+Адамантиевый щит духа|68
+Прогнивший круглый щит|5
+Пихтовый круглый щит|12
+Клепаный круглый щит|20
+Алый круглый щит|27
+Украшенный круглый щит|33
+Кленовый круглый щит|39
+Усиленный круглый щит|45
+Багряный круглый щит|49
+Вычурный круглый щит|54
+Тиковый круглый щит|58
+Укрепленный круглый щит|62
+Червленый круглый щит|66
+Элегантный круглый щит|70
+Дощатый каплевидный щит|7
+Липовый каплевидный щит|13
+Укрепленный каплевидный щит|20
+Многослойный каплевидный щит|27
+Церемониальный каплевидный щит|34
+Каплевидный щит с рисунком|40
+Стальной каплевидный щит|46
+Проклеенный каплевидный щит|50
+Каплевидный щит ангела|55
+Каплевидный щит с символом|59
+Каплевидный щит триумфатора|62
+Мозаичный каплевидный щит|65
+Каплевидный щит архонта|68
+Колючая повязка|5
+Колючий щит из плавника|12
+Бронзовый колючий щит|20
+Вороненый колючий щит|27
+Украшенный колючий щит|33
+Сандаловый колючий щит|39
+Латунный колючий щит|45
+Полированный колючий щит|49
+Царский колючий щит|54
+Ольховый колючий щит|58
+Колючий щит эзомита|62
+Зеркальный колючий щит|66
+Императорский колючий щит|70

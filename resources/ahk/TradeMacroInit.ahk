@@ -1,4 +1,4 @@
-п»ї; TradeMacro Add-on to POE-ItemInfo
+; TradeMacro Add-on to POE-ItemInfo
 ; IGN: Eruyome, ManicCompression
 #SingleInstance force
 #NoEnv ; Recommended for performance and compatibility with future AutoHotkey releases.
@@ -15,6 +15,10 @@ SetWorkingDir, %A_ScriptDir%
 #Include, %A_ScriptDir%\lib\ConvertKeyToKeyCode.ahk
 #Include, %A_ScriptDir%\resources\ahk\jsonData.ahk
 #Include, %A_ScriptDir%\resources\VersionTrade.txt
+
+; немного повысим скорость загрузки отключив на период отладки некоторые функции при старте
+;speedBoot := true
+;speedBoot := false
 
 TradeMsgWrongAHKVersion := "AutoHotkey v" . TradeAHKVersionRequired . " or later is needed to run this script. `n`nYou are using AutoHotkey v" . A_AhkVersion . " (installed at: " . A_AhkPath . ")`n`nPlease go to http://ahkscript.org to download the most recent version."
 If (A_AhkVersion < TradeAHKVersionRequired)
@@ -68,16 +72,19 @@ TradeGlobals.Set("DefaultLeague", (TradeFunc_CheckIfTempLeagueIsRunning() > 0) ?
 TradeGlobals.Set("GithubUser", "POE-TradeMacro")
 TradeGlobals.Set("GithubRepo", "POE-TradeMacro")
 TradeGlobals.Set("ReleaseVersion", TradeReleaseVersion)
+TradeGlobals.Set("ReleaseVersionRu", TradeReleaseVersionRu)
 global globalUpdateInfo := {}
 globalUpdateInfo.repo := TradeGlobals.Get("GithubRepo")
 globalUpdateInfo.user := TradeGlobals.Get("GithubUser")
 globalUpdateInfo.releaseVersion 	:= TradeGlobals.Get("ReleaseVersion")
+globalUpdateInfo.releaseVersionRu 	:= TradeGlobals.Get("ReleaseVersionRu")
 globalUpdateInfo.skipSelection 	:= 0
 globalUpdateInfo.skipBackup 		:= 0
 globalUpdateInfo.skipUpdateCheck 	:= 0
 
 TradeGlobals.Set("SettingsScriptList", ["TradeMacro", "ItemInfo", "Additional Macros"])
-TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Settings")
+;TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Settings")
+TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Настройки")
 argumentProjectName		= %1%
 argumentUserDirectory	= %2%
 argumentIsDevVersion	= %3%
@@ -112,8 +119,17 @@ global overwrittenUserFiles	:= argumentOverwrittenFiles
 ; 	CopyDefaultTradeConfig()
 ; }
 
+
 TradeFunc_CheckIfCloudFlareBypassNeeded()
 Sleep, 200
+
+/*
+If (not speedBoot) {
+	TradeFunc_CheckIfCloudFlareBypassNeeded()
+	Sleep, 200
+}
+*/
+
 ReadTradeConfig()
 
 ; set this variable to skip the update check in "PoE-ItemInfo.ahk"
@@ -128,7 +144,15 @@ TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[SearchLeague])
 
 If (TradeOpts.AlternativeCurrencySearch) {
 	GoSub, ReadPoeNinjaCurrencyData
+} 
+
+/*
+If (not speedBoot) {
+	If (TradeOpts.AlternativeCurrencySearch) {
+		GoSub, ReadPoeNinjaCurrencyData
+	} 
 }
+*/
 TradeGlobals.Set("VariableUniqueData", TradeUniqueData)
 TradeGlobals.Set("VariableRelicData",  TradeRelicData)
 TradeGlobals.Set("ModsData", TradeModsData)
@@ -145,8 +169,29 @@ If (TradeOpts.DownloadDataFiles and not TradeOpts.Debug) {
 	TradeFunc_DownloadDataFiles()
 }
 
+/*
+If (not speedBoot) {
+	; get currency ids from currency.poe.trade
+	TradeFunc_DoCurrencyRequest("", false, true)
+	If (TradeOpts.DownloadDataFiles and not TradeOpts.Debug) {
+		TradeFunc_DownloadDataFiles()
+	}
+}
+*/
+
 CreateTradeSettingsUI()
 TradeFunc_StopSplashScreen()
+
+InintAdaptationRu()
+
+; сюда размещаем все собственные функции инициализации
+InintAdaptationRu()
+{
+	; функция инициализации массива соответствий для названий валюты с poe.trade
+	InitBuyoutCurrencyEnToRu()
+	; функция инициализации массива соответствий перфиксов и суффиксов в названиях волшебных флаконов русских вариантов английским
+	InitRuPrefSufFlask()
+}
 
 ; ----------------------------------------------------------- Functions ----------------------------------------------------------------
 
@@ -475,7 +520,7 @@ TradeFunc_ScriptUpdate() {
 		ShowUpdateNotification := 1
 	}
 	SplashScreenTitle := "PoE-TradeMacro"
-	PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
+	PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle)
 }
 
 ;----------------------- Trade Settings UI (added onto ItemInfos Settings UI) ---------------------------------------
@@ -537,7 +582,7 @@ CreateTradeSettingsUI()
 	AddToolTip(DeleteCookiesH, "Delete Internet Explorer cookies.`nThe default option (all) is preferred.`n`nThis will be skipped if no cookies are needed to access poe.trade.")
 	GuiAddDropDownList("All|poe.trade", "x+10 yp+4 w70", TradeOpts.CookieSelect, "CookieSelect", "CookieSelectH")
 
-	GuiAddCheckbox("Use poedb.tw instead of the wiki.", "x17 yp+27 w260 h30 0x0100", TradeOpts.WikiAlternative, "WikiAlternative", "WikiAlternativeH")
+    GuiAddCheckbox("Use poedb.tw instead of the wiki.", "x17 yp+27 w260 h30 0x0100", TradeOpts.WikiAlternative, "WikiAlternative", "WikiAlternativeH")
 	AddToolTip(WikiAlternativeH, "Use poedb.tw to open a page with information`nabout your item/item base.")
 
     ; Search
@@ -622,11 +667,11 @@ CreateTradeSettingsUI()
 	; option group start
 	GuiAddCheckbox("Alternative currency search.", "x337 yp+30 w280 h40", TradeOpts.AlternativeCurrencySearch, "AlternativeCurrencySearch", "AlternativeCurrencySearchH")
 	AddToolTip(AlternativeCurrencySearchH, "Shows historical data of the searched currency.`nProvided by poe.ninja.")
-	
+
 	; option group start
 	GuiAddCheckbox("Use predicted item pricing (experimental).", "x337 yp+30 w280 h40", TradeOpts.UsePredictedItemPricing, "UsePredictedItemPricing", "UsePredictedItemPricingH")
 	AddToolTip(UsePredictedItemPricingH, "Use predicted item pricing via machine-learning algorithms.`nReplaces the default search, works with magic/rare/unique items.`n`nProvided by poeprices.info.")
-
+	
 	; option group start
 	GuiAddCheckbox("Predicted item pricing: Use feedback Gui.", "x337 yp+30 w280 h40", TradeOpts.UsePredictedItemPricingGui, "UsePredictedItemPricingGui", "UsePredictedItemPricingGuiH")
 	AddToolTip(UsePredictedItemPricingGuiH, "Use a Gui instead of the default tooltip to display results.`nYou can send some feedback to improve this feature.")
@@ -668,7 +713,6 @@ CreateTradeSettingsUI()
 
 	;Gui, Add, Link, x337 yp+43 w280 cBlue BackgroundTrans, <a href="https://github.com/POE-TradeMacro/POE-TradeMacro/wiki/Options">Options Wiki-Page</a>
 	
-
 	; Hotkeys
 
 	GuiAddGroupBox("[TradeMacro] Hotkeys", "x647 y35 w310 h265")
@@ -688,15 +732,10 @@ CreateTradeSettingsUI()
 	GuiAddHotkey(TradeOpts.CustomInputSearchHotKey, "x+1 yp-2 w124 h20", "CustomInputSearchHotKey", "CustomInputSearchHotKeyH")
 	AddToolTip(CustomInputSearchHotKeyH, "Press key/key combination.`nDefault: ctrl + i")
 
-	GuiAddCheckbox("Search (poe.trade):", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenSearchOnPoeTradeEnabled, "OpenSearchOnPoeTradeEnabled", "OpenSearchOnPoeTradeEnabledH")
+	GuiAddCheckbox("Search (Browser):", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenSearchOnPoeTradeEnabled, "OpenSearchOnPoeTradeEnabled", "OpenSearchOnPoeTradeEnabledH")
 	AddToolTip(OpenSearchOnPoeTradeEnabledH, "Open your search on poe.trade instead of showing`na tooltip with results.")
 	GuiAddHotkey(TradeOpts.OpenSearchOnPoeTradeHotKey, "x+1 yp-2 w124 h20", "OpenSearchOnPoeTradeHotKey", "OpenSearchOnPoeTradeHotKeyH")
 	AddToolTip(OpenSearchOnPoeTradeHotKeyH, "Press key/key combination.`nDefault: ctrl + q")
-
-	GuiAddCheckbox("Search (poeapp.com):", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenSearchOnPoEAppEnabled, "OpenSearchOnPoEAppEnabled", "OpenSearchOnPoEAppEnabledH")
-	AddToolTip(OpenSearchOnPoEAppEnabledH, "Open your search on poeapp.com instead of showing`na tooltip with results.")
-	GuiAddHotkey(TradeOpts.OpenSearchOnPoEAppHotKey, "x+1 yp-2 w124 h20", "OpenSearchOnPoEAppHotKey", "OpenSearchOnPoEAppHotKeyH")
-	AddToolTip(OpenSearchOnPoEAppHotKeyH, "Press key/key combination.`nDefault: ctrl + alt + q")
 
 	GuiAddCheckbox("Open Item (Wiki):", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenWikiEnabled, "OpenWikiEnabled", "OpenWikiEnabledH")
 	AddToolTip(OpenWikiEnabledH, "Open your items page on the PoE-Wiki.")
@@ -709,7 +748,7 @@ CreateTradeSettingsUI()
 	AddToolTip(ShowItemAgeHotkeyH, "Press key/key combination.`nDefault: ctrl + e")
 	
 	GuiAddCheckbox("Change League:", "x657 yp+32 w165 h20 0x0100", TradeOpts.ChangeLeagueEnabled, "ChangeLeagueEnabled", "ChangeLeagueEnabledH")
-	AddToolTip(ChangeLeagueEnabledH, "Changes the league you're searching for the item in.")
+	AddToolTip(ChangeLeagueEnabledH, "Checks your item's age.")
 	GuiAddHotkey(TradeOpts.ChangeLeagueHotkey, "x+1 yp-2 w124 h20", "ChangeLeagueHotkey", "ChangeLeagueHotkeyH")
 	AddToolTip(ChangeLeagueHotkeyH, "Press key/key combination.`nDefault: ctrl + l")
 
@@ -815,9 +854,10 @@ TradeFunc_CreateTradeAboutWindow() {
 	{
 		Authors := TradeFunc_GetContributors(0)
 		RelVer := TradeGlobals.get("ReleaseVersion")
+		RelVerRu := TradeGlobals.get("ReleaseVersionRu")
 		Gui, About:Font, S10 CA03410,verdana
 
-		Gui, About:Add, Text, x705 y27 w170 h20 Center, Release %RelVer%
+		Gui, About:Add, Text, x705 y27 w170 h20 Center, Release %RelVer%_%RelVerRu%
 		Gui, About:Add, Picture, 0x1000 x462 y16 w230 h180, %A_ScriptDir%\resources\images\splash-bl.png
 		Gui, About:Font, Underline C3571AC,verdana
 		Gui, About:Add, Text, x705 y57 w170 h20 gTradeVisitForumsThread Center, PoE forums thread
@@ -1118,7 +1158,7 @@ TradeFunc_ReadCookieData() {
 	SplashTextOff
 	If (CookieErrorLevel or BypassFailed or CompiledExeNotFound) {
 		; collect debug information
-		ScriptVersion	:= TradeGlobals.Get("ReleaseVersion")
+		ScriptVersion	:= TradeGlobals.Get("ReleaseVersion") . "_" . TradeGlobals.Get("ReleaseVersionRu")
 		CookieFile	:= (!CookieFileNotFound) ? "Cookie file found." : "Cookie file not found."
 		Cookies		:= (!CookieErrorLevel) ? "Retrieving cookies successful." : "Retrieving cookies failed."
 		OSInfo		:= TradeFunc_GetOSInfo()
@@ -1464,7 +1504,7 @@ TradeFunc_GetOSInfo() {
 ;----------------------- SplashScreens ---------------------------------------
 TradeFunc_StartSplashScreen() {
 	;SplashTextOn, , 20, PoE-TradeMacro, Initializing script...
-	SplashTextOn, , 20, PoE-TradeMacro, Initializing PokГ©dex...
+	SplashTextOn, , 20, PoE-TradeMacro, Инициализация скрипта...
 }
 TradeFunc_StopSplashScreen() {
 	SplashTextOff
@@ -1473,8 +1513,10 @@ TradeFunc_StopSplashScreen() {
 		Menu, Tray, Add ; Separator
 		Menu, Tray, Add, Test Item Pricing, DebugTestItemPricing
 		Menu, Tray, Add ; Separator
-		MsgBox, 4096, PoE-TradeMacro, Debug mode enabled! Disable in settings-menu unless you're developing!, 2
-		Class_Console("console",0,335,650,900,,,,9)
+		;MsgBox, 4096, PoE-TradeMacro, Debug mode enabled! Disable in settings-menu unless you're developing!, 2
+		MsgBox, 4096, PoE-TradeMacro, Debug mode enabled! Disable in settings-menu unless you're developing!, 1
+		;Class_Console("console",0,335,650,900,,,,9)
+		Class_Console("console",0,0,650,800,,,,9)
 		console.show()
 		SetTimer, BringPoEWindowToFrontAfterInit, 1000
 

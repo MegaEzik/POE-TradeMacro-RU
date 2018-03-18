@@ -1,13 +1,12 @@
 ﻿#Include, %A_ScriptDir%\lib\JSON.ahk
 #Include, %A_ScriptDir%\lib\zip.ahk
 
-PoEScripts_Update(user, repo, ReleaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, skipSelection, skipBackup, SplashScreenTitle = "", debugState = false) {
-	debug := (debugState) ? 1 : 0
-	status := GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, skipSelection, skipBackup, SplashScreenTitle, debug)
+PoEScripts_Update(user, repo, ReleaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, skipSelection, skipBackup, SplashScreenTitle = "") {
+	status := GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, skipSelection, skipBackup, SplashScreenTitle)
 	Return status
 }
 
-GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, skipSelection, skipBackup, SplashScreenTitle = "", debug = 0) {
+GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, skipSelection, skipBackup, SplashScreenTitle = "") {
 	If (ShowUpdateNotification = 0) {
 		return
 	}
@@ -81,7 +80,6 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 		global updateWindow_skipSelection	:= skipSelection
 		global updateWindow_skipBackup	:= skipBackup
 		global updateWindow_userDirectory	:= userDirectory
-		global updateWindow_debug		:= debug
 
 		isPrerelease:= LatestRelease.prerelease
 		releaseTag  := LatestRelease.tag_name
@@ -94,12 +92,13 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 		
 		newRelease := CompareVersions(versions.latest, versions.current)
 		If (newRelease) {
-			If (SplashScreenTitle) {
-				Try {
-					WinSet, AlwaysOnTop, Off, %SplashScreenTitle%
-				} Catch er {
-					
-				}
+			; пока отключим
+			; об обновлении
+			;MsgBox, , Обновление, Доступно обновление английской версии скрипта.`nПроверьте наличие обновлений для адаптированной версии.
+			return
+			
+			If(SplashScreenTitle) {
+				WinSet, AlwaysOnTop, Off, %SplashScreenTitle%
 			}
 			Gui, UpdateNotification:Font,, Consolas
 
@@ -144,7 +143,8 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 		}
 	} Catch e {
 		SplashTextOff
-		MsgBox,,, % "Update-Check failed, Exception thrown!`n`nwhat: " e.what "`nfile: " e.file "`nline: " e.line "`nmessage: " e.message "`nextra: " e.extra
+		;MsgBox,,, % "Update-Check failed, Exception thrown!`n`nwhat: " e.what "`nfile: " e.file "`nline: " e.line "`nmessage: " e.message "`nextra: " e.extra
+		MsgBox,,, % "Ошибка проверки обновления, брошено исключение!`n`nтип: " e.what "`nфайл: " e.file "`nстрока: " e.line "`nсообщение: " e.message "`nдополнительно: " e.extra
 	}
 	
 	Return
@@ -290,7 +290,7 @@ GetVersionIdentifierPriority(identifier) {
 	}
 }
 
-UpdateScript(url, project, defaultDir, isDevVersion, skipSelection, skipBackup, userDirectory, debug) {	
+UpdateScript(url, project, defaultDir, isDevVersion, skipSelection, skipBackup, userDirectory) {	
 	DriveSpaceFree, freeSpace, %A_Temp%
 	If (freeSpace < 30) {
 		MsgBox You don't have enough free space available on your system drive (at least 30MB). Update will be cancelled. 
@@ -395,8 +395,8 @@ UpdateScript(url, project, defaultDir, isDevVersion, skipSelection, skipBackup, 
 		
 		savePath := "" ; ByRef
 		If (DownloadRelease(url, project, savePath)) {
-			folderName := ExtractRelease(savePath, project)
-			If (StrLen(folderName) and not isEmpty(folderName)) {
+			folderName := ExtractRelease(savePath, project)			
+			If (StrLen(folderName)) {
 				; successfully downloaded and extracted release.zip to %A_Temp%\%Project%\ext
 				; copy script to %A_Temp%\%Project%
 				SplitPath, savePath, , saveDir				
@@ -407,7 +407,7 @@ UpdateScript(url, project, defaultDir, isDevVersion, skipSelection, skipBackup, 
 				; try to run the script and exit the app
 				; this needs to be done so that we can overwrite the current scripts directory
 				If (FileExist(externalScript)) {
-					Run "%A_AhkPath%" "%externalScript%" "%A_ScriptDir%" "%folderName%" "%InstallPath%" "%project%" "%A_ScriptName%" "%debug%"
+					Run "%A_AhkPath%" "%externalScript%" "%A_ScriptDir%" "%folderName%" "%InstallPath%" "%project%" "%A_ScriptName%"
 					If (ErrorLevel) {
 						MsgBox Update failed, couldn't launch 'FinishUpdate' script. File not found.
 					}
@@ -416,12 +416,6 @@ UpdateScript(url, project, defaultDir, isDevVersion, skipSelection, skipBackup, 
 					MsgBox Update failed, couldn't launch 'FinishUpdate' script.
 				}				
 				ExitApp
-			}
-			Else If (StrLen(folderName)) {
-				MsgBox % "Update failed, temporary folder containing the extracted update files doesn't exist." "`n`n" folderName
-			} 
-			Else {
-				MsgBox % "Update failed, temporary folder containing the extracted update files is empty." "`n`n" folderName
 			}
 		}		
 	}
@@ -561,7 +555,7 @@ ExtractRelease(file, project) {
 	If (Number > 1) {
 		folderName := sUnz
 	}
-
+	
 	Return folderName
 }
 
@@ -622,5 +616,5 @@ CloseUpdateWindow:
 Return
 
 UpdateScript:
-	UpdateScript(updateWindow_downloadURL, updateWindow_Project, updateWindow_DefaultFolder, updateWindow_isDevVersion, updateWindow_skipSelection, updateWindow_skipBackup, updateWindow_userDirectory, updateWindow_debug)	
+	UpdateScript(updateWindow_downloadURL, updateWindow_Project, updateWindow_DefaultFolder, updateWindow_isDevVersion, updateWindow_skipSelection, updateWindow_skipBackup, updateWindow_userDirectory)	
 Return
