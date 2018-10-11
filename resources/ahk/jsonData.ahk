@@ -37,9 +37,16 @@ FileRead, JSONFile, %A_ScriptDir%\data_trade\currencyIDs_Fallback.json
 parsedJSON := JSON.Load(JSONFile)
 global TradeCurrencyIDsFallback := parsedJSON
 
+; Parse the unique items data
+FileRead, JSONFile, %A_ScriptDir%\data_trade\currency_tags.json
+parsedJSON := JSON.Load(JSONFile)
+global TradeCurrencyTags := parsedJSON.tags
+
 ; Download and parse the current leagues
 postData		:= ""
 reqHeaders	:= []
+;options		:= "ReturnHeaders: Skip"
+options		:= "`n" "RequestType: GET"
 reqHeaders.push("Host: api.pathofexile.com")
 reqHeaders.push("Connection: keep-alive")
 reqHeaders.push("Cache-Control: max-age=0")
@@ -47,7 +54,7 @@ reqHeaders.push("Content-type: application/x-www-form-urlencoded; charset=UTF-8"
 reqHeaders.push("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
 reqHeaders.push("User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36")
 parsedLeagueJSON := PoEScripts_Download("http://api.pathofexile.com/leagues?type=main", postData, reqHeaders, options, true, true, false, "", reqHeadersCurl)
-TradeFunc_WriteToLogFile("Requesting leagues from api.pathofexile.com...`n`n" "cURL command:`n" reqHeadersCurl "`n`nAnswer:`n" reqHeaders)
+WriteToLogFile("Requesting leagues from api.pathofexile.com...`n`n" "cURL command:`n" reqHeadersCurl "`n`nAnswer: " reqHeaders, "StartupLog.txt", "PoE-TradeMacro")
 FileDelete, %A_ScriptDir%\temp\currentLeagues.json, 1
 FileAppend, %parsedLeagueJSON%, %A_ScriptDir%\temp\currentLeagues.json
 
@@ -55,11 +62,11 @@ errorMsg := "Parsing the league data (json) from the Path of Exile API failed."
 errorMsg .= "`nThis should only happen when the servers are down for maintenance." 
 errorMsg .= "`n`nThe script execution will be stopped, please try again at a later time."
 
-Try {
+Try {	
 	test := FileExist(A_ScriptDir "\temp\currentLeagues.json")
 	If (test) {
 		FileRead, JSONFile, %A_ScriptDir%\temp\currentLeagues.json
-		parsedJSON := JSON.Load(JSONFile)	
+		parsedJSON := JSON.Load(JSONFile)
 		global LeaguesData := parsedJSON
 	}
 	Else	{

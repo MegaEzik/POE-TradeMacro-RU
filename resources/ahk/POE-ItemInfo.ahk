@@ -16,6 +16,8 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64.exe
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64Steam.exe
 
+
+
 #Include, %A_ScriptDir%\resources\Version.txt
 #Include, %A_ScriptDir%\lib\JSON.ahk
 #Include, %A_ScriptDir%\lib\EasyIni.ahk
@@ -45,7 +47,6 @@ class Globals {
 
 Globals.Set("AHKVersionRequired", AHKVersionRequired)
 Globals.Set("ReleaseVersion", ReleaseVersion)
-Globals.Set("ReleaseVersionRu", ReleaseVersionRu)
 Globals.Set("DataDir", A_ScriptDir . "\data")
 Globals.Set("SettingsUIWidth", 963)
 Globals.Set("SettingsUIHeight", 665)
@@ -58,6 +59,7 @@ Globals.Set("GithubUser", "aRTy42")
 Globals.Set("ScriptList", [A_ScriptDir "\POE-ItemInfo"])
 Globals.Set("UpdateNoteFileList", [[A_ScriptDir "\resources\updates.txt","ItemInfo"]])
 Globals.Set("SettingsScriptList", ["ItemInfo", "Additional Macros"])
+Globals.Set("ScanCodes", GetScanCodes())
 argumentProjectName		= %1%
 argumentUserDirectory	= %2%
 argumentIsDevVersion	= %3%
@@ -333,6 +335,7 @@ class Item_ {
 		This.Implicit		:= []
 		This.Charges		:= []
 		This.AreaMonsterLevelReq := []
+		This.BeastData 	:= {}
 		
 		This.HasImplicit	:= False
 		This.HasEffect		:= False
@@ -368,6 +371,7 @@ class Item_ {
 		This.IsElderBase	:= False
 		This.IsShaperBase	:= False
 		This.IsAbyssJewel	:= False
+		This.IsBeast		:= False
 	}
 }
 Global Item := new Item_
@@ -493,7 +497,6 @@ Menu, PreviewTextFiles, Add, Additional Macros, PreviewAdditionalMacros
 
 ; Menu tooltip
 RelVer := Globals.Get("ReleaseVersion")
-RelVerRu := Globals.Get("ReleaseVersionRu")
 ;Menu, Tray, Tip, Path of Exile Item Info %RelVer%
 Menu, Tray, Tip, Path of Exile Item Info %RelVer% _ %RelVerRu%
 
@@ -511,8 +514,8 @@ Menu, Tray, Add, О скрипте..., MenuTray_About
 Menu, Tray, Add, Показать все назначенные горячие клавиши, ShowAssignedHotkeys
 Menu, Tray, Add, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings"), ShowSettingsUI
 ;Menu, Tray, Add, Check for updates, CheckForUpdates
-Menu, Tray, Add, Проверить наличие обновлений, CheckForUpdates
-;Menu, Tray, Add, Update Notes, ShowUpdateNotes
+;Menu, Tray, Add, Проверить наличие обновлений, CheckForUpdates
+;Menu, Tray, Add, Show Update Notes, ShowUpdateNotes
 Menu, Tray, Add, Об оновлении, ShowUpdateNotes
 Menu, Tray, Add ; Separator
 Menu, Tray, Add, Edit Files, :TextFiles
@@ -919,12 +922,12 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 					;If (RegExMatch(LoopField, "\bShaped " . mapMatch))
 					If (RegExMatch(LoopField, "Изменённая " . mapMatch))
 					{
-						mapMatch := ConvertRuItemNameToEn(mapMatch)
+						mapMatch := AdpRu_ConvertRuItemNameToEn(mapMatch)
 						SubType = Shaped %mapMatch%
 					}
 					Else
 					{
-						mapMatch := ConvertRuItemNameToEn(mapMatch)
+						mapMatch := AdpRu_ConvertRuItemNameToEn(mapMatch)
 						SubType = %mapMatch%
 					}
 					return
@@ -1069,6 +1072,8 @@ GetClipboardContents(DropNewlines=False)
 			}
 			IfInString, A_LoopField, Map drop
 			{
+				; We drop the "Map drop", but the "--------" has already been added and we don't want it, so we delete the last 8 chars.
+				Result := SubStr(Result, 1, -8)
 				break
 			}
 			If A_Index = 1                  ; so we start with just adding the first line w/o either a `n or `r
@@ -1116,7 +1121,7 @@ SetClipboardContents(String)
 */
 ArrayFromDataobject(Obj)
 {
-	If(Obj = False)
+	If (Obj = False)
 	{
 		return False
 	}
@@ -1202,7 +1207,7 @@ Each array element is an object with 8 keys:
 */
 ArrayFromDatafile(Filename, AffixMode="Native")
 {
-	If(Filename = False)
+	If (Filename = False)
 	{
 		return False
 	}
@@ -1221,7 +1226,7 @@ ArrayFromDatafile(Filename, AffixMode="Native")
 		maxLo	:= ""
 		maxHi	:= ""
 		
-		If(A_LoopReadLine ~= "--Essence--")
+		If (A_LoopReadLine ~= "--Essence--")
 		{
 			ReadType := "Essence"
 			Continue
@@ -1273,7 +1278,7 @@ ArrayFromDatafile(Filename, AffixMode="Native")
 		ModDataArray_%ReadType%.InsertAt(1, element)
 	}
 	
-	If(AffixMode = "essence" or AffixMode = "ess")
+	If (AffixMode = "essence" or AffixMode = "ess")
 	{
 		return ModDataArray_Essence
 	}
@@ -1297,7 +1302,7 @@ Returns an object with 3 keys:
 */
 LookupTierByValue(Value, ModDataArray, ItemLevel=100)
 {
-	If(ModDataArray = False)
+	If (ModDataArray = False)
 	{
 		return False
 	}
@@ -1308,14 +1313,14 @@ LookupTierByValue(Value, ModDataArray, ItemLevel=100)
 	
 	Loop
 	{
-		If( A_Index > ModDataArray.Length() )
+		If ( A_Index > ModDataArray.Length() )
 		{
 			Break
 		}
 		
 		CheckTier := A_Index
 		
-		If( ModDataArray[CheckTier].ilvl > ItemLevel)
+		If ( ModDataArray[CheckTier].ilvl > ItemLevel)
 		{
 			; Skip line if the ItemLevel is too low for the tier
 			Continue
@@ -1327,10 +1332,10 @@ LookupTierByValue(Value, ModDataArray, ItemLevel=100)
 				; Value is a range (due to a double range mod)
 				SplitRange(Value, ValueLo, ValueHi)
 				
-				If( (ModDataArray[CheckTier].minLo <= ValueLo) and (ValueLo <= ModDataArray[CheckTier].minHi) and (ModDataArray[CheckTier].maxLo <= ValueHi) and (ValueHi <= ModDataArray[CheckTier].maxHi) )
+				If ( (ModDataArray[CheckTier].minLo <= ValueLo) and (ValueLo <= ModDataArray[CheckTier].minHi) and (ModDataArray[CheckTier].maxLo <= ValueHi) and (ValueHi <= ModDataArray[CheckTier].maxHi) )
 				{
 					; Both values fit in the brackets
-					If(tier="")
+					If (tier="")
 					{
 						; tier not assigned yet, so fill it. This is put into tierTop later if more than one tier fits.
 						tier := CheckTier
@@ -1346,10 +1351,10 @@ LookupTierByValue(Value, ModDataArray, ItemLevel=100)
 			Else
 			{
 				; Value is a number, not a range
-				If( (ModDataArray[CheckTier].min <= Value) and (Value <= ModDataArray[CheckTier].max) )
+				If ( (ModDataArray[CheckTier].min <= Value) and (Value <= ModDataArray[CheckTier].max) )
 				{
 					; Value fits in the bracket
-					If(tier="")
+					If (tier="")
 					{
 						; tier not assigned yet, so fill it. This is put into tierTop later if more than one tier fits.
 						tier := CheckTier
@@ -1364,7 +1369,7 @@ LookupTierByValue(Value, ModDataArray, ItemLevel=100)
 			}
 		}
 	}
-	If(tierBtm)
+	If (tierBtm)
 	{
 		; tierBtm was actually used, so more than one tier fits. Thus putting tier into tierTop instead.
 		tierTop := tier
@@ -1386,15 +1391,15 @@ LookupImplicitValue(ItemBaseName)
 		StringSplit, Part, ImplicitText, `,
 		return [GetActualValue(Part1), GetActualValue(Part2)]
 	}
-	Else If(RegExMatch(ImplicitText, "Adds \((\d+\-\d+)\) to \((\d+\-\d+)\)", match))
+	Else If (RegExMatch(ImplicitText, "Adds \((\d+\-\d+)\) to \((\d+\-\d+)\)", match))
 	{
 		return [match1  Opts.DoubleRangeSeparator  match2]
 	}
-	Else If(RegExMatch(ImplicitText, "Adds (\d+\) to (\d+\)", match))
+	Else If (RegExMatch(ImplicitText, "Adds (\d+\) to (\d+\)", match))
 	{
 		return [match1  Opts.DoubleRangeSeparator  match2]
 	}
-	Else If(RegExMatch(ImplicitText, "\((.*?)\)", match))
+	Else If (RegExMatch(ImplicitText, "\((.*?)\)", match))
 	{
 		return [match1]
 	}
@@ -1405,7 +1410,7 @@ LookupImplicitValue(ItemBaseName)
 
 LookupAffixData(DataSource, ItemLevel, Value, ByRef Tier="")
 {
-	If(IsObject(DataSource)){
+	If (IsObject(DataSource)){
 		ModDataArray := ArrayFromDataobject(DataSource)
 	}
 	Else{
@@ -1414,18 +1419,18 @@ LookupAffixData(DataSource, ItemLevel, Value, ByRef Tier="")
 
 	ModTiers := LookupTierByValue(Value, ModDataArray, ItemLevel)
 	
-	If(ModTiers.Tier)
+	If (ModTiers.Tier)
 	{
 		Tier := ModTiers.Tier
 	}
-	Else If(ModTiers.Top and ModTiers.Btm)
+	Else If (ModTiers.Top and ModTiers.Btm)
 	{
 		Tier := [ModTiers.Top, ModTiers.Btm]
 	}
-	Else If(Value contains "-")
+	Else If (Value contains "-")
 	{
 		SplitRange(Value, Lo, Hi)
-		If(Lo > ModDataArray[1].maxLo and Hi > ModDataArray[1].maxHi)
+		If (Lo > ModDataArray[1].maxLo and Hi > ModDataArray[1].maxHi)
 		{
 			Tier := 0
 		}
@@ -1436,7 +1441,7 @@ LookupAffixData(DataSource, ItemLevel, Value, ByRef Tier="")
 	}
 	Else
 	{
-		If(Value > ModDataArray[1].max)
+		If (Value > ModDataArray[1].max)
 		{
 			Tier := 0
 		}
@@ -1616,7 +1621,7 @@ FormatDoubleRanges(BtmMin, BtmMax, TopMin, TopMax, StyleOverwrite="")
 {
 	Global Opts
 	
-	If(StyleOverwrite = "compact" or (Opts.UseCompactDoubleRanges and StyleOverwrite = "") )
+	If (StyleOverwrite = "compact" or (Opts.UseCompactDoubleRanges and StyleOverwrite = "") )
 	{
 		ValueRange := BtmMin "-" TopMax
 	}
@@ -1637,7 +1642,7 @@ FormatMultiTierRange(BtmMin, BtmMax, TopMin, TopMax)
 {
 	Global Opts
 	
-	If(BtmMin = TopMin and BtmMax = TopMax)
+	If (BtmMin = TopMin and BtmMax = TopMax)
 	{
 		return BtmMin "-" TopMax
 	}
@@ -1683,7 +1688,7 @@ ParseItemLevel(ItemDataText)
 }
 
 ;;hixxie fixed. Shows MapLevel for any map base.
-ParseMapLevel(ItemDataText)
+ParseMapTier(ItemDataText)
 {
 	ItemDataChunk := GetItemDataChunk(ItemDataText, "MapTier:")
 	If (StrLen(ItemDataChunk) <= 0)
@@ -1692,7 +1697,7 @@ ParseMapLevel(ItemDataText)
 		ItemDataChunk := GetItemDataChunk(ItemDataText, "Уровень карты:")
 	}
 
-	Assert(StrLen(ItemDataChunk) > 0, "ParseMapLevel: couldn't parse item data chunk")
+	Assert(StrLen(ItemDataChunk) > 0, "ParseMapTier: couldn't parse item data chunk")
 
 	Loop, Parse, ItemDataChunk, `n, `r
 	{
@@ -1706,7 +1711,7 @@ ParseMapLevel(ItemDataText)
 		IfInString, A_LoopField, Уровень карты:
 		{
 			StringSplit, MapLevelParts, A_LoopField, %A_Space%
-			Result := StrTrimWhitespace(MapLevelParts3) + 67
+			Result := StrTrimWhitespace(MapLevelParts3)
 			return Result
 		}
 	}
@@ -1773,22 +1778,22 @@ DebugFile(Content, LineEnd="`n", StartNewFile=False)
 {
 	Global DebugMode
 	
-	If( not isDevVersion){
+	If ( not isDevVersion){
 	DebugMode := False 
 	}
 	
-	If(DebugMode = False)
+	If (DebugMode = False)
 		return
 	
-	If(StartNewFile){
+	If (StartNewFile){
 		FileDelete, DebugFile.txt
 	}
 	
-	If(IsObject(Content))
+	If (IsObject(Content))
 	{
 		Print := "`n>>`n" ExploreObj(Content) "`n<<`n"
 	}
-	Else If(StrLen(Content) > 100)
+	Else If (StrLen(Content) > 100)
 	{
 		Print := "`n" Content "`n`n"
 	}
@@ -1883,7 +1888,7 @@ NumFormat(Num, Format)
 
 ; Formats floating values such as 2.50000 or 3.00000 into 2.5 and 3
 NumFormatPointFiveOrInt(Value){
-	If( not Mod(Value, 1) )
+	If ( not Mod(Value, 1) )
 	{
 		return Round(Value)
 	}
@@ -1904,8 +1909,8 @@ NumPad(Num, TotalWidth, DecimalPlaces=0)
 AffixTypeShort(AffixType)
 {
 	result := RegExReplace(AffixType, "Hybrid Defence Prefix", "HDP")
-	;result := RegExReplace(result, "Crafted ", "Cr")		; not properly supported yet, so remove completely
-	result := RegExReplace(result, "Crafted ", "Крф")		; not properly supported yet, so remove completely
+	;result := RegExReplace(result, "Crafted ", "Cr")		; not fully supported yet.
+	result := RegExReplace(result, "Crafted ", "Крф")		; not fully supported yet.
 	;result := RegExReplace(result, "Hybrid ", "Hyb")
 	result := RegExReplace(result, "Hybrid ", "Гиб")
 	;result := RegExReplace(result, "Prefix", "P")
@@ -1920,18 +1925,18 @@ MakeAffixDetailLine(AffixLine, AffixType, ValueRange, Tier, CountAffixTotals=Tru
 {
 	Global ItemData, AffixTotals
 	
-	If(CountAffixTotals)
+	If (CountAffixTotals)
 	{
-		If(AffixType = "Hybrid Prefix" or AffixType = "Hybrid Defence Prefix"){
+		If (AffixType = "Hybrid Prefix" or AffixType = "Hybrid Defence Prefix"){
 			AffixTotals.NumPrefixes += 0.5
 		}
-		Else If(AffixType = "Hybrid Suffix"){
+		Else If (AffixType = "Hybrid Suffix"){
 			AffixTotals.NumSuffixes += 0.5
 		}
-		Else If(AffixType ~= "Prefix"){	; using ~= to match all that contains "Prefix", such as "Crafted Prefix".
+		Else If (AffixType ~= "Prefix"){	; using ~= to match all that contains "Prefix", such as "Crafted Prefix".
 			AffixTotals.NumPrefixes += 1
 		}
-		Else If(AffixType ~= "Suffix"){
+		Else If (AffixType ~= "Suffix"){
 			AffixTotals.NumSuffixes += 1
 		}
 	}
@@ -1943,17 +1948,17 @@ MakeAffixDetailLine(AffixLine, AffixType, ValueRange, Tier, CountAffixTotals=Tru
 		return [AffixLine, ValueRange, TierAndType]
 	}
 	
-	If(IsObject(AffixType))
+	If (IsObject(AffixType))
 	{
 		; Multiple mods in one line
 		TierAndType := ""
 		
 		For n, AfTy in AffixType
 		{
-			If(IsObject(Tier[A_Index]))
+			If (IsObject(Tier[A_Index]))
 			{
 				; Tier has a range
-				If(Tier[A_Index][1] = Tier[A_Index][2])
+				If (Tier[A_Index][1] = Tier[A_Index][2])
 				{
 					Ti := Tier[A_Index][1]
 				}
@@ -1972,10 +1977,10 @@ MakeAffixDetailLine(AffixLine, AffixType, ValueRange, Tier, CountAffixTotals=Tru
 		
 		TierAndType := SubStr(TierAndType, 1, -3)	; Remove trailing " + " at line end
 	}
-	Else If(IsObject(Tier))
+	Else If (IsObject(Tier))
 	{
 		; Just one mod in the line, but Tier has a range
-		If(Tier[1] = Tier[2])
+		If (Tier[1] = Tier[2])
 		{
 			Ti := Tier[1]
 		}
@@ -1988,7 +1993,7 @@ MakeAffixDetailLine(AffixLine, AffixType, ValueRange, Tier, CountAffixTotals=Tru
 	}
 	Else
 	{
-		If(IsNum(Tier) or Tier = "?")
+		If (IsNum(Tier) or Tier = "?")
 		{
 			; Just one mod and a single numeric tier
 			TierAndType := "T" Tier " " AffixTypeShort(AffixType)
@@ -2024,7 +2029,7 @@ AssembleAffixDetails()
 	
 	TextLineWidth := 20
 	; ширина строки аффикса - будем определять в зависимости от настроек, либо полную, либо краткую
-	If(!Opts.ShortAffix){
+	If (!Opts.ShortAffix){
 		TextLineWidth := ParseModLength(ItemData.Affixes, false)
 	}
 	TextLineWidthUnique := TextLineWidth + 10
@@ -2036,7 +2041,7 @@ AssembleAffixDetails()
 	Separator := Opts.AffixColumnSeparator
 	Ellipsis := Opts.AffixTextEllipsis
 	
-	If(Item.IsUnique)
+	If (Item.IsUnique)
 	{
 		Loop, %NumAffixLines%
 		{
@@ -2044,7 +2049,7 @@ AssembleAffixDetails()
 			AffixText := CurLine[1]
 			ValueRange := CurLine[2]
 			
-			If(StrLen(AffixText) > TextLineWidthUnique)
+			If (StrLen(AffixText) > TextLineWidthUnique)
 			{
 				AffixText := SubStr(AffixText, 1, TextLineWidthUnique - StrLen(Ellipsis)) . Ellipsis
 			}
@@ -2067,21 +2072,21 @@ AssembleAffixDetails()
 			CurLine := AffixLines[A_Index]
 			
 			ValueRange := CurLine[2]
-			If( ! IsObject(ValueRange) )
+			If ( ! IsObject(ValueRange) )
 			{
 				; Text as ValueRange
 				continue
 			}
 			
-			If( StrLen(ValueRange[1]) > ValueRange1Width )
+			If ( StrLen(ValueRange[1]) > ValueRange1Width )
 			{
-				If(ValueRange[2])
+				If (ValueRange[2])
 				{
 					ValueRange1Width := StrLen(ValueRange[1])
 				}
 				Else
-				{	; Has no ilvl entry for first range, can expand a bit.
-					; Moving more the longer the range text is. Until 9: +2, 10-11: +3, 12-13: +4, then: +5.
+				{	; TierRange has no ilvl entry, can expand a bit.
+					; Moving more the longer the range text is. Until 9 chars: +2, 10-11 chars: +3, 12-13 chars: +4, then: +5.
 					; This keeps the "…" of a multi tier range aligned with the "-" of most normal ranges,
 					;   but also keeps slightly larger normal ranges aligned as usual, like so:
 					/*        28-32 (44)
@@ -2094,20 +2099,20 @@ AssembleAffixDetails()
 					*/
 					extra := StrLen(ValueRange[1]) <= 7 ? 0 : (StrLen(ValueRange[1]) <= 9 ? 2 : ( StrLen(ValueRange[1]) <= 11 ? 3 : ( StrLen(ValueRange[1]) <= 13 ? 4 : 5)))
 					
-					If( StrLen(ValueRange[1]) > ValueRange1Width + extra )
+					If ( StrLen(ValueRange[1]) > ValueRange1Width + extra )
 					{
 						ValueRange1Width := StrLen(ValueRange[1]) - extra
 					}
 				}
 			}
 			
-			If( StrLen(ValueRange[3]) > ValueRange2Width )
+			If ( StrLen(ValueRange[3]) > ValueRange2Width )
 			{
 				ValueRange2Width := StrLen(ValueRange[3])
 			}
 		}
 		
-		If( not ((Item.IsJewel and not Item.IsAbyssJewel) or Item.IsFlask) and Opts.ShowHeaderForAffixOverview)
+		If ( not ((Item.IsJewel and not Item.IsAbyssJewel) or Item.IsFlask) and Opts.ShowHeaderForAffixOverview)
 		{
 			; Add a header line above the affix infos.			
 			ProcessedLine := "`n"
@@ -2124,13 +2129,13 @@ AssembleAffixDetails()
 		{
 			CurLine := AffixLines[A_Index]
 			; Any empty line is considered as an Unprocessed Mod
-			If(IsObject(CurLine))
+			If (IsObject(CurLine))
 			{
 				AffixText := CurLine[1]
 				ValueRange := CurLine[2]
 				TierAndType := CurLine[3]
 				
-				If(AffixText = "or")
+				If (AffixText = "or")
 				{
 					;AffixText := "--or--"
 					;AffixText := "--или--"
@@ -2138,9 +2143,9 @@ AssembleAffixDetails()
 					AffixText := StrPad(AffixText, round( (TextLineWidth + StrLen(AffixText))/2 ), "left")	; align mid
 				}
 				
-				If((Item.IsJewel and not Item.IsAbyssJewel) or Item.IsFlask)
+				If ((Item.IsJewel and not Item.IsAbyssJewel) or Item.IsFlask)
 				{
-					If(StrLen(AffixText) > TextLineWidthJewel)
+					If (StrLen(AffixText) > TextLineWidthJewel)
 					{
 						ProcessedLine := SubStr(AffixText, 1, TextLineWidthJewel - StrLen(Ellipsis))  Ellipsis
 					}
@@ -2155,7 +2160,7 @@ AssembleAffixDetails()
 				}
 				Else
 				{
-					If(StrLen(AffixText) > TextLineWidth)
+					If (StrLen(AffixText) > TextLineWidth)
 					{
 						ProcessedLine := SubStr(AffixText, 1, TextLineWidth - StrLen(Ellipsis))  Ellipsis
 					}
@@ -2164,10 +2169,10 @@ AssembleAffixDetails()
 						ProcessedLine := StrPad(AffixText, TextLineWidth)
 					}
 					
-					If( ! IsObject(ValueRange) )
+					If ( ! IsObject(ValueRange) )
 					{
 						; Text as ValueRange. Right-aligned to tier range column and with separator if it fits.
-						If(StrLen(ValueRange) > ValueRange1Width + 5)
+						If (StrLen(ValueRange) > ValueRange1Width + 5)
 						{
 							; wider than the TierRange column (with ilvl space), content is allowed to also move in the second column but we can't put the Separator in.
 							ProcessedLine .= Separator  StrPad(StrPad(ValueRange, ValueRange1Width + 5, "left"), ValueRange1Width + 5 + StrLen(Separator) + ValueRange2Width + 5, "right")
@@ -2178,7 +2183,7 @@ AssembleAffixDetails()
 							ProcessedLine .= Separator  StrPad(StrPad(ValueRange, ValueRange1Width + 5, "left") . Separator, ValueRange1Width + 5 + StrLen(Separator) + ValueRange2Width + 5, "right")
 						}
 						
-						If(RegExMatch(TierAndType, "^T\d.*"))
+						If (RegExMatch(TierAndType, "^T\d.*"))
 						{
 							ProcessedLine .= Separator  TierAndType
 						}
@@ -2190,9 +2195,17 @@ AssembleAffixDetails()
 					}
 					Else
 					{
-						If(ValueRange[2])
+						If (ValueRange[2])
 						{	; Has ilvl entry for tier range
 							ProcessedLine .= Separator  StrPad(ValueRange[1], ValueRange1Width, "left") " " StrPad("(" ValueRange[2] ")", 4, "left")
+							ProcessedLine .= Separator  StrPad(ValueRange[3], ValueRange2Width, "left") " " StrPad("(" ValueRange[4] ")", 4, "left")
+							ProcessedLine .= Separator  TierAndType
+						}
+						Else If (ValueRange[2] != "")
+						{	; Has some kind of ilvl entry that is not a number, likely a space. Format as above but without brackets.
+							ProcessedLine .= Separator  StrPad(ValueRange[1], ValueRange1Width, "left") " " StrPad(ValueRange[2] , 4, "left")
+							ProcessedLine .= Separator  StrPad(ValueRange[3], ValueRange2Width, "left") " " StrPad(ValueRange[4] , 4, "left")
+							ProcessedLine .= Separator  TierAndType
 						}
 						Else
 						{	; Has no ilvl entry for tier range, can expand a bit.
@@ -2200,10 +2213,9 @@ AssembleAffixDetails()
 							extra := StrLen(ValueRange[1]) <= 7 ? 0 : (StrLen(ValueRange[1]) <= 9 ? 2 : ( StrLen(ValueRange[1]) <= 11 ? 3 : ( StrLen(ValueRange[1]) <= 13 ? 4 : 5)))
 							
 							ProcessedLine .= Separator  StrPad(ValueRange[1] . StrMult(" ", 5 - extra), ValueRange1Width + 5, "left")
+							ProcessedLine .= Separator  StrPad(ValueRange[3], ValueRange2Width, "left") " " StrPad("(" ValueRange[4] ")", 4, "left")
+							ProcessedLine .= Separator  TierAndType
 						}
-						
-						ProcessedLine .= Separator  StrPad(ValueRange[3], ValueRange2Width, "left") " " StrPad("(" ValueRange[4] ")", 4, "left")
-						ProcessedLine .= Separator  TierAndType
 					}
 				}
 			}
@@ -2231,7 +2243,7 @@ AssembleMapAffixes()
 	{
 		CurLine := AffixLines[A_Index]
 		; Any empty line is considered as an Unprocessed Mod
-		If(IsObject(CurLine))
+		If (IsObject(CurLine))
 		{
 			AffixLine := CurLine[1]
 			MapAffixCount := CurLine[2]
@@ -2565,11 +2577,11 @@ SetMapInfoLine(AffixType, ByRef MapAffixCount, EnumLabel="")
 {
 	Global AffixTotals
 	
-	If(AffixType =="Prefix")
+	If (AffixType =="Prefix")
 	{
 		AffixTotals.NumPrefixes += 1
 	}
-	Else If(AffixType =="Suffix")
+	Else If (AffixType =="Suffix")
 	{
 		AffixTotals.NumSuffixes += 1
 	}
@@ -2636,7 +2648,8 @@ ParseMapAffixes(ItemDataAffixes)
 		; --- ONE LINE AFFIXES ---		
 		
 		;If (RegExMatch(A_LoopField, "Area is inhabited by 2 additional Rogue Exiles|Area has increased monster variety"))
-		If (RegExMatch(A_LoopField, "2 дополнительный бродячий изгнанник в области|Область населяют разнообразные монстры"))
+		;If (RegExMatch(A_LoopField, "2 дополнительный бродячий изгнанник в области|Область населяют разнообразные монстры"))
+		If (RegExMatch(A_LoopField, "Дополнительных бродячих изгнанников в области: 2|Область населяют разнообразные монстры"))
 		{
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
@@ -2650,8 +2663,8 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Monsters deal \d+% extra Damage as (Fire|Cold|Lightning)"))
 		If (RegExMatch(A_LoopField, "Монстры наносят \d+% дополнительного урона в виде урона от (огня|холода|молнии)"))
 		{
-			MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`nExtra Ele Damage" : ""			
-			;MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`nДополнительный стихийный урон" : ""			
+			;MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`nExtra Ele Damage" : ""			
+			MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`n Дополнительный стихийный урон" : ""			
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Count_DmgMod += 1
 			String_DmgMod := String_DmgMod . ", Extra Ele"
@@ -2661,63 +2674,72 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Monsters reflect \d+% of Elemental Damage"))
 		If (RegExMatch(A_LoopField, "Монстры отражают \d+% урона от стихий"))
 		{
-			MapModWarnings .= MapModWarn.EleReflect ? "`nEle reflect" : ""
+			;MapModWarnings .= MapModWarn.EleReflect ? "`nEle reflect" : ""
+			MapModWarnings .= MapModWarn.EleReflect ? "`n Отражение стихийного урона" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters reflect \d+% of Physical Damage"))
 		If (RegExMatch(A_LoopField, "Монстры отражают \d+% физического урона"))
 		{
-			MapModWarnings .= MapModWarn.PhysReflect ? "`nPhys reflect" : ""
+			;MapModWarnings .= MapModWarn.PhysReflect ? "`nPhys reflect" : ""
+			MapModWarnings .= MapModWarn.PhysReflect ? "`n Отражение физ. урона" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "\+\d+% Monster Physical Damage Reduction"))
 		If (RegExMatch(A_LoopField, "\+\d+% к сопротивлению физическому урону монстров"))
 		{
-			MapModWarnings .= MapModWarn.MonstPhysDmgReduction ? "`nPhys Damage Reduction" : ""
+			;MapModWarnings .= MapModWarn.MonstPhysDmgReduction ? "`nPhys Damage Reduction" : ""
+			MapModWarnings .= MapModWarn.MonstPhysDmgReduction ? "`n Сопротивление физическому урону" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "\d+% less effect of Curses on Monsters"))
 		If (RegExMatch(A_LoopField, "Эффект от проклятий на монстрах на \d+% меньше"))
 		{
-			MapModWarnings .= MapModWarn.MonstLessCurse ? "`nLess Curse Effect" : ""
+			;MapModWarnings .= MapModWarn.MonstLessCurse ? "`nLess Curse Effect" : ""
+			MapModWarnings .= MapModWarn.MonstLessCurse ? "`n Уменьшение эффекта от проклятий" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have a \d+% chance to avoid Poison, Blind, and Bleed"))
 		If (RegExMatch(A_LoopField, "Монстры имеют \d+% шанс избежать отравления, ослепления и кровотечения"))
 		{
-			MapModWarnings .= MapModWarn.MonstAvoidPoisonBlindBleed ? "`nAvoid Poison/Blind/Bleed" : ""
+			;MapModWarnings .= MapModWarn.MonstAvoidPoisonBlindBleed ? "`nAvoid Poison/Blind/Bleed" : ""
+			MapModWarnings .= MapModWarn.MonstAvoidPoisonBlindBleed ? "`n Избегание отравления/ослепления/кровотечения" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have a \d+% chance to cause Elemental Ailments on Hit"))
 		If (RegExMatch(A_LoopField, "Монстры имеют \d+% шанс наложить стихийные состояния при нанесении удара"))
 		{
-			MapModWarnings .= MapModWarn.MonstCauseElementalAilments ? "`nCause Elemental Ailments" : ""
+			;MapModWarnings .= MapModWarn.MonstCauseElementalAilments ? "`nCause Elemental Ailments" : ""
+			MapModWarnings .= MapModWarn.MonstCauseElementalAilments ? "`n Шанс наложить стихийные состояния" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "\d+% increased Monster Damage"))
 		If (RegExMatch(A_LoopField, "\d+% увеличение урона монстров"))
 		{
-			MapModWarnings .= MapModWarn.MonstIncrDmg ? "`nIncreased Damage" : ""
+			;MapModWarnings .= MapModWarn.MonstIncrDmg ? "`nIncreased Damage" : ""
+			MapModWarnings .= MapModWarn.MonstIncrDmg ? "`n Увеличение урона" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area contains many Totems"))
 		If (RegExMatch(A_LoopField, "В области много тотемов"))
 		{
-			MapModWarnings .= MapModWarn.ManyTotems ? "`nTotems" : ""
+			;MapModWarnings .= MapModWarn.ManyTotems ? "`nTotems" : ""
+			MapModWarnings .= MapModWarn.ManyTotems ? "`n Тотемы" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters' skills Chain 2 additional times"))
 		If (RegExMatch(A_LoopField, "Монстры поражают целей по цепи: 2"))
 		{
-			MapModWarnings .= MapModWarn.MonstSkillsChain ? "`nSkills Chain" : ""
+			;MapModWarnings .= MapModWarn.MonstSkillsChain ? "`nSkills Chain" : ""
+			MapModWarnings .= MapModWarn.MonstSkillsChain ? "`n Урон по цепи" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Flag_SkillsChain := 1
 			Continue
@@ -2725,35 +2747,40 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "All Monster Damage from Hits always Ignites"))
 		If (RegExMatch(A_LoopField, "Весь урон от ударов монстров всегда поджигает"))
 		{
-			MapModWarnings .= MapModWarn.MonstHitsIgnite ? "`nHits Ignite" : ""
+			;MapModWarnings .= MapModWarn.MonstHitsIgnite ? "`nHits Ignite" : ""
+			MapModWarnings .= MapModWarn.MonstHitsIgnite ? "`n Удары поджигают" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Slaying Enemies close together can attract monsters from Beyond"))
 		If (RegExMatch(A_LoopField, "Убитые близко друг к другу враги могут привлечь монстров из другого мира"))
 		{
-			MapModWarnings .= MapModWarn.Beyond ? "`nBeyond" : ""
+			;MapModWarnings .= MapModWarn.Beyond ? "`nBeyond" : ""
+			MapModWarnings .= MapModWarn.Beyond ? "`n Иномирцы" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area contains two Unique Bosses"))
 		If (RegExMatch(A_LoopField, "В области можно встретить двух уникальных боссов"))
 		{
-			MapModWarnings .= MapModWarn.BossTwinned ? "`nTwinned Boss" : ""
+			;MapModWarnings .= MapModWarn.BossTwinned ? "`nTwinned Boss" : ""
+			MapModWarnings .= MapModWarn.BossTwinned ? "`n Два Босса" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters are Hexproof"))
 		If (RegExMatch(A_LoopField, "Монстры имеют свойство Заговоренный"))
 		{
-			MapModWarnings .= MapModWarn.MonstHexproof ? "`nHexproof" : ""
+			;MapModWarnings .= MapModWarn.MonstHexproof ? "`nHexproof" : ""
+			MapModWarnings .= MapModWarn.MonstHexproof ? "`n Заговоренный" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters fire 2 additional Projectiles"))
 		If (RegExMatch(A_LoopField, "Монстры выпускают дополнительных снарядов: 2"))
 		{
-			MapModWarnings .= MapModWarn.MonstTwoAdditionalProj ? "`nAdditional Projectiles" : ""
+			;MapModWarnings .= MapModWarn.MonstTwoAdditionalProj ? "`nAdditional Projectiles" : ""
+			MapModWarnings .= MapModWarn.MonstTwoAdditionalProj ? "`n Дополнительные снаряды" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Flag_TwoAdditionalProj := 1
 			Continue
@@ -2763,28 +2790,32 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Elemental Weakness"))
 		If (RegExMatch(A_LoopField, "Игроки прокляты Уязвимостью к стихиям"))
 		{
-			MapModWarnings .= MapModWarn.EleWeakness ? "`nEle Weakness" : ""
+			;MapModWarnings .= MapModWarn.EleWeakness ? "`nEle Weakness" : ""
+			MapModWarnings .= MapModWarn.EleWeakness ? "`n Уязвимость к стихиям" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Enfeeble"))
 		If (RegExMatch(A_LoopField, "Игроки прокляты Слабостью"))
 		{
-			MapModWarnings .= MapModWarn.Enfeeble ? "`nEnfeeble" : ""
+			;MapModWarnings .= MapModWarn.Enfeeble ? "`nEnfeeble" : ""
+			MapModWarnings .= MapModWarn.Enfeeble ? "`n Слабость" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Temporal Chains"))
 		If (RegExMatch(A_LoopField, "Игроки прокляты Путами времени"))
 		{
-			MapModWarnings .= MapModWarn.TempChains ? "`nTemp Chains" : ""
+			;MapModWarnings .= MapModWarn.TempChains ? "`nTemp Chains" : ""
+			MapModWarnings .= MapModWarn.TempChains ? "`n Путы времени" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Vulnerability"))
 		If (RegExMatch(A_LoopField, "Игроки прокляты Уязвимостью"))
 		{
-			MapModWarnings .= MapModWarn.Vulnerability ? "`nVulnerability" : ""
+			;MapModWarnings .= MapModWarn.Vulnerability ? "`nVulnerability" : ""
+			MapModWarnings .= MapModWarn.Vulnerability ? "`n Уязвимость" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 
 			Count_DmgMod += 0.5
@@ -2794,21 +2825,24 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Area has patches of burning ground"))
 		If (RegExMatch(A_LoopField, "Область имеет участки горящей земли"))
 		{
-			MapModWarnings .= MapModWarn.BurningGround ? "`nBurning ground" : ""
+			;MapModWarnings .= MapModWarn.BurningGround ? "`nBurning ground" : ""
+			MapModWarnings .= MapModWarn.BurningGround ? "`n Горящая земля" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area has patches of chilled ground"))
 		If (RegExMatch(A_LoopField, "Область имеет участки замерзшей земли"))
 		{
-			MapModWarnings .= MapModWarn.ChilledGround ? "`nChilled ground" : ""
+			;MapModWarnings .= MapModWarn.ChilledGround ? "`nChilled ground" : ""
+			MapModWarnings .= MapModWarn.ChilledGround ? "`n Замёрзшая земля" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area has patches of shocking ground"))
 		If (RegExMatch(A_LoopField, "Область имеет участки заряженной земли"))
 		{
-			MapModWarnings .= MapModWarn.ShockingGround ? "`nShocking ground" : ""
+			;MapModWarnings .= MapModWarn.ShockingGround ? "`nShocking ground" : ""
+			MapModWarnings .= MapModWarn.ShockingGround ? "`n Заряжённая земля" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 
 			Count_DmgMod += 0.5
@@ -2818,56 +2852,64 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Area has patches of desecrated ground"))
 		If (RegExMatch(A_LoopField, "Область имеет участки осквернённой земли"))
 		{
-			MapModWarnings .= MapModWarn.DesecratedGround ? "`nDesecrated ground" : ""
+			;MapModWarnings .= MapModWarn.DesecratedGround ? "`nDesecrated ground" : ""
+			MapModWarnings .= MapModWarn.DesecratedGround ? "`n Осквернённая земля" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players gain \d+% reduced Flask Charges"))
 		If (RegExMatch(A_LoopField, "Игроки получают уменьшение зарядов флакона на \d+%"))
 		{
-			MapModWarnings .= MapModWarn.PlayerReducedFlaskCharge ? "`nReduced Flask Charges" : ""
+			;MapModWarnings .= MapModWarn.PlayerReducedFlaskCharge ? "`nReduced Flask Charges" : ""
+			MapModWarnings .= MapModWarn.PlayerReducedFlaskCharge ? "`n Уменьшение зарядов флакона" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have \d+% increased Area of Effect"))
 		If (RegExMatch(A_LoopField, "Монстры имеют \d+% увеличение области действия"))
 		{
-			MapModWarnings .= MapModWarn.MonstIncrAoE ? "`nIncreased Monster AoE" : ""
+			;MapModWarnings .= MapModWarn.MonstIncrAoE ? "`nIncreased Monster AoE" : ""
+			MapModWarnings .= MapModWarn.MonstIncrAoE ? "`n Увеличение области действия у монстров" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have \d+% less Area of Effect"))
 		If (RegExMatch(A_LoopField, "Область действия у игроков на \d+% меньше"))
 		{
-			MapModWarnings .= MapModWarn.PlayerLessAoE ? "`nLess Player AoE" : ""
+			;MapModWarnings .= MapModWarn.PlayerLessAoE ? "`nLess Player AoE" : ""
+			MapModWarnings .= MapModWarn.PlayerLessAoE ? "`n Уменьшение области действия у игрока" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have \d+% chance to Avoid Elemental Ailments"))
 		If (RegExMatch(A_LoopField, "Монстры имеют \d+% шанс избежать стихийных состояний"))
 		{
-			MapModWarnings .= MapModWarn.MonstAvoidElementalAilments ? "`nMonsters Avoid Elemental Ailments" : ""
+			;MapModWarnings .= MapModWarn.MonstAvoidElementalAilments ? "`nMonsters Avoid Elemental Ailments" : ""
+			MapModWarnings .= MapModWarn.MonstAvoidElementalAilments ? "`n Монстры избегают стихийных состояний" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have \d+% less Recovery Rate of Life and Energy Shield"))
 		If (RegExMatch(A_LoopField, "Скорость восстановления здоровья и энергетического щита игроков на \d+% ниже"))
 		{
-			MapModWarnings .= MapModWarn.LessRecovery ? "`nLess Recovery" : ""
+			;MapModWarnings .= MapModWarn.LessRecovery ? "`nLess Recovery" : ""
+			MapModWarnings .= MapModWarn.LessRecovery ? "`n Снижение скорости восстановления" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters take \d+% reduced Extra Damage from Critical Strikes"))
 		If (RegExMatch(A_LoopField, "Монстры получают \d+% уменьшение дополнительного урона от критических ударов"))
 		{
-			MapModWarnings .= MapModWarn.MonstTakeReducedCritDmg ? "`nReduced Crit Damage" : ""
+			;MapModWarnings .= MapModWarn.MonstTakeReducedCritDmg ? "`nReduced Crit Damage" : ""
+			MapModWarnings .= MapModWarn.MonstTakeReducedCritDmg ? "`n Снижение крит. урона" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "-\d+% maximum Player Resistances"))
 		If (RegExMatch(A_LoopField, "-\d+% максимум сопротивлений игроков"))
 		{
-			MapModWarnings .= MapModWarn.PlayerReducedMaxRes ? "`n-Max Res" : ""
+			;MapModWarnings .= MapModWarn.PlayerReducedMaxRes ? "`n-Max Res" : ""
+			MapModWarnings .= MapModWarn.PlayerReducedMaxRes ? "`n -уменьшение макс. сопротивлений" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 
 			Count_DmgMod += 0.5
@@ -2877,28 +2919,32 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Players have Elemental Equilibrium"))
 		If (RegExMatch(A_LoopField, "Игроки имеют Равновесие стихий"))
 		{
-			MapModWarnings .= MapModWarn.PlayerEleEquilibrium ? "`nEle Equilibrium" : ""
+			;MapModWarnings .= MapModWarn.PlayerEleEquilibrium ? "`nEle Equilibrium" : ""
+			MapModWarnings .= MapModWarn.PlayerEleEquilibrium ? "`n Равновесие стихий" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have Point Blank"))
 		If (RegExMatch(A_LoopField, "У игроков есть Стрельба в упор"))
 		{
-			MapModWarnings .= MapModWarn.PlayerPointBlank ? "`nPoint Blank" : ""
+			;MapModWarnings .= MapModWarn.PlayerPointBlank ? "`nPoint Blank" : ""
+			MapModWarnings .= MapModWarn.PlayerPointBlank ? "`n Стрельба в упор" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters Poison on Hit"))
 		If (RegExMatch(A_LoopField, "Монстры отравляют при нанесении удара"))
 		{
-			MapModWarnings .= MapModWarn.MonstHitsPoison ? "`nHits Poison" : ""
+			;MapModWarnings .= MapModWarn.MonstHitsPoison ? "`nHits Poison" : ""
+			MapModWarnings .= MapModWarn.MonstHitsPoison ? "`n Отравление при получении удара" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players cannot Regenerate Life, Mana or Energy Shield"))
 		If (RegExMatch(A_LoopField, "Игроки не могут регенерировать здоровье, ману или энергетический щит"))
 		{
-			MapModWarnings .= MapModWarn.NoRegen ? "`nNo Regen" : ""
+			;MapModWarnings .= MapModWarn.NoRegen ? "`nNo Regen" : ""
+			MapModWarnings .= MapModWarn.NoRegen ? "`n Отсутствует регенерация" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
@@ -2917,7 +2963,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_RareMonst)
 			{
-				MapModWarnings .= MapModWarn.MonstRareNemesis ? "`nNemesis" : ""
+				;MapModWarnings .= MapModWarn.MonstRareNemesis ? "`nNemesis" : ""
+				MapModWarnings .= MapModWarn.MonstRareNemesis ? "`n Немезида" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_RareMonst := MapAffixCount
 				Continue
@@ -2933,7 +2980,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_MonstSlowedTaunted)
 			{
-				MapModWarnings .= MapModWarn.MonstNotSlowedTaunted ? "`nNot Slowed/Taunted" : ""
+				;MapModWarnings .= MapModWarn.MonstNotSlowedTaunted ? "`nNot Slowed/Taunted" : ""
+				MapModWarnings .= MapModWarn.MonstNotSlowedTaunted ? "`n Нельзя замедлить/спровоцировать" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_MonstSlowedTaunted := MapAffixCount
 				Continue
@@ -2949,7 +2997,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_BossDamageAttackCastSpeed)
 			{
-				MapModWarnings .= MapModWarn.BossDmgAtkCastSpeed ? "`nBoss Damage & Attack/Cast Speed" : ""
+				;MapModWarnings .= MapModWarn.BossDmgAtkCastSpeed ? "`nBoss Damage & Attack/Cast Speed" : ""
+				MapModWarnings .= MapModWarn.BossDmgAtkCastSpeed ? "`n Босс имеет увеличенный урон/скорость атаки/сотворения чар" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_BossDamageAttackCastSpeed := MapAffixCount
 				Continue
@@ -2965,7 +3014,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_BossLifeAoE)
 			{
-				MapModWarnings .= MapModWarn.BossLifeAoE ? "`nBoss Life & AoE" : ""
+				;MapModWarnings .= MapModWarn.BossLifeAoE ? "`nBoss Life & AoE" : ""
+				MapModWarnings .= MapModWarn.BossLifeAoE ? "`n Босс имеет увеличенное здоровье/область действия" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_BossLifeAoE := MapAffixCount
 				Continue
@@ -2981,7 +3031,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_MonstChaosEleRes)
 			{
-				MapModWarnings .= MapModWarn.MonstChaosEleRes ? "`nChaos/Ele Res" : ""
+				;MapModWarnings .= MapModWarn.MonstChaosEleRes ? "`nChaos/Ele Res" : ""
+				MapModWarnings .= MapModWarn.MonstChaosEleRes ? "`n Дополнительные сопротивления" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_MonstChaosEleRes := MapAffixCount
 				Continue
@@ -2997,7 +3048,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_MagicMonst)
 			{
-				MapModWarnings .= MapModWarn.MonstMagicBloodlines ? "`nBloodlines" : ""
+				;MapModWarnings .= MapModWarn.MonstMagicBloodlines ? "`nBloodlines" : ""
+				MapModWarnings .= MapModWarn.MonstMagicBloodlines ? "`n Родословные" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_MagicMonst := MapAffixCount
 				Continue
@@ -3013,7 +3065,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_MonstCritChanceMult)
 			{
-				MapModWarnings .= MapModWarn.MonstCritChanceMult ? "`nCrit Chance & Multiplier" : ""
+				;MapModWarnings .= MapModWarn.MonstCritChanceMult ? "`nCrit Chance & Multiplier" : ""
+				MapModWarnings .= MapModWarn.MonstCritChanceMult ? "`n Повышение шанса крита/множителя" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 
 				Count_DmgMod += 1
@@ -3032,7 +3085,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_PlayerDodgeMonstAccu)
 			{
-				MapModWarnings .= MapModWarn.PlayerDodgeMonstAccu ? "`nDodge unlucky / Monster Accuracy" : ""
+				;MapModWarnings .= MapModWarn.PlayerDodgeMonstAccu ? "`nDodge unlucky / Monster Accuracy" : ""
+				MapModWarnings .= MapModWarn.PlayerDodgeMonstAccu ? "`n Неудачный уворот / Меткие монстры" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_PlayerDodgeMonstAccu := MapAffixCount
 				Continue
@@ -3048,7 +3102,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_PlayerBlockArmour)
 			{
-				MapModWarnings .= MapModWarn.PlayerReducedBlockLessArmour ? "`nReduced Block / Less Armour" : ""
+				;MapModWarnings .= MapModWarn.PlayerReducedBlockLessArmour ? "`nReduced Block / Less Armour" : ""
+				MapModWarnings .= MapModWarn.PlayerReducedBlockLessArmour ? "`n Снижение блока / меньше брони" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_PlayerBlockArmour := MapAffixCount
 				Continue
@@ -3064,7 +3119,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_CannotLeech)
 			{
-				MapModWarnings .= MapModWarn.NoLeech ? "`nNo Leech" : ""
+				;MapModWarnings .= MapModWarn.NoLeech ? "`nNo Leech" : ""
+				MapModWarnings .= MapModWarn.NoLeech ? "`n Нельзя похищать здоровье/ману" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_CannotLeech := MapAffixCount
 				Continue
@@ -3079,7 +3135,8 @@ ParseMapAffixes(ItemDataAffixes)
 		;If (RegExMatch(A_LoopField, "Monsters cannot be Stunned"))
 		If (RegExMatch(A_LoopField, "Монстры не могут быть оглушены"))
 		{
-			MapModWarnings .= MapModWarn.MonstNotStunned ? "`nNot Stunned" : ""
+			;MapModWarnings .= MapModWarn.MonstNotStunned ? "`nNot Stunned" : ""
+			MapModWarnings .= MapModWarn.MonstNotStunned ? "`n Нельзя оглушить" : ""
 
 			If (Not Index_MonstStunLife)
 			{
@@ -3102,7 +3159,8 @@ ParseMapAffixes(ItemDataAffixes)
 		{
 			If (Not Index_MonstMoveAttCastSpeed)
 			{
-				MapModWarnings .= MapModWarn.MonstMoveAtkCastSpeed ? "`nMove/Attack/Cast Speed" : ""
+				;MapModWarnings .= MapModWarn.MonstMoveAtkCastSpeed ? "`nMove/Attack/Cast Speed" : ""
+				MapModWarnings .= MapModWarn.MonstMoveAtkCastSpeed ? "`n Повышение скорости передвижения/атаки/сотворения чар" : ""
 
 				Count_DmgMod += 0.5
 				String_DmgMod := String_DmgMod . ", Move/Attack/Cast"
@@ -3113,16 +3171,16 @@ ParseMapAffixes(ItemDataAffixes)
 				AppendAffixInfo(MakeMapAffixLine(A_LoopField, Index_MonstMoveAttCastSpeed), A_Index)
 				Continue
 			}
-			Else If InStr (Index_MonstMoveAttCastSpeed, "a")
+			Else If InStr(Index_MonstMoveAttCastSpeed, "a")
 			{
 				Index_MonstMoveAttCastSpeed := StrReplace(Index_MonstMoveAttCastSpeed, "a", "b")
 				AppendAffixInfo(MakeMapAffixLine(A_LoopField, Index_MonstMoveAttCastSpeed), A_Index)
 				Continue
 			}
-			Else If InStr (Index_MonstMoveAttCastSpeed, "b")
+			Else If InStr(Index_MonstMoveAttCastSpeed, "b")
 			{
-				Index_MonstMoveAttCastSpeed := StrReplace(Index_MonstMoveAttCastSpeed, "b", "")
-				AppendAffixInfo(MakeMapAffixLine(A_LoopField, Index_MonstMoveAttCastSpeed . "c"), A_Index)
+				Index_MonstMoveAttCastSpeed := StrReplace(Index_MonstMoveAttCastSpeed, "b", "c")
+				AppendAffixInfo(MakeMapAffixLine(A_LoopField, Index_MonstMoveAttCastSpeed), A_Index)
 				Continue
 			}
 		}
@@ -3137,7 +3195,8 @@ ParseMapAffixes(ItemDataAffixes)
 		If (RegExMatch(A_LoopField, "(\d+)% больше здоровья монстров", match))
 		{
 			RegExMonsterLife := match1
-			MapModWarnings .= MapModWarn.MonstMoreLife ? "`nMore Life" : ""
+			;MapModWarnings .= MapModWarn.MonstMoreLife ? "`nMore Life" : ""
+			MapModWarnings .= MapModWarn.MonstMoreLife ? "`n Больше здоровья у монстров" : ""
 
 			;RegExMatch(ItemData.FullText, "Map Tier: (\d+)", RegExMapTier)
 			RegExMatch(ItemData.FullText, "Уровень карты: (\d+)", RegExMapTier)
@@ -3195,18 +3254,23 @@ ParseMapAffixes(ItemDataAffixes)
 
 	If (Flag_TwoAdditionalProj and Flag_SkillsChain)
 	{
-		MapModWarnings := MapModWarnings . "`nAdditional Projectiles & Skills Chain"
+		;MapModWarnings := MapModWarnings . "`nAdditional Projectiles & Skills Chain"
+		MapModWarnings := MapModWarnings . "`n Дополнительные снаряды & Урон по цепи"
 	}
 
 	If (Count_DmgMod >= 1.5)
 	{
-		String_DmgMod := SubStr(String_DmgMod, 3)
-		MapModWarnings := MapModWarnings . "`nMulti Damage: " . String_DmgMod
+		If (MapModWarn.MultiDmgWarning)
+		{
+			String_DmgMod := SubStr(String_DmgMod, 3)
+			MapModWarnings := MapModWarnings . "`n Множественный урон: " . String_DmgMod
+		}
 	}
 	
 	If (Not Opts.EnableMapModWarnings)
 	{
-		MapModWarnings := " disabled"
+		;MapModWarnings := " disabled"
+		MapModWarnings := " отключено"
 	}
 
 	return MapModWarnings
@@ -3218,25 +3282,40 @@ ParseLeagueStoneAffixes(ItemDataAffixes, Item) {
 
 LookupAffixAndSetInfoLine(DataSource, AffixType, ItemLevel, Value, AffixLineText:="", AffixLineNum:="")
 {	
-	If( ! AffixLineText){
+	If ( ! AffixLineText){
 		AffixLineText := A_LoopField
 	}
-	If( ! AffixLineNum){
+	If ( ! AffixLineNum){
 		AffixLineNum := A_Index
 	}
 	
 	AffixMode := "Native"
-	If(AffixType ~= ".*Craft.*")
+	If (AffixType ~= ".*Craft.*")
 	{
 		AffixMode := "Crafted"
 	}
-	Else If(AffixType ~= ".*Essence.*")
+	Else If (AffixType ~= ".*Essence.*")
 	{
 		AffixMode := "Essence"
 	}
 	
 	ValueRanges := LookupAffixData(DataSource, ItemLevel, Value, CurrTier)
-	AppendAffixInfo(MakeAffixDetailLine(AffixLineText, AffixType, ValueRanges, CurrTier), AffixLineNum)
+		
+	;If (RegexMatch(AffixLineText, "Adds (\d+) to (\d+) (.+)", match) and ValueRanges[5])
+	If (RegexMatch(AffixLineText, "Добавляет от (\d+) до (\d+) (.+)", match) and ValueRanges[5])
+	{
+		NormalRow := MakeAffixDetailLine(AffixLineText, AffixType, ValueRanges, CurrTier)
+		
+		avgDmg := NumFormatPointFiveOrInt((match1 + match2)/2)
+		;AvgLineText := "   Average: "  StrPad(avgDmg, 4, "left")
+		AvgLineText := "   В среднем: "  StrPad(avgDmg, 4, "left")
+		
+		AppendAffixInfo([NormalRow, [AvgLineText, [ValueRanges[5], " ", ValueRanges[7], " "], ""]], AffixLineNum)
+	}
+	Else
+	{
+		AppendAffixInfo(MakeAffixDetailLine(AffixLineText, AffixType, ValueRanges, CurrTier), AffixLineNum)
+	}
 }
 	
 /*
@@ -3244,7 +3323,7 @@ Finds possible tier combinations for a single value (thus from a single affix li
 */
 SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 {
-	If((Mod1DataArray = False) or (Mod2DataArray = False))
+	If ((Mod1DataArray = False) or (Mod2DataArray = False))
 	{
 		return False
 	}
@@ -3252,7 +3331,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 	Mod1MinVal := Mod1DataArray[Mod1DataArray.MaxIndex()].min
 	Mod2MinVal := Mod2DataArray[Mod2DataArray.MaxIndex()].min
 	
-	If(Mod1MinVal + Mod2MinVal > Value)
+	If (Mod1MinVal + Mod2MinVal > Value)
 	{
 		; Value is smaller than smallest possible sum, so it can't be composite
 		return
@@ -3261,7 +3340,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 	Mod1MinIlvl := Mod1DataArray[Mod1DataArray.MaxIndex()].ilvl
 	Mod2MinIlvl := Mod2DataArray[Mod2DataArray.MaxIndex()].ilvl
 	
-	If( (Mod1MinIlvl > ItemLevel) or (Mod2MinIlvl > ItemLevel) )
+	If ( (Mod1MinIlvl > ItemLevel) or (Mod2MinIlvl > ItemLevel) )
 	{
 		; The ItemLevel is too low to roll both affixes
 		return
@@ -3271,7 +3350,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 	TmpValue := Value - Mod2MinVal
 	Mod1Tiers := LookupTierByValue(TmpValue, Mod1DataArray, ItemLevel)
 	
-	If(Mod1Tiers.Tier)
+	If (Mod1Tiers.Tier)
 	{
 		; Tier exists, so we already found a working combination
 		Mod1TopTier := Mod1Tiers.Tier
@@ -3282,7 +3361,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 		; Assuming the min portion for Mod2 was not enough, so look up the highest tier for Mod1, limited by ItemLevel
 		Loop
 		{
-			If( Mod1DataArray[A_Index].ilvl <= ItemLevel )
+			If ( Mod1DataArray[A_Index].ilvl <= ItemLevel )
 			{
 				Mod1TopTier := A_Index
 				Break
@@ -3293,7 +3372,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 		TmpValue := Value - Mod1DataArray[Mod1TopTier].max
 		Mod2Tiers := LookupTierByValue(TmpValue, Mod2DataArray, ItemLevel)
 		
-		If(Mod2Tiers.Tier)
+		If (Mod2Tiers.Tier)
 		{
 			; Tier exists, we found a working combination
 			Mod2BtmTier := Mod2Tiers.Tier
@@ -3310,7 +3389,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 	TmpValue := Value - Mod1MinVal
 	Mod2Tiers := LookupTierByValue(TmpValue, Mod2DataArray, ItemLevel)
 	
-	If(Mod2Tiers.Tier)
+	If (Mod2Tiers.Tier)
 	{
 		Mod2TopTier := Mod2Tiers.Tier
 		Mod1BtmTier := Mod1DataArray.MaxIndex()
@@ -3319,7 +3398,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 	{
 		Loop
 		{
-			If( Mod2DataArray[A_Index].ilvl <= ItemLevel )
+			If ( Mod2DataArray[A_Index].ilvl <= ItemLevel )
 			{
 				Mod2TopTier := A_Index
 				Break
@@ -3329,7 +3408,7 @@ SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 		TmpValue := Value - Mod2DataArray[Mod2TopTier].max
 		Mod1Tiers := LookupTierByValue(TmpValue, Mod1DataArray, ItemLevel)
 		
-		If(Mod1Tiers.Tier)
+		If (Mod1Tiers.Tier)
 		{
 			Mod1BtmTier := Mod1Tiers.Tier
 		}
@@ -3353,14 +3432,14 @@ Finds possible tier combinations for the following case/paramenters:
 */
 SolveTiers_ModHyb(ModHybValue, HybOnlyValue, ModDataArray, HybWithModDataArray, HybOnlyDataArray, ItemLevel)
 {
-	If((ModDataArray = False) or (HybWithModDataArray = False) or (HybOnlyDataArray = False))
+	If ((ModDataArray = False) or (HybWithModDataArray = False) or (HybOnlyDataArray = False))
 	{
 		return False
 	}
 	
 	HybTiers := LookupTierByValue(HybOnlyValue, HybOnlyDataArray, ItemLevel)
 	
-	If(not(HybTiers.Tier))
+	If (not(HybTiers.Tier))
 	{
 		; HybOnlyValue can't be found as a bare hybrid mod.
 		return
@@ -3373,25 +3452,25 @@ SolveTiers_ModHyb(ModHybValue, HybOnlyValue, ModDataArray, HybWithModDataArray, 
 	RemainHiTiers := LookupTierByValue(RemainHi, ModDataArray, ItemLevel)
 	RemainLoTiers := LookupTierByValue(RemainLo, ModDataArray, ItemLevel)
 	
-	If( RemainHiTiers.Tier and RemainLoTiers.Tier )
+	If ( RemainHiTiers.Tier and RemainLoTiers.Tier )
 	{
 		; Both RemainLo/Hi result in a possible tier
 		ModTopTier := RemainHiTiers.Tier
 		ModBtmTier := RemainLoTiers.Tier
 	}
-	Else If(RemainHiTiers.Tier)
+	Else If (RemainHiTiers.Tier)
 	{
 		; Only RemainHi gives a possible tier, assign that tier to both Top/Btm output results
 		ModTopTier := RemainHiTiers.Tier
 		ModBtmTier := RemainHiTiers.Tier
 	}
-	Else If(RemainLoTiers.Tier)
+	Else If (RemainLoTiers.Tier)
 	{
 		; Only RemainLo gives a possible tier, assign that tier to both Top/Btm output results
 		ModTopTier := RemainLoTiers.Tier
 		ModBtmTier := RemainLoTiers.Tier
 	}
-	Else If(RemainHi > ModDataArray[1].max)
+	Else If (RemainHi > ModDataArray[1].max)
 	{
 		; Legacy cases
 		ModTopTier := 0
@@ -3418,7 +3497,7 @@ Finds possible tier combinations for the following case/paramenters:
 */
 SolveTiers_Mod1Mod2Hyb(Value1, Value2, Mod1DataArray, Mod2DataArray, Hyb1DataArray, Hyb2DataArray, ItemLevel, TierCombinationArray=False)
 {
-	If((Mod1DataArray = False) or (Mod2DataArray = False) or (Hyb1DataArray = False) or (Hyb2DataArray = False))
+	If ((Mod1DataArray = False) or (Mod2DataArray = False) or (Hyb1DataArray = False) or (Hyb2DataArray = False))
 	{
 		return False
 	}
@@ -3426,7 +3505,7 @@ SolveTiers_Mod1Mod2Hyb(Value1, Value2, Mod1DataArray, Mod2DataArray, Hyb1DataArr
 	Mod1HybTiers := SolveTiers_Mod1Mod2(Value1, Mod1DataArray, Hyb1DataArray, ItemLevel)
 	Mod2HybTiers := SolveTiers_Mod1Mod2(Value2, Mod2DataArray, Hyb2DataArray, ItemLevel)
 
-	If(not( IsObject(Mod1HybTiers) and IsObject(Mod2HybTiers) ))
+	If (not( IsObject(Mod1HybTiers) and IsObject(Mod2HybTiers) ))
 	{
 		; Checking that both results are objects and thus contain tiers
 		return
@@ -3445,36 +3524,36 @@ SolveTiers_Mod1Mod2Hyb(Value1, Value2, Mod1DataArray, Mod2DataArray, Hyb1DataArr
 	HybTopTier := (Mod1HybTiers.Mod2Top > Mod2HybTiers.Mod2Top) ? Mod1HybTiers.Mod2Top : Mod2HybTiers.Mod2Top
 	HybBtmTier := (Mod1HybTiers.Mod2Btm < Mod2HybTiers.Mod2Btm) ? Mod1HybTiers.Mod2Btm : Mod2HybTiers.Mod2Btm
 	
-	If(HybTopTier > HybBtmTier)
+	If (HybTopTier > HybBtmTier)
 	{
 		; Check that HybTopTier is not worse (numerically higher) than HybBtmTier.
 		return
 	}
 	
 	; Check if any hybrid tier was actually changed and re-calculate the corresponding non-hybrid tier.
-	If(Mod1HybTiers.Mod2Top != HybTopTier)
+	If (Mod1HybTiers.Mod2Top != HybTopTier)
 	{
 		TmpValue := Value1 - Hyb1DataArray[HybTopTier].max
 		Mod1BtmTier := LookupTierByValue(TmpValue, Mod1DataArray, ItemLevel).Tier
 	}
-	Else If(Mod2HybTiers.Mod2Top != HybTopTier)
+	Else If (Mod2HybTiers.Mod2Top != HybTopTier)
 	{
 		TmpValue := Value2 - Hyb2DataArray[HybTopTier].max
 		Mod2BtmTier := LookupTierByValue(TmpValue, Mod2DataArray, ItemLevel).Tier
 	}
 	
-	If(Mod1HybTiers.Mod2Btm != HybBtmTier)
+	If (Mod1HybTiers.Mod2Btm != HybBtmTier)
 	{
 		TmpValue := Value1 - Hyb1DataArray[HybBtmTier].min
 		Mod1TopTier := LookupTierByValue(TmpValue, Mod1DataArray, ItemLevel).Tier
 	}
-	Else If(Mod2HybTiers.Mod2Btm != HybBtmTier)
+	Else If (Mod2HybTiers.Mod2Btm != HybBtmTier)
 	{
 		TmpValue := Value2 - Hyb2DataArray[HybBtmTier].min
 		Mod2TopTier := LookupTierByValue(TmpValue, Mod2DataArray, ItemLevel).Tier
 	}
 	
-	If(TierCombinationArray = True)
+	If (TierCombinationArray = True)
 	{
 		TierArray := []
 		Mod1Tier := Mod1TopTier
@@ -3486,7 +3565,7 @@ SolveTiers_Mod1Mod2Hyb(Value1, Value2, Mod1DataArray, Mod2DataArray, Hyb1DataArr
 				HybTier := HybTopTier
 				While HybTier <= HybBtmTier
 				{
-					If( Mod1DataArray[Mod1Tier].min + Hyb1DataArray[HybTier].min < Value1
+					If ( Mod1DataArray[Mod1Tier].min + Hyb1DataArray[HybTier].min < Value1
 					and Mod1DataArray[Mod1Tier].max + Hyb1DataArray[HybTier].max > Value1
 					and Mod2DataArray[Mod2Tier].min + Hyb2DataArray[HybTier].min < Value2
 					and Mod2DataArray[Mod2Tier].max + Hyb2DataArray[HybTier].max > Value2)
@@ -3506,7 +3585,7 @@ SolveTiers_Mod1Mod2Hyb(Value1, Value2, Mod1DataArray, Mod2DataArray, Hyb1DataArr
 
 SolveTiers_Hyb1Hyb2(HybOverlapValue, Hyb1OnlyValue, Hyb2OnlyValue, Hyb1OverlapDataArray, Hyb2OverlapDataArray, Hyb1OnlyDataArray, Hyb2OnlyDataArray, ItemLevel)
 {
-	If((Hyb1OverlapDataArray = False) or (Hyb2OverlapDataArray = False) or (Hyb1OnlyDataArray = False) or (Hyb2OnlyDataArray = False))
+	If ((Hyb1OverlapDataArray = False) or (Hyb2OverlapDataArray = False) or (Hyb1OnlyDataArray = False) or (Hyb2OnlyDataArray = False))
 	{
 		return False
 	}
@@ -3514,7 +3593,7 @@ SolveTiers_Hyb1Hyb2(HybOverlapValue, Hyb1OnlyValue, Hyb2OnlyValue, Hyb1OverlapDa
 	Hyb1Tiers := LookupTierByValue(Hyb1OnlyValue, Hyb1OnlyDataArray, ItemLevel)
 	Hyb2Tiers := LookupTierByValue(Hyb2OnlyValue, Hyb2OnlyDataArray, ItemLevel)
 	
-	If(not(Hyb1Tiers.Tier) or not(Hyb2Tiers.Tier))
+	If (not(Hyb1Tiers.Tier) or not(Hyb2Tiers.Tier))
 	{
 		; Value can't be found as a bare hybrid mod.
 		return
@@ -3523,7 +3602,7 @@ SolveTiers_Hyb1Hyb2(HybOverlapValue, Hyb1OnlyValue, Hyb2OnlyValue, Hyb1OverlapDa
 	OverlapValueMin := Hyb1OverlapDataArray[Hyb1Tiers.Tier].min + Hyb2OverlapDataArray[Hyb2Tiers.Tier].min
 	OverlapValueMax := Hyb1OverlapDataArray[Hyb1Tiers.Tier].max + Hyb2OverlapDataArray[Hyb2Tiers.Tier].max
 	
-	If(not( (OverlapValueMin < HybOverlapValue) and (HybOverlapValue < OverlapValueMax) ))
+	If (not( (OverlapValueMin < HybOverlapValue) and (HybOverlapValue < OverlapValueMax) ))
 	{
 		; Combined Value can't be explained.
 		return
@@ -3537,12 +3616,12 @@ ReviseTierCombinationArray(TierCombinationArray, ReviseValue, ReviseIndex)
 	RevisedTierCombinationArray := []
 	Loop % TierCombinationArray.MaxIndex()
 	{
-		If(TierCombinationArray[A_Index][ReviseIndex] = ReviseValue)
+		If (TierCombinationArray[A_Index][ReviseIndex] = ReviseValue)
 		{
 			RevisedTierCombinationArray.push(TierCombinationArray[A_Index])
 		}
 	}
-	If(not RevisedTierCombinationArray[1][1]){
+	If (not RevisedTierCombinationArray[1][1]){
 		return False
 	}
 	return RevisedTierCombinationArray
@@ -3550,7 +3629,7 @@ ReviseTierCombinationArray(TierCombinationArray, ReviseValue, ReviseIndex)
 
 GetTierRangesFromTierCombinationArray(TierCombinationArray)
 {
-	If(not IsObject(TierCombinationArray)){
+	If (not IsObject(TierCombinationArray)){
 		return False
 	}
 	
@@ -3566,11 +3645,11 @@ GetTierRangesFromTierCombinationArray(TierCombinationArray)
 		BtmTier := 0
 		Loop % TierCombinationArray.MaxIndex()
 		{
-			If(TierCombinationArray[A_Index][TierIdxToCheck] < TopTier)
+			If (TierCombinationArray[A_Index][TierIdxToCheck] < TopTier)
 			{
 				TopTier := TierCombinationArray[A_Index][TierIdxToCheck]
 			}
-			If(TierCombinationArray[A_Index][TierIdxToCheck] > BtmTier)
+			If (TierCombinationArray[A_Index][TierIdxToCheck] > BtmTier)
 			{
 				BtmTier := TierCombinationArray[A_Index][TierIdxToCheck]
 			}
@@ -3589,9 +3668,9 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 	
 	result := []
 	
-	If(IsObject(Mod2DataArray) and Mod2Tier)
+	If (IsObject(Mod2DataArray) and Mod2Tier)
 	{
-		If(IsObject(Mod1Tiers))
+		If (IsObject(Mod1Tiers))
 		{
 			BtmMin := Mod1DataArray[Mod1Tiers[2]].min + Mod2DataArray[Mod2Tier].min
 			BtmMax := Mod1DataArray[Mod1Tiers[2]].max + Mod2DataArray[Mod2Tier].max
@@ -3599,7 +3678,7 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 			TopMax := Mod1DataArray[Mod1Tiers[1]].max + Mod2DataArray[Mod2Tier].max
 			
 			result[1] := FormatMultiTierRange(BtmMin, BtmMax, TopMin, TopMax)
-			result[2] := 0
+			result[2] := ""
 		}
 		Else
 		{
@@ -3612,9 +3691,9 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 	}
 	Else
 	{
-		If(Mod1DataArray[1].maxHi)	; arbitrary pick to check whether mod has double ranges
+		If (Mod1DataArray[1].maxHi)	; arbitrary pick to check whether mod has double ranges
 		{
-			If(IsObject(Mod1Tiers))
+			If (IsObject(Mod1Tiers))
 			{
 				WorstBtmMin := Mod1DataArray[Mod1Tiers[2]].minLo
 				WorstBtmMax := Mod1DataArray[Mod1Tiers[2]].minHi
@@ -3625,16 +3704,17 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 				BestTopMin := Mod1DataArray[Mod1Tiers[1]].maxLo
 				BestTopMax := Mod1DataArray[Mod1Tiers[1]].maxHi
 				
-				TmpFullrange := WorstBtmMin "-" WorstBtmMax " to " WorstTopMin "-" WorstTopMax " " Opts.MultiTierRangeSeparator " " BestBtmMin "-" BestBtmMax " to " BestTopMin "-" BestTopMax
+				;TmpFullrange := WorstBtmMin "-" WorstBtmMax " to " WorstTopMin "-" WorstTopMax " " Opts.MultiTierRangeSeparator " " BestBtmMin "-" BestBtmMax " to " BestTopMin "-" BestTopMax
+				TmpFullrange := "от " WorstBtmMin "-" WorstBtmMax " до " WorstTopMin "-" WorstTopMax " " Opts.MultiTierRangeSeparator " " "от " BestBtmMin "-" BestBtmMax " до " BestTopMin "-" BestTopMax
 				;Itemdata.SpecialCaseNotation .= "`nWe have a rare case of a double range mod with multi tier uncertainty here.`n The entire TierRange is: " TmpFullrange
 				;перевод не очень
 				;Itemdata.SpecialCaseNotation .= "`nЭто редкий случай - мод с двойным диапазоном с неопределенностью между несколькими уровнями.`n Полный диапазон уровней: " TmpFullrange
 				Itemdata.SpecialCaseNotation .= "`nЭто редкий случай - мод с двойным диапазоном с неопределенностью в уровнях.`n Полный диапазон уровней: " TmpFullrange
 				
-				result[1] := FormatMultiTierRange(WorstBtmMin, WorstTopMin, BestBtmMax, BestTopMax)
-				result[2] := ""
+				result[1] := WorstBtmMin  Opts.DoubleRangeSeparator  WorstTopMin  Opts.MultiTierRangeSeparator  BestBtmMax  Opts.DoubleRangeSeparator  BestTopMax
+				result[2] := " "
 			}
-			Else If(IsNum(Mod1Tiers))
+			Else If (IsNum(Mod1Tiers))
 			{
 				BtmMin := Mod1DataArray[Mod1Tiers].minLo
 				BtmMax := Mod1DataArray[Mod1Tiers].minHi
@@ -3643,6 +3723,7 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 				
 				result[1] := FormatDoubleRanges(BtmMin, BtmMax, TopMin, TopMax)
 				result[2] := Mod1DataArray[Mod1Tiers].ilvl
+				result[5] := NumFormatPointFiveOrInt((BtmMin + TopMin)/2) "-" StrPad(NumFormatPointFiveOrInt((BtmMax + TopMax)/2), StrLen(TopMin) + 1 + StrLen(TopMax) )
 			}
 			Else
 			{
@@ -3651,11 +3732,11 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 			}
 			
 			BtmMin := Mod1DataArray[Mod1DataArray.MaxIndex()].minLo
-			BtmMax := Mod1DataArray[Mod1DataArray.MaxIndex()].minHi
-			TopMin := Mod1DataArray[1].maxLo
+			BtmMax := Mod1DataArray[1].minHi
+			TopMin := Mod1DataArray[Mod1DataArray.MaxIndex()].maxLo
 			TopMax := Mod1DataArray[1].maxHi
 			
-			If(Opts.OnlyCompactForTotalColumn and not Opts.UseCompactDoubleRanges){
+			If (Opts.OnlyCompactForTotalColumn and not Opts.UseCompactDoubleRanges){
 				result[3] := FormatDoubleRanges(BtmMin, BtmMax, TopMin, TopMax, "compact")
 			}
 			Else{
@@ -3663,10 +3744,11 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 			}
 			
 			result[4] := Mod1DataArray[1].ilvl
+			result[7] := NumFormatPointFiveOrInt((BtmMin + TopMin)/2) "-" StrPad(NumFormatPointFiveOrInt((BtmMax + TopMax)/2), StrLen(TopMin) + 1 + StrLen(TopMax) )
 		}
 		Else
 		{
-			If(IsObject(Mod1Tiers))
+			If (IsObject(Mod1Tiers))
 			{
 				BtmMin := Mod1DataArray[Mod1Tiers[2]].min
 				BtmMax := Mod1DataArray[Mod1Tiers[2]].max
@@ -3676,7 +3758,7 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 				result[1] := FormatMultiTierRange(BtmMin, BtmMax, TopMin, TopMax)
 				result[2] := ""
 			}
-			Else If(IsNum(Mod1Tiers))
+			Else If (IsNum(Mod1Tiers))
 			{
 				result[1] := Mod1DataArray[Mod1Tiers].values
 				result[2] := Mod1DataArray[Mod1Tiers].ilvl
@@ -3692,7 +3774,7 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 		}
 	}
 	
-	If(Mod1Tiers = 0 or Mod1Tiers[1] = 0 or Mod1Tiers[2] = 0 or Mod2Tier = 0){
+	If (Mod1Tiers = 0 or Mod1Tiers[1] = 0 or Mod1Tiers[2] = 0 or Mod2Tier = 0){
 		result[1] := "Legacy?"
 	}
 	return result
@@ -3701,11 +3783,11 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 
 FormatValueRangesAndIlvl_MultiTiers(Value, Mod1DataArray, Mod2DataArray, Mod1TopTier, Mod1BtmTier, Mod2TopTier, Mod2BtmTier)
 {
-	If( (Mod1TopTier = Mod1BtmTier) and (Mod2TopTier = Mod2BtmTier) )
+	If ( (Mod1TopTier = Mod1BtmTier) and (Mod2TopTier = Mod2BtmTier) )
 	{
 		result := []
 		result[1] := (Mod1DataArray[Mod1TopTier].min + Mod2DataArray[Mod2BtmTier].min) "-" (Mod1DataArray[Mod1TopTier].max + Mod2DataArray[Mod2BtmTier].max)
-		result[2] := 0
+		result[2] := ""
 		result[3] := Mod1DataArray[Mod1DataArray.MaxIndex()].min + Mod2DataArray[Mod2DataArray.MaxIndex()].min "-" Mod1DataArray[1].max + Mod2DataArray[1].max
 		result[4] := (Mod1DataArray[1].ilvl > Mod2DataArray[1].ilvl) ? Mod1DataArray[1].ilvl : Mod2DataArray[1].ilvl
 		
@@ -3739,9 +3821,9 @@ FormatValueRangesAndIlvl_MultiTiers(Value, Mod1DataArray, Mod2DataArray, Mod1Top
 			; Increment t here because we might break/continue the loop just below.
 			++t
 			
-			If(not( (TmpMin <= Value) and (Value <= TmpMax) ))
+			If (not( (TmpMin <= Value) and (Value <= TmpMax) ))
 			{
-				If(t_RestartIndex)
+				If (t_RestartIndex)
 				{
 					; Value not within Tmp-Range, but we have a t_RestartIndex, so we had matching Tmp-Ranges for this b value
 					;   but the Tmp-Ranges are getting too low for "Value" now. Break t loop to check next b, start t at t_RestartIndex and set t_RestartIndex to 0 (see loop end).
@@ -3751,34 +3833,34 @@ FormatValueRangesAndIlvl_MultiTiers(Value, Mod1DataArray, Mod2DataArray, Mod1Top
 				Else continue
 			}
 			
-			If(not(t_RestartIndex))
+			If (not(t_RestartIndex))
 			{
 				; Value is within Tmp-Range (because section above was passed) and we have no t_RestartIndex yet.
 				; This means this is the first matching range found for this b. Record this t (and remove the increment from the loop start).
 				t_RestartIndex := (t-1)
 			}
 			
-			If(TmpMin <= RangeBtmMin)
+			If (TmpMin <= RangeBtmMin)
 			{
-				If(TmpMin < RangeBtmMin)
+				If (TmpMin < RangeBtmMin)
 				{
 					RangeBtmMin := TmpMin
 					RangeBtmMax := TmpMax
 				}
-				Else If(TmpMax < RangeBtmMax)
+				Else If (TmpMax < RangeBtmMax)
 				{
 					RangeBtmMax := TmpMax
 				}
 			}
 			
-			If(TmpMax >= RangeTopMax)
+			If (TmpMax >= RangeTopMax)
 			{
-				If(TmpMax > RangeTopMax)
+				If (TmpMax > RangeTopMax)
 				{
 					RangeTopMax := TmpMax
 					RangeTopMin := TmpMin
 				}
-				Else If(TmpMin > RangeTopMin)
+				Else If (TmpMin > RangeTopMin)
 				{
 					RangeTopMin := TmpMin
 				}
@@ -3792,7 +3874,7 @@ FormatValueRangesAndIlvl_MultiTiers(Value, Mod1DataArray, Mod2DataArray, Mod1Top
 	
 	result := []
 	result[1] := FormatMultiTierRange(RangeBtmMin, RangeBtmMax, RangeTopMin, RangeTopMax)
-	result[2] := 0
+	result[2] := ""
 	result[3] := Mod1DataArray[Mod1DataArray.MaxIndex()].min + Mod2DataArray[Mod2DataArray.MaxIndex()].min "-" Mod1DataArray[1].max + Mod2DataArray[1].max
 	result[4] := (Mod1DataArray[1].ilvl > Mod2DataArray[1].ilvl) ? Mod1DataArray[1].ilvl : Mod2DataArray[1].ilvl
 	
@@ -3831,11 +3913,11 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 	Overlap2Tiers := SolveTiers_Mod1Mod2Hyb(ValueDef2, ValueLife, DualDef_D2_DataArray, Life_DataArray, DefLife_D2_DataArray, DefLife_Li_DataArray, ItemLevel, True)
 	
 	
-	If(IsObject(Overlap1Tiers))
+	If (IsObject(Overlap1Tiers))
 	{
 		Overlap1TierCombinationArray := ReviseTierCombinationArray(Overlap1Tiers.TierCombinationArray, DualDef_D2_Tiers.Tier, 1)
 	
-		If(Overlap1TierCombinationArray = False){
+		If (Overlap1TierCombinationArray = False){
 			Overlap1Tiers := False
 		}
 		Else
@@ -3852,11 +3934,11 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 		}
 	}
 	
-	If(IsObject(Overlap2Tiers))
+	If (IsObject(Overlap2Tiers))
 	{
 		Overlap2TierCombinationArray := ReviseTierCombinationArray(Overlap2Tiers.TierCombinationArray, DualDef_D1_Tiers.Tier, 1)
 	
-		If(Overlap2TierCombinationArray = False){
+		If (Overlap2TierCombinationArray = False){
 			Overlap2Tiers := False
 		}
 		Else
@@ -3874,7 +3956,7 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 	}
 	
 	
-	If(DualDef_D1_Tiers.Tier and DualDef_D2_Tiers.Tier and (DualDef_D1_Tiers.Tier = DualDef_D2_Tiers.Tier) and LifeTiers.Tier)
+	If (DualDef_D1_Tiers.Tier and DualDef_D2_Tiers.Tier and (DualDef_D1_Tiers.Tier = DualDef_D2_Tiers.Tier) and LifeTiers.Tier)
 	{
 		ValueRange1 := FormatValueRangesAndIlvl(DualDef_D1_DataArray, DualDef_D1_Tiers.Tier)
 		LineTxt1    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumDef1].Text, "Hybrid Defence Prefix", ValueRange1, DualDef_D1_Tiers.Tier, False)
@@ -3888,9 +3970,9 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 		Itemdata.UncertainAffixes[Keyname]["1_ModHyb"] := [2, 0, LineNumDef1, LineTxt1, LineNumDef2, LineTxt2, LineNumLife, LineTxt3]
 	}
 	
-	If(IsObject(Def1LifeTiers) or IsObject(Def2LifeTiers))
+	If (IsObject(Def1LifeTiers) or IsObject(Def2LifeTiers))
 	{
-		If(IsObject(Def1LifeTiers))
+		If (IsObject(Def1LifeTiers))
 		{
 			ValueRange1 := FormatValueRangesAndIlvl(DualDef_D1_DataArray, Def1LifeTiers.Hyb1, DefLife_D1_DataArray, Def1LifeTiers.Hyb2)
 			LineTxt1    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumDef1].Text, ["Hybrid Defence Prefix", "Hybrid Prefix"], ValueRange1, [Def1LifeTiers.Hyb1, Def1LifeTiers.Hyb2], False)
@@ -3902,7 +3984,7 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 			LineTxt3    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumLife].Text, "Hybrid Prefix", ValueRange3, Def1LifeTiers.Hyb2, False)
 		}
 		
-		If(IsObject(Def2LifeTiers))
+		If (IsObject(Def2LifeTiers))
 		{
 			ValueRange4 := FormatValueRangesAndIlvl(DualDef_D1_DataArray, Def2LifeTiers.Hyb1)
 			LineTxt4    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumDef2].Text, "Hybrid Defence Prefix", ValueRange4, Def2LifeTiers.Hyb1, False)
@@ -3914,23 +3996,23 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 			LineTxt6    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumLife].Text, "Hybrid Prefix", ValueRange6, Def2LifeTiers.Hyb2, False)
 		}
 		
-		If(IsObject(Def1LifeTiers) and IsObject(Def2LifeTiers))
+		If (IsObject(Def1LifeTiers) and IsObject(Def2LifeTiers))
 		{
 			Itemdata.UncertainAffixes[Keyname]["2_Hyb1Hyb2"] := [2, 0, LineNumDef1, LineTxt1, LineNumDef2, LineTxt2, LineNumLife, LineTxt3, LineNumDef1, LineTxt4, LineNumDef2, LineTxt5, LineNumLife, LineTxt6]
 		}
-		Else If(IsObject(Def1LifeTiers))
+		Else If (IsObject(Def1LifeTiers))
 		{
 			Itemdata.UncertainAffixes[Keyname]["2_Hyb1Hyb2"] := [2, 0, LineNumDef1, LineTxt1, LineNumDef2, LineTxt2, LineNumLife, LineTxt3]
 		}
-		Else If(IsObject(Def2LifeTiers))
+		Else If (IsObject(Def2LifeTiers))
 		{
 			Itemdata.UncertainAffixes[Keyname]["2_Hyb1Hyb2"] := [2, 0, LineNumDef1, LineTxt4, LineNumDef2, LineTxt5, LineNumLife, LineTxt6]
 		}	
 	}
 	
-	If(IsObject(Overlap1Tiers) or IsObject(Overlap2Tiers))
+	If (IsObject(Overlap1Tiers) or IsObject(Overlap2Tiers))
 	{
-		If(IsObject(Overlap1Tiers))
+		If (IsObject(Overlap1Tiers))
 		{
 			ValueRange1 := FormatValueRangesAndIlvl_MultiTiers(ValueDef1, DualDef_D1_DataArray, DefLife_D1_DataArray, Overlap1Tiers.Mod1Top, Overlap1Tiers.Mod1Btm, Overlap1Tiers.HybTop, Overlap1Tiers.HybBtm)
 			LineTxt1    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumDef1].Text, ["Hybrid Defence Prefix", "Hybrid Prefix"], ValueRange1, [[Overlap1Tiers.Mod1Top, Overlap1Tiers.Mod1Btm], [Overlap1Tiers.HybTop, Overlap1Tiers.HybBtm]], False)
@@ -3942,7 +4024,7 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 			LineTxt3    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumLife].Text, ["Prefix", "Hybrid Prefix"], ValueRange3, [[Overlap1Tiers.Mod2Top, Overlap1Tiers.Mod2Btm], [Overlap1Tiers.HybTop, Overlap1Tiers.HybBtm]], False)
 		}
 		
-		If(IsObject(Overlap2Tiers))
+		If (IsObject(Overlap2Tiers))
 		{
 			ValueRange4 := FormatValueRangesAndIlvl(DualDef_D1_DataArray, DualDef_D1_Tiers.Tier)
 			LineTxt4    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumDef1].Text, "Hybrid Defence Prefix", ValueRange4, DualDef_D1_Tiers.Tier, False)
@@ -3954,15 +4036,15 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 			LineTxt6    := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNumLife].Text, ["Prefix", "Hybrid Prefix"], ValueRange6, [[Overlap2Tiers.Mod2Top, Overlap2Tiers.Mod2Btm], [Overlap2Tiers.HybTop, Overlap2Tiers.HybBtm]], False)
 		}
 		
-		If(IsObject(Overlap1Tiers) and IsObject(Overlap2Tiers))
+		If (IsObject(Overlap1Tiers) and IsObject(Overlap2Tiers))
 		{
 			Itemdata.UncertainAffixes[Keyname]["3_ModHyb1Hyb2"] := [3, 0, LineNumDef1, LineTxt1, LineNumDef2, LineTxt2, LineNumLife, LineTxt3, LineNumDef1, LineTxt4, LineNumDef2, LineTxt5, LineNumLife, LineTxt6]
 		}
-		Else If(IsObject(Overlap1Tiers))
+		Else If (IsObject(Overlap1Tiers))
 		{
 			Itemdata.UncertainAffixes[Keyname]["3_ModHyb1Hyb2"] := [3, 0, LineNumDef1, LineTxt1, LineNumDef2, LineTxt2, LineNumLife, LineTxt3]
 		}
-		Else If(IsObject(Overlap2Tiers))
+		Else If (IsObject(Overlap2Tiers))
 		{
 			Itemdata.UncertainAffixes[Keyname]["3_ModHyb1Hyb2"] := [3, 0, LineNumDef1, LineTxt4, LineNumDef2, LineTxt5, LineNumLife, LineTxt6]
 		}	
@@ -3990,7 +4072,7 @@ SolveAffixes_Mod1Mod2Hyb(Keyname, LineNum1, LineNum2, Value1, Value2, Mod1Type, 
 	Mod1Mod2HybTiers := SolveTiers_Mod1Mod2Hyb(Value1, Value2, Mod1DataArray, Mod2DataArray, Hyb1DataArray, Hyb2DataArray, ItemLevel)
 	
 	
-	If(Mod1Tiers.Tier and Mod2Tiers.Tier)
+	If (Mod1Tiers.Tier and Mod2Tiers.Tier)
 	{
 		PrefixCount := 0
 		SuffixCount := 0
@@ -4008,7 +4090,7 @@ SolveAffixes_Mod1Mod2Hyb(Keyname, LineNum1, LineNum2, Value1, Value2, Mod1Type, 
 		Itemdata.UncertainAffixes[Keyname]["1_Mod1Mod2"] := [PrefixCount, SuffixCount, LineNum1, LineTxt1, LineNum2, LineTxt2]
 	}
 	
-	If(Hyb1Tiers.Tier and Hyb2Tiers.Tier and (Hyb1Tiers.Tier = Hyb2Tiers.Tier))
+	If (Hyb1Tiers.Tier and Hyb2Tiers.Tier and (Hyb1Tiers.Tier = Hyb2Tiers.Tier))
 	{
 		PrefixCount := 0
 		SuffixCount := 0
@@ -4024,7 +4106,7 @@ SolveAffixes_Mod1Mod2Hyb(Keyname, LineNum1, LineNum2, Value1, Value2, Mod1Type, 
 		Itemdata.UncertainAffixes[Keyname]["2_OnlyHyb"] := [PrefixCount, SuffixCount, LineNum1, LineTxt1, LineNum2, LineTxt2]
 	}
 	
-	If(IsObject(Mod1HybTiers))
+	If (IsObject(Mod1HybTiers))
 	{
 		PrefixCount := 0
 		SuffixCount := 0
@@ -4042,7 +4124,7 @@ SolveAffixes_Mod1Mod2Hyb(Keyname, LineNum1, LineNum2, Value1, Value2, Mod1Type, 
 		Itemdata.UncertainAffixes[Keyname]["3_Mod1Hyb"] := [PrefixCount, SuffixCount, LineNum1, LineTxt1, LineNum2, LineTxt2]
 	}
 	
-	If(IsObject(Mod2HybTiers))
+	If (IsObject(Mod2HybTiers))
 	{
 		PrefixCount := 0
 		SuffixCount := 0
@@ -4060,7 +4142,7 @@ SolveAffixes_Mod1Mod2Hyb(Keyname, LineNum1, LineNum2, Value1, Value2, Mod1Type, 
 		Itemdata.UncertainAffixes[Keyname]["4_Mod2Hyb"] := [PrefixCount, SuffixCount, LineNum1, LineTxt1, LineNum2, LineTxt2]
 	}
 	
-	If(IsObject(Mod1Mod2HybTiers))
+	If (IsObject(Mod1Mod2HybTiers))
 	{
 		PrefixCount := 0
 		SuffixCount := 0
@@ -4093,21 +4175,21 @@ SolveAffixes_PreSuf(Keyname, LineNum, Value, Filename1, Filename2, ItemLevel)
 	Mod2Tiers := LookupTierByValue(Value, Mod2DataArray, ItemLevel)
 	Mod1Mod2Tiers := SolveTiers_Mod1Mod2(Value, Mod1DataArray, Mod2DataArray, ItemLevel)
 	
-	If(Mod1Tiers.Tier)
+	If (Mod1Tiers.Tier)
 	{
 		ValueRange := FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers.Tier)
 		LineTxt := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNum].Text, "Prefix", ValueRange, Mod1Tiers.Tier, False)
 		Itemdata.UncertainAffixes[Keyname]["1_Pre"] := [1, 0, LineNum, LineTxt]
 	}
 	
-	If(Mod2Tiers.Tier)
+	If (Mod2Tiers.Tier)
 	{
 		ValueRange := FormatValueRangesAndIlvl(Mod2DataArray, Mod2Tiers.Tier)
 		LineTxt := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNum].Text, "Suffix", ValueRange, Mod2Tiers.Tier, False)
 		Itemdata.UncertainAffixes[Keyname]["2_Suf"] := [0, 1, LineNum, LineTxt]
 	}
 	
-	If(IsObject(Mod1Mod2Tiers))
+	If (IsObject(Mod1Mod2Tiers))
 	{
 		ValueRange := FormatValueRangesAndIlvl_MultiTiers(Value, Mod1DataArray, Mod2DataArray, Mod1Mod2Tiers.Mod1Top, Mod1Mod2Tiers.Mod1Btm, Mod1Mod2Tiers.Mod2Top, Mod1Mod2Tiers.Mod2Btm)
 		LineTxt := MakeAffixDetailLine(Itemdata.AffixTextLines[LineNum].Text, ["Prefix", "Suffix"], ValueRange, [[Mod1Mod2Tiers.Mod1Top, Mod1Mod2Tiers.Mod1Btm] , [Mod1Mod2Tiers.Mod2Top, Mod1Mod2Tiers.Mod2Btm]], False)
@@ -4219,7 +4301,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, to Armour
 			IfInString, A_LoopField, к броне
 			{
-				If(HasToArmour){
+				If (HasToArmour){
 					HasToArmourCraft := A_Index
 				}Else{
 					HasToArmour := A_Index
@@ -4229,7 +4311,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, to Evasion Rating
 			IfInString, A_LoopField, к уклонению
 			{
-				If(HasToEvasion){
+				If (HasToEvasion){
 					HasToEvasionCraft := A_Index
 				}Else{
 					HasToEvasion := A_Index
@@ -4239,7 +4321,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, to maximum Energy Shield
 			IfInString, A_LoopField, к максимуму энергетического щита
 			{
-				If(HasToMaxES){
+				If (HasToMaxES){
 					HasToMaxESCraft := A_Index
 				}Else{
 					HasToMaxES := A_Index
@@ -4249,7 +4331,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, to maximum Life
 			IfInString, A_LoopField, к максимуму здоровья
 			{
-				If(HasToMaxLife){
+				If (HasToMaxLife){
 					HasToMaxLifeCraft := A_Index
 				}Else{
 					HasToMaxLife := A_Index
@@ -4259,7 +4341,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Armour and Evasion	; it's indeed "Evasion" and not "Evasion Rating" here
 			IfInString, A_LoopField, повышение брони и уклонения
 			{
-				If(HasIncrDefences){
+				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
 					HasIncrDefencesCraft := A_Index
 				}Else{
@@ -4271,7 +4353,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Armour and Energy Shield
 			IfInString, A_LoopField, повышение брони и энергетического щита
 			{
-				If(HasIncrDefences){
+				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
 					HasIncrDefencesCraft := A_Index
 				}Else{
@@ -4283,7 +4365,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Evasion and Energy Shield	; again "Evasion" and not "Evasion Rating"
 			IfInString, A_LoopField, увеличение уклонения и энергетического щита
 			{
-				If(HasIncrDefences){
+				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
 					HasIncrDefencesCraft := A_Index
 				}Else{
@@ -4295,7 +4377,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Armour
 			IfInString, A_LoopField, повышение брони
 			{
-				If(HasIncrDefences){
+				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Armour"
 					HasIncrDefencesCraft := A_Index
 				}Else{
@@ -4307,7 +4389,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Evasion Rating
 			IfInString, A_LoopField, увеличение уклонения
 			{
-				If(HasIncrDefences){
+				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Evasion"
 					HasIncrDefencesCraft := A_Index
 				}Else{
@@ -4319,7 +4401,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Energy Shield
 			IfInString, A_LoopField, увеличение энергетического щита
 			{
-				If(HasIncrDefences){
+				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "EnergyShield"
 					HasIncrDefencesCraft := A_Index
 				}Else{
@@ -4348,7 +4430,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, to Accuracy Rating
 			IfInString, A_LoopField, к меткости
 			{
-				If(HasToAccuracyRating){
+				If (HasToAccuracyRating){
 					HasToAccuracyRatingCraft := A_Index
 				}Else{
 					HasToAccuracyRating := A_Index
@@ -4358,7 +4440,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Physical Damage
 			IfInString, A_LoopField, увеличение физического урона
 			{
-				If(HasIncrPhysDmg){
+				If (HasIncrPhysDmg){
 					HasIncrPhysDmgCraft := A_Index
 				}Else{
 					HasIncrPhysDmg := A_Index
@@ -4368,7 +4450,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Rarity of Items found
 			IfInString, A_LoopField, повышение редкости найденных предметов
 			{
-				If(HasIncrRarity){
+				If (HasIncrRarity){
 					HasIncrRarityCraft := A_Index
 				}Else{
 					HasIncrRarity := A_Index
@@ -4378,7 +4460,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, to maximum Mana
 			IfInString, A_LoopField, к максимуму маны
 			{
-				If(HasMaxMana){
+				If (HasMaxMana){
 					HasMaxManaCraft := A_Index
 				}Else{
 					HasMaxMana := A_Index
@@ -4394,7 +4476,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Spell Damage
 			IfInString, A_LoopField, увеличение урона от чар
 			{
-				If(HasIncrSpellDamage){
+				If (HasIncrSpellDamage){
 					HasIncrSpellDamageCraft := A_Index
 					HasIncrSpellDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
@@ -4407,7 +4489,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				}Else{
 					Found := LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\SpellDamage_MaxMana_Staff.txt"), ItemLevel).Tier
 				}
-				If( ! Found){
+				If ( ! Found){
 					HasIncrSpellDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
 				}
@@ -4416,7 +4498,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Fire Damage
 			IfInString, A_LoopField, увеличение урона от огня
 			{
-				If(HasIncrFireDamage){
+				If (HasIncrFireDamage){
 					HasIncrFireDamageCraft := A_Index
 					HasIncrFireDamagePrefix := HasIncrFireDamage
 					HasIncrSpellOrElePrefix := HasIncrFireDamagePrefix
@@ -4424,7 +4506,7 @@ ParseAffixes(ItemDataAffixes, Item)
 					HasIncrFireDamage := A_Index
 				}
 				
-				If( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrFireDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
+				If ( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrFireDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
 				{
 					HasIncrFireDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
@@ -4434,7 +4516,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Cold Damage
 			IfInString, A_LoopField, увеличение урона от холода
 			{
-				If(HasIncrColdDamage){
+				If (HasIncrColdDamage){
 					HasIncrColdDamageCraft := A_Index
 					HasIncrColdDamagePrefix := HasIncrColdDamage
 					HasIncrSpellOrElePrefix := HasIncrColdDamagePrefix
@@ -4442,7 +4524,7 @@ ParseAffixes(ItemDataAffixes, Item)
 					HasIncrColdDamage := A_Index
 				}
 				
-				If( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrColdDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
+				If ( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrColdDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
 				{
 					HasIncrColdDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
@@ -4452,7 +4534,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, increased Lightning Damage
 			IfInString, A_LoopField, увеличение урона от молнии
 			{
-				If(HasIncrLightningDamage){
+				If (HasIncrLightningDamage){
 					HasIncrLightningDamageCraft := A_Index
 					HasIncrLightningDamagePrefix := HasIncrLightningDamage
 					HasIncrSpellOrElePrefix := HasIncrLightningDamagePrefix
@@ -4460,7 +4542,7 @@ ParseAffixes(ItemDataAffixes, Item)
 					HasIncrLightningDamage := A_Index
 				}
 				
-				If( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrLightningDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
+				If ( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrLightningDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
 				{
 					HasIncrLightningDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
@@ -4616,7 +4698,8 @@ ParseAffixes(ItemDataAffixes, Item)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "^[\d\.]+ Life Regenerated per second$")
-				If RegExMatch(A_LoopField, "Регенерирует [\d\.]+ здоровья в секунду$")
+				;If RegExMatch(A_LoopField, "Регенерирует [\d\.]+ здоровья в секунду$")
+				If RegExMatch(A_LoopField, "Регенерация [\d\.]+ здоровья в секунду$")
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\LifeRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
@@ -4631,13 +4714,6 @@ ParseAffixes(ItemDataAffixes, Item)
 				IfInString, A_LoopField, увеличение постепенного урона
 				{
 					LookupAffixAndSetInfoLine(["1|10-14"], "Prefix", ItemLevel, CurrValue)
-					Continue
-				}
-				
-				;IfInString, A_LoopField, to Accuracy Rating
-				IfInString, A_LoopField, к меткости
-				{
-					LookupAffixAndSetInfoLine("data\abyss_jewel\AccuracyRating.txt", "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				
@@ -4737,6 +4813,7 @@ ParseAffixes(ItemDataAffixes, Item)
 						Continue
 					}					
 				}
+				
 				;IfInString, A_LoopField, to Accuracy Rating
 				IfInString, A_LoopField, к меткости
 				{
@@ -4893,12 +4970,13 @@ ParseAffixes(ItemDataAffixes, Item)
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to Dodge Attacks and Spells if you've
+				;IfInString, A_LoopField, chance to Dodge Attacks and Spells if you've been Hit Recently
 				IfInString, A_LoopField, шанс увернуться от атак и чар, если вы недавно получали удар
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
+				/* было удалено в оригинальной версии 2.7.6
 				;If RegExMatch(A_LoopField, "^been Hit Recently$")
 				If RegExMatch(A_LoopField, "шанс увернуться от атак и чар, если вы недавно получали удар$")
 				{
@@ -4907,6 +4985,7 @@ ParseAffixes(ItemDataAffixes, Item)
 					AffixLines.RemoveAt(A_Index)
 					Continue
 				}
+				*/
 				;IfInString, A_LoopField, increased Movement Speed if you've Killed Recently
 				IfInString, A_LoopField, повышение скорости передвижения, если недавно вы совершали убийство
 				{
@@ -5064,7 +5143,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Weapon Critical Strike Chance while Dual Wielding
-			IfInString, A_LoopField, повышение шанса критического удара парным оружием
+			IfInString, A_LoopField, повышение шанса критического удара оружием с парным оружием в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\WeaponCritChanceDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
@@ -5249,7 +5328,9 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, Life gained for each Enemy hit by your Attacks
-			IfInString, A_LoopField, здоровья за каждого задетого атакой врага
+			;IfInString, A_LoopField, здоровья за каждого задетого атакой врага
+			; меняется от патча к патчу
+			If RegExMatch(A_LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")			
 			{
 				LookupAffixAndSetInfoLine("data\jewel\LifeOnHit_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
@@ -5705,7 +5786,15 @@ ParseAffixes(ItemDataAffixes, Item)
 		;IfInString, A_LoopField, увеличение количества находимых предметов
 		IfInString, A_LoopField, увеличение количества найденных предметов
 		{
-			LookupAffixAndSetInfoLine("data\IncrQuantity.txt", "Suffix", ItemLevel, CurrValue)
+			If (Item.IsShaperBase)
+			{
+				File := ["75|4-7","85|8-10"]
+			}
+			Else
+			{
+				File := "data\IncrQuantity.txt"
+			}
+			LookupAffixAndSetInfoLine(File, "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Life gained on Kill
@@ -5716,7 +5805,8 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		;IfInString, A_LoopField, Life gained for each Enemy hit ; Cuts off the rest to accommodate both "by Attacks" and "by your Attacks"
 		;IfInString, A_LoopField, здоровья за каждого задетого атакой врага
-		IfInString, A_LoopField, здоровья за каждый удар атаками по врагу
+		;IfInString, A_LoopField, здоровья за каждый удар атаками по врагу
+		If RegExMatch(A_LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")
 		{
 			If (ItemBaseType = "Weapon") {
 				File := "data\LifeOnHit_Weapon.txt"
@@ -5732,14 +5822,14 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		;IfInString, A_LoopField, of Life Regenerated per second		
 		;If RegExMatch(A_LoopField, "Регенерирует \(.*\)% здоровья в секунду")
-		If RegExMatch(A_LoopField, "Регенерирует .*% здоровья в секунду")
+		If RegExMatch(A_LoopField, "Регенерация .*% здоровья в секунду")
 		{
 			LookupAffixAndSetInfoLine("data\LifeRegenPercent.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Life Regenerated per second
 		;If RegExMatch(A_LoopField, "Регенерирует \(.*\) здоровья в секунду")
-		If RegExMatch(A_LoopField, "Регенерирует .* здоровья в секунду")
+		If RegExMatch(A_LoopField, "Регенерация .* здоровья в секунду")
 		{
 			If (ItemSubType = "BodyArmour"){
 				LookupAffixAndSetInfoLine("data\LifeRegen_BodyArmour.txt", "Suffix", ItemLevel, CurrValue)
@@ -5843,7 +5933,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;IfInString, A_LoopField, of Energy Shield Regenerated per second
-		If RegExMatch(A_LoopField, "Регенерирует .*% энергетического щита в секунду")
+		If RegExMatch(A_LoopField, "Регенерирует .*% энергетического щита в секунду|Регенерация .*% энергетического щита в секунду")
 		{
 			LookupAffixAndSetInfoLine("data\EnergyShieldRegeneratedPerSecond.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
@@ -5919,7 +6009,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			;IfInString, A_LoopField, chance to cause Bleeding on Hit
 			IfInString, A_LoopField, шанс наложить кровотечение при нанесении удара
 			{
-				If(CurrValue = 25)
+				If (CurrValue = 25)
 				{
 					; Vagan/Tora prefix
 					AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Vagan 7 or Buy:Tora 4", ""), A_Index)
@@ -6139,7 +6229,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 
 		;IfInString, A_LoopField, to Level of Socketed		
-		If(RegExMatch(A_LoopField, ".* к уровню размещённых .*"))
+		If (RegExMatch(A_LoopField, ".* к уровню размещённых .*"))
 		{
 			;If RegExMatch(A_LoopField, "(Fire|Cold|Lightning)"){
 			If RegExMatch(A_LoopField, "(огня|холода|молнии)"){
@@ -6186,7 +6276,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, Movement Speed
-		If(RegExMatch(A_LoopField, ".*% повышение скорости передвижения$"))
+		If (RegExMatch(A_LoopField, ".*% повышение скорости передвижения$"))
 		{
 			If (ItemSubType = "Boots")
 			{
@@ -6660,36 +6750,36 @@ ParseAffixes(ItemDataAffixes, Item)
 					LineNum := HasToArmour
 					LineTxt := Itemdata.AffixTextLines[LineNum].Text
 					Value   := Itemdata.AffixTextLines[LineNum].Value
-					LookupAffixAndSetInfoLine(FileToArmourHyb, "Hybrid Prefix", ItemLevel, Value, LineTxt, LineNum)
+					LookupAffixAndSetInfoLine(FileToArmourHyb, "Hybrid Defence Prefix", ItemLevel, Value, LineTxt, LineNum)
 					
 					LineNum := HasToEvasion
 					LineTxt := Itemdata.AffixTextLines[LineNum].Text
 					Value   := Itemdata.AffixTextLines[LineNum].Value
-					LookupAffixAndSetInfoLine(FileToEvasionHyb, "Hybrid Prefix", ItemLevel, Value, LineTxt, LineNum)
+					LookupAffixAndSetInfoLine(FileToEvasionHyb, "Hybrid Defence Prefix", ItemLevel, Value, LineTxt, LineNum)
 				}
 				Else If (HasToArmour and HasToMaxES)
 				{
 					LineNum := HasToArmour
 					LineTxt := Itemdata.AffixTextLines[LineNum].Text
 					Value   := Itemdata.AffixTextLines[LineNum].Value
-					LookupAffixAndSetInfoLine(FileToArmourHyb, "Hybrid Prefix", ItemLevel, Value, LineTxt, LineNum)
+					LookupAffixAndSetInfoLine(FileToArmourHyb, "Hybrid Defence Prefix", ItemLevel, Value, LineTxt, LineNum)
 					
 					LineNum := HasToMaxES
 					LineTxt := Itemdata.AffixTextLines[LineNum].Text
 					Value   := Itemdata.AffixTextLines[LineNum].Value
-					LookupAffixAndSetInfoLine(FileToMaxESHyb, "Hybrid Prefix", ItemLevel, Value, LineTxt, LineNum)
+					LookupAffixAndSetInfoLine(FileToMaxESHyb, "Hybrid Defence Prefix", ItemLevel, Value, LineTxt, LineNum)
 				}
 				Else If (HasToEvasion and HasToMaxES)
 				{
 					LineNum := HasToEvasion
 					LineTxt := Itemdata.AffixTextLines[LineNum].Text
 					Value   := Itemdata.AffixTextLines[LineNum].Value
-					LookupAffixAndSetInfoLine(FileToEvasionHyb, "Hybrid Prefix", ItemLevel, Value, LineTxt, LineNum)
+					LookupAffixAndSetInfoLine(FileToEvasionHyb, "Hybrid Defence Prefix", ItemLevel, Value, LineTxt, LineNum)
 					
 					LineNum := HasToMaxES
 					LineTxt := Itemdata.AffixTextLines[LineNum].Text
 					Value   := Itemdata.AffixTextLines[LineNum].Value
-					LookupAffixAndSetInfoLine(FileToMaxESHyb, "Hybrid Prefix", ItemLevel, Value, LineTxt, LineNum)
+					LookupAffixAndSetInfoLine(FileToMaxESHyb, "Hybrid Defence Prefix", ItemLevel, Value, LineTxt, LineNum)
 				}
 				Else If (HasToArmour)
 				{
@@ -7063,8 +7153,8 @@ ParseAffixes(ItemDataAffixes, Item)
 	{
 		Itemdata.UncAffTmpAffixLines[A_Index] := AffixLines[A_Index]
 	}
-	;If(Itemdata.Rarity = "Magic"){
-	If(Itemdata.Rarity = "Волшебный"){
+	;If (Itemdata.Rarity = "Magic"){
+	If (Itemdata.Rarity = "Волшебный"){
 		PrefixLimit := 1
 		SuffixLimit := 1
 	} Else {
@@ -7097,7 +7187,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		; No infinite looping. We re-enable ReloopAll below when it is warranted.
 		ReloopAll := False
 		
-		If(ConsiderAllRemainingAffixes = False)
+		If (ConsiderAllRemainingAffixes = False)
 		{
 			; Phase 1:
 			; Store each grp's affix min count for a later check.
@@ -7142,17 +7232,17 @@ ParseAffixes(ItemDataAffixes, Item)
 					; Even though we might not be able to finalize the group itself yet, we can now use 
 					;   that information to make decisions about the entries of other groups.
 					
-					If(entry[1] < PrefixMinCount){
+					If (entry[1] < PrefixMinCount){
 						PrefixMinCount := entry[1]
 					}
-					If(entry[2] < SuffixMinCount){
+					If (entry[2] < SuffixMinCount){
 						SuffixMinCount := entry[2]
 					}
-					If(entry[1] + entry[2] < TotalMinCount){
+					If (entry[1] + entry[2] < TotalMinCount){
 						TotalMinCount := entry[1] + entry[2]
 					}
 					
-					If(ConsiderAllRemainingAffixes = False)
+					If (ConsiderAllRemainingAffixes = False)
 					{
 						; Phase 1:
 						; No fancy affix assumptions yet, just the certain count due to what we have added to AffixLines already.
@@ -7170,7 +7260,7 @@ ParseAffixes(ItemDataAffixes, Item)
 						AssumeTotalCount  := AffixTotals.NumPrefixes + AffixTotals.NumSuffixes + GrpTotalMinCount["total"] - GrpTotalMinCount[key_grp]
 					}
 					
-					If( (AssumePrefixCount + entry[1] > PrefixLimit) or (AssumeSuffixCount + entry[2] > SuffixLimit) or (AssumeTotalCount + entry[1] + entry[2] > PrefixLimit + SuffixLimit) )
+					If ( (AssumePrefixCount + entry[1] > PrefixLimit) or (AssumeSuffixCount + entry[2] > SuffixLimit) or (AssumeTotalCount + entry[1] + entry[2] > PrefixLimit + SuffixLimit) )
 					{
 						; Mod does not work because of affix number limit
 						; Remove mod entry from "grp"
@@ -7183,7 +7273,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 			}
 			
-			If(ConsiderAllRemainingAffixes = False)
+			If (ConsiderAllRemainingAffixes = False)
 			{
 				; Phase 1:
 				; We've finished the whole "For key_entry..." loop for a grp, so the Prefix/Suffix/TotalMinCount actually represents that grp.
@@ -7200,7 +7290,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 			
 			
-			If(grp_len=1)
+			If (grp_len=1)
 			{
 				; Only one mod in this grp, so there is no ambiguity. Put the mod in and remove grp.
 				FinalizeUncertainAffixGroup(grp)
@@ -7217,7 +7307,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				ReloopAll := True
 				break
 			}
-			Else If(grp_len=0)
+			Else If (grp_len=0)
 			{
 				Itemdata.UncertainAffixes.Delete(key_grp)
 				
@@ -7228,13 +7318,13 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		
-		If(ReloopAll = False)
+		If (ReloopAll = False)
 		{
 			; Phase 1:
 			; Basic checks are done. Now we can check if a group is not solved yet but is guaranteed to bring a certain affix type
 			;   which we can count against the limit and then rule out entries from other groups.
 			
-			If(ConsiderAllRemainingAffixes = False)
+			If (ConsiderAllRemainingAffixes = False)
 			{
 				; We enable Phase 2 of affix count comparison here.
 				
@@ -7242,7 +7332,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				ReloopAll = True
 				; ...and ReloopAll obviously. (Continue reading Phase 2 from the top again)
 			}
-			Else If(CheckAgainForGoodMeasure = False)
+			Else If (CheckAgainForGoodMeasure = False)
 			{
 				; Phase 2:
 				; If we arrive here we've checked everything with the Phase 2 comparison.
@@ -7269,14 +7359,14 @@ ParseAffixes(ItemDataAffixes, Item)
 	;   line2 is "T1 HybP" in both cases, we don't want that double entry in line2.
 	For key1, line in Itemdata.UncAffTmpAffixLines{
 		For key2, subline in line{
-			If(IsObject(subline)){
+			If (IsObject(subline)){
 				; Check line possibilities starting from the last index (safer when removing entries)
 				i := line.MaxIndex()
 				While(i > key2)
 				{
 					; Check all entries after our current entry at line[key2] if they are duplicates of it
 					;   (by comparing "TypeAndTier" and line index 3). Remove if identical.
-					If(line[i][3] = line[key2][3])
+					If (line[i][3] = line[key2][3])
 					{
 						line.RemoveAt(i)
 					}
@@ -7306,9 +7396,9 @@ ParseAffixes(ItemDataAffixes, Item)
 	;	]
 	i := 1
 	For key1, line in Itemdata.UncAffTmpAffixLines{
-		If(IsObject(line)){
+		If (IsObject(line)){
 			For key2, subline in line{
-				If(IsObject(subline)){
+				If (IsObject(subline)){
 					AffixLines.Set(i, subline)
 					++i
 				}Else{
@@ -7341,31 +7431,31 @@ FinalizeUncertainAffixGroup(grp)
 	{
 		; entry[1] is PrefixCount and entry[2] is SuffixCount for that entry.
 		
-		If(entry[1] < PrefixMin){
+		If (entry[1] < PrefixMin){
 			PrefixMin := entry[1]
 		}
-		If(entry[1] > PrefixMax){
+		If (entry[1] > PrefixMax){
 			PrefixMax := entry[1]
 		}
-		If(entry[2] < SuffixMin){
+		If (entry[2] < SuffixMin){
 			SuffixMin := entry[2]
 		}
-		If(entry[2] > SuffixMax){
+		If (entry[2] > SuffixMax){
 			SuffixMax := entry[2]
 		}
-		If(entry[1] + entry[2] < TotalMin){
+		If (entry[1] + entry[2] < TotalMin){
 			TotalMin := entry[1] + entry[2]
 		}
-		If(entry[1] + entry[2] > TotalMax){
+		If (entry[1] + entry[2] > TotalMax){
 			TotalMax := entry[1] + entry[2]
 		}
 		
 		
 		For junk, val in [3,5,7,9,11,13]	; these are the potential line number entries, the +1's are the line texts.
 		{
-			If(entry[val])
+			If (entry[val])
 			{
-				If(IsObject(Itemdata.UncAffTmpAffixLines[entry[val]]))
+				If (IsObject(Itemdata.UncAffTmpAffixLines[entry[val]]))
 				{
 					; There already is a mod for that line. Append this alternative to the array of the line.
 					; Overwrite the line text with "or"
@@ -7414,7 +7504,7 @@ IsEmptyString(String)
 }
 
 IsNum(Var){
-	If(++Var)
+	If (++Var)
 		return true
 	return false
 }
@@ -7490,7 +7580,7 @@ ParseClipBoardChanges(debug = false)
 	ParsedData := ParseItemData(CBContents)
 	ParsedData := PostProcessData(ParsedData)
 	
-	If (Opts.PutResultsOnClipboard > 0)
+	If (Opts.PutResultsOnClipboard && ParsedData)
 	{
 		SetClipboardContents(ParsedData)
 	}
@@ -7544,11 +7634,26 @@ GetTimestampUTC() { ; http://msdn.microsoft.com/en-us/library/ms724390
 	. SubStr("0" . NumGet(ST, 12, "UShort"), -1)     ; second : 2 digits forced
 }
 
+WriteToLogFile(data, file, project) {
+	logFile	:= A_ScriptDir "\temp\" file
+	If (not FileExist(logFile)) {
+		FileAppend, Starting up %project%....`n`n, %logFile%
+	}
+	line		:= "----------------------------------------------------------"
+	timeStamp	:= ""
+	UTCTimestamp := GetTimestampUTC()
+	UTCFormatStr := "yyyy-MM-dd'T'HH:mm'Z'"
+	FormatTime, TimeStr, %UTCTimestamp%, %UTCFormatStr%
+	entry	:= line "`n" TimeStr "`n" line "`n`n"
+	entry	:= entry . data "`n`n"
+	FileAppend, %entry%, %logFile%
+}
+
 ParseAddedDamage(String, DmgType, ByRef DmgLo, ByRef DmgHi)
 {
-	;If(RegExMatch(String, "Adds (\d+) to (\d+) " DmgType " Damage", Match))
-	;If(RegExMatch(String, "Добавляет от (\d+) до (\d+) урона от " DmgType, Match))
-	If(RegExMatch(String, "Добавляет от (\d+) до (\d+) урона " DmgType, Match))
+	;If (RegExMatch(String, "Adds (\d+) to (\d+) " DmgType " Damage", Match))
+	;If (RegExMatch(String, "Добавляет от (\d+) до (\d+) урона от " DmgType, Match))
+	If (RegExMatch(String, "Добавляет от (\d+) до (\d+) урона " DmgType, Match))
 	{
 	;StringSplit, Arr, Match, %A_Space%
 	;StringSplit, Arr, Arr2, -
@@ -7807,9 +7912,54 @@ AssembleDamageDetails(FullItemData)
 	return Result
 }
 
+AssembleProphecyDetails(name) {
+	parsedJSON := {}
+	prophecy := {}
+	
+	If (not Globals.Get("ProphecyData")) {
+		Try {
+			FileRead, JSONFile, %A_ScriptDir%\data_trade\prophecy_details.json
+			parsedJSON := JSON.Load(JSONFile)
+			prophecy := parsedJSON.prophecy_details[name]
+			
+			If (not prophecy.text) {
+				Return
+			}
+		} Catch error {
+			Return
+		}
+		
+		Globals.Set("ProphecyData", parsedJSON.prophecy_details)
+	} Else {
+		prophecy := Globals.Get("ProphecyData")[name]
+	}
+	
+	TT := ""
+	If (prophecy.objective) {
+		;TT .= "`n" "Objective:" "`n" prophecy.objective "`n"
+		TT .= "`n" "Цель:" "`n" prophecy.objective "`n"
+	}
+	If (prophecy.reward) {
+		;TT .= "`n" "Reward:" "`n" prophecy.reward "`n"
+		TT .= "`n" "Награда:" "`n" prophecy.reward "`n"
+	}
+	If (StrLen(prophecy["seal cost"])) {
+		;TT .= "`n" "Seal Cost:" " " prophecy["seal cost"] "`n"
+		TT .= "`n" "Стоимость запечатывания:" " " prophecy["seal cost"] "`n"
+	}
+	
+	Return TT
+}
+
 ; ParseItemName fixed by user: uldo_.  Thanks!
-ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = "")
+ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = "", ItemData = "")
 {
+	isVaalGem := false
+	;If (RegExMatch(Trim(ItemData.Parts[1]), "i)^Rarity: Gem") and RegExMatch(Trim(ItemData.Parts[2]), "i)Vaal")) {
+	If (RegExMatch(Trim(ItemData.Parts[1]), "i)^Редкость: Камень") and RegExMatch(Trim(ItemData.Parts[2]), "i)Ваал")) {
+		isVaalGem := true
+	}
+	
 	Loop, Parse, ItemDataChunk, `n, `r
 	{
 		If (A_Index == 1)
@@ -7840,6 +7990,22 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 			Else
 			{
 				ItemName := A_LoopField
+				;If (isVaalGem and not RegExMatch(ItemName, "i)^Vaal ")) {
+				If (isVaalGem and not RegExMatch(ItemName, "i) ваал$")) {					
+										
+					; examples of name differences
+					; summon skeleton - vaal summon skeletons
+					; Purity of Lightning - Vaal Impurity of Lightning
+					ItemName := ItemData.Parts[6]	; this may be unsafe, the parts index may change in the future
+
+					For k, part in ItemData.Parts {
+						;If (RegExMatch(part, "im)(^Vaal .*?" ItemName ".*)", vaalName)) {	; TODO: make sure this is safer
+						If (RegExMatch(part, "im)(.*?" ItemName ".* ваал$)", vaalName)) {
+							ItemName := vaalName1
+							Break
+						}
+					}
+				}
 			}
 			; Normal items don't have a third line and the item name equals the BaseName if we sanitize it ("superior").
 			;If (RegExMatch(ItemDataChunk, "i)Rarity.*?:.*?Normal"))
@@ -7893,7 +8059,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 
 					; базовое имя, как и префикс начинаются с большой буквы
 					RegExReplace(ItemName, "([А-ЯЁ])", "", matchCount)
-					If(matchCount>1)
+					If (matchCount>1)
 					{
 						ItemBaseName := RegExReplace(ItemName, "^[А-ЯЁ][а-яё]+ ", "")
 					}
@@ -7904,7 +8070,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 					
 					; для волшебных предметов у которых не распознаны аффиксы, базовое имя предмета не будет корректно определяться
 					; TODO необходимо как-то обработать этот случай
-					If((matchCount > 1 and AffixCount > 1) or (matchCount = 1 and AffixCount = 1))					
+					If ((matchCount > 1 and AffixCount > 1) or (matchCount = 1 and AffixCount = 1))					
 					{
 						; если суффикс состоит из двух слов - будем его отбрасывать по словарю,
 						; все не учтенные суффиксы добавлять в файл \data\ru\SuffixTwoWord.txt
@@ -7939,7 +8105,7 @@ UniqueHasFatedVariant(ItemName)
 		{
 			Continue
 		}
-		If(ItemName == Line)
+		If (ItemName == Line)
 		{
 			return True
 		}
@@ -8037,6 +8203,61 @@ ParseCharges(stats)
 	return charges
 }
 
+ParseBeastData(data) {
+	a := {}
+
+	legendaryBeastsList := ["Farric Wolf Alpha", "Fenumal Scorpion", "Fenumal Plaqued Arachnid", "Farric Frost Hellion Alpha", "Farric Lynx ALpha", "Saqawine Vulture", "Craicic Chimeral", "Saqawine Cobra", "Craicic Maw", "Farric Ape", "Farric Magma Hound", "Craicic Vassal", "Farric Pit Hound", "Craicic Squid" 
+	, "Farric Taurus", "Fenumal Scrabbler", "Farric Goliath", "Fenumal Queen", "Saqawine Blood Viper", "Fenumal Devourer", "Farric Ursa", "Fenumal Widow", "Farric Gargantuan", "Farric Chieftain", "Farric Ape", "Farrci Flame Hellion Alpha", "Farrci Goatman", "Craicic Watcher", "Saqawine Retch"
+	, "Saqawine Chimeral", "Craicic Shield Crab", "Craicic Sand Spitter", "Craicic Savage Crab", "Saqawine Rhoa"]
+	
+	portalBeastsList := ["Farric Tiger Alpha", "Craicic Spider Crab", "Fenumal Hybrid Arachnid", "Saqawine Rhex"]
+	aspectBeastsList := ["Farrul, First of the Plains", "Craiceann, First of the Deep", "Fenumus, First of the Night", "Saqawal, First of the Sky"]
+	
+	;nameplate := data.nameplate
+	nameplate := AdpRu_ConvertRuItemNameToEn(data.nameplate)
+	Loop, Parse, nameplate, `n, `r
+	{
+		If (A_Index = 2 and IsInArray(Trim(A_LoopField), aspectBeastsList)) {
+			a.IsAspectBeast := true
+			a.BeastName := Trim(A_LoopField)
+		}	
+		
+		If (A_Index = 3) {
+			a.BeastBase := Trim(A_LoopField)
+			If (IsInArray(Trim(A_LoopField), portalBeastsList)) {
+				a.IsPortalbeast := true
+			}
+			Else If (IsInArray(Trim(A_LoopField), legendaryBeastsList)) {
+				a.IsLegendaryBeast := true
+			}
+			
+		}		
+	}
+	
+	parts := data.parts[2]
+	Loop, Parse, parts, `n, `r
+	{
+		;RegExMatch(A_LoopField, "i)(Genus|Family|Group):\s+?(.*)", match)
+		RegExMatch(A_LoopField, "i)(Род|Семейство|Группа):\s+?(.*)", match)
+		a[match1] := Trim(match2)
+	}
+	
+	parts := data.parts[4]
+	a["Mods"] := []
+	Loop, Parse, parts, `n, `r
+	{
+		_A_LoopField_ := AdpRu_ConvertRuItemNameToEn(A_LoopField)
+		;If (RegExMatch(A_LoopField, "i)(Aspect of the Hellion|Blood Geyser|Churning Claws|Craicic Presence|Crimson Flock|Crushing Claws|Deep One's Presence|Erupting Winds|Farric Presence|Fenumal Presence|Fertile Presence|Hadal Dive|Incendiary Mite|Infested Earth|Putrid Flight|Raven Caller|Saqawine Presence|Satyr Storm|Spectral Stampede|Spectral Swipe|Tiger Prey|Unstable Swarm|Vile Hatchery|Winter Bloom)", match))
+		If (RegExMatch(_A_LoopField_, "i)(Aspect of the Hellion|Blood Geyser|Churning Claws|Craicic Presence|Crimson Flock|Crushing Claws|Deep One's Presence|Erupting Winds|Farric Presence|Fenumal Presence|Fertile Presence|Hadal Dive|Incendiary Mite|Infested Earth|Putrid Flight|Raven Caller|Saqawine Presence|Satyr Storm|Spectral Stampede|Spectral Swipe|Tiger Prey|Unstable Swarm|Vile Hatchery|Winter Bloom)", match))
+		;If (RegExMatch(A_LoopField, "i)(Дух Адского льва|Кровавый гейзер|Цепкие клешни|Присутствие Краценна|Багровая стая|Сокрушающие клешни|Присутствие Глубоководного|Порывы ветра|Присутствие Фаррул|Присутствие Фенумы|Плодородное присутствие|Глубокая пучина|Взрывной клещ|Заражённая земля|Мерзкий полёт|Призыватель воронов|Присутствие Сакаваля|Козлопад|Призрачный табун|Призрачный взмах|Жертва тигра|Нестабильный рой|Нечестивый выводок|Зимнее цветение)", match))
+		{
+			a["Mods"].Push(match1)
+		}
+	}
+	
+	return a
+}
+
 ParseAreaMonsterLevelRequirement(stats)
 {
 	requirements := {}
@@ -8064,7 +8285,7 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 	;ItemNameRu := Globals.Get("nameItemRuToEn")
 	;ItemNameEn := ItemNameRu[ItemName]
 	; используем функцию конвертации для котроля процесса конвертации имен
-	ItemNameEn := ConvertRuItemNameToEn(ItemName, true)
+	ItemNameEn := AdpRu_ConvertRuItemNameToEn(ItemName, true)
 	If (ItemNameEn)
 	{
 		ItemName := ItemNameEn
@@ -8109,7 +8330,7 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 
 	leagueRu := {"Standard":"Стандарт", "Hardcore":"Хардкор "}
 	CurrencyDataRates := Globals.Get("CurrencyDataRates")
-	For idx, league in ["tmpstandard", "tmphardcore", "Standard", "Hardcore"] {
+	For idx, league in ["tmpstandard", "tmphardcore", "Standard", "Hardcore", "eventstandard", "eventhardcore"] {
 		ninjaRates	:= CurrencyDataRates[league]
 		ChaosRatio	:= ninjaRates[ItemName].OwnQuantity ":" ninjaRates[ItemName].ChaosQuantity
 		ChaosMult		:= ninjaRates[ItemName].ChaosQuantity / ninjaRates[ItemName].OwnQuantity
@@ -8118,6 +8339,9 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 		If (league == "tmpstandard" or league == "tmphardcore" ) {
 			;leagueName := InStr(league, "standard") ? "Challenge Standard" : "Challenge Hardcore"
 			leagueName := InStr(league, "standard") ? "Временная  Стандарт" : "Временная  Хардкор "
+		}
+		Else If (league = "eventstandard" or league = "eventhardcore") {
+			leagueName := InStr(league, "standard") ? "Event Standard    " : "Event Hardcore    "
 		}
 		Else {
 			;leagueName := "Permanent " . league
@@ -8229,11 +8453,10 @@ ParseUnique(ItemName)
 		{
 			Continue
 		}
-		If(RegExMatch(ALine, "^" ItemName "\|"))
+		If (RegExMatch(ALine, "^" ItemName "\|"))
 		{
 			StringSplit, LineParts, ALine, |
-			NumLineParts := LineParts0
-			NumAffixLines := NumLineParts-1 ; exclude item name at first pos
+			NumLineParts := LineParts0			
 			UniqueFound := True
 			AppendImplicitSep := False
 			Idx := 1
@@ -8345,7 +8568,7 @@ ParseClipBoardChanges()
 */
 ParseItemData(ItemDataText, ByRef RarityLevel="")
 {
-	Global Opts, AffixTotals, uniqueMapList, mapList, mapMatchList, shapedMapMatchList, divinationCardList, gemQualityList
+	Global Opts, AffixTotals, mapList, mapMatchList, uniqueMapList, uniqueMapNameFromBase, divinationCardList, gemQualityList
 	
 	ItemDataPartsIndexLast =
 	ItemDataPartsIndexAffixes =
@@ -8415,7 +8638,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	; ItemData.Requirements := GetItemDataChunk(ItemDataText, "Requirements:")
 	; ParseRequirements(ItemData.Requirements, RequiredLevel, RequiredAttributes, RequiredAttributeValues)
 	
-	ParseItemName(ItemData.NamePlate, ItemName, ItemBaseName)
+	ParseItemName(ItemData.NamePlate, ItemName, ItemBaseName, "", ItemData)
 	
 	If (Not ItemName)
 	{
@@ -8425,7 +8648,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	Item.BaseName	:= ItemBaseName
 	
 	; инициализация английских названий предметов
-	InitNameEnItem()
+	AdpRu_InitNameEnItem()
 
 	;IfInString, ItemDataText, Unidentified
 	IfInString, ItemDataText, Неопознано
@@ -8478,6 +8701,15 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		Item.BaseType := "Prophecy"
 		; ParseProphecy(ItemData, Difficulty)
 		; Item.DifficultyRestriction := Difficulty
+	}
+	
+	; Beast detection
+	;If (RegExMatch(ItemData.Parts[2], "i)Genus|Family"))
+	If (RegExMatch(ItemData.Parts[2], "i)Род|Семейство"))
+	{
+		Item.IsBeast := True
+		Item.BeastData := ParseBeastData(ItemData)
+		Item.BaseType := "Beast"
 	}
 	
 	;Item.IsGem	:= (InStr(ItemData.Rarity, "Gem"))
@@ -8538,7 +8770,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		Else If (Not Item.IsCurrency and Not Item.IsDivinationCard and Not Item.IsProphecy)
 		{
 			;regex := ["^Sacrifice At", "^Fragment of", "^Mortal ", "^Offering to ", "'s Key$", "Ancient Reliquary Key"]
-			regex := ["^Жертва в", "^Жертва на", "^Фрагмент ", "Смертное уныние", "Смертное невежество", "Смертный гнев", "Смертная надежда", "Подношение Богине", "Ключ Эвера", "Ключ Иньи", "Ключ Ириэла", "Ключ Волкуур", "Ключ от Древнего Реликвария"]
+			regex := ["^Жертва в", "^Жертва на", "^Фрагмент ", "Смертное уныние", "Смертное невежество", "Смертный гнев", "Смертная надежда", "Подношение Богине", "Ключ Эвера", "Ключ Иньи", "Ключ Ириэла", "Ключ Волкуур", "Ключ от Древнего Реликвария", "Ключ от Ветхого Реликвария"]
 			For key, val in regex {
 				If (RegExMatch(Item.Name, "i)" val "")) {
 					Item.IsMapFragment := True
@@ -8550,10 +8782,12 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			Item.Level	:= ParseItemLevel(ItemDataText)
 			;ItemLevelWord	:= "Item Level:"
 			ItemLevelWord	:= "Уровень предмета:"
-			ParseItemType(ItemData.Stats, ItemData.NamePlate, ItemBaseType, ItemSubType, ItemGripType, Item.IsMapFragment, RarityLevel)
-			Item.BaseType	:= ItemBaseType
-			Item.SubType	:= ItemSubType
-			Item.GripType	:= ItemGripType
+			If (Not Item.IsBeast) {
+				ParseItemType(ItemData.Stats, ItemData.NamePlate, ItemBaseType, ItemSubType, ItemGripType, Item.IsMapFragment, RarityLevel)
+				Item.BaseType	:= ItemBaseType
+				Item.SubType	:= ItemSubType
+				Item.GripType	:= ItemGripType
+			}
 		}
 	}
 	
@@ -8624,7 +8858,11 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	If (Item.IsLeagueStone) {
 		ItemDataIndexAffixes := ItemDataIndexAffixes - 1
 	}
-	ItemData.Affixes := ItemDataParts%ItemDataIndexAffixes%
+	If (Item.IsBeast) {
+		ItemDataIndexAffixes := ItemDataIndexAffixes - 1
+	}
+	;ItemData.Affixes := RegExReplace(ItemDataParts%ItemDataIndexAffixes%, "[\r\n]+([a-z])", " $1")
+	ItemData.Affixes := RegExReplace(ItemDataParts%ItemDataIndexAffixes%, "[\r\n]+([a-zа-яё])", " $1")
 	ItemData.IndexAffixes := ItemDataIndexAffixes
 
 	; Retrieve items implicit mod if it has one
@@ -8643,7 +8881,10 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			tempImplicit	:= ItemDataParts%ItemDataIndexImplicit%
 			Loop, Parse, tempImplicit, `n, `r
 			{
-				Item.Implicit.push(A_LoopField)
+				;Item.Implicit.push(A_LoopField)
+				If (A_LoopField) { ; иногда на обычных предметах к имплициту добавляется пустая строка
+					Item.Implicit.push(A_LoopField)
+				}
 			}
 			Item.hasImplicit := True
 		}
@@ -8654,6 +8895,10 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	If (Item.IsFlask)
 	{
 		ParseFlaskAffixes(ItemData.Affixes)
+	}
+	Else If (Item.IsBeast)
+	{
+		; already parsed
 	}
 	Else If (RarityLevel > 1 and RarityLevel < 4 and Item.IsMap = False and not Item.IsLeaguestone)  ; Code added by Bahnzo to avoid maps showing affixes
 	{
@@ -8680,7 +8925,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	AffixTotals.NumTotalMax := NumTotalAffixesMax
 
 	; We need to call this function a second time because now we know the AffixCount.
-	ParseItemName(ItemData.NamePlate, ItemName, ItemBaseName, NumTotalAffixes)
+	ParseItemName(ItemData.NamePlate, ItemName, ItemBaseName, NumTotalAffixes, ItemData)
 	Item.BaseName := ItemBaseName
 
 	pseudoMods := PreparePseudoModCreation(ItemData.Affixes, Item.Implicit, RarityLevel, Item.isMap)
@@ -8689,9 +8934,9 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	TT := Item.Name
 	
 	; инициализация английских названий предметов
-	InitNameEnItem()
+	AdpRu_InitNameEnItem()
 
-	If ((Item.IsUnique or Item.IsDivinationCard or Item.IsCurrency or Item.IsMapFragment or Item.IsGem or Item.RarityLevel = 1 or (Item.IsFlask and Item.RarityLevel = 2)) and (Item.Name != Item.Name_En)) {
+	If ((Item.IsUnique or Item.IsDivinationCard or Item.IsCurrency or Item.IsMapFragment or Item.IsGem or Item.IsProphecy or Item.IsMap or Item.RarityLevel = 1 or (Item.IsFlask and Item.RarityLevel = 2)) and (Item.Name != Item.Name_En)) {
 		TT := TT . " (анг. " Item.Name_En ")"
 	}
 	
@@ -8701,7 +8946,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	If (Item.BaseName && (Item.BaseName != NameNotQ))
 	{
 		TT := TT . "`n" . Item.BaseName
-		If(not Item.IsUnique and not (Item.IsFlask and Item.RarityLevel = 2) and (Item.BaseName != Item.BaseName_En)){
+		If (not Item.IsUnique and not (Item.IsFlask and Item.RarityLevel = 2) and (Item.BaseName != Item.BaseName_En)){
 			TT := TT . " (анг. " Item.BaseName_En ")"
 		}
 	}
@@ -8811,9 +9056,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	{
 		If (divinationCardList[Item.Name] != "")
 		{
-			;CardDescription := "`nPOTENTIALLY OUTDATED 3.0 INFORMATION:`n`n" divinationCardList[Item.Name]
-			; убрать после актуализвции информации для лиги Бездна
-			CardDescription := "`n----!!!Возможна неактуальная информация!!!----`n" divinationCardList[Item.Name]
+			CardDescription := divinationCardList[Item.Name]
 		}
 		Else
 		{
@@ -8823,48 +9066,63 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		TT := TT . "`n--------`n" . CardDescription
 	}
 
-	/*
+	
 	If (Item.IsProphecy)
 	{
+		/*
 		Restriction := StrLen(Item.DifficultyRestriction) > 0 ? Item.DifficultyRestriction : "None"
 		TT := TT . "`n--------`nDifficulty Restriction: " Restriction
+		*/
+		;TT .= AssembleProphecyDetails(Item.Name)
+		TT .= AssembleProphecyDetails(Item.Name_En)
 	}
-	*/
+	
 	
 	If (Item.IsMap)
 	{
-		Item.MapLevel := ParseMapLevel(ItemDataText)
-		Item.MapTier  := Item.MapLevel - 67
+		Item.MapTier  := ParseMapTier(ItemDataText)
+		Item.MapLevel := Item.MapTier + 67
+		
+		;MapDescription := " (Tier: " Item.MapTier ", Level: " Item.MapLevel ")`n`n"
+		MapDescription := " (Тир: " Item.MapTier ", Уровень: " Item.MapLevel ")`n`n"
 		
 		If (Item.IsUnique)
 		{
-			MapDescription := uniqueMapList[Item.SubType]
+			MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.SubType]]
 		}
 		Else
 		{
-			MapDescription := mapList[Item.SubType]
+			If (RegExMatch(Item.SubType, "Shaped (.+ Map)", match))
+			{
+				;MapDescription .= "Infos from non-shaped version:`n" mapList[match1]
+				MapDescription .= "Информация о не изменённой версии:`n" mapList[match1]
+			}
+			Else
+			{
+				MapDescription .= mapList[Item.SubType]
+			}
 		}
-		If(MapDescription)
+		If (MapDescription)
 		{
-			TT := TT "`n" "`nВозможна неактуальная информация!`n`n" MapDescription
+			TT .= MapDescription
 		}
 		
 		If (RarityLevel > 1 and RarityLevel < 4 and Not Item.IsUnidentified)
 		{
 			AffixDetails := AssembleMapAffixes()
 			MapAffixCount := AffixTotals.NumPrefixes + AffixTotals.NumSuffixes
-			;TT = %TT%`n`n-----------`nMods (%MapAffixCount%):%AffixDetails%
-			TT = %TT%`n`n-----------`nМоды (%MapAffixCount%):%AffixDetails%
+			;TT = %TT%`n`nMods (%MapAffixCount%):%AffixDetails%
+			TT = %TT%`n`nМоды (%MapAffixCount%):%AffixDetails%
 			
 			If (MapModWarnings)
 			{
-				TT = %TT%`n`nMod warnings:%MapModWarnings%
-				;TT = %TT%`n`nОпасные моды:%MapModWarnings%
+				;TT = %TT%`n`nMod warnings:%MapModWarnings%
+				TT = %TT%`n`nОпасные моды:%MapModWarnings%
 			}
 			Else
 			{
-				TT = %TT%`n`nMod warnings:`nnone
-				;TT = %TT%`n`nОпасные моды:`nнет
+				;TT = %TT%`n`nMod warnings:`nnone
+				TT = %TT%`n`nОпасные моды:`nнет
 			}
 		}
 	}
@@ -8884,12 +9142,17 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		TT := TT . "`nКачество 20%:`n" . GemQualityDescription
 	}
 	
+	If (Item.IsBeast)
+	{
+		return TT
+	}
+	
 	If (RarityLevel > 1 and RarityLevel < 4)
 	{
 		; Append affix info if rarity is greater than normal (white)
 		; Affix total statistic
-		;If(Itemdata.Rarity = "Magic"){
-		If(Itemdata.Rarity = "Волшебный"){
+		;If (Itemdata.Rarity = "Magic"){
+		If (Itemdata.Rarity = "Волшебный"){
 			PrefixLimit := 1
 			SuffixLimit := 1
 		}Else{
@@ -8944,14 +9207,14 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		maxIndex 	:= Item.Implicit.MaxIndex()
 		TextLineWidth := ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]) ? 20 : 50
 		; ширина поля для собственного свойства предмета - будем определять в зависимости от настроек, либо полную, либо краткую
-		If(!Opts.ShortAffix){
+		If (!Opts.ShortAffix){
 			TextLineWidth := ParseModLength(Item.Implicit, true, ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]))
 		}
 		Ellipsis := Opts.AffixTextEllipsis
 		
 		Loop, % maxIndex {
 			ImplicitText := Item.Implicit[A_Index]
-			If(StrLen(ImplicitText) > TextLineWidth)
+			If (StrLen(ImplicitText) > TextLineWidth)
 				{
 					ImplicitText := SubStr(ImplicitText, 1, TextLineWidth - StrLen(Ellipsis))  Ellipsis
 				}
@@ -9024,34 +9287,34 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	{
 		Notation := ""
 		
-		;If(RegExMatch(AffixDetails, "(HybP|HybS)")){
-		If(RegExMatch(AffixDetails, "(ГибПр|ГибСу)")){
+		;If (RegExMatch(AffixDetails, "(HybP|HybS)")){
+		If (RegExMatch(AffixDetails, "(ГибПр|ГибСу)")){
 			;Notation .= "`n Hyb: Hybrid. One mod with two parts in two lines."
 			Notation .= "`n Гиб: Гибридный. Один мод состоящий из двух частей в двух строках."
 		}
-		;If(RegExMatch(AffixDetails, "HDP")){
-		If(RegExMatch(AffixDetails, "HDP")){
+		;If (RegExMatch(AffixDetails, "HDP")){
+		If (RegExMatch(AffixDetails, "HDP")){
 			;Notation .= "`n HDP: Hybrid Defence Prefix. Flat Def on Hybrid Base Armour."
 			Notation .= "`n HDP: Гибридный защитный префикс. Плоская защита от гибридной базовой брони."
 		}
-		;If(RegExMatch(AffixDetails, "(CrP|CrS)")){
-		If(RegExMatch(AffixDetails, "(КрфПр|КрфСу)")){
+		;If (RegExMatch(AffixDetails, "(CrP|CrS)")){
+		If (RegExMatch(AffixDetails, "(КрфПр|КрфСу)")){
 			;Notation .= "`n Cr: Craft. Master tiers not in yet, treated as normal mod."
 			Notation .= "`n Крф: Крафт. Уровни мастеров не определяются, обрабатывается как обычный мод."
 		}
 		matchpattern := "\d\" Opts.DoubleRangeSeparator "\d"
-		If(RegExMatch(AffixDetails, matchpattern)){
+		If (RegExMatch(AffixDetails, matchpattern)){
 			;Notation .= "`n a-b" Opts.DoubleRangeSeparator "c-d: For added damage mods. (a-b) to (c-d)"
 			Notation .= "`n a-b" Opts.DoubleRangeSeparator "c-d: Для модов добавляющих урон: от (a-b) до (c-d)"
 		}
 		matchpattern := "\d\" Opts.MultiTierRangeSeparator "\d"
-		If(RegExMatch(AffixDetails, matchpattern)){
+		If (RegExMatch(AffixDetails, matchpattern)){
 			;Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: Multi tier uncertainty. WorstCaseRange" Opts.MultiTierRangeSeparator "BestCaseRange"
 			;Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: Неопределенность в уровнях. ХудшийДиапазон" Opts.MultiTierRangeSeparator "ЛучшийДиапазон"
 			Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: Невозможно однозначно определить тир. ХудшийДиапазон" Opts.MultiTierRangeSeparator "ЛучшийДиапазон"
 		}
 		
-		If(Itemdata.SpecialCaseNotation is not "")
+		If (Itemdata.SpecialCaseNotation != "")
 		{
 			Notation .= "`n" Itemdata.SpecialCaseNotation
 		}
@@ -9069,42 +9332,48 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 
 GetNegativeAffixOffset(Item)
 {
+	; Certain item types have descriptive text lines at the end,
+	; so decrement item index to get to the affix lines.
 	NegativeAffixOffset := 0
-	If (Item.IsFlask or Item.IsUnique or Item.IsTalisman)
+	If (Item.IsFlask)
 	{
-		; Uniques as well as flasks have descriptive text as last item,
-		; so decrement item index to get to the item before last one
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
+	}
+	If (Item.IsUnique)
+	{
+		NegativeAffixOffset += 1
+	}
+	If (Item.IsTalisman)
+	{
+		NegativeAffixOffset += 1
 	}
 	If (Item.IsMap)
 	{
-		; Maps have a descriptive text as the last item
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
 	}
 	If (Item.IsJewel)
 	{
-		; Jewels, like maps and flask, have a descriptive text as the last item
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
 	}
 	If (Item.HasEffect)
 	{
-		; Same with weapon skins or other effects
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
 	}
 	If (Item.IsCorrupted)
 	{
-		; And corrupted items
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
 	}
 	If (Item.IsElderBase or Item.IsShaperBase)
 	{
-		; And Elder/Shaper items
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
 	}
 	If (Item.IsMirrored)
 	{
-		; And mirrored items
-		NegativeAffixOffset := NegativeAffixOffset + 1
+		NegativeAffixOffset += 1
+	}
+	If (RegExMatch(Item.Name, "i)Tabula Rasa")) ; no mods, no flavour text
+	{
+		NegativeAffixOffset -= 2
 	}
 	return NegativeAffixOffset
 }
@@ -9171,9 +9440,9 @@ ModStringToObject(string, isImplicit) {
 	}
 
 	type := ""
-	; Matching "x% fire and cold resistance" or "x% to cold resist", excluding "to maximum cold resistance" and "damage penetrates x% cold resistance"
-	;If (RegExMatch(val, "i)to ((cold|fire|lightning)( and (cold|fire|lightning))?) resistance")) {
-	If (RegExMatch(val, "i)к сопротивлению ((холоду|огню|молнии)( и (холоду|огню|молнии))?)")) {
+	; Matching "x% fire and cold resistance" or "x% to cold resist", excluding "to maximum cold resistance" and "damage penetrates x% cold resistance" and minion/totem related mods
+	;If (RegExMatch(val, "i)to ((cold|fire|lightning)( and (cold|fire|lightning))?) resistance") and not RegExMatch(val, "i)Minion|Totem")) {
+	If (RegExMatch(val, "i)к сопротивлению ((холоду|огню|молнии)( и (холоду|огню|молнии))?)") and not RegExMatch(val, "i)Приспешник|Тотем")) {
 		type := "Resistance"
 		;If (RegExMatch(val, "i)fire")) {
 		If (RegExMatch(val, "i)огню")) {
@@ -9199,15 +9468,18 @@ ModStringToObject(string, isImplicit) {
 		type := "Defence"
 		;If (RegExMatch(val, "i)Armour")) {
 		If (RegExMatch(val, "i)броне")) {
-			Matches.push("Armour")
+			;Matches.push("Armour")
+			Matches.push("броне")
 		}
 		;If (RegExMatch(val, "i)Evasion Rating")) {
 		If (RegExMatch(val, "i)уклонению")) {
-			Matches.push("Evasion Rating")
+			;Matches.push("Evasion Rating")
+			Matches.push("уклонению")
 		}
 		;If (RegExMatch(val, "i)Energy Shield")) {
 		If (RegExMatch(val, "i)(энергетическому щиту|максимуму энергетического щита)")) {
-			Matches.push("Energy Shield")
+			;Matches.push("Energy Shield")
+			Matches.push("максимуму энергетического щита")
 		}
 	}
 
@@ -9229,8 +9501,8 @@ ModStringToObject(string, isImplicit) {
 		Matches[A_Index] := match1 ? sign . "#% к " . match1 . " " . Matches[A_Index] : sign . "#" . type . "" . Matches[A_Index]
 	}
 
-	;If (RegExMatch(val, "i)to all attributes|to all elemental (Resistances)", match)) {
-	If (RegExMatch(val, "i)ко всем характеристикам|к (сопротивлению) всем стихиям", match)) {
+	;If (RegExMatch(val, "i)to all attributes|to all elemental (Resistances)", match) and not RegExMatch(val, "i)Minion|Totem")) {
+	If (RegExMatch(val, "i)ко всем характеристикам|к (сопротивлению) всем стихиям", match) and not RegExMatch(val, "i)Приспешник|Тотем")) {
 		resist := match1 ? true : false
 		;Matches[1] := resist ? "+#% to Fire Resistance" : "+# to Strength"
 		Matches[1] := resist ? "+#% к сопротивлению огню" : "+# к силе"
@@ -9262,7 +9534,7 @@ ModStringToObject(string, isImplicit) {
 		;temp.name		:= RegExReplace(s, "i)# ?to ? #", "#", isRange)
 		temp.name		:= RegExReplace(s, "i)# ?к ? #", "#", isRange)
 		; попытаемся сконвертировать имя мода содержащего константу
-		nameModNum := nameModNumToConst(temp.name)
+		nameModNum := AdpRu_nameModNumToConst(temp.name)
 		temp.name := nameModNum.nameModConst
 
 		temp.isVariable:= false
@@ -9414,14 +9686,14 @@ CreatePseudoMods(mods, returnAllMods := False) {
 
 		; ### Resistances
 		; % to all resistances ( careful about 'max all resistances' )
-		;Else If (RegExMatch(mod.name, "i)to all Elemental Resistances$")) {
-		Else If (RegExMatch(mod.name, "i)к сопротивлению всем стихиям$")) {
+		;Else If (RegExMatch(mod.name, "i)to all Elemental Resistances$") and not RegExMatch(mod.name, "i)Minion|Totem")) {
+		Else If (RegExMatch(mod.name, "i)к сопротивлению всем стихиям$") and not RegExMatch(mod.name, "i)Приспешник|Тотем")) {
 			toAllElementalResist := toAllElementalResist + mod.values[1]
 			mod.simplifiedName := "xToAllElementalResistances"
 		}
 		; % to base resistances
-		;Else If (RegExMatch(mod.name, "i)to (Cold|Fire|Lightning|Chaos) Resistance$", resistType)) {
-		Else If (RegExMatch(mod.name, "i)к сопротивлению (холоду|огню|молнии|хаосу)$", resistType)) {
+		;Else If (RegExMatch(mod.name, "i)to (Cold|Fire|Lightning|Chaos) Resistance$", resistType) and not RegExMatch(mod.name, "i)Minion|Totem")) {
+		Else If (RegExMatch(mod.name, "i)к сопротивлению (холоду|огню|молнии|хаосу)$", resistType) and not RegExMatch(mod.name, "i)Приспешник|Тотем")) {
 			resistType1 := nameRuToEn[resistType1]
 			%resistType1%Resist := %resistType1%Resist + mod.values[1]
 			mod.simplifiedName := "xTo" resistType1 "Resistance"
@@ -9789,7 +10061,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 	; other damages
 	;percentDamageModSuffixes := [" Damage", " Damage with Attack Skills", " Spell Damage"]
 	;percentDamageModSuffixes := ["", " от умений атак", " для чар"]
-	percentDamageModSuffixes := ["", " от умений атак", " чарами"]
+	;percentDamageModSuffixes := ["", " от умений атак", " чарами"]
+	percentDamageModSuffixes := ["", " умениями атак", " чарами"]
 	;flatDamageModSuffixes    := ["", " to Attacks", " to Spells"]
 	flatDamageModSuffixes    := ["", " к атакам", " к чарам"]
 
@@ -10317,6 +10590,8 @@ CreateSettingsUI()
 {
 	Global
 	
+	Gui, Color, ffffff, ffffff
+	
 	; ItemInfo is not included in other scripts
 	If (not SkipItemInfoUpdateCall) {	
 		;Fonts.SetUIFont()
@@ -10604,9 +10879,10 @@ CreateSettingsUI()
 	GuiAddButton("Defaults", "xp-5 y+8 w90 h23", "SettingsUI_AM_BtnDefaults")
 	GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	GuiAddButton("Cancel", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")
+	GuiAddText("Any change here currently requires a script restart!", ButtonsShiftX "y+10 w280 h50 cGreen")
 	
 	If (SkipItemInfoUpdateCall) {
-		GuiAddText("Use these buttons to change ItemInfo and AdditionalMacros settings (TradeMacro has it's own buttons).", ButtonsShiftX "y+10 w280 h50 cRed")
+		GuiAddText("Use these buttons to change ItemInfo and AdditionalMacros settings (TradeMacro has it's own buttons).", ButtonsShiftX "y+5 w280 h50 cRed")
 	}
 	
 	GuiAddText("Experimental Feature!", ButtonsShiftX "y+35 w280 h200 cRed")
@@ -10762,7 +11038,9 @@ ShowUpdateNotes()
 	}
 	ToolTip
 	Gui, UpdateNotes:Destroy
+	Gui, UpdateNotes:Color, ffffff, ffffff
 	Fonts.SetUIFont(9)
+	Gui, UpdateNotes:Font, , Verdana
 
 	Files := Globals.Get("UpdateNoteFileList")
 
@@ -10779,13 +11057,13 @@ ShowUpdateNotes()
 	Loop, % Files.Length() {
 		file := Files[A_Index][1]
 		FileRead, notes, %file%
-		Gui, UpdateNotes:Add, Edit, r50 ReadOnly w700 BackgroundTrans, %notes%
+		Gui, UpdateNotes:Add, Edit, r50 ReadOnly w900 BackgroundTrans, %notes%
 		NextTab := A_Index + 1
 		Gui, UpdateNotes:Tab, %NextTab%
 	}
 	Gui, UpdateNotes:Tab
 
-	SettingsUIWidth := 745
+	SettingsUIWidth := 945
 	SettingsUIHeight := 710
 	SettingsUITitle := "Update Notes"
 	Gui, UpdateNotes:Show, w%SettingsUIWidth% h%SettingsUIHeight%, %SettingsUITitle%
@@ -10794,6 +11072,7 @@ ShowUpdateNotes()
 ShowChangedUserFiles()
 {
 	Gui, ChangedUserFiles:Destroy
+	Gui, ChangedUserFiles:Color, ffffff, ffffff
 
 	Gui, ChangedUserFiles:Add, Text, , Following user files were changed in the last update and `nwere overwritten (old files were backed up):
 
@@ -11144,6 +11423,7 @@ ShowAssignedHotkeys() {
 		}
 	}
 
+	Gui, ShowHotkeys:Color, ffffff, ffffff
 	Gui, ShowHotkeys:Add, Text, , List of this scripts assigned hotkeys.
 	Gui, ShowHotkeys:Default
 	Gui, Font, , Courier New
@@ -11211,6 +11491,12 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 		ClipBoardTemp := Clipboard
 		SuspendPOEItemScript = 1 ; This allows us to handle the clipboard change event
 
+		scancode_c := Globals.Get("ScanCodes").c
+		scancode_v := Globals.Get("ScanCodes").v
+		scancode_a := Globals.Get("ScanCodes").a
+		scancode_f := Globals.Get("ScanCodes").f
+		scancode_enter := Globals.Get("ScanCodes").enter
+		
 		; Parse the clipboard contents twice.
 		; If the clipboard contains valid item data before we send ctrl + c to try and parse an item via ctrl + f then don't restore that clipboard data later on.
 		; This prevents the highlighting function to fill search fields with data from previous item parsings/manual data copying since
@@ -11218,7 +11504,7 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 		Loop, 2 {
 			If (A_Index = 2) {
 				Clipboard :=
-				Send ^{sc02E}	; ^{c}
+				Send ^{%scancode_c%}	; ^{c}
 				Sleep 100
 			}
 			CBContents := GetClipboardContents()
@@ -11233,11 +11519,14 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 		If (Item.Name) {
 			rarity := ""
 			If (Item.RarityLevel = 2) {
-				rarity := "magic"
+				;rarity := "magic"
+				rarity := "волшебный"
 			} Else If (Item.RarityLevel = 3) {
-				rarity := "rare"
+				;rarity := "rare"
+				rarity := "редкий"
 			} Else If (Item.RarityLevel = 4) {
-				rarity := "unique"
+				;rarity := "unique"
+				rarity := "уникальный"
 			}
 
 			terms := []
@@ -11245,15 +11534,19 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard) {
 				If (broadTerms) {
 					If (Item.IsUnique) {
-						terms.push("Rarity: Unique")
+						;terms.push("Rarity: Unique")
+						terms.push("Редкость: Уникальный")
 					} Else {
-						terms.push("Rarity: " Item.BaseType)
+						;terms.push("Rarity: " Item.BaseType)
+						terms.push("Редкость: " Item.BaseType_Ru)
 					}
 				} Else {
 					If (Item.IsUnique) {
-						terms.push("Rarity: Unique")
+						;terms.push("Rarity: Unique")
+						terms.push("Редкость: Уникальный")
 					} Else {
-						terms.push("Rarity: " Item.BaseType)
+						;terms.push("Rarity: " Item.BaseType)
+						terms.push("Редкость: " Item.BaseType_Ru)
 					}
 					terms.push(Item.Name)
 				}
@@ -11261,17 +11554,21 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			; prophecies
 			Else If (Item.IsProphecy) {
 				If (broadTerms) {
-					terms.push("this prophecy")
+					;terms.push("this prophecy")
+					terms.push("это пророчество")
 				} Else {
-					terms.push("this prophecy")
+					;terms.push("this prophecy")
+					terms.push("это пророчество")
 					terms.push(Item.Name)
 				}
 			}
 			; essences
 			Else If (Item.IsEssence) {
 				If (broadTerms) {
-					terms.push("Rarity: Currency")
-					terms.push("Essence")
+					;terms.push("Rarity: Currency")
+					terms.push("Редкость: Валюта")
+					;terms.push("Essence")
+					terms.push("Сущность")
 				} Else {
 					terms.push(Item.Name)
 				}
@@ -11279,7 +11576,8 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			; currency
 			Else If (Item.IsCurrency) {
 				If (broadTerms) {
-					terms.push("Currency")
+					;terms.push("Currency")
+					terms.push("Валюта")
 				} Else {
 					terms.push(Item.Name)
 				}
@@ -11287,15 +11585,18 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			; maps
 			Else If (Item.IsMap) {
 				If (broadTerms) {
-					terms.push(" Map")
+					;terms.push(" Map")
+					terms.push(" Карта")
 				} Else {
 					terms.push(Item.SubType)
-					terms.push("tier:" Item.MapTier)
+					;terms.push("tier:" Item.MapTier)
+					terms.push("Уровень карты:" Item.MapTier)
 				}
 			}
 			; flasks
 			Else If (Item.IsFlask) {
 				If (broadTerms) {
+					;terms.push("Consumes")
 					terms.push("Consumes")
 					terms.push(Item.SubType)
 				} Else {
@@ -11316,13 +11617,20 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 					terms.push(Item.BaseType)
 				} Else {
 					terms.push(Item.BaseName)
+										If (Item.BaseName) {
+						terms.push(Item.BaseName)	
+					} Else {
+						terms.push("Jewel")
+					}	
 					terms.push(rarity)
 				}
 			}
 			; offerings / sacrifice and mortal fragments / guardian fragments / council keys / breachstones
-			Else If (RegExMatch(Item.Name, "i)Sacrifice At") or RegExMatch(Item.Name, "i)Fragment of") or RegExMatch(Item.Name, "i)Mortal ") or RegExMatch(Item.Name, "i)Offering to ") or RegExMatch(Item.Name, "i)'s Key") or RegExMatch(Item.Name, "i)Breachstone") or RegExMatch(Item.Name, "i)Reliquary Key")) {
+			;Else If (RegExMatch(Item.Name, "i)Sacrifice At") or RegExMatch(Item.Name, "i)Fragment of") or RegExMatch(Item.Name, "i)Mortal ") or RegExMatch(Item.Name, "i)Offering to ") or RegExMatch(Item.Name, "i)'s Key") or RegExMatch(Item.Name, "i)Breachstone") or RegExMatch(Item.Name, "i)Reliquary Key")) {
+			Else If (RegExMatch(Item.Name_En, "i)Sacrifice At") or RegExMatch(Item.Name_En, "i)Fragment of") or RegExMatch(Item.Name_En, "i)Mortal ") or RegExMatch(Item.Name_En, "i)Offering to ") or RegExMatch(Item.Name_En, "i)'s Key") or RegExMatch(Item.Name_En, "i)Breachstone") or RegExMatch(Item.Name_En, "i)Reliquary Key")) {
 				If (broadTerms) {
-					tmpName := RegExReplace(Item.Name, "i)(Sacrifice At).*|(Fragment of).*|(Mortal).*|.*('s Key)|.*(Breachstone)|(Reliquary Key)", "$1$2$3$4$5$6")
+					;tmpName := RegExReplace(Item.Name, "i)(Sacrifice At).*|(Fragment of).*|(Mortal).*|.*('s Key)|.*(Breachstone)|(Reliquary Key)", "$1$2$3$4$5$6")
+					tmpName := RegExReplace(Item.Name, "i)(Жертва в).*|(Жертва на).*|(Фрагмент).*|(Смертная|Смертное|Смертный).*|.*(Ключ)|.*(Камень Разлома)|(Ключ от )", "$1$2$3$4$5$6$7")
 					terms.push(tmpName)
 				} Else {
 					terms.push(Item.Name)
@@ -11334,19 +11642,23 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 					If (Item.IsWeapon or Item.IsAmulet or Item.IsRing or Item.IsBelt or InStr(Item.SubType, "Shield")) {
 						; add the term "Chance to Block" to remove items with "Energy Shield" from "Shield" searches
 						If (InStr(Item.SubType, "Shield")) {
-							terms.push("Chance to Block")
+							;terms.push("Chance to Block")
+							terms.push("Шанс заблокировать удар")
 						}
 
 						; add grip type to differentiate 1 and 2 handed weapons
 						If (Item.GripType == "1H" and RegExMatch(Item.Subtype, "i)Sword|Mace|Axe")) {
-							prefix := "One Handed"
+							;prefix := "One Handed"
+							prefix := "Одноручный"
 						} Else If (Item.GripType == "2H") {
-							prefix := "Two Handed"
+							;prefix := "Two Handed"
+							prefix := "Двуручный"
 						}
 
 						; Handle Talismans, they have SubType "Amulet" but this won't be found ingame.
 						If (Item.IsTalisman) {
-							term := "Talisman Tier:"
+							;term := "Talisman Tier:"
+							term := "Уровень талисмана:"
 						} Else {
 							; add a space since all these terms have a preceding one, this reduces the chance of accidental matches
 							; for example "Ring" found in "Voidbringers" or "during Flask effect"
@@ -11359,7 +11671,8 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 					; we can use the item defences though to match armour pieces with the same defence types (can't differentiate between "Body Armour" and "Helmet").
 					Else If (InStr(Item.BaseType, "Armour")) {
 						For key, val in ItemData.Parts {
-							If (RegExMatch(val, "i)(Energy Shield:)|(Armour:)|(Evasion Rating:)", match)) {
+							;If (RegExMatch(val, "i)(Energy Shield:)|(Armour:)|(Evasion Rating:)", match)) {
+							If (RegExMatch(val, "i)(Энерг. щит:)|(Броня:)|(Уклонение:)", match)) {
 								Loop, 3 {
 									If (StrLen(match%A_Index%)) {
 										terms.push(match%A_Index%)
@@ -11368,14 +11681,18 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 							}
 						}
 					}
-				} Else {
-					terms.push(Item.BaseName)
+				} Else {			
+					If (Item.BaseName) {
+						terms.push(Item.BaseName)	
+					} Else {
+						terms.push(Trim(RegExReplace(Item.Name, "Superior")))
+					}
 				}
 			}
 		}
 
 		If (terms.length() > 0) {
-			SendInput ^{sc021} ; sc021 = f
+			SendInput ^{%scancode_f%} ; sc021 = f
 			searchText =
 			For key, val in terms {
 				searchText = %searchText% "%val%"
@@ -11393,14 +11710,14 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 
 			Clipboard := searchText
 			Sleep 10
-			SendEvent ^{sc02f}		; ctrl + v
+			SendEvent ^{%scancode_v%}		; ctrl + v
 			If (leaveSearchField) {
-				SendInput {sc01c}	; enter
+				SendInput {%scancode_enter%}	; enter
 			} Else {
-				SendInput ^{sc01e}	; ctrl + a
+				SendInput ^{%scancode_a%}	; ctrl + a
 			}
 		} Else {
-			SendInput ^{sc021}		; send ctrl + f in case we don't have information to input
+			SendInput ^{%scancode_f%}		; send ctrl + f in case we don't have information to input
 		}
 
 		Sleep, 10
@@ -11420,7 +11737,8 @@ AdvancedItemInfoExt() {
 		SuspendPOEItemScript = 1 ; This allows us to handle the clipboard change event
 
 		Clipboard :=
-		Send ^{sc02E}	; ^{c}
+		scancode_c := Globals.Get("Scancodes").c
+		Send ^{%scancode_c%}	; ^{c}
 		Sleep 100
 
 		CBContents := GetClipboardContents()
@@ -11436,6 +11754,156 @@ AdvancedItemInfoExt() {
 		SuspendPOEItemScript = 0
 	}
 }
+
+OpenItemOnPoEAntiquary() {
+	IfWinActive, ahk_group PoEWindowGrp
+	{
+		Global Item, Opts, Globals, ItemData
+
+		ClipBoardTemp := Clipboard
+		SuspendPOEItemScript = 1 ; This allows us to handle the clipboard change event
+
+		Clipboard :=
+		scancode_c := Globals.Get("Scancodes").c
+		Send ^{%scancode_c%}	; ^{c}
+		Sleep 100
+
+		CBContents := GetClipboardContents()
+		CBContents := PreProcessContents(CBContents)
+		Globals.Set("ItemText", CBContents)
+		ParsedData := ParseItemData(CBContents)
+	
+		;If (Item.Name) {			
+		If (Item.Name_En) {
+			global AntiquaryData := []
+			global AntiquaryType := AntiquaryGetType(Item)
+			
+			If (AntiquaryType) {
+				If (AntiquaryType = "Map") {
+					name := Item.BaseName
+				} Else {
+					name := Item.Name
+				}
+
+				;url := "http://poe-antiquary.xyz/api/macro/" UriEncode(AntiquaryType) "/" UriEncode(Item.Name)			
+				url := "http://poe-antiquary.xyz/api/macro/" UriEncode(AntiquaryType) "/" UriEncode(Item.Name_En)
+
+				postData 	:= ""					
+				options	:= "RequestType: GET"
+				options	.= "`n" "TimeOut: 15"
+				reqHeaders := []
+				
+				reqHeaders.push("Connection: keep-alive")
+				reqHeaders.push("Cache-Control: max-age=0")
+				reqHeaders.push("Upgrade-Insecure-Requests: 1")
+				reqHeaders.push("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+		
+				data := PoEScripts_Download(url, postData, reqHeaders, "", true)
+
+
+				Try {
+					AntiquaryData := JSON.Load(data)
+				} Catch error {
+					errorMsg := error.Message
+					Msgbox, %errorMsg%
+				}
+
+				name := AntiquaryData["name"]
+				lastLeague := AntiquaryData["league"]
+				itemType := AntiquaryData["itemType"]
+				items := AntiquaryData.items
+				length := items.Length()
+				
+				If (length == 0) {
+					;ShowToolTip("Item not available on http://poe-antiquary.xyz.")
+					ShowToolTip("Предмет не доступен на http://poe-antiquary.xyz.")
+				}
+				Else If (length == 1) {
+					id := items[1].id
+					AntiquaryOpenInBrowser(itemType, name, id, lastLeague)
+				}
+				Else If (length > 1) {
+					AntiquaryOpenInBrowser(itemType, name, id, lastLeague, length)
+				}
+			}
+		} Else {			
+			;ShowToolTip("Item parsing failed, no name recognized.")
+			ShowToolTip("Ошибка анализа предмета, не распознано имя.")
+		}
+		SuspendPOEItemScript = 0
+	}
+}
+
+AntiquaryOpenInBrowser(type, name, id, lastLeague, multiItems = false) {
+	league := TradeGlobals.Get("LeagueName")
+	If (RegExMatch(league, "Hardcore.*")) {
+		league := lastLeague "HC"
+	} Else {
+		league := lastLeague
+	}
+	
+	league	:= UriEncode(league)
+	type		:= UriEncode(type)
+	name		:= UriEncode(name)
+	id		:= UriEncode(id)
+	utm		:= UriEncode("trade macro")
+	
+	If (multiItems) {
+		url := "http://poe-antiquary.xyz/" league "/" type "?name=" name ;"?utm_source=" utm "&utm_medium=" utm "&utm_campaign=" utm		
+	}
+	Else {
+		url := "http://poe-antiquary.xyz/" league "/" type "/" name "/" id ;"?utm_source=" utm "&utm_medium=" utm "&utm_campaign=" utm	
+	}
+	openWith := AssociatedProgram("html")
+	OpenWebPageWith(openWith, url)
+}
+
+AntiquaryGetType(Item) {
+	If (Item.IsUnique) {
+		If (Item.IsWeapon) {
+			return "Weapon"
+		}
+		If (Item.IsArmour) {
+			return "Armour"
+		}
+		If (Item.IsFlask) {
+			return "Flask"
+		}
+		If (Item.IsJewel) {
+			return "Jewel"
+		}
+		If (Item.IsBelt or Item.IsRing or Item.IsAmulet) {
+			return "Accessory"
+		}
+	}
+	If (Item.IsEssence) {
+		return "Essence"
+	}
+	If (Item.IsDivinationCard) {
+		return "Divination"
+	}
+	If (Item.IsProphecy) {
+		return "Prophecy"
+	}
+	If (Item.IsMapFragment) {
+		return "Fragment"
+	}
+	If (Item.IsMap) {
+		If (Item.IsUnique) {
+			return "Unique Map"
+		} Else {
+			return "Map"	
+		}		
+	}
+	;If (RegExMatch(Item.Name, "(Sacrifice|Mortal|Fragment).*|Offering to the Goddess|Divine Vesse|.*(Breachstone|s Key)")) {
+	If (RegExMatch(Item.Name_En, "(Sacrifice|Mortal|Fragment).*|Offering to the Goddess|Divine Vesse|.*(Breachstone|s Key)")) {
+		return "Fragment"
+	}
+	If (Item.IsCurrency) {
+		return "Currency"
+	}
+}
+
 
 StringToBase64UriEncoded(stringIn, noUriEncode = false) {
 	stringBase64 := ""
@@ -11491,7 +11959,8 @@ LookUpAffixes() {
 		SuspendPOEItemScript = 1 ; This allows us to handle the clipboard change event
 
 		Clipboard :=
-		Send ^{sc02E}	; ^{c}
+		scancode_c := Globals.Get("Scancodes").c
+		Send ^{%scancode_c%}	; ^{c}
 		Sleep 100
 
 		CBContents := GetClipboardContents()
@@ -11560,7 +12029,7 @@ ParseModLength(modStr, impl=false, isImplVal=false)
 
 	For i, modString in modStr {
 		strLength := StrLen(modString)
-		If(strLength > maxLen){
+		If (strLength > maxLen){
 			maxLen := strLength
 		}
 	}
@@ -11663,6 +12132,7 @@ ShowTranslationUI() {
 	Global 
 	
 	Gui, Translate:Destroy
+	Gui, Translate:Color, ffffff, ffffff
 	
 	Gui, Translate:Margin, 10 , 10
 	Gui, Translate:Add, Text, , Add your copied item information to translate it to english. The rightmost column shows some debug information. 
@@ -12009,11 +12479,10 @@ MenuTray_About:
 	{
 		Authors := GetContributors(0)
 		RelVer := Globals.get("ReleaseVersion")
-		RelVerRu := Globals.Get("ReleaseVersionRu")
 		Gui, About:+owner1 -Caption +Border
+		Gui, About:Color, ffffff, ffffff
 		Gui, About:Font, S10 CA03410,verdana
-		;Gui, About:Add, Text, x260 y27 w170 h20 Center, Release %RelVer%
-		Gui, About:Add, Text, x260 y15 w170 h40 Center, Release`n%RelVer%_%RelVerRu%
+		Gui, About:Add, Text, x260 y15 w170 h40 Center, Release`n%RelVer%
 		Gui, About:Add, Button, 0x8000 x316 y300 w70 h21, Close
 		Gui, About:Add, Picture, 0x1000 x17 y16 w230 h180, %A_ScriptDir%\resources\images\splash.png
 		Gui, About:Font, Underline C3571AC,verdana
@@ -12094,7 +12563,7 @@ EditCurrencyRates:
 
 ReloadScript:
 	;scriptName := RegExReplace(Globals.Get("ProjectName"), "i)poe-", "Run_") . ".ahk"
-	scriptName := RegExReplace(Globals.Get("ProjectName"), "i)-Ru$", "")
+	scriptName := RegExReplace(Globals.Get("ProjectName"), "i)_ru$", "")
 	scriptName := RegExReplace(scriptName, "i)poe-", "Run_") . ".ahk"
 	Run, "%A_AhkPath%" "%A_ScriptDir%\%scriptName%"
 	return
@@ -12151,25 +12620,47 @@ CheckForUpdates:
 	}
 	return
 
-; TODO: use this for trademacro also
-CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, league = "", project ="", tmpFileName = "", fallbackDir = "", ByRef usedFallback = false) {
+ CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, isFallbackRequest = false, league = "", project = "", tmpFileName = "", fallbackDir = "", ByRef usedFallback = false, ByRef loggedCurrencyRequestAtStartup = false, ByRef loggedTempLeagueCurrencyRequest = false) { 
 	errorMsg := "Parsing the currency data (json) from poe.ninja failed.`n"
 	errorMsg .= "This should only happen when the servers are down / unavailable."
 	errorMsg .= "`n`n"
 	errorMsg .= "This can fix itself when the servers are up again and the data gets updated automatically or if you restart the script at such a time."
+	errorMsg .= "`n`n"
+	errorMsg .= "You can find a log file with some debug information:"
+	errorMsg .= "`n" """" A_ScriptDir "\temp\StartupLog.txt"""
+	errorMsg .= "`n`n"
 
 	errors := 0
 	Try {
-		reqHeaders.push("Host: poe.ninja")
 		reqHeaders.push("Connection: keep-alive")
 		reqHeaders.push("Cache-Control: max-age=0")
-		;reqHeaders.push("Content-type: application/x-www-form-urlencoded; charset=UTF-8")
 		reqHeaders.push("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")	
 		reqHeaders.push("User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36")
-		parsedJSON := PoEScripts_Download(url, postData, reqHeaders, options, true, true, false, "", reqHeadersCurl)
+		currencyData := PoEScripts_Download(url, postData, reqHeaders, options, true, true, false, "", reqHeadersCurl)
 		
+		If (FileExist(A_ScriptDir "\temp\currencyHistory_" league ".txt")) {
+			FileDelete, % A_ScriptDir "\temp\currencyHistory_" league ".txt"	
+		}
+		FileAppend, %currencyData%, % A_ScriptDir "\temp\currencyHistory_" league ".txt"
+		
+		Try {
+			parsedJSON := JSON.Load(currencyData)
+		} Catch e {
+			parsingError := true
+		}	
+		
+		isTempLeague := RegExMatch(league, "^(Standard|Hardcore)")
+		If (not loggedCurrencyRequestAtStartup or (not loggedTempLeagueCurrencyRequest and not isTempLeague)) {
+			logMsg := "Requesting currency data from poe.ninja...`n`n" "cURL command:`n" reqHeadersCurl "`n`nAnswer: " reqHeaders
+			WriteToLogFile(logMsg, "StartupLog.txt", project)
+			
+			loggedCurrencyRequestAtStartup := true
+			If (not loggedTempLeagueCurrencyRequest and not isTempLeague) {
+				loggedTempLeagueCurrencyRequest := true
+			}
+		}
 		; first currency data parsing (script start)
-		If (critical and not sampleValue or not parsedJSON.lines.length()) {
+ 		If ((critical and (not sampleValue or isFallbackRequest)) or not parsedJSON.lines.length()) { 
 			errors++
 		}
 	} Catch error {
@@ -12179,17 +12670,15 @@ CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, league = "", pr
 		}
 	}
 
-	Try {
-		parsedJSON := JSON.Load(parsedJSON)
-	} Catch e {
-		parsingError := true
-	}
-	
-	If ((errors and critical and not sampleValue) or parsingError) {
+	If ((errors and critical and (not sampleValue or isFallbackRequest)) or parsingError) {
 		FileRead, JSONFile, %fallbackDir%\currencyData_Fallback_%league%.json
 		Try {
 			parsedJSON := JSON.Load(JSONFile)
-			errorMsg .= "Using archived data from a fallback file. League: """ league """."
+			If (isFallbackRequest) {
+				errorMsg .= "This is a fallback request trying to get data for the """ league """ league since getting data for the currently selected league failed."
+				errorMsg .= "`n`n"
+			}
+			errorMsg .= "The script is now using archived data from a fallback file instead. League: """ league """"
 			errorMsg .= "`n`n"
 		} Catch e {
 			errorMsg .= "Using archived fallback data failed (JSON parse error)."
@@ -12204,8 +12693,10 @@ CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, league = "", pr
 
 FetchCurrencyData:
 	_CurrencyDataJSON	:= {}
-	currencyLeagues	:= ["Standard", "Hardcore", "tmpstandard", "tmphardcore"]
+	currencyLeagues	:= ["Standard", "Hardcore", "tmpstandard", "tmphardcore", "eventstandard", "eventhardcore"]
 	sampleValue		:= "ff"
+	loggedCurrencyRequestAtStartup := loggedCurrencyRequestAtStartup ? loggedCurrencyRequestAtStartup : false
+	loggedTempLeagueCurrencyRequest := loggedTempLeagueCurrencyRequest ? loggedTempLeagueCurrencyRequest : false 
 	
 	Loop, % currencyLeagues.Length() {
 		currencyLeague := currencyLeagues[A_Index]
@@ -12214,8 +12705,8 @@ FetchCurrencyData:
 
 		url		:= "http://poe.ninja/api/Data/GetCurrencyOverview?league=" . currencyLeague
 		critical	:= StrLen(Globals.Get("LastCurrencyUpdate")) ? false : true
-		parsedJSON := CurrencyDataDowloadURLtoJSON(url, sampleValue, critical, currencyLeague, "PoE-ItemInfo", file, A_ScriptDir "\data", usedFallback)		
-
+ 		parsedJSON := CurrencyDataDowloadURLtoJSON(url, sampleValue, critical, false, currencyLeague, "PoE-ItemInfo", file, A_ScriptDir "\data", usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest)		
+		
 		Try {
 			If (parsedJSON) {		
 				_CurrencyDataJSON[currencyLeague] := parsedJSON.lines
@@ -12280,6 +12771,18 @@ ZeroTrim(number) {
 	}
 }
 
+IsInArray(el, array) {
+	For i, element in array {
+		If (el = "") {
+			Return false
+		}
+		If (element = el) {
+			Return true
+		}
+	}
+	Return false
+}
+
 TogglePOEItemScript()
 {
 	IF SuspendPOEItemScript = 0
@@ -12292,6 +12795,34 @@ TogglePOEItemScript()
 		SuspendPOEItemScript = 0
 		ShowToolTip("Item parsing ENABLED")
 	}
+}
+
+GetScanCodes() {
+	f := A_FormatInteger
+	SetFormat, Integer, H
+	WinGet, WinID,, A
+	ThreadID:=DllCall("GetWindowThreadProcessId", "UInt", WinID, "UInt", 0)
+	InputLocaleID:=DllCall("GetKeyboardLayout", "UInt", ThreadID, "UInt")	
+	SetFormat, Integer, %f%
+
+	; example results: 0xF0020809/0xF01B0809/0xF01A0809
+	; 0809 is for "English United Kingdom"
+	; 0xF002 = "Dvorak"
+	; 0xF01B = "Dvorak right handed"
+	; 0xF01A = "Dvorak left handed"
+	
+	If (RegExMatch(InputLocaleID, "i)^(0xF002|0xF01B|0xF01A|0xF01C0809).*")) {
+		; dvorak
+		sc := {"c" : "sc017", "v" : "sc034", "f" : "sc015", "a" : "sc01E", "enter" : "sc01C"}
+		project := Globals.Set("ProjectName")
+		msg := "Using Dvorak keyboard layout mode!`n`nMsgBox closes after 15s."
+		MsgBox, 0, %project%, %msg%, 15
+		Return sc
+	} Else {
+		; default
+		sc := {"c" : "sc02E", "v" : "sc02f", "f" : "sc021", "a" : "sc01E", "enter" : "sc01C"}
+		Return sc
+	}	
 }
 
 ; ############ (user) macros #############

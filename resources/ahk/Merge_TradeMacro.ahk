@@ -1,4 +1,4 @@
-; #####################################################################################################################
+﻿; #####################################################################################################################
 ; # This script merges TradeMacro, TradeMacroInit, PoE-ItemInfo and AdditionalMacros into one script and executes it.
 ; # We also have to set some global variables and pass them to the ItemInfo/TradeMacroInit scripts.
 ; # This is to support using ItemInfo as dependancy for TradeMacro.
@@ -37,9 +37,8 @@ If (InStr(arguments, "-mergeonly", 0)) {
 /*
 	Set ProjectName to create user settings folder in A_MyDocuments
 */
-;projectName := "PoE-TradeMacro"
-; новое имя проекта, соответственно и другая папка с настройками отличная от английйской версии
-projectName := "PoE-TradeMacro-Ru"
+projectName := "PoE-TradeMacro_ru"
+
 /*
 	Check some folder permissions
 */
@@ -75,7 +74,7 @@ info		:= ReadFileToMerge(scriptDir "\resources\ahk\POE-ItemInfo.ahk")
 tradeInit := ReadFileToMerge(scriptDir "\resources\ahk\TradeMacroInit.ahk")
 trade	:= ReadFileToMerge(scriptDir "\resources\ahk\TradeMacro.ahk")
 addMacros := ReadFileToMerge(scriptDir "\resources\ahk\AdditionalMacros.ahk")
-; дополнительные функции
+
 adaptationRu := ReadFileToMerge(scriptDir "\resources\ahk\AdaptationRu.ahk")
 
 info		:= "`n`r`n`r" . info . "`n`r`n`r"
@@ -88,10 +87,9 @@ FileDelete, %scriptDir%\_TradeMacroMain.ahk
 FileDelete, %scriptDir%\_ItemInfoMain.ahk
 FileCopy,   %scriptDir%\resources\ahk\TradeMacroInit.ahk, %scriptDir%\_TradeMacroMain.ahk
 
-FileAppend, %info%		, %scriptDir%\_TradeMacroMain.ahk
-; дополнительные функции
-FileAppend, %adaptationRu%		, %scriptDir%\_TradeMacroMain.ahk
+FileAppend, %adaptationRu%	, %scriptDir%\_TradeMacroMain.ahk 
 
+FileAppend, %info%		, %scriptDir%\_TradeMacroMain.ahk
 FileAppend, %addMacros%	, %scriptDir%\_TradeMacroMain.ahk
 FileAppend, %trade%		, %scriptDir%\_TradeMacroMain.ahk
 
@@ -142,7 +140,8 @@ RunAsAdmin(arguments)
 }
 
 StartSplashScreen() {
-    SplashTextOn, , 20, PoE-TradeMacro, Merging and starting Scripts...
+	;SplashTextOn, , 20, PoE-TradeMacro, Merging and starting Scripts...	
+	SplashTextOn, , 20, PoE-TradeMacro, Слияние и запуск Скриптов...	
 }
 
 AppendCustomMacros(userDirectory)

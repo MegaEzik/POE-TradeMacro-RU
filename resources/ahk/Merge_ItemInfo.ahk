@@ -16,9 +16,7 @@ scriptDir := FileExist(arg1) ? arg1 : RegExReplace(A_ScriptDir, "(.*)\\[^\\]+\\.
 /*
 	Set ProjectName to create user settings folder in A_MyDocuments
 */
-;projectName := "PoE-ItemInfo"
-; новое имя проекта, соответственно и другая папка с настройками отличная от английйской версии
-projectName := "PoE-ItemInfo-Ru"
+projectName := "PoE-ItemInfo_ru"
 
 /*
 	Check some folder permissions
@@ -51,7 +49,7 @@ PoEScripts_CompareUserFolderWithScriptFolder(userDirectory, scriptDir, projectNa
 */
 info		:= ReadFileToMerge(scriptDir "\resources\ahk\POE-ItemInfo.ahk")
 addMacros := ReadFileToMerge(scriptDir "\resources\ahk\AdditionalMacros.ahk")
-; дополнительные функции
+
 adaptationRu := ReadFileToMerge(scriptDir "\resources\ahk\AdaptationRu.ahk")
 
 info		:= info . "`n`r`n`r"
@@ -62,7 +60,6 @@ CloseScript("ItemInfoMain.ahk")
 FileDelete, %scriptDir%\_ItemInfoMain.ahk
 FileCopy,   %scriptDir%\resources\ahk\POE-ItemInfo.ahk, %scriptDir%\_ItemInfoMain.ahk
 
-; дополнительные функции
 FileAppend, %adaptationRu%	, %scriptDir%\_ItemInfoMain.ahk
 
 FileAppend, %addMacros%	, %scriptDir%\_ItemInfoMain.ahk

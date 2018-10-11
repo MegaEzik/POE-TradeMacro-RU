@@ -1,24 +1,24 @@
-Талисман ребролома|1
-Талисман пепельного чешуйника|1
-Талисман глубинника|1
-Талисман оленерога-одиночки|1
-Талисман смерторука|1
-Талисман костешипа|1
-Талисман чёрной пасти|1
-Талисман бессмертной плоти|1
-Талисман гнилой головы|1
-Талисман клыкастика|2
-Талисман птичьих близнецов|2
-Талисман колотритона|2
-Талисман ведьмокогтя|2
-Талисман когтистого оборотня|2
-Сжимающий талисман|2
-Талисман первочерепа|2
-Талисман близнецов-обезьян|3
-Талисман трёх крыс|3
-Талисман длиннозуба|3
-Талисман перогнильца|3
-Талисман трёх рук|3
-Талисман хребтоплава|3
-Талисман из лапы обезьяны|3
-Талисман Великого волка|4
+Breakrib Talisman|1
+Ashscale Talisman|1
+Deep One Talisman|1
+Lone Antler Talisman|1
+Deadhand Talisman|1
+Bonespire Talisman|1
+Black Maw Talisman|1
+Undying Flesh Talisman|1
+Rot Head Talisman|1
+Fangjaw Talisman|2
+Avian Twins Talisman|2
+Splitnewt Talisman|2
+Hexclaw Talisman|2
+Wereclaw Talisman|2
+Clutching Talisman|2
+Primal Skull Talisman|2
+Monkey Twins Talisman|3
+Three Rat Talisman|3
+Longtooth Talisman|3
+Rotfeather Talisman|3
+Three Hands Talisman|3
+Spinefuse Talisman|3
+Monkey Paw Talisman|3
+Greatwolf Talisman |4

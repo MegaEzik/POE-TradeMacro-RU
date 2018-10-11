@@ -2,33 +2,37 @@
 
 Вспомогательные функции для русской адаптации
 
-
 */
 
 
 
 ; конвертируем русские названия модов в их английские варианты
 ; сохраняем русские названия модов в отдельном параметре
-ConvertRuModToEn(_item)
+AdpRu_ConvertRuModToEn(_item)
 {
+;console_log(_item, "_item")	
 	For k, imod in _item.mods {
 		
 		_item.mods[k].name_ru := _item.mods[k].name
-		_item.mods[k].name := Ru_En_Stats_Value(_item.mods[k].name)
+		result1 := AdpRu_Ru_En_Stats_Value(_item.mods[k].name)
+		_item.mods[k].name := result1.name
 		
 		; попытаемся сконвертировать оригинальное название мода, 
 		; это нужно для модов с числами, например "Имеет 1 гнездо" 
 		; - для таких модов в файле должно быть соответствие полному названию с числовыми значениями
-		_item.mods[k].name_orig_en := Ru_En_Stats_Value(_item.mods[k].name_orig)
+		result2 := AdpRu_Ru_En_Stats_Value(_item.mods[k].name_orig)
+		_item.mods[k].name_orig_en := result2.name
 		
 		; если мод не был сконвертирован
-		If (_item.mods[k].name = _item.mods[k].name_ru) {		
-			; в массиве соответствий названия модов без плюса в начале, поэтому если он присутствует, то избавляемся от него
-			RegExMatch(_item.mods[k].name, "(.*)([+]#)(.*)", mod_name)			
+		;If (_item.mods[k].name = _item.mods[k].name_ru) {		
+		If (not result1.IsName) {		
+			; в массиве соответствий названия модов без плюса и минуса перед #, поэтому если они присутствуют, то избавляемся от них
+			RegExMatch(_item.mods[k].name, "(.*)([+-]#)(.*)", mod_name)			
 			modRu := mod_name1 "#" mod_name3
-			modEn := Ru_En_Stats_Value(modRu)
+			result := AdpRu_Ru_En_Stats_Value(modRu)
+			modEn := result.name
 			; и добавляем после получения английского названия
-			_item.mods[k].name := StrReplace(modEn, "#", "+#")
+			_item.mods[k].name := StrReplace(modEn, "#", mod_name2)
 		}
 	}
 ;console_log(_item, "_item")
@@ -37,38 +41,64 @@ ConvertRuModToEn(_item)
 
 
 ; конвертирование для одной строки мода
-ConvertRuOneModToEn(smod)
+AdpRu_ConvertRuOneModToEn(smod)
 {
-	; в массиве соответствий названия модов без плюсов в начале, поэтому если он присутствует, то избавляемся от него		
-	If (RegExMatch(smod, "^([+])")) {
-		RegExMatch(smod, "^([+])(.*)", mod_name)
-		; и добавляем после получения английского названия
-		smod := "+" . Ru_En_Stats_Value(mod_name2)
+	result := AdpRu_Ru_En_Stats_Value(smod)
+		
+	; если мод не был сконвертирован		
+	If (not result.IsName) {		
+		; в массиве соответствий названия модов без плюса перед #, поэтому если он присутствует, то избавляемся от него
+		RegExMatch(smod, "(.*)([+]#)(.*)", mod_name)			
+		modRu := mod_name1 "#" mod_name3
+
+		result := AdpRu_Ru_En_Stats_Value(modRu)
+		If (result.IsName) {
+			modEn := result.name
+			; и добавляем после получения английского названия
+			smod := StrReplace(modEn, "#", "+#")
+		}
+	} Else {
+		smod := result.name
 	}
-	Else {
-		smod := Ru_En_Stats_Value(smod)
-	}
+
+;console_log(smod, "smod")
 
 	Return smod
 }
 
+
 ;
-Ru_En_Stats_Value(smod)
+AdpRu_Ru_En_Stats_Value(smod)
 {
 	ru_en_stats := Globals.Get("ru_en_stats")
+	
+	result := {}
+	result.name := ""
+	result.IsName := ""
 
 	smod_en := ru_en_stats[smod]
 	
 	If(not smod_en) {
 	
 		; для случая с константой - имя мода содержит # вместо константы
-		res := nameModNumToConst(smod)
+		res := AdpRu_nameModNumToConst(smod)
 		If (res.IsNameRuConst) {
 			smod_en := ru_en_stats[res.nameModConst]
 		}
 		
+		; возможно это мод бестиария
+		If(not smod_en) {				
+			; в массиве соответствий в имени мода бестиария присутствует фраза (Пойманное животное) - добавим её к ру имени мода
+			smod_en := ru_en_stats[smod . " (Пойманное животное)"]
+			; и удалим из анг. имени мода
+			smod_en := RegExReplace(smod_en, " \(Captured Beast\)", "")
+		}
+		
 		If(not smod_en) {	
-			return smod
+			;return smod
+			result.name := smod
+			result.IsName := false
+			return result
 		}
 	}
 	
@@ -76,32 +106,16 @@ Ru_En_Stats_Value(smod)
 	; - для случая, когда в файле соответствий в английском названии мода присутствует символ новой строки, т.к. в модах poetrade он отсутствует
 	StringReplace, smod_en, smod_en, `n, %A_Space%, All
 	
-	return smod_en
-}
-
-; конвертирует имя мода с # в имя мода с константами
-nameModNumToConst(nameMod)
-{
-	nameModNum  := Globals.Get("nameModNum")
-	nameModConst := nameModNum[nameMod]
+	result.name := smod_en
+	result.IsName := true
 	
-	result := {}
-	
-	If(not nameModConst)
-	{
-		result.IsNameRuConst := false
-		result.nameModConst := nameMod
-		return result
-	} 
-	
-	result.IsNameRuConst := true
-	result.nameModConst := nameModConst
-;console_log(nameMod, "nameMod")	
+	;return smod_en
 	return result
 }
 
+
 ;конвертирует русские имена предметов в английский вариант
-ConvertRuItemNameToEn(itemRu, currency=false)
+AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 {
 	Global Item
 	
@@ -121,6 +135,15 @@ ConvertRuItemNameToEn(itemRu, currency=false)
 		IfInString, itemRu_, Вихрь хаоса
 		{
 			itemEn := "Maelstr" chr(0xF6) "m of Chaos"
+			return itemEn
+		}
+	}
+	
+	If (Item.IsWeapon and Item.SubType = Mace) {
+		; тоже для уникального молота "Мьельнир" 
+		IfInString, itemRu_, Мьельнир
+		{
+			itemEn := "Mj" chr(0xF6) "lner"
 			return itemEn
 		}
 	}
@@ -156,8 +179,9 @@ ConvertRuItemNameToEn(itemRu, currency=false)
 	return itemEn
 }
 
+
 ; конвертирование полного имени волшебных флаконов в английский вариант
-ConvertRuFlaskNameToEn(nameRu, baseNameRu)
+AdpRu_ConvertRuFlaskNameToEn(nameRu, baseNameRu)
 {
 	ruPrefSufFlask := TradeGlobals.Get("ruPrefSufFlask")
 	
@@ -178,99 +202,242 @@ ConvertRuFlaskNameToEn(nameRu, baseNameRu)
 		suff := Trim(aff_name1)
 	}
 	
-	
-	;MsgBox full_ru:%nameRu% aff_ru:%affName% `npref: %pref% suff: %suff% 
 	nameEn := ""
-	nameEn := ruPrefSufFlask[pref] " " ConvertRuItemNameToEn(baseNameRu) " " ruPrefSufFlask[suff]
-	;MsgBox %nameRu% `n%nameEn% 
+	nameEn := ruPrefSufFlask[pref] " " AdpRu_ConvertRuItemNameToEn(baseNameRu) " " ruPrefSufFlask[suff]
 	
 	return nameEn
 }
 
 
+; конвертирует имя мода с # в имя мода с константами
+AdpRu_nameModNumToConst(nameMod)
+{
+	nameModNum  := Globals.Get("nameModNum")
+	nameModConst := nameModNum[nameMod]
+	
+	result := {}
+	
+	If(not nameModConst)
+	{
+		result.IsNameRuConst := false
+		result.nameModConst := nameMod
+		return result
+	} 
+	result.IsNameRuConst := true
+	result.nameModConst := nameModConst
+;console_log(nameMod, "nameMod")	
+;console_log(nameMod, "nameMod")	
+;console_log(result, "result")		
+
+	return result
+}
+
+
 ; есть моды с константами идущими первыми в имени мода
 ; в результате извлечение значения мода работает не корректно
-; такие моды необходимо обработать подготовив их к извлечению значения
-ConverNameModToValue(nameMod, name_ru)
+; такие моды необходимо обработать подготовив их к извлечению значения -
+; из мода нужно удалить константу заменив её на #
+AdpRu_ConverNameModToValue(nameMod, name_ru)
 {
-	; извлекаем значение константы
-	RegExMatch(name_ru, ".*(\d+).*", constValue)
-	; извлекаем положение константы в строке
-	RegExMatch(name_ru, "P).*(\d+).*", const)
-	
-	If (const and constValue) {
-		; удаляем из оригинального мода константу
-		nameMod := RegExReplace(nameMod, constValue1, "#",,1, constPos1)
-		;console_log(name_ru, "name_ru")	
-		;console_log(nameMod, "nameMod")	
-	}
+	; разбираем адаптированный мод на подстроки	
+	RegExMatch(name_ru, "([^\d#]*)([\d#]*)([^\d#]*)([\d#]*)([^\d#]*)([\d#]*)([^\d#]*)", name_ruSub)
 
+	If (name_ruSub2 or name_ruSub4 or name_ruSub6) {
+		
+		; разбираем оригинальный мод на подстроки
+		RegExMatch(nameMod, "(\D*)(\d+)(\D*)(\d+)(\D*)(\d*)(\D*)", nameModSub)
+
+		; если значения равны, значит это константа
+		If ((nameModSub2 = name_ruSub2) and nameModSub2) {
+			value1 := "#"
+		} Else { ; иначе, это величина
+			value1 := nameModSub2
+		}
+		
+		If ((nameModSub4 = name_ruSub4) and nameModSub4) {
+			value2 := "#"
+		} Else { 
+			value2 := nameModSub4
+		}
+		
+		; есть моды с двумя константами
+		If ((nameModSub6 = name_ruSub6) and nameModSub6) {
+			value3 := "#"
+		} Else { 
+			value3 := nameModSub6
+		}
+		
+		nameMod := nameModSub1 . value1 . nameModSub3 . value2 . nameModSub5 . value3 . nameModSub7
+				
+		;console_log(nameMod, "CONST")		
+	}
+	;console_log(nameMod, "nameMod Full")		
+	
 	return nameMod
 }
 
 
+; На текущий момент в оригинальной версии 2.8.0 нет поддержки уникальных предметов с переменными модами - это
+; уникальные предметы состав модов которых не постоянен и зависит от конкретного экземпляра предмета, а не от его типа.
+; Алгоритм оригинального скрипта не рассчитан на обработку таких предметов.
+; Также присутствует ряд уникальных предметов которые, либо не добавлены в дата-файл скрипта \data_trade\uniques.json, 
+; либо в этом файле не корректно прописаны названия модов, хотя в дата-файле \data_trade\mods.json содержащем
+; названия модов присутствующих на poe.trade моды названы корректно - отсюда возникают ошибки, либо с полностью недоступным
+; расширенным поиском предмета, либо с отсутствующими определенными модами на предмете при расширенном поиске.
+; Данная функция позволяет справиться с такими ограничениями путем добавления к запросу необходимых отсутствующих модов взятых с предмета. 
+;
+; Такие предметы необходимо добавлять в файл \data_trade\ru\uniquesItemModEmpty.txt
+AdpRu_AddUniqueVariableMods(uniqueItem)
+{
+	Global Item, ItemData
+	
+	tempMods	:= []
+	utempMods	:= {}
+	
+	Affixes	:= StrSplit(ItemData.Affixes, "`n")
+
+	For key, val in Affixes {
+
+		modFound := false
+		
+		; remove negative sign also			
+		t_ru_full := TradeUtils.CleanUp(RegExReplace(val, "i)-?[\d\.]+", "#"))
+
+		; для модов с константами
+		t_ru := AdpRu_nameModNumToConst(t_ru_full)
+		; если мод с константой
+		If (t_ru.IsNameRuConst) {
+			t := AdpRu_ConvertRuOneModToEn(t_ru.nameModConst)
+		} Else {
+			t := AdpRu_ConvertRuOneModToEn(t_ru_full)
+		}
+		
+		; английское имя мода
+		nameVarMod := t
+
+		t := TradeUtils.CleanUp(RegExReplace(t, "i)-?[\d\.]+", "#"))
+		
+		; избавимся от "+" в модах - есть моды у которых "+" расположен в середине
+		t := StrReplace(t, "+", "")
+
+		For k, v in uniqueItem.mods {
+			
+			; воспользуемся подготовленным модом
+			n := utempMods[k]
+
+			If (not n){ ; если мод не подготовлен, то подготовим его
+				n := TradeUtils.CleanUp(RegExReplace(v.name, "i)-?[\d\.]+", "#"))
+				n := TradeUtils.CleanUp(n)
+
+				; избавимся от "+" в модах - есть моды у которых "+" расположен в середине			
+				n := StrReplace(n, "+", "")
+				
+				; сохраним подготовленный мод во временном массиве
+				utempMods[k] := n
+			}
+
+			; match with optional positive sign to match for example "-7% to cold resist" with "+#% to cold resist"
+			RegExMatch(n, "i)(\+?" . t . ")", match)
+
+			If (match) {
+				; присутствующие моды пропускаем
+				modFound := true
+				break				
+			} 
+		}
+		
+		If (not modFound) {
+			; сформируем запись о моде
+			varMod := {}
+			; английское имя мода
+			varMod.name := nameVarMod
+			; добавляем оригинальную строку мода с предмета
+			varMod.name_orig_item := val
+			; оригинальный диапазон значений будет пустым
+			varMod.ranges := []
+			; пометим, что мод изменяемый
+			varMod.isVariable := true
+			; пометим, что моды необходимо отсортировать
+			varMod.isSort := true
+			
+			; добавляем отсутствующие моды
+			tempMods.push(varMod)
+		}
+	}
+;console_log(tempMods, "tempMods")	
+	; 
+	If (tempMods) {
+		For key, val in tempMods {
+			; добавим мод к списку модов на уникальном предмете
+			uniqueItem.mods.push(val)
+		}
+	}
+	
+	return uniqueItem
+}
+
+
+; функция инициализации массива имен уникальных предметов:
+; - с переменным составом модов
+; - с модами которые ещё не добавлены в служебный файл uniques.json оригинального скрипта.
+; необходим для функции AdpRu_AddUniqueVariableMods(uniqueItem)
+AdpRu_InitUniquesItemModEmpty()
+{
+	FileRead, uniquesItemModEmpty, %A_ScriptDir%\data_trade\ru\uniquesItemModEmpty.txt
+	uniquesItemModEmpty	:= StrSplit(uniquesItemModEmpty, "`r`n")
+	
+	tmpArr := {}
+	
+	For k, uIt in uniquesItemModEmpty {
+		uIt := Trim(uIt)
+		If (uIt) {
+			tmpArr[uIt] := true
+		}
+	}
+
+	TradeGlobals.Set("uniquesItemModEmpty", tmpArr)
+}
+
+
 ; инициализация английских названий предметов
-InitNameEnItem()
+AdpRu_InitNameEnItem()
 {
 	Global Item
 	
 	; конвертирование полного имени волшебных флаконов
 	If (Item.IsFlask and Item.RarityLevel = 2) {
-		Item.Name_En := ConvertRuFlaskNameToEn(Item.Name, Item.BaseName)
+		Item.Name_En := AdpRu_ConvertRuFlaskNameToEn(Item.Name, Item.BaseName)
 	}
 	Else {
 		; сконвертируем по возможности русские названия в английские
-		Item.Name_En := ConvertRuItemNameToEn(Item.Name, Item.IsCurrency)
+		Item.Name_En := AdpRu_ConvertRuItemNameToEn(Item.Name, Item.IsCurrency)
 	}
 	
-	Item.BaseName_En := ConvertRuItemNameToEn(Item.BaseName, Item.IsCurrency)
+	Item.BaseName_En := AdpRu_ConvertRuItemNameToEn(Item.BaseName, Item.IsCurrency)
 }
 
-; функция инициализации массива соответствий для названий валюты с poe.trade
-InitRuPrefSufFlask()
+; функция инициализации массива соответствий названий префиксов и суффиксов флаконов
+AdpRu_InitRuPrefSufFlask()
 {
 	FileRead, ruPrefSufFlask, %A_ScriptDir%\data_trade\ru\ruPrefSufFlask.json	
 	TradeGlobals.Set("ruPrefSufFlask", JSON.Load(ruPrefSufFlask))
 }
 
-; функция инициализации массива соответствий перфиксов и суффиксов в названиях волшебных флаконов русских вариантов английским
-InitBuyoutCurrencyEnToRu()
-{
-	buyoutCurrencyEnToRu := {}
-	buyoutCurrencyEnToRu["blessed"]    := "благодатных сфер"
-	buyoutCurrencyEnToRu["chisel"]     := "резцов"
-	buyoutCurrencyEnToRu["chaos"]      := "хаосов"
-	buyoutCurrencyEnToRu["chromatic"]  := "цветных сфер"
-	buyoutCurrencyEnToRu["alchemy"]    := "сфер алхимии"
-	buyoutCurrencyEnToRu["divine"]     := "божественных сфер"
-	buyoutCurrencyEnToRu["exalted"]    := "возвышений"
-	buyoutCurrencyEnToRu["gcp"]        := "призм камнереза"
-	buyoutCurrencyEnToRu["jewellers"]  := "сфер златокузнеца"
-	buyoutCurrencyEnToRu["alteration"] := "сфер перемен"
-	buyoutCurrencyEnToRu["chance"]     := "сфер удачи"
-	buyoutCurrencyEnToRu["fusing"]     := "сфер соединений"
-	buyoutCurrencyEnToRu["regret"]     := "сфер раскаяния"
-	buyoutCurrencyEnToRu["scouring"]   := "сфер очищения"
-	buyoutCurrencyEnToRu["regal"]      := "сфер царей"
-	buyoutCurrencyEnToRu["vaal"]       := "сфер ваал"
-	buyoutCurrencyEnToRu["coin"]       := "монет Просперусов"
-	buyoutCurrencyEnToRu["silver"]     := "серебряных монет"
 
-	TradeGlobals.Set("buyoutCurrencyEnToRu", buyoutCurrencyEnToRu)
+; функция инициализации массива соответствий перфиксов и суффиксов в названиях валюты русских вариантов английским
+AdpRu_InitBuyoutCurrencyEnToRu()
+{
+	FileRead, buyoutCurrencyEnToRu, %A_ScriptDir%\data_trade\ru\ruBuyoutCurrency.json	
+	TradeGlobals.Set("buyoutCurrencyEnToRu", JSON.Load(buyoutCurrencyEnToRu))
 }
 
+
 ; конвертирует название валюты с английского на русский
-ConvertBuyoutCurrencyEnToRu(buycurEn)
+AdpRu_ConvertBuyoutCurrencyEnToRu(buycurEn)
 {
 	buyoutCurrencyEnToRu := TradeGlobals.Get("buyoutCurrencyEnToRu")
 	buycurRu := buyoutCurrencyEnToRu[ buycurEn ]
 
-/*
-console.log("############Value: buyoutCurrencyEnToRu ############")
-tmp := buyoutCurrencyEnToRu
-console.log(tmp)
-console.log("##############################")
-*/	
 	If (buycurRu){
 		return buycurRu
 	}
@@ -279,29 +446,59 @@ console.log("##############################")
 	}
 }
 
+
+; вспомогательная функция полного копирования объекта
+; встроенные метод Clone() выполняет только мелкое копирование, т.е. подобъекты копируются не полностью,
+; а в виде ссылок
+AdpRu_ObjFullyClone(obj)
+{
+	nobj := obj.Clone()
+	For k,v in nobj
+		if IsObject(v)
+			nobj[k] := A_ThisFunc.(v)
+	return nobj
+}
+
+
 ; функция вывода значения переменной в отладачную консоль
 ; var_ - переменная
 ; name_var - текстовое имя переменной, либо текст который будут выведен в заголовок блока сообщения
 ; console_log(var_, "var_")
 console_log(var_, name_var)
 {
-	console.log("############Value: " name_var " ############")
+	;console.log("############ " name_var " ############")
+	;console.log(var_)
+	;console.log("##############################")
+	console.log("------------- " name_var " -------------")
 	console.log(var_)
-	console.log("##############################")
+	console.log("---------------------------------------")
 }
 
-; тестовая функция для отладки
-testAdp(name_tst)
+
+AdpRu_InitTimeStart := 0
+
+; функции применяемые при тестировании для оценки производительности
+;
+; фиксируем текущий момент времени - должна вызываться перед оцениваемым кодом
+AdpRu_InitTime()
 {
-	dataTst := TradeGlobals.Get("VariableUniqueData")
+	Global AdpRu_InitTimeStart
 	
-	For index, uitem in dataTst {
-		If (uitem.name = "Axiom Perpetuum") {
-			console.log("############Value: uitem.mods.Length()_TST " name_tst " ############")
-			tmp := uitem.mods.Length()
-			console.log(tmp)
-			console.log("##############################")
-		}
-		
-	}
+	;AdpRu_InitTimeStart := A_TickCount
+	; количество тактов прошедшее с момента старта компьютера
+	DllCall("QueryPerformanceCounter", "Int64*", AdpRu_InitTimeStart)
+}
+
+
+; выводит в отладочную консоль количество тактов прошедшее с момента вызова предыдущей функции
+; должна вызываться после оцениваемого кода
+AdpRu_ElapsedTime()
+{
+	Global AdpRu_InitTimeStart
+	
+	;_A_TickCount_ := A_TickCount
+	DllCall("QueryPerformanceCounter", "Int64*", _A_TickCount_)
+
+	elapsed_time := _A_TickCount_ - AdpRu_InitTimeStart
+	console_log(elapsed_time, " Прошло тактов: ")
 }

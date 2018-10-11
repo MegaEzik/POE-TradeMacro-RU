@@ -193,7 +193,7 @@ class GdipTooltip
 		StringArray := StrSplit(String, "`n")
 		Loop % StringArray.MaxIndex()
 		{
-			element := StringArray[A_index]
+			element := StringArray[A_Index]
 			dim	:= this.MeasureText(element, fontSize + 1, "Consolas")
 			len	:= dim["W"] * (fontSize / 10)
 			hi	:= dim["H"] * ((fontSize - 1) / 10)
