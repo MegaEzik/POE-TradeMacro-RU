@@ -1,2 +1,0 @@
-ReleaseVersion := "3.3.03"
-AHKVersionRequired := "1.1.26"
