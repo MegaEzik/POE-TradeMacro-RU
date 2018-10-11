@@ -9340,10 +9340,10 @@ GetNegativeAffixOffset(Item)
 	{
 		NegativeAffixOffset += 1
 	}
-	If (RegExMatch(Item.Name, "i)Tabula Rasa")) ; no mods, no flavour text
+	If (RegExMatch(Item.Name, "i)Tabula Rasa") or RegExMatch(Item.Name, "i)Табула раса"))
 	{
 		NegativeAffixOffset -= 2
-	}
+	}	
 	return NegativeAffixOffset
 }
 
