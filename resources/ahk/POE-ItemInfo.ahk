@@ -708,7 +708,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			GripType = 2H
 			return
 		}
-		/*
+
 		;IfInString, A_LoopField, One Handed Mace
 		IfInString, A_LoopField, Одноручная булава
 		{
@@ -717,37 +717,8 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			GripType = 1H
 			return
 		}
-		*/		
-		;i---
-		; временное решение пока не починят в основной ветке
-		; при синхронизации проверять на наличие исправления
-		IfInString, A_LoopField, Одноручная булава
-		{
-			BaseType = Weapon
-			SubType = Mace
-			GripType = 1H
-			; среди одноручных булав встречаются скипетры 
-			Loop, Parse, ItemDataNamePlate, `n, `r
-			{
-				; Get third line in case of rare or unique item and retrieve the base item name
-				LoopField := RegExReplace(A_LoopField, "<<.*>>", "")
-				If (RarityLevel > 2)
-				{
-					Loop, Parse, ItemDataNamePlate, `n, `r
-					{
-						If (A_Index = 3) {
-							LoopField := Trim(A_LoopField) ? Trim(A_LoopField) : LoopField
-						}
-					}
-				}
-				If (RegExMatch(LoopField, "i)Скипетр|Сехем|Фетиш"))
-				{
-					SubType = Sceptre				
-				}
-			}
-			return
-		}
-		
+
+				
 		;IfInString, A_LoopField, Two Handed Mace
 		IfInString, A_LoopField, Двуручная булава
 		{
@@ -756,9 +727,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			GripType = 2H
 			return
 		}
-		; ---- 
-		; так определять подтип Скипетр неверно - его нужно определять через название, см. выше
-		/*
+
 		;IfInString, A_LoopField, Sceptre
 		If (RegExMatch(A_LoopField, "i)Скипетр"))
 		{ 
@@ -767,7 +736,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			GripType = 1H
 			return
 		}
-		*/
+		
 		;IfInString, A_LoopField, Staff
 		IfInString, A_LoopField, Посох
 		{
