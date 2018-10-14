@@ -174,8 +174,13 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 			; uses poedb.tw
 			UrlPage := "item.php?n="
 			
-			If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
+			;If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) { ;Для уникальных предметов нужен отдельный URL! Проверять на исправление!!!
+			If (Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
 				;UrlAffix := Item.Name
+				UrlAffix := Item.Name_En
+			;Указание верного URL для уникальных предметов
+			} Else If (Item.IsUnique) {
+				UrlPage := "unique.php?n="
 				UrlAffix := Item.Name_En
 			} Else If (Item.IsFlask) {
 				UrlPage := "search.php?Search="
