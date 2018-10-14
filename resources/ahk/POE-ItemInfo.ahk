@@ -8906,7 +8906,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	AdpRu_InitNameEnItem()
 
 	If ((Item.IsUnique or Item.IsDivinationCard or Item.IsCurrency or Item.IsMapFragment or Item.IsGem or Item.IsProphecy or Item.IsMap or Item.RarityLevel = 1 or (Item.IsFlask and Item.RarityLevel = 2)) and (Item.Name != Item.Name_En)) {
-		TT := TT . " (анг. " Item.Name_En ")"
+		TT := TT . " (англ. " Item.Name_En ")"
 	}
 	
 	NameNotQ := Trim(StrReplace(Item.Name, "высокого качества", ""))
@@ -8916,7 +8916,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	{
 		TT := TT . "`n" . Item.BaseName
 		If (not Item.IsUnique and not (Item.IsFlask and Item.RarityLevel = 2) and (Item.BaseName != Item.BaseName_En)){
-			TT := TT . " (анг. " Item.BaseName_En ")"
+			TT := TT . " (англ. " Item.BaseName_En ")"
 		}
 	}
 	

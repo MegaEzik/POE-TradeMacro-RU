@@ -2244,7 +2244,7 @@ TradeFunc_ParseCurrencyHtml(html, payload, ParsingError = "") {
 	
 
 	;Title := Item.Name
-	Title := Item.Name " (анг. " Item.Name_En ")"
+	Title := Item.Name " (англ. " Item.Name_En ")"
 	Title .= " (" LeagueName ")"
 	Title .= "`n------------------------------ `n"
 	NoOfItemsToShow := TradeOpts.ShowItemResults
@@ -2758,12 +2758,12 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	}
 
 	;Name := (Item.IsRare and not Item.IsMap) ? Item.Name " " Item.BaseName : Item.Name
-	Name := (Item.IsRare and not Item.IsMap) ? Item.Name " " Item.BaseName " (анг. " Item.BaseName_En ")" : Item.Name 
+	Name := (Item.IsRare and not Item.IsMap) ? Item.Name " " Item.BaseName " (англ. " Item.BaseName_En ")" : Item.Name 
 	;Title := Trim(StrReplace(Name, "Superior", ""))
 	Title := Trim(StrReplace(Name, "высокого качества", ""))
 	
 	If (Item.IsUnique or Item.IsDivinationCard or Item.IsCurrency or Item.IsMapFragment or Item.IsProphecy or Item.RarityLevel = 1 or (Item.IsFlask and Item.RarityLevel = 2)) {
-		Title := Title . " (анг. " Item.Name_En ")"
+		Title := Title . " (англ. " Item.Name_En ")"
 	}
 
 	If (Item.IsMap && !Item.isUnique) {
@@ -2786,11 +2786,11 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 		Title .= Item.BaseName
 		If (Item.BaseName !=  Item.BaseName_En)
 		{
-			Title .= " [анг. " Item.BaseName_En "] "
+			Title .= " [англ. " Item.BaseName_En "] "
 		}
 		Else If (not Item.BaseName and Item.IsUnidentified)
 		{
-			Title .= " [анг. " Item.SubType "] "
+			Title .= " [англ. " Item.SubType "] "
 		}
 	}
 
@@ -2803,16 +2803,16 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	; add gem quality and level
 	If (Item.IsGem) {
 		Title := Item.Name ", Q" Item.Quality "%"
-		Title .= " (анг. " Item.Name_En ")"
+		Title .= " (англ. " Item.Name_En ")"
 		If (Item.Level >= 16) {
 			Title := Item.Name ", " Item.Level "`/" Item.Quality "%"
-			Title .= " (анг. " Item.Name_En ")"
+			Title .= " (англ. " Item.Name_En ")"
 		}
 	}
 	; add item sockets and links
 	If (ItemData.Sockets >= 5) {
 		;Title := Name " " ItemData.Sockets "s" ItemData.Links "l"
-		Title := Name " (анг. " Item.Name_En ")" " " ItemData.Sockets "s" ItemData.Links "l" 
+		Title := Name " (англ. " Item.Name_En ")" " " ItemData.Sockets "s" ItemData.Links "l" 
 	}
 	If (showItemLevel) {
 		Title .= ", iLvl: " iLvl
@@ -4609,7 +4609,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		;If (not RegExMatch(advItem.name, "[а-€ј-яЄ® ]+"))
 		If (not advItem.name = advItem.name_ru)
 		{
-			itemNameEn := " (анг. " advItem.name ")"
+			itemNameEn := " (англ. " advItem.name ")"
 		}
 		;itemType := advItem.BaseName
 		itemType := advItem.BaseName_Ru
