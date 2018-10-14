@@ -5671,7 +5671,8 @@ OverwriteSettingsNameTimer:
 
 	If (o) {
 		RelVer := TradeGlobals.Get("ReleaseVersion")
-		Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%
+		;Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%
+		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer%
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel
