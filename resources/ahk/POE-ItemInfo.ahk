@@ -1,4 +1,4 @@
-; Path of Exile Item Info Tooltip
+п»ї; Path of Exile Item Info Tooltip
 ;
 ; Script is currently maintained by various people and kept up to date by aRTy42 / IGN: Erinyen
 ; Forum thread: https://www.pathofexile.com/forum/view-thread/1678678
@@ -53,7 +53,7 @@ Globals.Set("SettingsUIHeight", 665)
 Globals.Set("AboutWindowHeight", 340)
 Globals.Set("AboutWindowWidth", 435)
 ;Globals.Set("SettingsUITitle", "PoE ItemInfo Settings")
-Globals.Set("SettingsUITitle", "PoE ItemInfo Настройки")
+Globals.Set("SettingsUITitle", "PoE ItemInfo РќР°СЃС‚СЂРѕР№РєРё")
 Globals.Set("GithubRepo", "POE-ItemInfo")
 Globals.Set("GithubUser", "aRTy42")
 Globals.Set("ScriptList", [A_ScriptDir "\POE-ItemInfo"])
@@ -72,17 +72,17 @@ global overwrittenUserFiles	:= overwrittenUserFiles ? overwrittenUserFiles : arg
 
 global SuspendPOEItemScript = 0
 
-; массив соответствий базовых имен предметов на русском языке их английским варимантам
+; РјР°СЃСЃРёРІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёР№ Р±Р°Р·РѕРІС‹С… РёРјРµРЅ РїСЂРµРґРјРµС‚РѕРІ РЅР° СЂСѓСЃСЃРєРѕРј СЏР·С‹РєРµ РёС… Р°РЅРіР»РёР№СЃРєРёРј РІР°СЂРёРјР°РЅС‚Р°Рј
 FileRead, nameItemRuToEnJSON, %A_ScriptDir%\data\ru\nameItemRuToEn.json
 Globals.Set("nameItemRuToEn", JSON.Load(nameItemRuToEnJSON))
-; аналогично моды
-; TODO - перенести в TradeMacroInit
+; Р°РЅР°Р»РѕРіРёС‡РЅРѕ РјРѕРґС‹
+; TODO - РїРµСЂРµРЅРµСЃС‚Рё РІ TradeMacroInit
 FileRead, ru_en_stats_file, %A_ScriptDir%\data_trade\ru\ru_en_stats.json
 Globals.Set("ru_en_stats", JSON.Load(ru_en_stats_file))
-; моды содержащие числовые константы в названии
+; РјРѕРґС‹ СЃРѕРґРµСЂР¶Р°С‰РёРµ С‡РёСЃР»РѕРІС‹Рµ РєРѕРЅСЃС‚Р°РЅС‚С‹ РІ РЅР°Р·РІР°РЅРёРё
 FileRead, nameModNum_file, %A_ScriptDir%\data_trade\ru\nameModNum.json
 Globals.Set("nameModNum", JSON.Load(nameModNum_file))
-; предметы с одинаковыми названиями
+; РїСЂРµРґРјРµС‚С‹ СЃ РѕРґРёРЅР°РєРѕРІС‹РјРё РЅР°Р·РІР°РЅРёСЏРјРё
 FileRead, sameNameItem_file, %A_ScriptDir%\data\ru\sameNameItem.json
 Globals.Set("sameNameItem", JSON.Load(sameNameItem_file))
 
@@ -123,7 +123,7 @@ class ItemInfoOptions extends UserOptions {
 	; Explain abbreviations and special notation symbols at the end of the tooltip when they are used
 	ShowExplanationForUsedNotation := 1
 	
-	; отображение аффиксов в укороченном виде
+	; РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ Р°С„С„РёРєСЃРѕРІ РІ СѓРєРѕСЂРѕС‡РµРЅРЅРѕРј РІРёРґРµ
 	ShortAffix := 0
 	
 	; If the mirrored affix text is longer than the field length the affix line will be cut off and
@@ -133,11 +133,11 @@ class ItemInfoOptions extends UserOptions {
 	;   the AHK version used. For best results, save this file as ANSI encoding which can be read and
 	;   displayed correctly by either ANSI based AutoHotkey or Unicode based AutoHotkey.
 	; Example: Assume the affix line to be mirrored is '50% increased Spell Damage'.
-	;   The field width is hardcoded (assume 20), this text would be shown as '50% increased Spell…'
-	AffixTextEllipsis := "…"
+	;   The field width is hardcoded (assume 20), this text would be shown as '50% increased SpellвЂ¦'
+	AffixTextEllipsis := "вЂ¦"
 	
 	; Separator for affix overview columns. This is put in at three places. Example with \\ instead of spaces:
-	; 50% increased Spell…\\50-59 (46)\\75-79 (84)\\T4 P
+	; 50% increased SpellвЂ¦\\50-59 (46)\\75-79 (84)\\T4 P
 	; Default: 2 spaces
 	AffixColumnSeparator := "  "
 	
@@ -151,9 +151,9 @@ class ItemInfoOptions extends UserOptions {
 	OnlyCompactForTotalColumn := 0
 	
 	; Separator for a multi tier roll range with uncertainty, such as:
-	;   83% increased Light…   73-85…83-95   102-109 (84)  T1-4 P + T1-6 S
+	;   83% increased LightвЂ¦   73-85вЂ¦83-95   102-109 (84)  T1-4 P + T1-6 S
 	;   	                 There--^
-	MultiTierRangeSeparator := "…"
+	MultiTierRangeSeparator := "вЂ¦"
 	
 	; Font size for the tooltip.
 	FontSize := 9
@@ -502,21 +502,21 @@ Menu, Tray, Tip, Path of Exile Item Info %RelVer% _ %RelVerRu%
 
 Menu, Tray, NoStandard
 ;Menu, Tray, Add, Reload Script (Use only this), ReloadScript
-Menu, Tray, Add, Перезагрузить скрипт (Используйте только этот способ), ReloadScript
+Menu, Tray, Add, РџРµСЂРµР·Р°РіСЂСѓР·РёС‚СЊ СЃРєСЂРёРїС‚ (РСЃРїРѕР»СЊР·СѓР№С‚Рµ С‚РѕР»СЊРєРѕ СЌС‚РѕС‚ СЃРїРѕСЃРѕР±), ReloadScript
 Menu, Tray, Add ; Separator
 ;Menu, Tray, Add, About..., MenuTray_About
-Menu, Tray, Add, О скрипте..., MenuTray_About
+Menu, Tray, Add, Рћ СЃРєСЂРёРїС‚Рµ..., MenuTray_About
 /*
 	;Item data Translation, won't be used for now.
 	Menu, Tray, Add, Translate Item, ShowTranslationUI
 */
 ;Menu, Tray, Add, Show all assigned Hotkeys, ShowAssignedHotkeys
-Menu, Tray, Add, Показать все назначенные горячие клавиши, ShowAssignedHotkeys
+Menu, Tray, Add, РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ РЅР°Р·РЅР°С‡РµРЅРЅС‹Рµ РіРѕСЂСЏС‡РёРµ РєР»Р°РІРёС€Рё, ShowAssignedHotkeys
 Menu, Tray, Add, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings"), ShowSettingsUI
 ;Menu, Tray, Add, Check for updates, CheckForUpdates
-;Menu, Tray, Add, Проверить наличие обновлений, CheckForUpdates
+;Menu, Tray, Add, РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ РѕР±РЅРѕРІР»РµРЅРёР№, CheckForUpdates
 ;Menu, Tray, Add, Show Update Notes, ShowUpdateNotes
-Menu, Tray, Add, Об оновлении, ShowUpdateNotes
+Menu, Tray, Add, РћР± РѕРЅРѕРІР»РµРЅРёРё, ShowUpdateNotes
 Menu, Tray, Add ; Separator
 Menu, Tray, Add, Edit Files, :TextFiles
 Menu, Tray, Add, Preview Files, :PreviewTextFiles
@@ -668,16 +668,16 @@ CheckBaseLevel(ItemBaseName)
 CheckRarityLevel(RarityString)
 {
 	;IfInString, RarityString, Normal
-	IfInString, RarityString, Обычный
+	IfInString, RarityString, РћР±С‹С‡РЅС‹Р№
 		return 1
 	;IfInString, RarityString, Magic
-	IfInString, RarityString, Волшебный
+	IfInString, RarityString, Р’РѕР»С€РµР±РЅС‹Р№
 		return 2
 	;IfInString, RarityString, Rare
-	IfInString, RarityString, Редкий
+	IfInString, RarityString, Р РµРґРєРёР№
 		return 3
 	;IfInString, RarityString, Unique
-	IfInString, RarityString, Уникальный
+	IfInString, RarityString, РЈРЅРёРєР°Р»СЊРЅС‹Р№
 		return 4
 	return 0 ; unknown rarity. shouldn't happen!
 }
@@ -693,7 +693,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 	{
 	
 		;IfInString, A_LoopField, One Handed Axe
-		IfInString, A_LoopField, Одноручный топор
+		IfInString, A_LoopField, РћРґРЅРѕСЂСѓС‡РЅС‹Р№ С‚РѕРїРѕСЂ
 		{
 			BaseType = Weapon
 			SubType = Axe
@@ -701,7 +701,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, Two Handed Axe
-		IfInString, A_LoopField, Двуручный топор
+		IfInString, A_LoopField, Р”РІСѓСЂСѓС‡РЅС‹Р№ С‚РѕРїРѕСЂ
 		{
 			BaseType = Weapon
 			SubType = Axe
@@ -710,7 +710,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		}
 
 		;IfInString, A_LoopField, One Handed Mace
-		IfInString, A_LoopField, Одноручная булава
+		IfInString, A_LoopField, РћРґРЅРѕСЂСѓС‡РЅР°СЏ Р±СѓР»Р°РІР°
 		{
 			BaseType = Weapon
 			SubType = Mace
@@ -720,7 +720,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 
 				
 		;IfInString, A_LoopField, Two Handed Mace
-		IfInString, A_LoopField, Двуручная булава
+		IfInString, A_LoopField, Р”РІСѓСЂСѓС‡РЅР°СЏ Р±СѓР»Р°РІР°
 		{
 			BaseType = Weapon
 			SubType = Mace
@@ -729,7 +729,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		}
 
 		;IfInString, A_LoopField, Sceptre
-		If (RegExMatch(A_LoopField, "i)Скипетр"))
+		If (RegExMatch(A_LoopField, "i)РЎРєРёРїРµС‚СЂ"))
 		{ 
 			BaseType = Weapon
 			SubType = Sceptre
@@ -738,7 +738,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		}
 		
 		;IfInString, A_LoopField, Staff
-		IfInString, A_LoopField, Посох
+		IfInString, A_LoopField, РџРѕСЃРѕС…
 		{
 			BaseType = Weapon
 			SubType = Staff
@@ -746,7 +746,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, One Handed Sword
-		IfInString, A_LoopField, Одноручный меч
+		IfInString, A_LoopField, РћРґРЅРѕСЂСѓС‡РЅС‹Р№ РјРµС‡
 		{
 			BaseType = Weapon
 			SubType = Sword
@@ -754,7 +754,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, Two Handed Sword
-		IfInString, A_LoopField, Двуручный меч
+		IfInString, A_LoopField, Р”РІСѓСЂСѓС‡РЅС‹Р№ РјРµС‡
 		{
 			BaseType = Weapon
 			SubType = Sword
@@ -762,7 +762,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, Dagger
-		IfInString, A_LoopField, Кинжал
+		IfInString, A_LoopField, РљРёРЅР¶Р°Р»
 		{
 			BaseType = Weapon
 			SubType = Dagger
@@ -770,7 +770,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, Claw
-		IfInString, A_LoopField, Когти
+		IfInString, A_LoopField, РљРѕРіС‚Рё
 		{
 			BaseType = Weapon
 			SubType = Claw
@@ -778,7 +778,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, Bow
-		IfInString, A_LoopField, Лук
+		IfInString, A_LoopField, Р›СѓРє
 		{
 			BaseType = Weapon
 			SubType = Bow
@@ -786,7 +786,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		;IfInString, A_LoopField, Wand
-		IfInString, A_LoopField, Жезл
+		IfInString, A_LoopField, Р–РµР·Р»
 		{
 			BaseType = Weapon
 			SubType = Wand
@@ -832,52 +832,52 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		}
 		*/
 		;----
-		; в русском переводе насчитывается 4-е наименования типов поясов и они могут стоять как в начале так и в середине названия пояса, поэтому определять тип пояса будем так
-		If (RegExMatch(LoopField, "i)Кушак|Цепочка|Ремень|Пояс"))
+		; РІ СЂСѓСЃСЃРєРѕРј РїРµСЂРµРІРѕРґРµ РЅР°СЃС‡РёС‚С‹РІР°РµС‚СЃСЏ 4-Рµ РЅР°РёРјРµРЅРѕРІР°РЅРёСЏ С‚РёРїРѕРІ РїРѕСЏСЃРѕРІ Рё РѕРЅРё РјРѕРіСѓС‚ СЃС‚РѕСЏС‚СЊ РєР°Рє РІ РЅР°С‡Р°Р»Рµ С‚Р°Рє Рё РІ СЃРµСЂРµРґРёРЅРµ РЅР°Р·РІР°РЅРёСЏ РїРѕСЏСЃР°, РїРѕСЌС‚РѕРјСѓ РѕРїСЂРµРґРµР»СЏС‚СЊ С‚РёРї РїРѕСЏСЃР° Р±СѓРґРµРј С‚Р°Рє
+		If (RegExMatch(LoopField, "i)РљСѓС€Р°Рє|Р¦РµРїРѕС‡РєР°|Р РµРјРµРЅСЊ|РџРѕСЏСЃ"))
 		{
 			BaseType = Item
 			SubType = Belt
 			return
 		}
-		; пояс лиги Бездна
-		IfInString, LoopField, Тёмные тиски
+		; РїРѕСЏСЃ Р»РёРіРё Р‘РµР·РґРЅР°
+		IfInString, LoopField, РўС‘РјРЅС‹Рµ С‚РёСЃРєРё
 		{
 			BaseType = Item
 			SubType = Belt
 			return
 		}
 		;If (InStr(LoopField, "Amulet") or (InStr(LoopField, "Talisman") and not InStr(LoopField, "Leaguestone")))
-		If (RegExMatch(LoopField, "i)Амулет") or (RegExMatch(LoopField, "i)Талисман") and not InStr(LoopField, "Камень лиги")))
+		If (RegExMatch(LoopField, "i)РђРјСѓР»РµС‚") or (RegExMatch(LoopField, "i)РўР°Р»РёСЃРјР°РЅ") and not InStr(LoopField, "РљР°РјРµРЅСЊ Р»РёРіРё")))
 		{
 			BaseType = Item
 			SubType = Amulet
 			return
 		}
 
-		;If (RegExMatch(LoopField, "\bRing\b")); оригинальная строка, но с кольцами на ru не работает 
-		If (RegExMatch(LoopField, "i)Кольцо"))
+		;If (RegExMatch(LoopField, "\bRing\b")); РѕСЂРёРіРёРЅР°Р»СЊРЅР°СЏ СЃС‚СЂРѕРєР°, РЅРѕ СЃ РєРѕР»СЊС†Р°РјРё РЅР° ru РЅРµ СЂР°Р±РѕС‚Р°РµС‚ 
+		If (RegExMatch(LoopField, "i)РљРѕР»СЊС†Рѕ"))
 		{
 			BaseType = Item
 			SubType = Ring
 			return
 		}
 		;IfInString, LoopField, Quiver
-		IfInString, LoopField, Колчан
+		IfInString, LoopField, РљРѕР»С‡Р°РЅ
 		{
 			BaseType = Item
 			SubType = Quiver
 			return
 		}
 		;IfInString, LoopField, Flask
-		;IfInString, LoopField, Флакон
-		If (RegExMatch(LoopField, "i)Флакон"))
+		;IfInString, LoopField, Р¤Р»Р°РєРѕРЅ
+		If (RegExMatch(LoopField, "i)Р¤Р»Р°РєРѕРЅ"))
 		{
 			BaseType = Item
 			SubType = Flask
 			return
 		}
 		;IfInString, LoopField, %A_Space%Map
-		If (RegExMatch(LoopField, "^Карта| Карта|Изменённая Карта "))
+		If (RegExMatch(LoopField, "^РљР°СЂС‚Р°| РљР°СЂС‚Р°|РР·РјРµРЅС‘РЅРЅР°СЏ РљР°СЂС‚Р° "))
 		{
 			Global mapMatchList, mapMatchListRu
 			BaseType = Map
@@ -889,7 +889,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 				IfInString, LoopField, %mapMatch%
 				{
 					;If (RegExMatch(LoopField, "\bShaped " . mapMatch))
-					If (RegExMatch(LoopField, "Изменённая " . mapMatch))
+					If (RegExMatch(LoopField, "РР·РјРµРЅС‘РЅРЅР°СЏ " . mapMatch))
 					{
 						mapMatch := AdpRu_ConvertRuItemNameToEn(mapMatch)
 						SubType = Shaped %mapMatch%
@@ -907,10 +907,10 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 			return
 		}
 		
-		jewelRuToEn := {"Кобальтовый":"Cobalt","Багровый":"Crimson","Бирюзовый":"Viridian","Радужный":"Prismatic","гипнотического":"Hypnotic","кровожадного":"Murderous","призрачного":"Ghastly","пытливого":"Searching"}
+		jewelRuToEn := {"РљРѕР±Р°Р»СЊС‚РѕРІС‹Р№":"Cobalt","Р‘Р°РіСЂРѕРІС‹Р№":"Crimson","Р‘РёСЂСЋР·РѕРІС‹Р№":"Viridian","Р Р°РґСѓР¶РЅС‹Р№":"Prismatic","РіРёРїРЅРѕС‚РёС‡РµСЃРєРѕРіРѕ":"Hypnotic","РєСЂРѕРІРѕР¶Р°РґРЅРѕРіРѕ":"Murderous","РїСЂРёР·СЂР°С‡РЅРѕРіРѕ":"Ghastly","РїС‹С‚Р»РёРІРѕРіРѕ":"Searching"}
 		; Jewels
 		;If (RegExMatch(LoopField, "i)(Cobalt|Crimson|Viridian|Prismatic) Jewel", match)) {
-		If (RegExMatch(LoopField, "i)(Кобальтовый|Багровый|Бирюзовый|Радужный) самоцвет", match)) {
+		If (RegExMatch(LoopField, "i)(РљРѕР±Р°Р»СЊС‚РѕРІС‹Р№|Р‘Р°РіСЂРѕРІС‹Р№|Р‘РёСЂСЋР·РѕРІС‹Р№|Р Р°РґСѓР¶РЅС‹Р№) СЃР°РјРѕС†РІРµС‚", match)) {
 			BaseType = Jewel
 			;SubType := match1 " Jewel"
 			SubType := jewelRuToEn[match1] " Jewel"
@@ -918,7 +918,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		}
 		; Abyss Jewels
 		;If (RegExMatch(LoopField, "i)(Murderous|Hypnotic|Searching|Ghastly) Eye Jewel", match)) {
-		If (RegExMatch(LoopField, "i)Самоцвет (гипнотического|кровожадного|призрачного|пытливого) глаза", match)) {
+		If (RegExMatch(LoopField, "i)РЎР°РјРѕС†РІРµС‚ (РіРёРїРЅРѕС‚РёС‡РµСЃРєРѕРіРѕ|РєСЂРѕРІРѕР¶Р°РґРЅРѕРіРѕ|РїСЂРёР·СЂР°С‡РЅРѕРіРѕ|РїС‹С‚Р»РёРІРѕРіРѕ) РіР»Р°Р·Р°", match)) {
 			BaseType = Jewel
 			SubType := jewelRuToEn[match1] " Eye Jewel"
 			return
@@ -926,10 +926,10 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 
 		; Leaguestones
 		;IfInString, LoopField, Leaguestone
-		IfInString, LoopField, Камень%A_Space%лиги
+		IfInString, LoopField, РљР°РјРµРЅСЊ%A_Space%Р»РёРіРё
 		{
 			;RegexMatch(LoopField, "i)(.*)Leaguestone", match)
-			RegexMatch(LoopField, "i)(.*)Камень лиги", match)
+			RegexMatch(LoopField, "i)(.*)РљР°РјРµРЅСЊ Р»РёРіРё", match)
 			RegexMatch(Trim(match1), "i)\b(\w+)\W*$", match) ; match last word
 			BaseType = Leaguestone
 			SubType := Trim(match1) " Leaguestone"
@@ -941,7 +941,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 
 		; Shields
 		;If (RegExMatch(LoopField, "Buckler|Bundle|Shield"))
-		If (RegExMatch(LoopField, "i)Баклер|Щит"))
+		If (RegExMatch(LoopField, "i)Р‘Р°РєР»РµСЂ|Р©РёС‚"))
 		{
 			BaseType = Armour
 			SubType = Shield
@@ -950,7 +950,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 
 		; Gloves
 		;If (RegExMatch(LoopField, "Gauntlets|Gloves|Mitts"))
-		If (RegExMatch(LoopField, "i)Рукавицы|Перчатки|Митенки"))
+		If (RegExMatch(LoopField, "i)Р СѓРєР°РІРёС†С‹|РџРµСЂС‡Р°С‚РєРё|РњРёС‚РµРЅРєРё"))
 		{
 			BaseType = Armour
 			SubType = Gloves
@@ -959,7 +959,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 
 		; Boots
 		;If (RegExMatch(LoopField, "Boots|Greaves|Slippers"))
-		If (RegExMatch(LoopField, "i)Ботинки|Поножи|Башмаки|Тапочки|Сапоги|Сандалии|Сандалеты|Калиги"))
+		If (RegExMatch(LoopField, "i)Р‘РѕС‚РёРЅРєРё|РџРѕРЅРѕР¶Рё|Р‘Р°С€РјР°РєРё|РўР°РїРѕС‡РєРё|РЎР°РїРѕРіРё|РЎР°РЅРґР°Р»РёРё|РЎР°РЅРґР°Р»РµС‚С‹|РљР°Р»РёРіРё"))
 		{
 			BaseType = Armour
 			SubType = Boots
@@ -968,7 +968,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 
 		; Helmets
 		;If (RegExMatch(LoopField, "Bascinet|Burgonet|Cage|Circlet|Crown|Hood|Helm|Helmet|Mask|Sallet|Tricorne"))
-		If (RegExMatch(LoopField, "i)Шапка|Кабассет|Барбют|Шлем|Чепец|Треуголка|Капюшон|Морда|Венок|Обруч|Клеть|Диадема|Венец|Салад|Бацинет|Койф|Корона|Маска"))
+		If (RegExMatch(LoopField, "i)РЁР°РїРєР°|РљР°Р±Р°СЃСЃРµС‚|Р‘Р°СЂР±СЋС‚|РЁР»РµРј|Р§РµРїРµС†|РўСЂРµСѓРіРѕР»РєР°|РљР°РїСЋС€РѕРЅ|РњРѕСЂРґР°|Р’РµРЅРѕРє|РћР±СЂСѓС‡|РљР»РµС‚СЊ|Р”РёР°РґРµРјР°|Р’РµРЅРµС†|РЎР°Р»Р°Рґ|Р‘Р°С†РёРЅРµС‚|РљРѕР№С„|РљРѕСЂРѕРЅР°|РњР°СЃРєР°"))
 		{
 			BaseType = Armour
 			SubType = Helmet
@@ -979,7 +979,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		;    explicitly matching the three pelt base items to be safe.
 
 		;If (RegExMatch(LoopField, "Iron Hat|Leather Cap|Rusted Coif|Wolf Pelt|Ursine Pelt|Lion Pelt"))
-		If (RegExMatch(LoopField, "i)Железная шапка|Кожаный чепец|Ржавый койф|Волчья морда|Медвежья морда|Львиная морда"))
+		If (RegExMatch(LoopField, "i)Р–РµР»РµР·РЅР°СЏ С€Р°РїРєР°|РљРѕР¶Р°РЅС‹Р№ С‡РµРїРµС†|Р Р¶Р°РІС‹Р№ РєРѕР№С„|Р’РѕР»С‡СЊСЏ РјРѕСЂРґР°|РњРµРґРІРµР¶СЊСЏ РјРѕСЂРґР°|Р›СЊРІРёРЅР°СЏ РјРѕСЂРґР°"))
 		{
 			BaseType = Armour
 			SubType = Helmet
@@ -989,10 +989,10 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		; BodyArmour
 		; Note: Not using "$" means "Leather" could match "Leather Belt", therefore we first check that the item is not a belt. (belts are currently checked earlier so this is redundant, but the order might change)
 		;If (!RegExMatch(LoopField, "Belt"))
-		If (!RegExMatch(LoopField, "i)Кушак|Цепочка|Ремень|Пояс"))
+		If (!RegExMatch(LoopField, "i)РљСѓС€Р°Рє|Р¦РµРїРѕС‡РєР°|Р РµРјРµРЅСЊ|РџРѕСЏСЃ"))
 		{
 			;If (RegExMatch(LoopField, "Armour|Brigandine|Chainmail|Coat|Doublet|Garb|Hauberk|Jacket|Lamellar|Leather|Plate|Raiment|Regalia|Ringmail|Robe|Tunic|Vest|Vestment"))
-			If (RegExMatch(LoopField, "i)Панцирь|Нагрудник|Латы|Доспех|Кожанка|Полукафтан|Облачение|Безрукавка|Одеяние|Халат|Наряд|Одежда|Шелка|Бригандина|Дублет|Жилет|Байдана|Кольчуга|Хауберг|Калантарь|Камзол|Куртка|Жакет"))
+			If (RegExMatch(LoopField, "i)РџР°РЅС†РёСЂСЊ|РќР°РіСЂСѓРґРЅРёРє|Р›Р°С‚С‹|Р”РѕСЃРїРµС…|РљРѕР¶Р°РЅРєР°|РџРѕР»СѓРєР°С„С‚Р°РЅ|РћР±Р»Р°С‡РµРЅРёРµ|Р‘РµР·СЂСѓРєР°РІРєР°|РћРґРµСЏРЅРёРµ|РҐР°Р»Р°С‚|РќР°СЂСЏРґ|РћРґРµР¶РґР°|РЁРµР»РєР°|Р‘СЂРёРіР°РЅРґРёРЅР°|Р”СѓР±Р»РµС‚|Р–РёР»РµС‚|Р‘Р°Р№РґР°РЅР°|РљРѕР»СЊС‡СѓРіР°|РҐР°СѓР±РµСЂРі|РљР°Р»Р°РЅС‚Р°СЂСЊ|РљР°РјР·РѕР»|РљСѓСЂС‚РєР°|Р–Р°РєРµС‚"))
 			{
 				BaseType = Armour
 				SubType = BodyArmour
@@ -1001,7 +1001,7 @@ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, B
 		}
 		
 		/* ;----  
-		   ; для ru варианта вся броня учтена в предыдущем условии 
+		   ; РґР»СЏ ru РІР°СЂРёР°РЅС‚Р° РІСЃСЏ Р±СЂРѕРЅСЏ СѓС‡С‚РµРЅР° РІ РїСЂРµРґС‹РґСѓС‰РµРј СѓСЃР»РѕРІРёРё 
 		If (RegExMatch(LoopField, "Chestplate|Full Dragonscale|Full Wyrmscale|Necromancer Silks|Shabby Jerkin|Silken Wrap"))
 		{
 			BaseType = Armour
@@ -1027,7 +1027,7 @@ GetClipboardContents(DropNewlines=False)
 		Loop, Parse, Clipboard, `n, `r
 		{
 			;IfInString, A_LoopField, note:
-			IfInString, A_LoopField, Примечание:
+			IfInString, A_LoopField, РџСЂРёРјРµС‡Р°РЅРёРµ:
 			
 			; new code added by Bahnzo - The ability to add prices to items causes issues. 
 			; Building the code sent from the clipboard differently, and ommiting the line with "Note:" on it partially fixes this.
@@ -1061,7 +1061,7 @@ GetClipboardContents(DropNewlines=False)
 		Loop, Parse, Clipboard, `n, `r
 		{
 			;IfInString, A_LoopField, note:
-			IfInString, A_LoopField, Примечание:
+			IfInString, A_LoopField, РџСЂРёРјРµС‡Р°РЅРёРµ:
 			{
 				Note := A_LoopField
 				Result := SubStr(Result, 1, -8)
@@ -1072,7 +1072,7 @@ GetClipboardContents(DropNewlines=False)
 	}
 		
 	;RegExMatch(Trim(Note), "i)^Note: (.*)", match)
-	RegExMatch(Trim(Note), "i)^Примечание: (.*)", match)
+	RegExMatch(Trim(Note), "i)^РџСЂРёРјРµС‡Р°РЅРёРµ: (.*)", match)
 	Globals.Set("ItemNote", match1)
 
 	return Result
@@ -1428,7 +1428,7 @@ ParseRarity(ItemData_NamePlate)
 	Loop, Parse, ItemData_NamePlate, `n, `r
 	{
 		;IfInString, A_LoopField, Rarity:
-		IfInString, A_LoopField, Редкость:
+		IfInString, A_LoopField, Р РµРґРєРѕСЃС‚СЊ:
 		{
 			StringReplace, RarityReplace, A_LoopField, :%A_Space%, :, All
 			StringSplit, RarityParts, RarityReplace, :
@@ -1473,15 +1473,15 @@ ParseQuality(ItemDataNamePlate)
 			Break
 		}
 		;IfInString, A_LoopField, Unidentified
-		IfInString, A_LoopField, Неопознано
+		IfInString, A_LoopField, РќРµРѕРїРѕР·РЅР°РЅРѕ
 		{
 			Break
 		}
 		;IfInString, A_LoopField, Quality:
-		IfInString, A_LoopField, Качество:
+		IfInString, A_LoopField, РљР°С‡РµСЃС‚РІРѕ:
 		{
 			;ItemQuality := RegExReplace(A_LoopField, "Quality: \+(\d+)% .*", "$1")
-			ItemQuality := RegExReplace(A_LoopField, "Качество: \+(\d+)% .*", "$1")
+			ItemQuality := RegExReplace(A_LoopField, "РљР°С‡РµСЃС‚РІРѕ: \+(\d+)% .*", "$1")
 			Break
 		}
 	}
@@ -1496,7 +1496,7 @@ ParseAugmentations(ItemDataChunk, ByRef AffixCSVList)
 		CurAugment := A_LoopField
 		Globals.Set("CurAugment", A_LoopField)
 		;IfInString, A_LoopField, Requirements:
-		IfInString, A_LoopField, Требования:
+		IfInString, A_LoopField, РўСЂРµР±РѕРІР°РЅРёСЏ:
 		{
 			; too far - Requirements: is already the next chunk
 			Break
@@ -1514,7 +1514,7 @@ ParseAugmentations(ItemDataChunk, ByRef AffixCSVList)
 ParseRequirements(ItemDataChunk, ByRef Level, ByRef Attributes, ByRef Values="")
 {
 	;IfNotInString, ItemDataChunk, Requirements
-	IfNotInString, ItemDataChunk, Требования
+	IfNotInString, ItemDataChunk, РўСЂРµР±РѕРІР°РЅРёСЏ
 	{
 		return
 	}
@@ -1529,28 +1529,28 @@ ParseRequirements(ItemDataChunk, ByRef Level, ByRef Attributes, ByRef Values="")
 			Break ; Not interested in blank lines
 		}
 		;IfInString, A_LoopField, Str
-		IfInString, A_LoopField, Сила
+		IfInString, A_LoopField, РЎРёР»Р°
 		{
 			;Attr := Attr . "Str" . Delim
-			Attr := Attr . "Сила" . Delim
+			Attr := Attr . "РЎРёР»Р°" . Delim
 			AttrValues := AttrValues . GetColonValue(A_LoopField) . Delim
 		}
 		;IfInString, A_LoopField, Dex
-		IfInString, A_LoopField, Ловк
+		IfInString, A_LoopField, Р›РѕРІРє
 		{
 			;Attr := Attr . "Dex" . Delim
-			Attr := Attr . "Ловк" . Delim
+			Attr := Attr . "Р›РѕРІРє" . Delim
 			AttrValues := AttrValues . GetColonValue(A_LoopField) . Delim
 		}
 		;IfInString, A_LoopField, Int
-		IfInString, A_LoopField, Инт
+		IfInString, A_LoopField, РРЅС‚
 		{
 			;Attr := Attr . "Int" . Delim
-			Attr := Attr . "Инт" . Delim
+			Attr := Attr . "РРЅС‚" . Delim
 			AttrValues := AttrValues . GetColonValue(A_LoopField) . Delim
 		}
 		;IfInString, A_LoopField, Level
-		IfInString, A_LoopField, Уровень
+		IfInString, A_LoopField, РЈСЂРѕРІРµРЅСЊ
 		{
 			Level := GetColonValue(A_LoopField)
 		}
@@ -1628,11 +1628,11 @@ ParseItemLevel(ItemDataText)
 	; Once TA is released we won't need to support both occurences of
 	; the word "Item level" any more...
 	;ItemDataChunk := GetItemDataChunk(ItemDataText, "Itemlevel:")
-	ItemDataChunk := GetItemDataChunk(ItemDataText, "Уровеньпредмета:")
+	ItemDataChunk := GetItemDataChunk(ItemDataText, "РЈСЂРѕРІРµРЅСЊРїСЂРµРґРјРµС‚Р°:")
 	If (StrLen(ItemDataChunk) <= 0)
 	{
 		;ItemDataChunk := GetItemDataChunk(ItemDataText, "Item Level:")
-		ItemDataChunk := GetItemDataChunk(ItemDataText, "Уровень предмета:")
+		ItemDataChunk := GetItemDataChunk(ItemDataText, "РЈСЂРѕРІРµРЅСЊ РїСЂРµРґРјРµС‚Р°:")
 	}
 
 	Assert(StrLen(ItemDataChunk) > 0, "ParseItemLevel: couldn't parse item data chunk")
@@ -1640,14 +1640,14 @@ ParseItemLevel(ItemDataText)
 	Loop, Parse, ItemDataChunk, `n, `r
 	{
 		;IfInString, A_LoopField, Itemlevel:
-		IfInString, A_LoopField, Уровеньпредмета:
+		IfInString, A_LoopField, РЈСЂРѕРІРµРЅСЊРїСЂРµРґРјРµС‚Р°:
 		{
 			StringSplit, ItemLevelParts, A_LoopField, %A_Space%
 			Result := StrTrimWhitespace(ItemLevelParts2)
 			return Result
 		}
 		;IfInString, A_LoopField, Item Level:
-		IfInString, A_LoopField, Уровень предмета:
+		IfInString, A_LoopField, РЈСЂРѕРІРµРЅСЊ РїСЂРµРґРјРµС‚Р°:
 		{
 			StringSplit, ItemLevelParts, A_LoopField, %A_Space%
 			Result := StrTrimWhitespace(ItemLevelParts3)
@@ -1663,7 +1663,7 @@ ParseMapTier(ItemDataText)
 	If (StrLen(ItemDataChunk) <= 0)
 	{
 		;ItemDataChunk := GetItemDataChunk(ItemDataText, "Map Tier:")
-		ItemDataChunk := GetItemDataChunk(ItemDataText, "Уровень карты:")
+		ItemDataChunk := GetItemDataChunk(ItemDataText, "РЈСЂРѕРІРµРЅСЊ РєР°СЂС‚С‹:")
 	}
 
 	Assert(StrLen(ItemDataChunk) > 0, "ParseMapTier: couldn't parse item data chunk")
@@ -1677,7 +1677,7 @@ ParseMapTier(ItemDataText)
 			return Result
 		}
 		;IfInString, A_LoopField, Map Tier:
-		IfInString, A_LoopField, Уровень карты:
+		IfInString, A_LoopField, РЈСЂРѕРІРµРЅСЊ РєР°СЂС‚С‹:
 		{
 			StringSplit, MapLevelParts, A_LoopField, %A_Space%
 			Result := StrTrimWhitespace(MapLevelParts3)
@@ -1689,7 +1689,7 @@ ParseMapTier(ItemDataText)
 
 
 ;ParseGemLevel(ItemDataText, PartialString="Level:")
-ParseGemLevel(ItemDataText, PartialString="Уровень:")
+ParseGemLevel(ItemDataText, PartialString="РЈСЂРѕРІРµРЅСЊ:")
 {
 	ItemDataChunk := GetItemDataChunk(ItemDataText, PartialString)
 	Loop, Parse, ItemDataChunk, `n, `r
@@ -1703,7 +1703,7 @@ ParseGemLevel(ItemDataText, PartialString="Уровень:")
 	}
 }
 
-ParseGemXP(ItemDataText, PartialString="Опыт:", ByRef Flat = "")
+ParseGemXP(ItemDataText, PartialString="РћРїС‹С‚:", ByRef Flat = "")
 {
 	ItemDataChunk := GetItemDataChunk(ItemDataText, PartialString)
 	Loop, Parse, ItemDataChunk, `n, `r
@@ -1715,8 +1715,8 @@ ParseGemXP(ItemDataText, PartialString="Опыт:", ByRef Flat = "")
 			_Flat := StrTrimWhitespace(ItemLevelParts2)
 			XP := RegExReplace(_Flat, "\.")	
 			*/
-			; вот так корректно расчитывает процент опыта камня
-			; т.к. в строке опыта камня между цифрами игра помещает символ с кодом 0xA0 - неразрывный пробел
+			; РІРѕС‚ С‚Р°Рє РєРѕСЂСЂРµРєС‚РЅРѕ СЂР°СЃС‡РёС‚С‹РІР°РµС‚ РїСЂРѕС†РµРЅС‚ РѕРїС‹С‚Р° РєР°РјРЅСЏ
+			; С‚.Рє. РІ СЃС‚СЂРѕРєРµ РѕРїС‹С‚Р° РєР°РјРЅСЏ РјРµР¶РґСѓ С†РёС„СЂР°РјРё РёРіСЂР° РїРѕРјРµС‰Р°РµС‚ СЃРёРјРІРѕР» СЃ РєРѕРґРѕРј 0xA0 - РЅРµСЂР°Р·СЂС‹РІРЅС‹Р№ РїСЂРѕР±РµР»
 			_Flat := StrTrimWhitespace(A_LoopField)
 			XP := RegExReplace(_Flat, chr(0xA0), "")
 		}
@@ -1879,13 +1879,13 @@ AffixTypeShort(AffixType)
 {
 	result := RegExReplace(AffixType, "Hybrid Defence Prefix", "HDP")
 	;result := RegExReplace(result, "Crafted ", "Cr")		; not fully supported yet.
-	result := RegExReplace(result, "Crafted ", "Крф")		; not fully supported yet.
+	result := RegExReplace(result, "Crafted ", "РљСЂС„")		; not fully supported yet.
 	;result := RegExReplace(result, "Hybrid ", "Hyb")
-	result := RegExReplace(result, "Hybrid ", "Гиб")
+	result := RegExReplace(result, "Hybrid ", "Р“РёР±")
 	;result := RegExReplace(result, "Prefix", "P")
-	result := RegExReplace(result, "Prefix", "Пр")
+	result := RegExReplace(result, "Prefix", "РџСЂ")
 	;result := RegExReplace(result, "Suffix", "S")
-	result := RegExReplace(result, "Suffix", "Cу")
+	result := RegExReplace(result, "Suffix", "CСѓ")
 	
 	return result
 }
@@ -1997,7 +1997,7 @@ AssembleAffixDetails()
 	NumAffixLines := AffixLines.MaxIndex()		; ( Itemdata.AffixTextLines.MaxIndex() > AffixLines.MaxIndex() ) ? Itemdata.AffixTextLines.MaxIndex() : AffixLines.MaxIndex()
 	
 	TextLineWidth := 20
-	; ширина строки аффикса - будем определять в зависимости от настроек, либо полную, либо краткую
+	; С€РёСЂРёРЅР° СЃС‚СЂРѕРєРё Р°С„С„РёРєСЃР° - Р±СѓРґРµРј РѕРїСЂРµРґРµР»СЏС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РЅР°СЃС‚СЂРѕРµРє, Р»РёР±Рѕ РїРѕР»РЅСѓСЋ, Р»РёР±Рѕ РєСЂР°С‚РєСѓСЋ
 	If (!Opts.ShortAffix){
 		TextLineWidth := ParseModLength(ItemData.Affixes, false)
 	}
@@ -2056,14 +2056,14 @@ AssembleAffixDetails()
 				Else
 				{	; TierRange has no ilvl entry, can expand a bit.
 					; Moving more the longer the range text is. Until 9 chars: +2, 10-11 chars: +3, 12-13 chars: +4, then: +5.
-					; This keeps the "…" of a multi tier range aligned with the "-" of most normal ranges,
+					; This keeps the "вЂ¦" of a multi tier range aligned with the "-" of most normal ranges,
 					;   but also keeps slightly larger normal ranges aligned as usual, like so:
 					/*        28-32 (44)
-					       48-62…58-72  
+					       48-62вЂ¦58-72  
 					        104-117     
 					          30-35 (49)
-					       84-97…94-108 
-					     119-261…201-361
+					       84-97вЂ¦94-108 
+					     119-261вЂ¦201-361
 					          40-44 (35)
 					*/
 					extra := StrLen(ValueRange[1]) <= 7 ? 0 : (StrLen(ValueRange[1]) <= 9 ? 2 : ( StrLen(ValueRange[1]) <= 11 ? 3 : ( StrLen(ValueRange[1]) <= 13 ? 4 : 5)))
@@ -2107,8 +2107,8 @@ AssembleAffixDetails()
 				If (AffixText = "or")
 				{
 					;AffixText := "--or--"
-					;AffixText := "--или--"
-					AffixText := ">>или>>"
+					;AffixText := "--РёР»Рё--"
+					AffixText := ">>РёР»Рё>>"
 					AffixText := StrPad(AffixText, round( (TextLineWidth + StrLen(AffixText))/2 ), "left")	; align mid
 				}
 				
@@ -2191,7 +2191,7 @@ AssembleAffixDetails()
 			Else
 			{
 				;ProcessedLine := "   Essence Mod, unknown Mod or unsolved case"
-				ProcessedLine := "   Мод полученный сущностью, неизвестный мод или неразрешимый вариант мода"
+				ProcessedLine := "   РњРѕРґ РїРѕР»СѓС‡РµРЅРЅС‹Р№ СЃСѓС‰РЅРѕСЃС‚СЊСЋ, РЅРµРёР·РІРµСЃС‚РЅС‹Р№ РјРѕРґ РёР»Рё РЅРµСЂР°Р·СЂРµС€РёРјС‹Р№ РІР°СЂРёР°РЅС‚ РјРѕРґР°"
 			}
 			
 			Result .= "`n" ProcessedLine
@@ -2264,11 +2264,11 @@ GetActualValue(ActualValueLine)
 	; Leaves "-" in for negative values, example: "Ventor's Gamble"
 	;Result := RegExReplace(ActualValueLine, ".*?\+?(-?\d+(?: to -?\d+|\.\d+)?).*", "$1")
 
-	; поддержка "to" для адаптированного варианта файла \data\Implicits.json
-	Result := RegExReplace(ActualValueLine, ".*?\+?(-?\d+(?: (до|to) -?\d+|\.\d+)?).*", "$1")
+	; РїРѕРґРґРµСЂР¶РєР° "to" РґР»СЏ Р°РґР°РїС‚РёСЂРѕРІР°РЅРЅРѕРіРѕ РІР°СЂРёР°РЅС‚Р° С„Р°Р№Р»Р° \data\Implicits.json
+	Result := RegExReplace(ActualValueLine, ".*?\+?(-?\d+(?: (РґРѕ|to) -?\d+|\.\d+)?).*", "$1")
 	; Formats "1 to 2" as "1-2"
 	StringReplace, Result, Result, %A_SPACE%to%A_SPACE%, -
-	StringReplace, Result, Result, %A_SPACE%до%A_SPACE%, -
+	StringReplace, Result, Result, %A_SPACE%РґРѕ%A_SPACE%, -
 	return Result
 }
 
@@ -2314,7 +2314,7 @@ ParseProphecy(ItemData, ByRef Difficulty = "", ByRef SealingCost = "")
 ParseFlaskAffixes(ItemDataAffixes)
 {
 	;IfInString, ItemDataChunk, Unidentified
-	IfInString, ItemDataChunk, Неопознано
+	IfInString, ItemDataChunk, РќРµРѕРїРѕР·РЅР°РЅРѕ
 	{
 		return ; Not interested in unidentified items
 	}
@@ -2328,145 +2328,145 @@ ParseFlaskAffixes(ItemDataAffixes)
 		
 		
 		;IfInString, A_LoopField, `% increased Charge Recovery
-		IfInString, A_LoopField, `% повышение скорости восстановления зарядов
+		IfInString, A_LoopField, `% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ Р·Р°СЂСЏРґРѕРІ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["20-40"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Maximum Charges
-		IfInString, A_LoopField, к максимуму зарядов
+		IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ Р·Р°СЂСЏРґРѕРІ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["10-20"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% reduced Charges used
-		IfInString, A_LoopField, `% снижение количества используемых зарядов
+		IfInString, A_LoopField, `% СЃРЅРёР¶РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РёСЃРїРѕР»СЊР·СѓРµРјС‹С… Р·Р°СЂСЏРґРѕРІ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["20-25"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 50`% increased Amount Recovered
-		IfInString, A_LoopField, 50`% увеличение объёма восстановления
+		IfInString, A_LoopField, 50`% СѓРІРµР»РёС‡РµРЅРёРµ РѕР±СЉС‘РјР° РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["50"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 33`% reduced Recovery Rate
-		IfInString, A_LoopField, 33`% снижение скорости восстановления
+		IfInString, A_LoopField, 33`% СЃРЅРёР¶РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["33"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 100`% increased Recovery when on Low Life
-		IfInString, A_LoopField, 100`% увеличение восстановления при малом количестве здоровья
+		IfInString, A_LoopField, 100`% СѓРІРµР»РёС‡РµРЅРёРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РїСЂРё РјР°Р»РѕРј РєРѕР»РёС‡РµСЃС‚РІРµ Р·РґРѕСЂРѕРІСЊСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["100"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 40`% increased Life Recovered
-		IfInString, A_LoopField, 40`% увеличение восстанавливаемого здоровья
+		IfInString, A_LoopField, 40`% СѓРІРµР»РёС‡РµРЅРёРµ РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРјРѕРіРѕ Р·РґРѕСЂРѕРІСЊСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["40"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Removes 10`% of Life Recovered from Mana when used
-		IfInString, A_LoopField, Забирает 10`% восстанавливаемого здоровья из маны при использовании
+		IfInString, A_LoopField, Р—Р°Р±РёСЂР°РµС‚ 10`% РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРјРѕРіРѕ Р·РґРѕСЂРѕРІСЊСЏ РёР· РјР°РЅС‹ РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["10"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 60`% increased Mana Recovered
-		IfInString, A_LoopField, 60`% увеличение восстанавливаемой маны
+		IfInString, A_LoopField, 60`% СѓРІРµР»РёС‡РµРЅРёРµ РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРјРѕР№ РјР°РЅС‹
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["60"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Removes 15`% of Mana Recovered from Life when used
-		IfInString, A_LoopField, Забирает 15`% восстанавливаемой маны из здоровья при использовании
+		IfInString, A_LoopField, Р—Р°Р±РёСЂР°РµС‚ 15`% РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРјРѕР№ РјР°РЅС‹ РёР· Р·РґРѕСЂРѕРІСЊСЏ РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["15"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 25`% reduced Amount Recovered
-		IfInString, A_LoopField, 25`% уменьшение объёма восстановления
+		IfInString, A_LoopField, 25`% СѓРјРµРЅСЊС€РµРЅРёРµ РѕР±СЉС‘РјР° РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["25"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Instant Recovery when on Low Life
-		IfInString, A_LoopField, Моментальное восстановление при малом количестве здоровья
+		IfInString, A_LoopField, РњРѕРјРµРЅС‚Р°Р»СЊРЅРѕРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РїСЂРё РјР°Р»РѕРј РєРѕР»РёС‡РµСЃС‚РІРµ Р·РґРѕСЂРѕРІСЊСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", [""], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 66`% reduced Amount Recovered
-		IfInString, A_LoopField, 66`% уменьшение объёма восстановления
+		IfInString, A_LoopField, 66`% СѓРјРµРЅСЊС€РµРЅРёРµ РѕР±СЉС‘РјР° РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["66"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Instant Recovery
-		IfInString, A_LoopField, Мгновенное восстановление
+		IfInString, A_LoopField, РњРіРЅРѕРІРµРЅРЅРѕРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", [""], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 50`% reduced Amount Recovered
-		IfInString, A_LoopField, 50`% уменьшение объёма восстановления
+		IfInString, A_LoopField, 50`% СѓРјРµРЅСЊС€РµРЅРёРµ РѕР±СЉС‘РјР° РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["50"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 135`% increased Recovery Rate
-		IfInString, A_LoopField, 135`% повышение скорости восстановления
+		IfInString, A_LoopField, 135`% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["135"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 50`% of Recovery applied Instantly
-		IfInString, A_LoopField, 50`% от восстановления применяется мгновенно
+		IfInString, A_LoopField, 50`% РѕС‚ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РїСЂРёРјРµРЅСЏРµС‚СЃСЏ РјРіРЅРѕРІРµРЅРЅРѕ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["50"], "", False), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 50`% increased Recovery Rate
-		IfInString, A_LoopField, 50`% повышение скорости восстановления
+		IfInString, A_LoopField, 50`% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["50"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Duration
-		IfInString, A_LoopField, `% увеличение длительности
+		IfInString, A_LoopField, `% СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["30-40"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 25`% increased effect 
-		IfInString, A_LoopField, 25`% усиление эффекта
+		IfInString, A_LoopField, 25`% СѓСЃРёР»РµРЅРёРµ СЌС„С„РµРєС‚Р°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["25"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 33`% reduced Duration 
-		IfInString, A_LoopField, 33`% уменьшение длительности 
+		IfInString, A_LoopField, 33`% СѓРјРµРЅСЊС€РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё 
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Prefix", ["33"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 20`% chance to gain a Flask Charge when you deal a Critical Strike
-		IfInString, A_LoopField, 20`% шанс получить заряд флакона при нанесении критического удара
+		IfInString, A_LoopField, 20`% С€Р°РЅСЃ РїРѕР»СѓС‡РёС‚СЊ Р·Р°СЂСЏРґ С„Р»Р°РєРѕРЅР° РїСЂРё РЅР°РЅРµСЃРµРЅРёРё РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["20"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Recharges 1 Charge when you deal a Critical Strike
-		IfInString, A_LoopField, Восстанавливает зарядов при нанесении критического удара: 1
+		IfInString, A_LoopField, Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р·Р°СЂСЏРґРѕРІ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°: 1
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["Legacy"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Recharges 3 Charges when you take a Critical Strike 
-		IfInString, A_LoopField, Восстанавливает зарядов при получении критического удара: 3
+		IfInString, A_LoopField, Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ Р·Р°СЂСЏРґРѕРІ РїСЂРё РїРѕР»СѓС‡РµРЅРёРё РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°: 3
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["3"], ""), A_Index)
 			Continue
@@ -2474,67 +2474,67 @@ ParseFlaskAffixes(ItemDataAffixes)
 		
 		
 		;IfInString, A_LoopField, Adds Knockback to Melee Attacks during Flask effect 
-		IfInString, A_LoopField, Добавляет отбрасывание к атакам ближнего боя во время действия эффекта флакона 
+		IfInString, A_LoopField, Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚Р±СЂР°СЃС‹РІР°РЅРёРµ Рє Р°С‚Р°РєР°Рј Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР° 
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", [""], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Armour during Flask effect 
-		IfInString, A_LoopField, `% повышение брони во время действия эффекта флакона 
+		IfInString, A_LoopField, `% РїРѕРІС‹С€РµРЅРёРµ Р±СЂРѕРЅРё РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР° 
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["60-100"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Evasion Rating during Flask effect 
-		IfInString, A_LoopField, `% увеличение уклонения во время действия эффекта флакона
+		IfInString, A_LoopField, `% СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["60-100"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 0.4`% of Physical Attack Damage Leeched as Life during Flask effect
-		IfInString, A_LoopField, 0.4`% от физического урона атак похищается в виде здоровья во время действия эффекта флакона
+		IfInString, A_LoopField, 0.4`% РѕС‚ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° Р°С‚Р°Рє РїРѕС…РёС‰Р°РµС‚СЃСЏ РІ РІРёРґРµ Р·РґРѕСЂРѕРІСЊСЏ РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["0.4"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, 0.4`% of Physical Attack Damage Leeched as Mana during Flask effect
-		IfInString, A_LoopField, 0.4`% от физического урона атак похищается в виде маны во время действия эффекта флакона
+		IfInString, A_LoopField, 0.4`% РѕС‚ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° Р°С‚Р°Рє РїРѕС…РёС‰Р°РµС‚СЃСЏ РІ РІРёРґРµ РјР°РЅС‹ РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["0.4"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% of Life Recovery to Minions
-		If (RegExMatch(A_LoopField, "Дарует приспешникам \d+?`% от восстанавливаемого здоровья"))
+		If (RegExMatch(A_LoopField, "Р”Р°СЂСѓРµС‚ РїСЂРёСЃРїРµС€РЅРёРєР°Рј \d+?`% РѕС‚ РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРјРѕРіРѕ Р·РґРѕСЂРѕРІСЊСЏ"))
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["40-60"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Movement Speed during Flask effect
-		IfInString, A_LoopField, `% повышение скорости передвижения во время действия эффекта флакона
+		IfInString, A_LoopField, `% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["20-30"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% additional Elemental Resistances during Flask effect
-		IfInString, A_LoopField, `% дополнительного сопротивления стихиям во время действия эффекта флакона
+		IfInString, A_LoopField, `% РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ СЃС‚РёС…РёСЏРј РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР°
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["20-30"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Block and Stun Recovery during Flask effect 
-		IfInString, A_LoopField, `% ускорение восстановления после оглушения во время действия флакона 
+		IfInString, A_LoopField, `% СѓСЃРєРѕСЂРµРЅРёРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РїРѕСЃР»Рµ РѕРіР»СѓС€РµРЅРёСЏ РІРѕ РІСЂРµРјСЏ РґРµР№СЃС‚РІРёСЏ С„Р»Р°РєРѕРЅР° 
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["40-60"], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Immun
-		If (RegExMatch(A_LoopField, "i)Иммунитет"))
+		If (RegExMatch(A_LoopField, "i)РРјРјСѓРЅРёС‚РµС‚"))
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Suffix", [""], ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Removes
-		If (RegExMatch(A_LoopField, "i)Снимает"))
+		If (RegExMatch(A_LoopField, "i)РЎРЅРёРјР°РµС‚"))
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Suffix", [""], ""), A_Index)
 			Continue
@@ -2578,7 +2578,7 @@ ParseMapAffixes(ItemDataAffixes)
 	ResetAffixDetailVars()
 	
 	;IfInString, ItemDataChunk, Unidentified
-	IfInString, ItemDataChunk, Неопознано
+	IfInString, ItemDataChunk, РќРµРѕРїРѕР·РЅР°РЅРѕ
 	{
 		return ; Not interested in unidentified items
 	}
@@ -2617,139 +2617,139 @@ ParseMapAffixes(ItemDataAffixes)
 		; --- ONE LINE AFFIXES ---		
 		
 		;If (RegExMatch(A_LoopField, "Area is inhabited by 2 additional Rogue Exiles|Area has increased monster variety"))
-		;If (RegExMatch(A_LoopField, "2 дополнительный бродячий изгнанник в области|Область населяют разнообразные монстры"))
-		If (RegExMatch(A_LoopField, "Дополнительных бродячих изгнанников в области: 2|Область населяют разнообразные монстры"))
+		;If (RegExMatch(A_LoopField, "2 РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ Р±СЂРѕРґСЏС‡РёР№ РёР·РіРЅР°РЅРЅРёРє РІ РѕР±Р»Р°СЃС‚Рё|РћР±Р»Р°СЃС‚СЊ РЅР°СЃРµР»СЏСЋС‚ СЂР°Р·РЅРѕРѕР±СЂР°Р·РЅС‹Рµ РјРѕРЅСЃС‚СЂС‹"))
+		If (RegExMatch(A_LoopField, "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… Р±СЂРѕРґСЏС‡РёС… РёР·РіРЅР°РЅРЅРёРєРѕРІ РІ РѕР±Р»Р°СЃС‚Рё: 2|РћР±Р»Р°СЃС‚СЊ РЅР°СЃРµР»СЏСЋС‚ СЂР°Р·РЅРѕРѕР±СЂР°Р·РЅС‹Рµ РјРѕРЅСЃС‚СЂС‹"))
 		{
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area is inhabited by .*"))
-		If (RegExMatch(A_LoopField, "В области можно встретить .*"))
+		If (RegExMatch(A_LoopField, "Р’ РѕР±Р»Р°СЃС‚Рё РјРѕР¶РЅРѕ РІСЃС‚СЂРµС‚РёС‚СЊ .*"))
 		{
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters deal \d+% extra Damage as (Fire|Cold|Lightning)"))
-		If (RegExMatch(A_LoopField, "Монстры наносят \d+% дополнительного урона в виде урона от (огня|холода|молнии)"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РЅР°РЅРѕСЃСЏС‚ \d+% РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓСЂРѕРЅР° РІ РІРёРґРµ СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё)"))
 		{
 			;MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`nExtra Ele Damage" : ""			
-			MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`n Дополнительный стихийный урон" : ""			
+			MapModWarnings .= MapModWarn.MonstExtraEleDmg ? "`n Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ СЃС‚РёС…РёР№РЅС‹Р№ СѓСЂРѕРЅ" : ""			
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Count_DmgMod += 1
 			String_DmgMod := String_DmgMod . ", Extra Ele"
-			;String_DmgMod := String_DmgMod . ", Доп. стихийный"
+			;String_DmgMod := String_DmgMod . ", Р”РѕРї. СЃС‚РёС…РёР№РЅС‹Р№"
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters reflect \d+% of Elemental Damage"))
-		If (RegExMatch(A_LoopField, "Монстры отражают \d+% урона от стихий"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РѕС‚СЂР°Р¶Р°СЋС‚ \d+% СѓСЂРѕРЅР° РѕС‚ СЃС‚РёС…РёР№"))
 		{
 			;MapModWarnings .= MapModWarn.EleReflect ? "`nEle reflect" : ""
-			MapModWarnings .= MapModWarn.EleReflect ? "`n Отражение стихийного урона" : ""
+			MapModWarnings .= MapModWarn.EleReflect ? "`n РћС‚СЂР°Р¶РµРЅРёРµ СЃС‚РёС…РёР№РЅРѕРіРѕ СѓСЂРѕРЅР°" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters reflect \d+% of Physical Damage"))
-		If (RegExMatch(A_LoopField, "Монстры отражают \d+% физического урона"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РѕС‚СЂР°Р¶Р°СЋС‚ \d+% С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°"))
 		{
 			;MapModWarnings .= MapModWarn.PhysReflect ? "`nPhys reflect" : ""
-			MapModWarnings .= MapModWarn.PhysReflect ? "`n Отражение физ. урона" : ""
+			MapModWarnings .= MapModWarn.PhysReflect ? "`n РћС‚СЂР°Р¶РµРЅРёРµ С„РёР·. СѓСЂРѕРЅР°" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "\+\d+% Monster Physical Damage Reduction"))
-		If (RegExMatch(A_LoopField, "\+\d+% к сопротивлению физическому урону монстров"))
+		If (RegExMatch(A_LoopField, "\+\d+% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С„РёР·РёС‡РµСЃРєРѕРјСѓ СѓСЂРѕРЅСѓ РјРѕРЅСЃС‚СЂРѕРІ"))
 		{
 			;MapModWarnings .= MapModWarn.MonstPhysDmgReduction ? "`nPhys Damage Reduction" : ""
-			MapModWarnings .= MapModWarn.MonstPhysDmgReduction ? "`n Сопротивление физическому урону" : ""
+			MapModWarnings .= MapModWarn.MonstPhysDmgReduction ? "`n РЎРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРјСѓ СѓСЂРѕРЅСѓ" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "\d+% less effect of Curses on Monsters"))
-		If (RegExMatch(A_LoopField, "Эффект от проклятий на монстрах на \d+% меньше"))
+		If (RegExMatch(A_LoopField, "Р­С„С„РµРєС‚ РѕС‚ РїСЂРѕРєР»СЏС‚РёР№ РЅР° РјРѕРЅСЃС‚СЂР°С… РЅР° \d+% РјРµРЅСЊС€Рµ"))
 		{
 			;MapModWarnings .= MapModWarn.MonstLessCurse ? "`nLess Curse Effect" : ""
-			MapModWarnings .= MapModWarn.MonstLessCurse ? "`n Уменьшение эффекта от проклятий" : ""
+			MapModWarnings .= MapModWarn.MonstLessCurse ? "`n РЈРјРµРЅСЊС€РµРЅРёРµ СЌС„С„РµРєС‚Р° РѕС‚ РїСЂРѕРєР»СЏС‚РёР№" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have a \d+% chance to avoid Poison, Blind, and Bleed"))
-		If (RegExMatch(A_LoopField, "Монстры имеют \d+% шанс избежать отравления, ослепления и кровотечения"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РёРјРµСЋС‚ \d+% С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ РѕС‚СЂР°РІР»РµРЅРёСЏ, РѕСЃР»РµРїР»РµРЅРёСЏ Рё РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ"))
 		{
 			;MapModWarnings .= MapModWarn.MonstAvoidPoisonBlindBleed ? "`nAvoid Poison/Blind/Bleed" : ""
-			MapModWarnings .= MapModWarn.MonstAvoidPoisonBlindBleed ? "`n Избегание отравления/ослепления/кровотечения" : ""
+			MapModWarnings .= MapModWarn.MonstAvoidPoisonBlindBleed ? "`n РР·Р±РµРіР°РЅРёРµ РѕС‚СЂР°РІР»РµРЅРёСЏ/РѕСЃР»РµРїР»РµРЅРёСЏ/РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have a \d+% chance to cause Elemental Ailments on Hit"))
-		If (RegExMatch(A_LoopField, "Монстры имеют \d+% шанс наложить стихийные состояния при нанесении удара"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РёРјРµСЋС‚ \d+% С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ СЃС‚РёС…РёР№РЅС‹Рµ СЃРѕСЃС‚РѕСЏРЅРёСЏ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР°"))
 		{
 			;MapModWarnings .= MapModWarn.MonstCauseElementalAilments ? "`nCause Elemental Ailments" : ""
-			MapModWarnings .= MapModWarn.MonstCauseElementalAilments ? "`n Шанс наложить стихийные состояния" : ""
+			MapModWarnings .= MapModWarn.MonstCauseElementalAilments ? "`n РЁР°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ СЃС‚РёС…РёР№РЅС‹Рµ СЃРѕСЃС‚РѕСЏРЅРёСЏ" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "\d+% increased Monster Damage"))
-		If (RegExMatch(A_LoopField, "\d+% увеличение урона монстров"))
+		If (RegExMatch(A_LoopField, "\d+% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РјРѕРЅСЃС‚СЂРѕРІ"))
 		{
 			;MapModWarnings .= MapModWarn.MonstIncrDmg ? "`nIncreased Damage" : ""
-			MapModWarnings .= MapModWarn.MonstIncrDmg ? "`n Увеличение урона" : ""
+			MapModWarnings .= MapModWarn.MonstIncrDmg ? "`n РЈРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area contains many Totems"))
-		If (RegExMatch(A_LoopField, "В области много тотемов"))
+		If (RegExMatch(A_LoopField, "Р’ РѕР±Р»Р°СЃС‚Рё РјРЅРѕРіРѕ С‚РѕС‚РµРјРѕРІ"))
 		{
 			;MapModWarnings .= MapModWarn.ManyTotems ? "`nTotems" : ""
-			MapModWarnings .= MapModWarn.ManyTotems ? "`n Тотемы" : ""
+			MapModWarnings .= MapModWarn.ManyTotems ? "`n РўРѕС‚РµРјС‹" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters' skills Chain 2 additional times"))
-		If (RegExMatch(A_LoopField, "Монстры поражают целей по цепи: 2"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РїРѕСЂР°Р¶Р°СЋС‚ С†РµР»РµР№ РїРѕ С†РµРїРё: 2"))
 		{
 			;MapModWarnings .= MapModWarn.MonstSkillsChain ? "`nSkills Chain" : ""
-			MapModWarnings .= MapModWarn.MonstSkillsChain ? "`n Урон по цепи" : ""
+			MapModWarnings .= MapModWarn.MonstSkillsChain ? "`n РЈСЂРѕРЅ РїРѕ С†РµРїРё" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Flag_SkillsChain := 1
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "All Monster Damage from Hits always Ignites"))
-		If (RegExMatch(A_LoopField, "Весь урон от ударов монстров всегда поджигает"))
+		If (RegExMatch(A_LoopField, "Р’РµСЃСЊ СѓСЂРѕРЅ РѕС‚ СѓРґР°СЂРѕРІ РјРѕРЅСЃС‚СЂРѕРІ РІСЃРµРіРґР° РїРѕРґР¶РёРіР°РµС‚"))
 		{
 			;MapModWarnings .= MapModWarn.MonstHitsIgnite ? "`nHits Ignite" : ""
-			MapModWarnings .= MapModWarn.MonstHitsIgnite ? "`n Удары поджигают" : ""
+			MapModWarnings .= MapModWarn.MonstHitsIgnite ? "`n РЈРґР°СЂС‹ РїРѕРґР¶РёРіР°СЋС‚" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Slaying Enemies close together can attract monsters from Beyond"))
-		If (RegExMatch(A_LoopField, "Убитые близко друг к другу враги могут привлечь монстров из другого мира"))
+		If (RegExMatch(A_LoopField, "РЈР±РёС‚С‹Рµ Р±Р»РёР·РєРѕ РґСЂСѓРі Рє РґСЂСѓРіСѓ РІСЂР°РіРё РјРѕРіСѓС‚ РїСЂРёРІР»РµС‡СЊ РјРѕРЅСЃС‚СЂРѕРІ РёР· РґСЂСѓРіРѕРіРѕ РјРёСЂР°"))
 		{
 			;MapModWarnings .= MapModWarn.Beyond ? "`nBeyond" : ""
-			MapModWarnings .= MapModWarn.Beyond ? "`n Иномирцы" : ""
+			MapModWarnings .= MapModWarn.Beyond ? "`n РРЅРѕРјРёСЂС†С‹" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area contains two Unique Bosses"))
-		If (RegExMatch(A_LoopField, "В области можно встретить двух уникальных боссов"))
+		If (RegExMatch(A_LoopField, "Р’ РѕР±Р»Р°СЃС‚Рё РјРѕР¶РЅРѕ РІСЃС‚СЂРµС‚РёС‚СЊ РґРІСѓС… СѓРЅРёРєР°Р»СЊРЅС‹С… Р±РѕСЃСЃРѕРІ"))
 		{
 			;MapModWarnings .= MapModWarn.BossTwinned ? "`nTwinned Boss" : ""
-			MapModWarnings .= MapModWarn.BossTwinned ? "`n Два Босса" : ""
+			MapModWarnings .= MapModWarn.BossTwinned ? "`n Р”РІР° Р‘РѕСЃСЃР°" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters are Hexproof"))
-		If (RegExMatch(A_LoopField, "Монстры имеют свойство Заговоренный"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РёРјРµСЋС‚ СЃРІРѕР№СЃС‚РІРѕ Р—Р°РіРѕРІРѕСЂРµРЅРЅС‹Р№"))
 		{
 			;MapModWarnings .= MapModWarn.MonstHexproof ? "`nHexproof" : ""
-			MapModWarnings .= MapModWarn.MonstHexproof ? "`n Заговоренный" : ""
+			MapModWarnings .= MapModWarn.MonstHexproof ? "`n Р—Р°РіРѕРІРѕСЂРµРЅРЅС‹Р№" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters fire 2 additional Projectiles"))
-		If (RegExMatch(A_LoopField, "Монстры выпускают дополнительных снарядов: 2"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РІС‹РїСѓСЃРєР°СЋС‚ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СЃРЅР°СЂСЏРґРѕРІ: 2"))
 		{
 			;MapModWarnings .= MapModWarn.MonstTwoAdditionalProj ? "`nAdditional Projectiles" : ""
-			MapModWarnings .= MapModWarn.MonstTwoAdditionalProj ? "`n Дополнительные снаряды" : ""
+			MapModWarnings .= MapModWarn.MonstTwoAdditionalProj ? "`n Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРЅР°СЂСЏРґС‹" : ""
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Flag_TwoAdditionalProj := 1
 			Continue
@@ -2757,34 +2757,34 @@ ParseMapAffixes(ItemDataAffixes)
 
 
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Elemental Weakness"))
-		If (RegExMatch(A_LoopField, "Игроки прокляты Уязвимостью к стихиям"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РїСЂРѕРєР»СЏС‚С‹ РЈСЏР·РІРёРјРѕСЃС‚СЊСЋ Рє СЃС‚РёС…РёСЏРј"))
 		{
 			;MapModWarnings .= MapModWarn.EleWeakness ? "`nEle Weakness" : ""
-			MapModWarnings .= MapModWarn.EleWeakness ? "`n Уязвимость к стихиям" : ""
+			MapModWarnings .= MapModWarn.EleWeakness ? "`n РЈСЏР·РІРёРјРѕСЃС‚СЊ Рє СЃС‚РёС…РёСЏРј" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Enfeeble"))
-		If (RegExMatch(A_LoopField, "Игроки прокляты Слабостью"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РїСЂРѕРєР»СЏС‚С‹ РЎР»Р°Р±РѕСЃС‚СЊСЋ"))
 		{
 			;MapModWarnings .= MapModWarn.Enfeeble ? "`nEnfeeble" : ""
-			MapModWarnings .= MapModWarn.Enfeeble ? "`n Слабость" : ""
+			MapModWarnings .= MapModWarn.Enfeeble ? "`n РЎР»Р°Р±РѕСЃС‚СЊ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Temporal Chains"))
-		If (RegExMatch(A_LoopField, "Игроки прокляты Путами времени"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РїСЂРѕРєР»СЏС‚С‹ РџСѓС‚Р°РјРё РІСЂРµРјРµРЅРё"))
 		{
 			;MapModWarnings .= MapModWarn.TempChains ? "`nTemp Chains" : ""
-			MapModWarnings .= MapModWarn.TempChains ? "`n Путы времени" : ""
+			MapModWarnings .= MapModWarn.TempChains ? "`n РџСѓС‚С‹ РІСЂРµРјРµРЅРё" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players are Cursed with Vulnerability"))
-		If (RegExMatch(A_LoopField, "Игроки прокляты Уязвимостью"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РїСЂРѕРєР»СЏС‚С‹ РЈСЏР·РІРёРјРѕСЃС‚СЊСЋ"))
 		{
 			;MapModWarnings .= MapModWarn.Vulnerability ? "`nVulnerability" : ""
-			MapModWarnings .= MapModWarn.Vulnerability ? "`n Уязвимость" : ""
+			MapModWarnings .= MapModWarn.Vulnerability ? "`n РЈСЏР·РІРёРјРѕСЃС‚СЊ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 
 			Count_DmgMod += 0.5
@@ -2792,26 +2792,26 @@ ParseMapAffixes(ItemDataAffixes)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area has patches of burning ground"))
-		If (RegExMatch(A_LoopField, "Область имеет участки горящей земли"))
+		If (RegExMatch(A_LoopField, "РћР±Р»Р°СЃС‚СЊ РёРјРµРµС‚ СѓС‡Р°СЃС‚РєРё РіРѕСЂСЏС‰РµР№ Р·РµРјР»Рё"))
 		{
 			;MapModWarnings .= MapModWarn.BurningGround ? "`nBurning ground" : ""
-			MapModWarnings .= MapModWarn.BurningGround ? "`n Горящая земля" : ""
+			MapModWarnings .= MapModWarn.BurningGround ? "`n Р“РѕСЂСЏС‰Р°СЏ Р·РµРјР»СЏ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area has patches of chilled ground"))
-		If (RegExMatch(A_LoopField, "Область имеет участки замерзшей земли"))
+		If (RegExMatch(A_LoopField, "РћР±Р»Р°СЃС‚СЊ РёРјРµРµС‚ СѓС‡Р°СЃС‚РєРё Р·Р°РјРµСЂР·С€РµР№ Р·РµРјР»Рё"))
 		{
 			;MapModWarnings .= MapModWarn.ChilledGround ? "`nChilled ground" : ""
-			MapModWarnings .= MapModWarn.ChilledGround ? "`n Замёрзшая земля" : ""
+			MapModWarnings .= MapModWarn.ChilledGround ? "`n Р—Р°РјС‘СЂР·С€Р°СЏ Р·РµРјР»СЏ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area has patches of shocking ground"))
-		If (RegExMatch(A_LoopField, "Область имеет участки заряженной земли"))
+		If (RegExMatch(A_LoopField, "РћР±Р»Р°СЃС‚СЊ РёРјРµРµС‚ СѓС‡Р°СЃС‚РєРё Р·Р°СЂСЏР¶РµРЅРЅРѕР№ Р·РµРјР»Рё"))
 		{
 			;MapModWarnings .= MapModWarn.ShockingGround ? "`nShocking ground" : ""
-			MapModWarnings .= MapModWarn.ShockingGround ? "`n Заряжённая земля" : ""
+			MapModWarnings .= MapModWarn.ShockingGround ? "`n Р—Р°СЂСЏР¶С‘РЅРЅР°СЏ Р·РµРјР»СЏ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 
 			Count_DmgMod += 0.5
@@ -2819,66 +2819,66 @@ ParseMapAffixes(ItemDataAffixes)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Area has patches of desecrated ground"))
-		If (RegExMatch(A_LoopField, "Область имеет участки осквернённой земли"))
+		If (RegExMatch(A_LoopField, "РћР±Р»Р°СЃС‚СЊ РёРјРµРµС‚ СѓС‡Р°СЃС‚РєРё РѕСЃРєРІРµСЂРЅС‘РЅРЅРѕР№ Р·РµРјР»Рё"))
 		{
 			;MapModWarnings .= MapModWarn.DesecratedGround ? "`nDesecrated ground" : ""
-			MapModWarnings .= MapModWarn.DesecratedGround ? "`n Осквернённая земля" : ""
+			MapModWarnings .= MapModWarn.DesecratedGround ? "`n РћСЃРєРІРµСЂРЅС‘РЅРЅР°СЏ Р·РµРјР»СЏ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players gain \d+% reduced Flask Charges"))
-		If (RegExMatch(A_LoopField, "Игроки получают уменьшение зарядов флакона на \d+%"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РїРѕР»СѓС‡Р°СЋС‚ СѓРјРµРЅСЊС€РµРЅРёРµ Р·Р°СЂСЏРґРѕРІ С„Р»Р°РєРѕРЅР° РЅР° \d+%"))
 		{
 			;MapModWarnings .= MapModWarn.PlayerReducedFlaskCharge ? "`nReduced Flask Charges" : ""
-			MapModWarnings .= MapModWarn.PlayerReducedFlaskCharge ? "`n Уменьшение зарядов флакона" : ""
+			MapModWarnings .= MapModWarn.PlayerReducedFlaskCharge ? "`n РЈРјРµРЅСЊС€РµРЅРёРµ Р·Р°СЂСЏРґРѕРІ С„Р»Р°РєРѕРЅР°" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have \d+% increased Area of Effect"))
-		If (RegExMatch(A_LoopField, "Монстры имеют \d+% увеличение области действия"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РёРјРµСЋС‚ \d+% СѓРІРµР»РёС‡РµРЅРёРµ РѕР±Р»Р°СЃС‚Рё РґРµР№СЃС‚РІРёСЏ"))
 		{
 			;MapModWarnings .= MapModWarn.MonstIncrAoE ? "`nIncreased Monster AoE" : ""
-			MapModWarnings .= MapModWarn.MonstIncrAoE ? "`n Увеличение области действия у монстров" : ""
+			MapModWarnings .= MapModWarn.MonstIncrAoE ? "`n РЈРІРµР»РёС‡РµРЅРёРµ РѕР±Р»Р°СЃС‚Рё РґРµР№СЃС‚РІРёСЏ Сѓ РјРѕРЅСЃС‚СЂРѕРІ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have \d+% less Area of Effect"))
-		If (RegExMatch(A_LoopField, "Область действия у игроков на \d+% меньше"))
+		If (RegExMatch(A_LoopField, "РћР±Р»Р°СЃС‚СЊ РґРµР№СЃС‚РІРёСЏ Сѓ РёРіСЂРѕРєРѕРІ РЅР° \d+% РјРµРЅСЊС€Рµ"))
 		{
 			;MapModWarnings .= MapModWarn.PlayerLessAoE ? "`nLess Player AoE" : ""
-			MapModWarnings .= MapModWarn.PlayerLessAoE ? "`n Уменьшение области действия у игрока" : ""
+			MapModWarnings .= MapModWarn.PlayerLessAoE ? "`n РЈРјРµРЅСЊС€РµРЅРёРµ РѕР±Р»Р°СЃС‚Рё РґРµР№СЃС‚РІРёСЏ Сѓ РёРіСЂРѕРєР°" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have \d+% chance to Avoid Elemental Ailments"))
-		If (RegExMatch(A_LoopField, "Монстры имеют \d+% шанс избежать стихийных состояний"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РёРјРµСЋС‚ \d+% С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ СЃС‚РёС…РёР№РЅС‹С… СЃРѕСЃС‚РѕСЏРЅРёР№"))
 		{
 			;MapModWarnings .= MapModWarn.MonstAvoidElementalAilments ? "`nMonsters Avoid Elemental Ailments" : ""
-			MapModWarnings .= MapModWarn.MonstAvoidElementalAilments ? "`n Монстры избегают стихийных состояний" : ""
+			MapModWarnings .= MapModWarn.MonstAvoidElementalAilments ? "`n РњРѕРЅСЃС‚СЂС‹ РёР·Р±РµРіР°СЋС‚ СЃС‚РёС…РёР№РЅС‹С… СЃРѕСЃС‚РѕСЏРЅРёР№" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have \d+% less Recovery Rate of Life and Energy Shield"))
-		If (RegExMatch(A_LoopField, "Скорость восстановления здоровья и энергетического щита игроков на \d+% ниже"))
+		If (RegExMatch(A_LoopField, "РЎРєРѕСЂРѕСЃС‚СЊ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ Рё СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° РёРіСЂРѕРєРѕРІ РЅР° \d+% РЅРёР¶Рµ"))
 		{
 			;MapModWarnings .= MapModWarn.LessRecovery ? "`nLess Recovery" : ""
-			MapModWarnings .= MapModWarn.LessRecovery ? "`n Снижение скорости восстановления" : ""
+			MapModWarnings .= MapModWarn.LessRecovery ? "`n РЎРЅРёР¶РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters take \d+% reduced Extra Damage from Critical Strikes"))
-		If (RegExMatch(A_LoopField, "Монстры получают \d+% уменьшение дополнительного урона от критических ударов"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РїРѕР»СѓС‡Р°СЋС‚ \d+% СѓРјРµРЅСЊС€РµРЅРёРµ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓСЂРѕРЅР° РѕС‚ РєСЂРёС‚РёС‡РµСЃРєРёС… СѓРґР°СЂРѕРІ"))
 		{
 			;MapModWarnings .= MapModWarn.MonstTakeReducedCritDmg ? "`nReduced Crit Damage" : ""
-			MapModWarnings .= MapModWarn.MonstTakeReducedCritDmg ? "`n Снижение крит. урона" : ""
+			MapModWarnings .= MapModWarn.MonstTakeReducedCritDmg ? "`n РЎРЅРёР¶РµРЅРёРµ РєСЂРёС‚. СѓСЂРѕРЅР°" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "-\d+% maximum Player Resistances"))
-		If (RegExMatch(A_LoopField, "-\d+% максимум сопротивлений игроков"))
+		If (RegExMatch(A_LoopField, "-\d+% РјР°РєСЃРёРјСѓРј СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёР№ РёРіСЂРѕРєРѕРІ"))
 		{
 			;MapModWarnings .= MapModWarn.PlayerReducedMaxRes ? "`n-Max Res" : ""
-			MapModWarnings .= MapModWarn.PlayerReducedMaxRes ? "`n -уменьшение макс. сопротивлений" : ""
+			MapModWarnings .= MapModWarn.PlayerReducedMaxRes ? "`n -СѓРјРµРЅСЊС€РµРЅРёРµ РјР°РєСЃ. СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёР№" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 
 			Count_DmgMod += 0.5
@@ -2886,39 +2886,39 @@ ParseMapAffixes(ItemDataAffixes)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have Elemental Equilibrium"))
-		If (RegExMatch(A_LoopField, "Игроки имеют Равновесие стихий"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РёРјРµСЋС‚ Р Р°РІРЅРѕРІРµСЃРёРµ СЃС‚РёС…РёР№"))
 		{
 			;MapModWarnings .= MapModWarn.PlayerEleEquilibrium ? "`nEle Equilibrium" : ""
-			MapModWarnings .= MapModWarn.PlayerEleEquilibrium ? "`n Равновесие стихий" : ""
+			MapModWarnings .= MapModWarn.PlayerEleEquilibrium ? "`n Р Р°РІРЅРѕРІРµСЃРёРµ СЃС‚РёС…РёР№" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players have Point Blank"))
-		If (RegExMatch(A_LoopField, "У игроков есть Стрельба в упор"))
+		If (RegExMatch(A_LoopField, "РЈ РёРіСЂРѕРєРѕРІ РµСЃС‚СЊ РЎС‚СЂРµР»СЊР±Р° РІ СѓРїРѕСЂ"))
 		{
 			;MapModWarnings .= MapModWarn.PlayerPointBlank ? "`nPoint Blank" : ""
-			MapModWarnings .= MapModWarn.PlayerPointBlank ? "`n Стрельба в упор" : ""
+			MapModWarnings .= MapModWarn.PlayerPointBlank ? "`n РЎС‚СЂРµР»СЊР±Р° РІ СѓРїРѕСЂ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters Poison on Hit"))
-		If (RegExMatch(A_LoopField, "Монстры отравляют при нанесении удара"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РѕС‚СЂР°РІР»СЏСЋС‚ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР°"))
 		{
 			;MapModWarnings .= MapModWarn.MonstHitsPoison ? "`nHits Poison" : ""
-			MapModWarnings .= MapModWarn.MonstHitsPoison ? "`n Отравление при получении удара" : ""
+			MapModWarnings .= MapModWarn.MonstHitsPoison ? "`n РћС‚СЂР°РІР»РµРЅРёРµ РїСЂРё РїРѕР»СѓС‡РµРЅРёРё СѓРґР°СЂР°" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Players cannot Regenerate Life, Mana or Energy Shield"))
-		If (RegExMatch(A_LoopField, "Игроки не могут регенерировать здоровье, ману или энергетический щит"))
+		If (RegExMatch(A_LoopField, "РРіСЂРѕРєРё РЅРµ РјРѕРіСѓС‚ СЂРµРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Р·РґРѕСЂРѕРІСЊРµ, РјР°РЅСѓ РёР»Рё СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРёР№ С‰РёС‚"))
 		{
 			;MapModWarnings .= MapModWarn.NoRegen ? "`nNo Regen" : ""
-			MapModWarnings .= MapModWarn.NoRegen ? "`n Отсутствует регенерация" : ""
+			MapModWarnings .= MapModWarn.NoRegen ? "`n РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ СЂРµРіРµРЅРµСЂР°С†РёСЏ" : ""
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
 		}
 		;If (RegExMatch(A_LoopField, "Monsters gain (an Endurance|a Frenzy|a Power) Charge on Hit"))
-		If (RegExMatch(A_LoopField, "Монстры получают заряд (ярости|выносливости|энергии) при нанесении удара"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РїРѕР»СѓС‡Р°СЋС‚ Р·Р°СЂСЏРґ (СЏСЂРѕСЃС‚Рё|РІС‹РЅРѕСЃР»РёРІРѕСЃС‚Рё|СЌРЅРµСЂРіРёРё) РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР°"))
 		{
 			SetMapInfoLine("Suffix", MapAffixCount)
 			Continue
@@ -2928,12 +2928,12 @@ ParseMapAffixes(ItemDataAffixes)
 
 
 		;If (RegExMatch(A_LoopField, "Rare Monsters each have a Nemesis Mod|\d+% more Rare Monsters"))
-		If (RegExMatch(A_LoopField, "Каждый редкий монстр имеет свойство Немезиды|На \d+% больше редких монстров"))
+		If (RegExMatch(A_LoopField, "РљР°Р¶РґС‹Р№ СЂРµРґРєРёР№ РјРѕРЅСЃС‚СЂ РёРјРµРµС‚ СЃРІРѕР№СЃС‚РІРѕ РќРµРјРµР·РёРґС‹|РќР° \d+% Р±РѕР»СЊС€Рµ СЂРµРґРєРёС… РјРѕРЅСЃС‚СЂРѕРІ"))
 		{
 			If (Not Index_RareMonst)
 			{
 				;MapModWarnings .= MapModWarn.MonstRareNemesis ? "`nNemesis" : ""
-				MapModWarnings .= MapModWarn.MonstRareNemesis ? "`n Немезида" : ""
+				MapModWarnings .= MapModWarn.MonstRareNemesis ? "`n РќРµРјРµР·РёРґР°" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_RareMonst := MapAffixCount
 				Continue
@@ -2945,12 +2945,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Monsters cannot be slowed below base speed|Monsters cannot be Taunted"))
-		If (RegExMatch(A_LoopField, "Монстры не могут быть замедлены ниже базовой скорости|Монстров нельзя спровоцировать"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РЅРµ РјРѕРіСѓС‚ Р±С‹С‚СЊ Р·Р°РјРµРґР»РµРЅС‹ РЅРёР¶Рµ Р±Р°Р·РѕРІРѕР№ СЃРєРѕСЂРѕСЃС‚Рё|РњРѕРЅСЃС‚СЂРѕРІ РЅРµР»СЊР·СЏ СЃРїСЂРѕРІРѕС†РёСЂРѕРІР°С‚СЊ"))
 		{
 			If (Not Index_MonstSlowedTaunted)
 			{
 				;MapModWarnings .= MapModWarn.MonstNotSlowedTaunted ? "`nNot Slowed/Taunted" : ""
-				MapModWarnings .= MapModWarn.MonstNotSlowedTaunted ? "`n Нельзя замедлить/спровоцировать" : ""
+				MapModWarnings .= MapModWarn.MonstNotSlowedTaunted ? "`n РќРµР»СЊР·СЏ Р·Р°РјРµРґР»РёС‚СЊ/СЃРїСЂРѕРІРѕС†РёСЂРѕРІР°С‚СЊ" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_MonstSlowedTaunted := MapAffixCount
 				Continue
@@ -2962,12 +2962,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Unique Boss deals \d+% increased Damage|Unique Boss has \d+% increased Attack and Cast Speed"))
-		If (RegExMatch(A_LoopField, "Урон уникального босса увеличен на \d+%|Уникальный босс имеет увеличенную на \d+% скорость атаки и сотворения чар"))
+		If (RegExMatch(A_LoopField, "РЈСЂРѕРЅ СѓРЅРёРєР°Р»СЊРЅРѕРіРѕ Р±РѕСЃСЃР° СѓРІРµР»РёС‡РµРЅ РЅР° \d+%|РЈРЅРёРєР°Р»СЊРЅС‹Р№ Р±РѕСЃСЃ РёРјРµРµС‚ СѓРІРµР»РёС‡РµРЅРЅСѓСЋ РЅР° \d+% СЃРєРѕСЂРѕСЃС‚СЊ Р°С‚Р°РєРё Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ"))
 		{
 			If (Not Index_BossDamageAttackCastSpeed)
 			{
 				;MapModWarnings .= MapModWarn.BossDmgAtkCastSpeed ? "`nBoss Damage & Attack/Cast Speed" : ""
-				MapModWarnings .= MapModWarn.BossDmgAtkCastSpeed ? "`n Босс имеет увеличенный урон/скорость атаки/сотворения чар" : ""
+				MapModWarnings .= MapModWarn.BossDmgAtkCastSpeed ? "`n Р‘РѕСЃСЃ РёРјРµРµС‚ СѓРІРµР»РёС‡РµРЅРЅС‹Р№ СѓСЂРѕРЅ/СЃРєРѕСЂРѕСЃС‚СЊ Р°С‚Р°РєРё/СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_BossDamageAttackCastSpeed := MapAffixCount
 				Continue
@@ -2979,12 +2979,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Unique Boss has \d+% increased Life|Unique Boss has \d+% increased Area of Effect"))
-		If (RegExMatch(A_LoopField, "Уникальный босс имеет \d+% увеличение здоровья|Уникальный босс имеет \d+% увеличение области действия"))
+		If (RegExMatch(A_LoopField, "РЈРЅРёРєР°Р»СЊРЅС‹Р№ Р±РѕСЃСЃ РёРјРµРµС‚ \d+% СѓРІРµР»РёС‡РµРЅРёРµ Р·РґРѕСЂРѕРІСЊСЏ|РЈРЅРёРєР°Р»СЊРЅС‹Р№ Р±РѕСЃСЃ РёРјРµРµС‚ \d+% СѓРІРµР»РёС‡РµРЅРёРµ РѕР±Р»Р°СЃС‚Рё РґРµР№СЃС‚РІРёСЏ"))
 		{
 			If (Not Index_BossLifeAoE)
 			{
 				;MapModWarnings .= MapModWarn.BossLifeAoE ? "`nBoss Life & AoE" : ""
-				MapModWarnings .= MapModWarn.BossLifeAoE ? "`n Босс имеет увеличенное здоровье/область действия" : ""
+				MapModWarnings .= MapModWarn.BossLifeAoE ? "`n Р‘РѕСЃСЃ РёРјРµРµС‚ СѓРІРµР»РёС‡РµРЅРЅРѕРµ Р·РґРѕСЂРѕРІСЊРµ/РѕР±Р»Р°СЃС‚СЊ РґРµР№СЃС‚РІРёСЏ" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_BossLifeAoE := MapAffixCount
 				Continue
@@ -2996,12 +2996,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "\+\d+% Monster Chaos Resistance|\+\d+% Monster Elemental Resistance"))
-		If (RegExMatch(A_LoopField, "\+\d+% к сопротивлению хаосу монстров|\+\d+% к сопротивлению стихиям монстров"))
+		If (RegExMatch(A_LoopField, "\+\d+% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С…Р°РѕСЃСѓ РјРѕРЅСЃС‚СЂРѕРІ|\+\d+% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ СЃС‚РёС…РёСЏРј РјРѕРЅСЃС‚СЂРѕРІ"))
 		{
 			If (Not Index_MonstChaosEleRes)
 			{
 				;MapModWarnings .= MapModWarn.MonstChaosEleRes ? "`nChaos/Ele Res" : ""
-				MapModWarnings .= MapModWarn.MonstChaosEleRes ? "`n Дополнительные сопротивления" : ""
+				MapModWarnings .= MapModWarn.MonstChaosEleRes ? "`n Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ" : ""
 				SetMapInfoLine("Prefix", MapAffixCount, "a")
 				Index_MonstChaosEleRes := MapAffixCount
 				Continue
@@ -3013,12 +3013,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "\d+% more Magic Monsters|Magic Monster Packs each have a Bloodline Mod"))
-		If (RegExMatch(A_LoopField, "\d+% больше волшебных монстров|Все группы волшебных монстров имеют свойство Родословных"))
+		If (RegExMatch(A_LoopField, "\d+% Р±РѕР»СЊС€Рµ РІРѕР»С€РµР±РЅС‹С… РјРѕРЅСЃС‚СЂРѕРІ|Р’СЃРµ РіСЂСѓРїРїС‹ РІРѕР»С€РµР±РЅС‹С… РјРѕРЅСЃС‚СЂРѕРІ РёРјРµСЋС‚ СЃРІРѕР№СЃС‚РІРѕ Р РѕРґРѕСЃР»РѕРІРЅС‹С…"))
 		{
 			If (Not Index_MagicMonst)
 			{
 				;MapModWarnings .= MapModWarn.MonstMagicBloodlines ? "`nBloodlines" : ""
-				MapModWarnings .= MapModWarn.MonstMagicBloodlines ? "`n Родословные" : ""
+				MapModWarnings .= MapModWarn.MonstMagicBloodlines ? "`n Р РѕРґРѕСЃР»РѕРІРЅС‹Рµ" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_MagicMonst := MapAffixCount
 				Continue
@@ -3030,12 +3030,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Monsters have \d+% increased Critical Strike Chance|\+\d+% to Monster Critical Strike Multiplier"))
-		If (RegExMatch(A_LoopField, "Монстры имеют \d+% повышение шанса критического удара|\+\d+% к множителю критического удара монстров"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РёРјРµСЋС‚ \d+% РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°|\+\d+% Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РјРѕРЅСЃС‚СЂРѕРІ"))
 		{
 			If (Not Index_MonstCritChanceMult)
 			{
 				;MapModWarnings .= MapModWarn.MonstCritChanceMult ? "`nCrit Chance & Multiplier" : ""
-				MapModWarnings .= MapModWarn.MonstCritChanceMult ? "`n Повышение шанса крита/множителя" : ""
+				MapModWarnings .= MapModWarn.MonstCritChanceMult ? "`n РџРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚Р°/РјРЅРѕР¶РёС‚РµР»СЏ" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 
 				Count_DmgMod += 1
@@ -3050,12 +3050,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Player Dodge chance is Unlucky|Monsters have \d+% increased Accuracy Rating"))
-		If (RegExMatch(A_LoopField, "Шанс игроков увернуться неудачлив|Меткость монстров повышена на \d+%"))
+		If (RegExMatch(A_LoopField, "РЁР°РЅСЃ РёРіСЂРѕРєРѕРІ СѓРІРµСЂРЅСѓС‚СЊСЃСЏ РЅРµСѓРґР°С‡Р»РёРІ|РњРµС‚РєРѕСЃС‚СЊ РјРѕРЅСЃС‚СЂРѕРІ РїРѕРІС‹С€РµРЅР° РЅР° \d+%"))
 		{
 			If (Not Index_PlayerDodgeMonstAccu)
 			{
 				;MapModWarnings .= MapModWarn.PlayerDodgeMonstAccu ? "`nDodge unlucky / Monster Accuracy" : ""
-				MapModWarnings .= MapModWarn.PlayerDodgeMonstAccu ? "`n Неудачный уворот / Меткие монстры" : ""
+				MapModWarnings .= MapModWarn.PlayerDodgeMonstAccu ? "`n РќРµСѓРґР°С‡РЅС‹Р№ СѓРІРѕСЂРѕС‚ / РњРµС‚РєРёРµ РјРѕРЅСЃС‚СЂС‹" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_PlayerDodgeMonstAccu := MapAffixCount
 				Continue
@@ -3067,12 +3067,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Players have \d+% reduced Block Chance|Players have \d+% less Armour"))
-		If (RegExMatch(A_LoopField, "У игроков шанс блока снижен на \d+%|У игроков на \d+% меньше брони"))
+		If (RegExMatch(A_LoopField, "РЈ РёРіСЂРѕРєРѕРІ С€Р°РЅСЃ Р±Р»РѕРєР° СЃРЅРёР¶РµРЅ РЅР° \d+%|РЈ РёРіСЂРѕРєРѕРІ РЅР° \d+% РјРµРЅСЊС€Рµ Р±СЂРѕРЅРё"))
 		{
 			If (Not Index_PlayerBlockArmour)
 			{
 				;MapModWarnings .= MapModWarn.PlayerReducedBlockLessArmour ? "`nReduced Block / Less Armour" : ""
-				MapModWarnings .= MapModWarn.PlayerReducedBlockLessArmour ? "`n Снижение блока / меньше брони" : ""
+				MapModWarnings .= MapModWarn.PlayerReducedBlockLessArmour ? "`n РЎРЅРёР¶РµРЅРёРµ Р±Р»РѕРєР° / РјРµРЅСЊС€Рµ Р±СЂРѕРЅРё" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_PlayerBlockArmour := MapAffixCount
 				Continue
@@ -3084,12 +3084,12 @@ ParseMapAffixes(ItemDataAffixes)
 			}
 		}
 		;If (RegExMatch(A_LoopField, "Cannot Leech Life from Monsters|Cannot Leech Mana from Monsters"))
-		If (RegExMatch(A_LoopField, "У монстров нельзя похищать здоровье|У монстров нельзя похищать ману"))
+		If (RegExMatch(A_LoopField, "РЈ РјРѕРЅСЃС‚СЂРѕРІ РЅРµР»СЊР·СЏ РїРѕС…РёС‰Р°С‚СЊ Р·РґРѕСЂРѕРІСЊРµ|РЈ РјРѕРЅСЃС‚СЂРѕРІ РЅРµР»СЊР·СЏ РїРѕС…РёС‰Р°С‚СЊ РјР°РЅСѓ"))
 		{
 			If (Not Index_CannotLeech)
 			{
 				;MapModWarnings .= MapModWarn.NoLeech ? "`nNo Leech" : ""
-				MapModWarnings .= MapModWarn.NoLeech ? "`n Нельзя похищать здоровье/ману" : ""
+				MapModWarnings .= MapModWarn.NoLeech ? "`n РќРµР»СЊР·СЏ РїРѕС…РёС‰Р°С‚СЊ Р·РґРѕСЂРѕРІСЊРµ/РјР°РЅСѓ" : ""
 				SetMapInfoLine("Suffix", MapAffixCount, "a")
 				Index_CannotLeech := MapAffixCount
 				Continue
@@ -3102,10 +3102,10 @@ ParseMapAffixes(ItemDataAffixes)
 		}
 		; Second part of this affix is further below at complex affixes
 		;If (RegExMatch(A_LoopField, "Monsters cannot be Stunned"))
-		If (RegExMatch(A_LoopField, "Монстры не могут быть оглушены"))
+		If (RegExMatch(A_LoopField, "РњРѕРЅСЃС‚СЂС‹ РЅРµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РѕРіР»СѓС€РµРЅС‹"))
 		{
 			;MapModWarnings .= MapModWarn.MonstNotStunned ? "`nNot Stunned" : ""
-			MapModWarnings .= MapModWarn.MonstNotStunned ? "`n Нельзя оглушить" : ""
+			MapModWarnings .= MapModWarn.MonstNotStunned ? "`n РќРµР»СЊР·СЏ РѕРіР»СѓС€РёС‚СЊ" : ""
 
 			If (Not Index_MonstStunLife)
 			{
@@ -3124,12 +3124,12 @@ ParseMapAffixes(ItemDataAffixes)
 
 
 		;If (RegExMatch(A_LoopField, "\d+% increased Monster Movement Speed|\d+% increased Monster Attack Speed|\d+% increased Monster Cast Speed"))
-		If (RegExMatch(A_LoopField, "\d+% повышение скорости передвижения монстров|\d+% повышение скорости атаки монстров|\d+% повышение скорости сотворения чар монстров"))
+		If (RegExMatch(A_LoopField, "\d+% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ РјРѕРЅСЃС‚СЂРѕРІ|\d+% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё РјРѕРЅСЃС‚СЂРѕРІ|\d+% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ РјРѕРЅСЃС‚СЂРѕРІ"))
 		{
 			If (Not Index_MonstMoveAttCastSpeed)
 			{
 				;MapModWarnings .= MapModWarn.MonstMoveAtkCastSpeed ? "`nMove/Attack/Cast Speed" : ""
-				MapModWarnings .= MapModWarn.MonstMoveAtkCastSpeed ? "`n Повышение скорости передвижения/атаки/сотворения чар" : ""
+				MapModWarnings .= MapModWarn.MonstMoveAtkCastSpeed ? "`n РџРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ/Р°С‚Р°РєРё/СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ" : ""
 
 				Count_DmgMod += 0.5
 				String_DmgMod := String_DmgMod . ", Move/Attack/Cast"
@@ -3161,14 +3161,14 @@ ParseMapAffixes(ItemDataAffixes)
 		; Hybrid mod: (15-19)/(20-24)/(25-30)% more Monster Life, Monsters cannot be Stunned
 
 		;If (RegExMatch(A_LoopField, "(\d+)% more Monster Life", match))
-		If (RegExMatch(A_LoopField, "(\d+)% больше здоровья монстров", match))
+		If (RegExMatch(A_LoopField, "(\d+)% Р±РѕР»СЊС€Рµ Р·РґРѕСЂРѕРІСЊСЏ РјРѕРЅСЃС‚СЂРѕРІ", match))
 		{
 			RegExMonsterLife := match1
 			;MapModWarnings .= MapModWarn.MonstMoreLife ? "`nMore Life" : ""
-			MapModWarnings .= MapModWarn.MonstMoreLife ? "`n Больше здоровья у монстров" : ""
+			MapModWarnings .= MapModWarn.MonstMoreLife ? "`n Р‘РѕР»СЊС€Рµ Р·РґРѕСЂРѕРІСЊСЏ Сѓ РјРѕРЅСЃС‚СЂРѕРІ" : ""
 
 			;RegExMatch(ItemData.FullText, "Map Tier: (\d+)", RegExMapTier)
-			RegExMatch(ItemData.FullText, "Уровень карты: (\d+)", RegExMapTier)
+			RegExMatch(ItemData.FullText, "РЈСЂРѕРІРµРЅСЊ РєР°СЂС‚С‹: (\d+)", RegExMapTier)
 
 			; only hybrid mod
 			If ((RegExMapTier1 >= 11 and RegExMonsterLife <= 30) or (RegExMapTier1 >= 6 and RegExMonsterLife <= 24) or RegExMonsterLife <= 19)
@@ -3224,7 +3224,7 @@ ParseMapAffixes(ItemDataAffixes)
 	If (Flag_TwoAdditionalProj and Flag_SkillsChain)
 	{
 		;MapModWarnings := MapModWarnings . "`nAdditional Projectiles & Skills Chain"
-		MapModWarnings := MapModWarnings . "`n Дополнительные снаряды & Урон по цепи"
+		MapModWarnings := MapModWarnings . "`n Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРЅР°СЂСЏРґС‹ & РЈСЂРѕРЅ РїРѕ С†РµРїРё"
 	}
 
 	If (Count_DmgMod >= 1.5)
@@ -3232,14 +3232,14 @@ ParseMapAffixes(ItemDataAffixes)
 		If (MapModWarn.MultiDmgWarning)
 		{
 			String_DmgMod := SubStr(String_DmgMod, 3)
-			MapModWarnings := MapModWarnings . "`n Множественный урон: " . String_DmgMod
+			MapModWarnings := MapModWarnings . "`n РњРЅРѕР¶РµСЃС‚РІРµРЅРЅС‹Р№ СѓСЂРѕРЅ: " . String_DmgMod
 		}
 	}
 	
 	If (Not Opts.EnableMapModWarnings)
 	{
 		;MapModWarnings := " disabled"
-		MapModWarnings := " отключено"
+		MapModWarnings := " РѕС‚РєР»СЋС‡РµРЅРѕ"
 	}
 
 	return MapModWarnings
@@ -3271,13 +3271,13 @@ LookupAffixAndSetInfoLine(DataSource, AffixType, ItemLevel, Value, AffixLineText
 	ValueRanges := LookupAffixData(DataSource, ItemLevel, Value, CurrTier)
 		
 	;If (RegexMatch(AffixLineText, "Adds (\d+) to (\d+) (.+)", match) and ValueRanges[5])
-	If (RegexMatch(AffixLineText, "Добавляет от (\d+) до (\d+) (.+)", match) and ValueRanges[5])
+	If (RegexMatch(AffixLineText, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ (\d+) РґРѕ (\d+) (.+)", match) and ValueRanges[5])
 	{
 		NormalRow := MakeAffixDetailLine(AffixLineText, AffixType, ValueRanges, CurrTier)
 		
 		avgDmg := NumFormatPointFiveOrInt((match1 + match2)/2)
 		;AvgLineText := "   Average: "  StrPad(avgDmg, 4, "left")
-		AvgLineText := "   В среднем: "  StrPad(avgDmg, 4, "left")
+		AvgLineText := "   Р’ СЃСЂРµРґРЅРµРј: "  StrPad(avgDmg, 4, "left")
 		
 		AppendAffixInfo([NormalRow, [AvgLineText, [ValueRanges[5], " ", ValueRanges[7], " "], ""]], AffixLineNum)
 	}
@@ -3674,11 +3674,11 @@ FormatValueRangesAndIlvl(Mod1DataArray, Mod1Tiers, Mod2DataArray="", Mod2Tier=""
 				BestTopMax := Mod1DataArray[Mod1Tiers[1]].maxHi
 				
 				;TmpFullrange := WorstBtmMin "-" WorstBtmMax " to " WorstTopMin "-" WorstTopMax " " Opts.MultiTierRangeSeparator " " BestBtmMin "-" BestBtmMax " to " BestTopMin "-" BestTopMax
-				TmpFullrange := "от " WorstBtmMin "-" WorstBtmMax " до " WorstTopMin "-" WorstTopMax " " Opts.MultiTierRangeSeparator " " "от " BestBtmMin "-" BestBtmMax " до " BestTopMin "-" BestTopMax
+				TmpFullrange := "РѕС‚ " WorstBtmMin "-" WorstBtmMax " РґРѕ " WorstTopMin "-" WorstTopMax " " Opts.MultiTierRangeSeparator " " "РѕС‚ " BestBtmMin "-" BestBtmMax " РґРѕ " BestTopMin "-" BestTopMax
 				;Itemdata.SpecialCaseNotation .= "`nWe have a rare case of a double range mod with multi tier uncertainty here.`n The entire TierRange is: " TmpFullrange
-				;перевод не очень
-				;Itemdata.SpecialCaseNotation .= "`nЭто редкий случай - мод с двойным диапазоном с неопределенностью между несколькими уровнями.`n Полный диапазон уровней: " TmpFullrange
-				Itemdata.SpecialCaseNotation .= "`nЭто редкий случай - мод с двойным диапазоном с неопределенностью в уровнях.`n Полный диапазон уровней: " TmpFullrange
+				;РїРµСЂРµРІРѕРґ РЅРµ РѕС‡РµРЅСЊ
+				;Itemdata.SpecialCaseNotation .= "`nР­С‚Рѕ СЂРµРґРєРёР№ СЃР»СѓС‡Р°Р№ - РјРѕРґ СЃ РґРІРѕР№РЅС‹Рј РґРёР°РїР°Р·РѕРЅРѕРј СЃ РЅРµРѕРїСЂРµРґРµР»РµРЅРЅРѕСЃС‚СЊСЋ РјРµР¶РґСѓ РЅРµСЃРєРѕР»СЊРєРёРјРё СѓСЂРѕРІРЅСЏРјРё.`n РџРѕР»РЅС‹Р№ РґРёР°РїР°Р·РѕРЅ СѓСЂРѕРІРЅРµР№: " TmpFullrange
+				Itemdata.SpecialCaseNotation .= "`nР­С‚Рѕ СЂРµРґРєРёР№ СЃР»СѓС‡Р°Р№ - РјРѕРґ СЃ РґРІРѕР№РЅС‹Рј РґРёР°РїР°Р·РѕРЅРѕРј СЃ РЅРµРѕРїСЂРµРґРµР»РµРЅРЅРѕСЃС‚СЊСЋ РІ СѓСЂРѕРІРЅСЏС….`n РџРѕР»РЅС‹Р№ РґРёР°РїР°Р·РѕРЅ СѓСЂРѕРІРЅРµР№: " TmpFullrange
 				
 				result[1] := WorstBtmMin  Opts.DoubleRangeSeparator  WorstTopMin  Opts.MultiTierRangeSeparator  BestBtmMax  Opts.DoubleRangeSeparator  BestTopMax
 				result[2] := " "
@@ -3865,12 +3865,12 @@ SolveAffixes_HybBase_FlatDefLife(Keyname, LineNumDef1, LineNumDef2, LineNumLife,
 	DualDef_D1_Tiers	:= LookupTierByValue(ValueDef1, DualDef_D1_DataArray, ItemLevel)
 	DualDef_D2_Tiers	:= LookupTierByValue(ValueDef2, DualDef_D2_DataArray, ItemLevel)
 	DefLife_D1_Tiers	:= LookupTierByValue(ValueDef1, DefLife_D1_DataArray, ItemLevel)
-	DefLife_D2_Tiers	:= LookupTierByValue(ValueDef2, DefLife_D2_DataArray, ItemLevel) ;пусто
+	DefLife_D2_Tiers	:= LookupTierByValue(ValueDef2, DefLife_D2_DataArray, ItemLevel) ;РїСѓСЃС‚Рѕ
 	LifeTiers			:= LookupTierByValue(ValueLife, Life_DataArray, ItemLevel)
-	DefLife_Li_Tiers	:= LookupTierByValue(ValueLife, DefLife_Li_DataArray, ItemLevel) ;пусто
+	DefLife_Li_Tiers	:= LookupTierByValue(ValueLife, DefLife_Li_DataArray, ItemLevel) ;РїСѓСЃС‚Рѕ
 
-	Def1LifeTiers := SolveTiers_Hyb1Hyb2(ValueDef1, ValueDef2, ValueLife, DualDef_D1_DataArray, DefLife_D1_DataArray, DualDef_D2_DataArray, DefLife_Li_DataArray, ItemLevel) ;пусто
-	Def2LifeTiers := SolveTiers_Hyb1Hyb2(ValueDef2, ValueDef1, ValueLife, DualDef_D2_DataArray, DefLife_D2_DataArray, DualDef_D1_DataArray, DefLife_Li_DataArray, ItemLevel) ;пусто
+	Def1LifeTiers := SolveTiers_Hyb1Hyb2(ValueDef1, ValueDef2, ValueLife, DualDef_D1_DataArray, DefLife_D1_DataArray, DualDef_D2_DataArray, DefLife_Li_DataArray, ItemLevel) ;РїСѓСЃС‚Рѕ
+	Def2LifeTiers := SolveTiers_Hyb1Hyb2(ValueDef2, ValueDef1, ValueLife, DualDef_D2_DataArray, DefLife_D2_DataArray, DualDef_D1_DataArray, DefLife_Li_DataArray, ItemLevel) ;РїСѓСЃС‚Рѕ
 
 	
 	/*           --------- Overlap1Case ---------    --------- Overlap2Case ---------
@@ -4173,7 +4173,7 @@ ParseAffixes(ItemDataAffixes, Item)
 	ItemDataChunk	:= ItemDataAffixes
 	
 	;IfInString, ItemDataChunk, Unidentified
-	IfInString, ItemDataChunk, Неопознано
+	IfInString, ItemDataChunk, РќРµРѕРїРѕР·РЅР°РЅРѕ
 	{
 		Return ; Not interested in unidentified items
 	}
@@ -4268,7 +4268,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			++HasLastLineNumber		; Counts the affix text lines so that the last line can be checked for being a craft
 			
 			;IfInString, A_LoopField, to Armour
-			IfInString, A_LoopField, к броне
+			IfInString, A_LoopField, Рє Р±СЂРѕРЅРµ
 			{
 				If (HasToArmour){
 					HasToArmourCraft := A_Index
@@ -4278,7 +4278,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, to Evasion Rating
-			IfInString, A_LoopField, к уклонению
+			IfInString, A_LoopField, Рє СѓРєР»РѕРЅРµРЅРёСЋ
 			{
 				If (HasToEvasion){
 					HasToEvasionCraft := A_Index
@@ -4288,7 +4288,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, to maximum Energy Shield
-			IfInString, A_LoopField, к максимуму энергетического щита
+			IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				If (HasToMaxES){
 					HasToMaxESCraft := A_Index
@@ -4298,7 +4298,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, to maximum Life
-			IfInString, A_LoopField, к максимуму здоровья
+			IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ Р·РґРѕСЂРѕРІСЊСЏ
 			{
 				If (HasToMaxLife){
 					HasToMaxLifeCraft := A_Index
@@ -4308,7 +4308,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Armour and Evasion	; it's indeed "Evasion" and not "Evasion Rating" here
-			IfInString, A_LoopField, повышение брони и уклонения
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ Р±СЂРѕРЅРё Рё СѓРєР»РѕРЅРµРЅРёСЏ
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
@@ -4320,7 +4320,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Armour and Energy Shield
-			IfInString, A_LoopField, повышение брони и энергетического щита
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ Р±СЂРѕРЅРё Рё СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
@@ -4332,7 +4332,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Evasion and Energy Shield	; again "Evasion" and not "Evasion Rating"
-			IfInString, A_LoopField, увеличение уклонения и энергетического щита
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ Рё СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
@@ -4344,7 +4344,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Armour
-			IfInString, A_LoopField, повышение брони
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ Р±СЂРѕРЅРё
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Armour"
@@ -4356,7 +4356,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Evasion Rating
-			IfInString, A_LoopField, увеличение уклонения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Evasion"
@@ -4368,7 +4368,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Energy Shield
-			IfInString, A_LoopField, увеличение энергетического щита
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "EnergyShield"
@@ -4380,24 +4380,24 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Stun and Block Recovery
-			IfInString, A_LoopField, ускорение восстановления после оглушения
+			IfInString, A_LoopField, СѓСЃРєРѕСЂРµРЅРёРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РїРѕСЃР»Рµ РѕРіР»СѓС€РµРЅРёСЏ
 			{
 				HasStunBlockRecovery := A_Index
 				Continue
 			}
 			;IfInString, A_LoopField, Chance to Block
-			;IfInString, A_LoopField, шанс блока
-			If RegExMatch(A_LoopField, ".* шанс блока$")
+			;IfInString, A_LoopField, С€Р°РЅСЃ Р±Р»РѕРєР°
+			If RegExMatch(A_LoopField, ".* С€Р°РЅСЃ Р±Р»РѕРєР°$")
 			{
 				;IfInString, ItemNamePlate, Tower Shield				
-				If RegExMatch(ItemNamePlate, "i)ростовой щит")
+				If RegExMatch(ItemNamePlate, "i)СЂРѕСЃС‚РѕРІРѕР№ С‰РёС‚")
 				{
 					HasChanceToBlockStrShield := A_Index
 				}
 				Continue
 			}
 			;IfInString, A_LoopField, to Accuracy Rating
-			IfInString, A_LoopField, к меткости
+			IfInString, A_LoopField, Рє РјРµС‚РєРѕСЃС‚Рё
 			{
 				If (HasToAccuracyRating){
 					HasToAccuracyRatingCraft := A_Index
@@ -4407,7 +4407,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Physical Damage
-			IfInString, A_LoopField, увеличение физического урона
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
 			{
 				If (HasIncrPhysDmg){
 					HasIncrPhysDmgCraft := A_Index
@@ -4417,7 +4417,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Rarity of Items found
-			IfInString, A_LoopField, повышение редкости найденных предметов
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РЅР°Р№РґРµРЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ
 			{
 				If (HasIncrRarity){
 					HasIncrRarityCraft := A_Index
@@ -4427,7 +4427,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, to maximum Mana
-			IfInString, A_LoopField, к максимуму маны
+			IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ РјР°РЅС‹
 			{
 				If (HasMaxMana){
 					HasMaxManaCraft := A_Index
@@ -4437,13 +4437,13 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Light Radius
-			IfInString, A_LoopField, увеличение радиуса обзора
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СЂР°РґРёСѓСЃР° РѕР±Р·РѕСЂР°
 			{
 				HasIncrLightRadius := A_Index
 				Continue
 			}
 			;IfInString, A_LoopField, increased Spell Damage
-			IfInString, A_LoopField, увеличение урона от чар
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ С‡Р°СЂ
 			{
 				If (HasIncrSpellDamage){
 					HasIncrSpellDamageCraft := A_Index
@@ -4465,7 +4465,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Fire Damage
-			IfInString, A_LoopField, увеличение урона от огня
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РѕРіРЅСЏ
 			{
 				If (HasIncrFireDamage){
 					HasIncrFireDamageCraft := A_Index
@@ -4483,7 +4483,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Cold Damage
-			IfInString, A_LoopField, увеличение урона от холода
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ С…РѕР»РѕРґР°
 			{
 				If (HasIncrColdDamage){
 					HasIncrColdDamageCraft := A_Index
@@ -4501,7 +4501,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Lightning Damage
-			IfInString, A_LoopField, увеличение урона от молнии
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РјРѕР»РЅРёРё
 			{
 				If (HasIncrLightningDamage){
 					HasIncrLightningDamageCraft := A_Index
@@ -4519,7 +4519,7 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, Can have multiple Crafted Mods
-			IfInString, A_LoopField, Может иметь несколько ремесленных свойств
+			IfInString, A_LoopField, РњРѕР¶РµС‚ РёРјРµС‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ СЂРµРјРµСЃР»РµРЅРЅС‹С… СЃРІРѕР№СЃС‚РІ
 			{
 				HasMultipleCrafted := A_Index
 				Itemdata.HasMultipleCrafted := A_Index
@@ -4542,7 +4542,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			++HasLastLineNumber
 			
 			;IfInString, A_LoopField, increased Accuracy Rating
-			IfInString, A_LoopField, повышение меткости
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјРµС‚РєРѕСЃС‚Рё
 			{
 				If (Item.SubType = "Viridian Jewel" or Item.SubType = "Prismatic Jewel")
 				{
@@ -4552,7 +4552,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 			
 			;IfInString, A_LoopField, increased Global Critical Strike Chance
-			IfInString, A_LoopField, повышение глобального шанса критического удара
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°
 			{
 				If (Item.SubType = "Viridian Jewel" or Item.SubType = "Prismatic Jewel" )
 				{
@@ -4571,7 +4571,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		AffixLines.Set(A_Index, "")
 	}
 	
-	nameRuToEn := {"физического":"Physical", "огня":"Fire", "холода":"Cold", "молнии":"Lightning", "хаосом":"Chaos"}
+	nameRuToEn := {"С„РёР·РёС‡РµСЃРєРѕРіРѕ":"Physical", "РѕРіРЅСЏ":"Fire", "С…РѕР»РѕРґР°":"Cold", "РјРѕР»РЅРёРё":"Lightning", "С…Р°РѕСЃРѕРј":"Chaos"}
 
 	; --- SIMPLE AFFIXES ---
 	
@@ -4582,7 +4582,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue ; Not interested in blank lines
 		}
 		;IfInString, ItemDataChunk, Unidentified
-		IfInString, ItemDataChunk, Неопознано
+		IfInString, ItemDataChunk, РќРµРѕРїРѕР·РЅР°РЅРѕ
 		{
 			Break ; Not interested in unidentified items
 		}
@@ -4598,31 +4598,31 @@ ParseAffixes(ItemDataAffixes, Item)
 			If (Item.IsAbyssJewel)
 			{
 				;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage")
-				If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического урона)|(урона от (огня|холода|молнии))|(урона хаосом)")
+				If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? (С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°)|(СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё))|(СѓСЂРѕРЅР° С…Р°РѕСЃРѕРј)")
 				{
 					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to \w+ Attacks", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к атакам [а-яА-ЯЁё]+", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к атакам [а-яА-ЯЁё]+", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к атакам [а-яА-ЯЁё]+", match))
+					If (RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? (С„РёР·РёС‡РµСЃРєРѕРіРѕ) СѓСЂРѕРЅР° Рє Р°С‚Р°РєР°Рј [Р°-СЏРђ-РЇРЃС‘]+", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё) Рє Р°С‚Р°РєР°Рј [Р°-СЏРђ-РЇРЃС‘]+", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° (С…Р°РѕСЃРѕРј) Рє Р°С‚Р°РєР°Рј [Р°-СЏРђ-РЇРЃС‘]+", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToWeaponTypeAttacks.txt", "Prefix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToWeaponTypeAttacks.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Attacks", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к атакам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к атакам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к атакам", match))
+					If (RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? (С„РёР·РёС‡РµСЃРєРѕРіРѕ) СѓСЂРѕРЅР° Рє Р°С‚Р°РєР°Рј", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё) Рє Р°С‚Р°РєР°Рј", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° (С…Р°РѕСЃРѕРј) Рє Р°С‚Р°РєР°Рј", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToAttacks.txt", "Suffix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToAttacks.txt", "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Spells while", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к чарам (с|со)", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к чарам (с|со)", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к чарам (с|со)", match))
+					If (RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? (С„РёР·РёС‡РµСЃРєРѕРіРѕ) СѓСЂРѕРЅР° Рє С‡Р°СЂР°Рј (СЃ|СЃРѕ)", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё) Рє С‡Р°СЂР°Рј (СЃ|СЃРѕ)", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° (С…Р°РѕСЃРѕРј) Рє С‡Р°СЂР°Рј (СЃ|СЃРѕ)", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToSpellsWhile.txt", "Prefix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToSpellsWhile.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Spells", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к чарам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к чарам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к чарам", match))
+					If (RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? (С„РёР·РёС‡РµСЃРєРѕРіРѕ) СѓСЂРѕРЅР° Рє С‡Р°СЂР°Рј", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё) Рє С‡Р°СЂР°Рј", match) or RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° (С…Р°РѕСЃРѕРј) Рє С‡Р°СЂР°Рј", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToSpells.txt", "Suffix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToSpells.txt", "Suffix", ItemLevel, CurrValue)
@@ -4631,152 +4631,152 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				
 				;IfInString, A_LoopField, to maximum Life
-				IfInString, A_LoopField, к максимуму здоровья
+				IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ Р·РґРѕСЂРѕРІСЊСЏ
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\MaxLife.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, to maximum Mana
-				IfInString, A_LoopField, к максимуму маны
+				IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ РјР°РЅС‹
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\MaxMana.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, to Armour
-				IfInString, A_LoopField, к броне
+				IfInString, A_LoopField, Рє Р±СЂРѕРЅРµ
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ToArmour.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, to Evasion Rating
-				IfInString, A_LoopField, к уклонению
+				IfInString, A_LoopField, Рє СѓРєР»РѕРЅРµРЅРёСЋ
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ToEvasionRating.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, to maximum Energy Shield
-				IfInString, A_LoopField, к максимуму энергетического щита
+				IfInString, A_LoopField, Рє РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ToMaximumEnergyShield.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, Energy Shield Regenerated per second
-				If RegExMatch(A_LoopField, "Регенерация .* энергетического щита в секунду")
+				If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂР°С†РёСЏ .* СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° РІ СЃРµРєСѓРЅРґСѓ")
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\EnergyShieldRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "^[\d\.]+ Life Regenerated per second$")
-				;If RegExMatch(A_LoopField, "Регенерирует [\d\.]+ здоровья в секунду$")
-				If RegExMatch(A_LoopField, "Регенерация [\d\.]+ здоровья в секунду$")
+				;If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂРёСЂСѓРµС‚ [\d\.]+ Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ$")
+				If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂР°С†РёСЏ [\d\.]+ Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ$")
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\LifeRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, Mana Regenerated per second
-				IfInString, A_LoopField, регенерации маны в секунду
+				IfInString, A_LoopField, СЂРµРіРµРЅРµСЂР°С†РёРё РјР°РЅС‹ РІ СЃРµРєСѓРЅРґСѓ
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ManaRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Damage over Time while
-				IfInString, A_LoopField, увеличение постепенного урона
+				IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РїРѕСЃС‚РµРїРµРЅРЅРѕРіРѕ СѓСЂРѕРЅР°
 				{
 					LookupAffixAndSetInfoLine(["1|10-14"], "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				
 				;IfInString, A_LoopField, Minion
-				;IfInString, A_LoopField, Приспешники
-				If RegExMatch(A_LoopField, "i)Приспешник")
+				;IfInString, A_LoopField, РџСЂРёСЃРїРµС€РЅРёРєРё
+				If RegExMatch(A_LoopField, "i)РџСЂРёСЃРїРµС€РЅРёРє")
 				{
 					;If RegExMatch(A_LoopField, "Minions deal \d+? to \d+? additional (Physical|Fire|Cold|Lightning|Chaos) Damage", match)
-					If (RegExMatch(A_LoopField, "Приспешники наносят от \d+? до \d+? дополнительного (физического) урона", match) or RegExMatch(A_LoopField, "Приспешники наносят от \d+? до \d+? дополнительного урона от (огня|холода|молнии)", match) or RegExMatch(A_LoopField, "Приспешники наносят от \d+? до \d+? дополнительного урона (хаосом)", match))
+					If (RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РЅР°РЅРѕСЃСЏС‚ РѕС‚ \d+? РґРѕ \d+? РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ (С„РёР·РёС‡РµСЃРєРѕРіРѕ) СѓСЂРѕРЅР°", match) or RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РЅР°РЅРѕСЃСЏС‚ РѕС‚ \d+? РґРѕ \d+? РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё)", match) or RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РЅР°РЅРѕСЃСЏС‚ РѕС‚ \d+? РґРѕ \d+? РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓСЂРѕРЅР° (С…Р°РѕСЃРѕРј)", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\MinionsDealAdditional" match1 "Damage.txt", "Prefix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\MinionsDealAdditional" nameRuToEn[match1] "Damage.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions Regenerate \d+? Life per second")
-					If RegExMatch(A_LoopField, "Приспешники регенерируют \d+? здоровья в секунду")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё СЂРµРіРµРЅРµСЂРёСЂСѓСЋС‚ \d+? Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ")
 					{
 						LookupAffixAndSetInfoLine("data\abyss_jewel\MinionsRegenerateLife.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% chance to Blind on Hit with Attacks")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% шанс ослепить при нанесении удара атаками")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% С€Р°РЅСЃ РѕСЃР»РµРїРёС‚СЊ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР° Р°С‚Р°РєР°РјРё")
 					{
 						LookupAffixAndSetInfoLine(["32|3-4","65|5-6"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% chance to Taunt on Hit with Attacks")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% шанс спровоцировать при нанесении удара атаками")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% С€Р°РЅСЃ СЃРїСЂРѕРІРѕС†РёСЂРѕРІР°С‚СЊ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР° Р°С‚Р°РєР°РјРё")
 					{
 						LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% chance to Hinder Enemies on Hit with Spells, with 30% reduced Movement Speed")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% шанс наложить Скованность на врагов, снижающую скорость их передвижения на 30%, при нанесении удара чарами")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ РЎРєРѕРІР°РЅРЅРѕСЃС‚СЊ РЅР° РІСЂР°РіРѕРІ, СЃРЅРёР¶Р°СЋС‰СѓСЋ СЃРєРѕСЂРѕСЃС‚СЊ РёС… РїРµСЂРµРґРІРёР¶РµРЅРёСЏ РЅР° 30%, РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР° С‡Р°СЂР°РјРё")
 					{
 						LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions deal \d+% increased Damage against Abyssal Monsters")
-					If RegExMatch(A_LoopField, "Приспешники наносят увеличенный на \d+% урон по монстрам Бездны")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РЅР°РЅРѕСЃСЏС‚ СѓРІРµР»РёС‡РµРЅРЅС‹Р№ РЅР° \d+% СѓСЂРѕРЅ РїРѕ РјРѕРЅСЃС‚СЂР°Рј Р‘РµР·РґРЅС‹")
 					{
 						LookupAffixAndSetInfoLine(["1|30-40"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% increased (Attack|Cast) Speed")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% повышение скорости (атаки|сотворения чар)")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё (Р°С‚Р°РєРё|СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ)")
 					{
 						LookupAffixAndSetInfoLine(["1|4-6"], "Hybrid Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions Regenerate \d+% Life per second")
-					If RegExMatch(A_LoopField, "Приспешники регенерируют \d+% здоровья в секунду")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё СЂРµРіРµРЅРµСЂРёСЂСѓСЋС‚ \d+% Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ")
 					{
 						LookupAffixAndSetInfoLine(["1|0.4-0.8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions Leech [\d\.]+% of Damage as Life")
-					If RegExMatch(A_LoopField, "Приспешники похищают [\d\.]+% от урона в виде здоровья")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РїРѕС…РёС‰Р°СЋС‚ [\d\.]+% РѕС‚ СѓСЂРѕРЅР° РІ РІРёРґРµ Р·РґРѕСЂРѕРІСЊСЏ")
 					{
 						LookupAffixAndSetInfoLine(["1|0.3-0.5"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% increased Movement Speed")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% повышение скорости передвижения")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ")
 					{
 						LookupAffixAndSetInfoLine(["1|6-10"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% increased maximum Life")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% увеличение максимума здоровья")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% СѓРІРµР»РёС‡РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° Р·РґРѕСЂРѕРІСЊСЏ")
 					{
 						LookupAffixAndSetInfoLine(["1|8-12"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have +\d+% to all Elemental Resistances")
-					If RegExMatch(A_LoopField, "Приспешники имеют +\d+% к сопротивлению всем стихиям")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ +\d+% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РІСЃРµРј СЃС‚РёС…РёСЏРј")
 					{
 						LookupAffixAndSetInfoLine(["1|6-10"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have +\d+% to Chaos Resistance")
-					If RegExMatch(A_LoopField, "Приспешники имеют +\d+% к сопротивлению хаосу")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ +\d+% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С…Р°РѕСЃСѓ")
 					{
 						LookupAffixAndSetInfoLine(["1|7-12"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "Minions have \d+% increased Attack and Cast Speed if you or your Minions have Killed Recently")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% повышение скорости атаки и сотворения чар, если вы или ваши приспешники недавно совершали убийство")
+					If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ \d+% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ, РµСЃР»Рё РІС‹ РёР»Рё РІР°С€Рё РїСЂРёСЃРїРµС€РЅРёРєРё РЅРµРґР°РІРЅРѕ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ")
 					{
 						LookupAffixAndSetInfoLine(["1|6-8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
 					;If RegExMatch(A_LoopField, "increased Minion Damage if you've used a Minion Skill Recently")
-					If RegExMatch(A_LoopField, "увеличение урона приспешников, если вы недавно использовали умение приспешников")
+					If RegExMatch(A_LoopField, "СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РїСЂРёСЃРїРµС€РЅРёРєРѕРІ, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°Р»Рё СѓРјРµРЅРёРµ РїСЂРёСЃРїРµС€РЅРёРєРѕРІ")
 					{
 						LookupAffixAndSetInfoLine(["1|15-20"], "Suffix", ItemLevel, CurrValue)
 						Continue
@@ -4784,170 +4784,170 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				
 				;IfInString, A_LoopField, to Accuracy Rating
-				IfInString, A_LoopField, к меткости
+				IfInString, A_LoopField, Рє РјРµС‚РєРѕСЃС‚Рё
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\AccuracyRating.txt", "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to Blind Enemies on Hit with Attacks
-				IfInString, A_LoopField, шанс ослепить врагов при нанесении удара атаками
+				IfInString, A_LoopField, С€Р°РЅСЃ РѕСЃР»РµРїРёС‚СЊ РІСЂР°РіРѕРІ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР° Р°С‚Р°РєР°РјРё
 				{
 					LookupAffixAndSetInfoLine(["32|3-4","65|5-6"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to Taunt Enemies on Hit with Attacks
-				IfInString, A_LoopField, шанс спровоцировать врагов при нанесении удара атаками
+				IfInString, A_LoopField, С€Р°РЅСЃ СЃРїСЂРѕРІРѕС†РёСЂРѕРІР°С‚СЊ РІСЂР°РіРѕРІ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР° Р°С‚Р°РєР°РјРё
 				{
 					LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "chance to Hinder Enemies on Hit with Spells, with 30% reduced Movement Speed")
-				If RegExMatch(A_LoopField, "шанс наложить Скованность на врагов, снижающую скорость их передвижения на 30%, при нанесении удара чарами")
+				If RegExMatch(A_LoopField, "С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ РЎРєРѕРІР°РЅРЅРѕСЃС‚СЊ РЅР° РІСЂР°РіРѕРІ, СЃРЅРёР¶Р°СЋС‰СѓСЋ СЃРєРѕСЂРѕСЃС‚СЊ РёС… РїРµСЂРµРґРІРёР¶РµРЅРёСЏ РЅР° 30%, РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР° С‡Р°СЂР°РјРё")
 				{
 					LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "chance to Avoid being (Ignited|Shocked)")
-				If RegExMatch(A_LoopField, "шанс избежать (поджога|шока)")
+				If RegExMatch(A_LoopField, "С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ (РїРѕРґР¶РѕРіР°|С€РѕРєР°)")
 				{
 					LookupAffixAndSetInfoLine(["1|6-8","30|9-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "chance to Avoid being (Chilled|Frozen)")
-				If RegExMatch(A_LoopField, "шанс избежать (охлаждения|заморозки)")
+				If RegExMatch(A_LoopField, "С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ (РѕС…Р»Р°Р¶РґРµРЅРёСЏ|Р·Р°РјРѕСЂРѕР·РєРё)")
 				{
 					LookupAffixAndSetInfoLine(["1|6-8","30|9-10"], "Hybrid Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "chance to [Aa]void (being Poisoned|Bleeding)")
-				If RegExMatch(A_LoopField, "шанс избежать (отравления|кровотечения)")
+				If RegExMatch(A_LoopField, "С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ (РѕС‚СЂР°РІР»РµРЅРёСЏ|РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ)")
 				{
 					LookupAffixAndSetInfoLine(["20|6-8","50|9-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to Avoid being Stunned
-				IfInString, A_LoopField, шанс избежать оглушения
+				IfInString, A_LoopField, С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ РѕРіР»СѓС€РµРЅРёСЏ
 				{
 					LookupAffixAndSetInfoLine(["1|6-8","20|9-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Damage against Abyssal Monsters
-				IfInString, A_LoopField, увеличение урона по монстрам Бездны
+				IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РїРѕ РјРѕРЅСЃС‚СЂР°Рј Р‘РµР·РґРЅС‹
 				{
 					LookupAffixAndSetInfoLine(["1|30-40"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, additional Physical Damage Reduction against Abyssal Monsters
-				IfInString, A_LoopField, дополнительного уменьшения получаемого физического урона от монстров Бездны
+				IfInString, A_LoopField, РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓРјРµРЅСЊС€РµРЅРёСЏ РїРѕР»СѓС‡Р°РµРјРѕРіРѕ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РѕС‚ РјРѕРЅСЃС‚СЂРѕРІ Р‘РµР·РґРЅС‹
 				{
 					LookupAffixAndSetInfoLine(["1|4-6"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "increased Effect of (Chill|Shock)")
-				If RegExMatch(A_LoopField, "усиление эффекта (охлаждения|шока)")
+				If RegExMatch(A_LoopField, "СѓСЃРёР»РµРЅРёРµ СЌС„С„РµРєС‚Р° (РѕС…Р»Р°Р¶РґРµРЅРёСЏ|С€РѕРєР°)")
 				{
 					LookupAffixAndSetInfoLine(["30|6-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to Block Spells if you were Damaged by a Hit Recently
-				IfInString, A_LoopField, шанс блока чар, если недавно вы получали урон от удара
+				IfInString, A_LoopField, С€Р°РЅСЃ Р±Р»РѕРєР° С‡Р°СЂ, РµСЃР»Рё РЅРµРґР°РІРЅРѕ РІС‹ РїРѕР»СѓС‡Р°Р»Рё СѓСЂРѕРЅ РѕС‚ СѓРґР°СЂР°
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, additional Physical Damage Reduction if you weren't Damaged by a Hit Recently
-				IfInString, A_LoopField, дополнительного уменьшения получаемого физического урона, если недавно вы не получали урон от ударов
+				IfInString, A_LoopField, РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓРјРµРЅСЊС€РµРЅРёСЏ РїРѕР»СѓС‡Р°РµРјРѕРіРѕ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°, РµСЃР»Рё РЅРµРґР°РІРЅРѕ РІС‹ РЅРµ РїРѕР»СѓС‡Р°Р»Рё СѓСЂРѕРЅ РѕС‚ СѓРґР°СЂРѕРІ
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Movement Speed if you haven't taken Damage Recently
-				IfInString, A_LoopField, повышение скорости передвижения, если вы недавно не получали урон
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅРµ РїРѕР»СѓС‡Р°Р»Рё СѓСЂРѕРЅ
 				{
 					LookupAffixAndSetInfoLine(["1|3-4"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Damage if you've Killed Recently
-				IfInString, A_LoopField, увеличение урона, если вы недавно совершали убийство
+				IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ
 				{
 					LookupAffixAndSetInfoLine(["1|10-20"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, to Critical Strike Multiplier if you've Killed Recently
-				IfInString, A_LoopField, к множителю критического удара, если вы недавно совершали убийство
+				IfInString, A_LoopField, Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ
 				{
 					LookupAffixAndSetInfoLine(["25|8-14"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Armour if you haven't Killed Recently
-				IfInString, A_LoopField, увеличение брони, если вы недавно не совершали убийство
+				IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ Р±СЂРѕРЅРё, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅРµ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ
 				{
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Accuracy Rating if you haven't Killed Recently
-				IfInString, A_LoopField, повышение меткости, если недавно вы не совершали убийство
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјРµС‚РєРѕСЃС‚Рё, РµСЃР»Рё РЅРµРґР°РІРЅРѕ РІС‹ РЅРµ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ
 				{
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "Damage Penetrates \d+% Elemental Resistance if you haven't Killed Recently")
-				If RegExMatch(A_LoopField, "Урон пробивает \d+% сопротивления стихиям, если вы недавно не совершали убийство")
+				If RegExMatch(A_LoopField, "РЈСЂРѕРЅ РїСЂРѕР±РёРІР°РµС‚ \d+% СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ СЃС‚РёС…РёСЏРј, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅРµ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ")
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Evasion Rating while moving
-				IfInString, A_LoopField, увеличение уклонения при передвижении
+				IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ РїСЂРё РїРµСЂРµРґРІРёР¶РµРЅРёРё
 				{
 					LookupAffixAndSetInfoLine(["1|25-35"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Mana Regeneration Rate while moving
-				IfInString, A_LoopField, повышение скорости регенерации маны при передвижении
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЂРµРіРµРЅРµСЂР°С†РёРё РјР°РЅС‹ РїСЂРё РїРµСЂРµРґРІРёР¶РµРЅРёРё
 				{
 					LookupAffixAndSetInfoLine(["1|20-25"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, of Life Regenerated per second while moving
-				If RegExMatch(A_LoopField, "Регенерирует \d+% здоровья в секунду при передвижении")
+				If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂРёСЂСѓРµС‚ \d+% Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ РїСЂРё РїРµСЂРµРґРІРёР¶РµРЅРёРё")
 				{
 					LookupAffixAndSetInfoLine(["1|0.5-1"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;If RegExMatch(A_LoopField, "Gain \d+% of Physical Damage as Extra Fire Damage if you've dealt a Critical Strike Recently")
-				If RegExMatch(A_LoopField, "Наносит \d+% от физического урона в виде дополнительного урона от огня, если вы недавно не наносили критический удар")
+				If RegExMatch(A_LoopField, "РќР°РЅРѕСЃРёС‚ \d+% РѕС‚ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РІ РІРёРґРµ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СѓСЂРѕРЅР° РѕС‚ РѕРіРЅСЏ, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅРµ РЅР°РЅРѕСЃРёР»Рё РєСЂРёС‚РёС‡РµСЃРєРёР№ СѓРґР°СЂ")
 				{
 					LookupAffixAndSetInfoLine(["40|2-4"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Attack Speed if you've dealt a Critical Strike Recently
-				IfInString, A_LoopField, повышение скорости атаки, если вы недавно наносили критический удар
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅР°РЅРѕСЃРёР»Рё РєСЂРёС‚РёС‡РµСЃРєРёР№ СѓРґР°СЂ
 				{
 					LookupAffixAndSetInfoLine(["25|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Cast Speed if you've dealt a Critical Strike Recently
-				IfInString, A_LoopField, повышение скорости сотворения чар, если вы недавно наносили критический удар
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅР°РЅРѕСЃРёР»Рё РєСЂРёС‚РёС‡РµСЃРєРёР№ СѓРґР°СЂ
 				{
 					LookupAffixAndSetInfoLine(["25|5-7"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, increased Critical Strike Chance if you haven't dealt a Critical Strike Recently
-				IfInString, A_LoopField, повышение шанса критического удара, если вы недавно не наносили критический удар
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РЅРµ РЅР°РЅРѕСЃРёР»Рё РєСЂРёС‚РёС‡РµСЃРєРёР№ СѓРґР°СЂ
 				{
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to Dodge Attacks and Spells if you've been Hit Recently
-				IfInString, A_LoopField, шанс увернуться от атак и чар, если вы недавно получали удар
+				IfInString, A_LoopField, С€Р°РЅСЃ СѓРІРµСЂРЅСѓС‚СЊСЃСЏ РѕС‚ Р°С‚Р°Рє Рё С‡Р°СЂ, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РїРѕР»СѓС‡Р°Р»Рё СѓРґР°СЂ
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				/* было удалено в оригинальной версии 2.7.6
+				/* Р±С‹Р»Рѕ СѓРґР°Р»РµРЅРѕ РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№ РІРµСЂСЃРёРё 2.7.6
 				;If RegExMatch(A_LoopField, "^been Hit Recently$")
-				If RegExMatch(A_LoopField, "шанс увернуться от атак и чар, если вы недавно получали удар$")
+				If RegExMatch(A_LoopField, "С€Р°РЅСЃ СѓРІРµСЂРЅСѓС‚СЊСЃСЏ РѕС‚ Р°С‚Р°Рє Рё С‡Р°СЂ, РµСЃР»Рё РІС‹ РЅРµРґР°РІРЅРѕ РїРѕР»СѓС‡Р°Р»Рё СѓРґР°СЂ$")
 				{
 					; mod above has a linebreak for some reason
 					Itemdata.LastAffixLineNumber := HasLastLineNumber -1
@@ -4956,31 +4956,31 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				*/
 				;IfInString, A_LoopField, increased Movement Speed if you've Killed Recently
-				IfInString, A_LoopField, повышение скорости передвижения, если недавно вы совершали убийство
+				IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ, РµСЃР»Рё РЅРµРґР°РІРЅРѕ РІС‹ СЃРѕРІРµСЂС€Р°Р»Рё СѓР±РёР№СЃС‚РІРѕ
 				{
 					LookupAffixAndSetInfoLine(["1|2-4"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, additional Block Chance if you were Damaged by a Hit Recently
-				IfInString, A_LoopField, дополнительный шанс блока, если недавно вы получали урон от ударов
+				IfInString, A_LoopField, РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ С€Р°РЅСЃ Р±Р»РѕРєР°, РµСЃР»Рё РЅРµРґР°РІРЅРѕ РІС‹ РїРѕР»СѓС‡Р°Р»Рё СѓСЂРѕРЅ РѕС‚ СѓРґР°СЂРѕРІ
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to gain Onslaught for 4 seconds on Kill
-				IfInString, A_LoopField, шанс получить эффект Боевой раж на 4 секунды при убийстве
+				IfInString, A_LoopField, С€Р°РЅСЃ РїРѕР»СѓС‡РёС‚СЊ СЌС„С„РµРєС‚ Р‘РѕРµРІРѕР№ СЂР°Р¶ РЅР° 4 СЃРµРєСѓРЅРґС‹ РїСЂРё СѓР±РёР№СЃС‚РІРµ
 				{
 					LookupAffixAndSetInfoLine(["10|3-5","50|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to gain Phasing for 4 seconds on Kill
-				IfInString, A_LoopField, шанс войти в Форму призрака на 4 секунда при убийстве
+				IfInString, A_LoopField, С€Р°РЅСЃ РІРѕР№С‚Рё РІ Р¤РѕСЂРјСѓ РїСЂРёР·СЂР°РєР° РЅР° 4 СЃРµРєСѓРЅРґР° РїСЂРё СѓР±РёР№СЃС‚РІРµ
 				{
 					LookupAffixAndSetInfoLine(["10|3-5","50|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 				;IfInString, A_LoopField, chance to gain Unholy Might for 4 seconds on Melee Kill
-				IfInString, A_LoopField, шанс получить Нечестивое могущество на 4 секунды при убийстве в ближнем бою
+				IfInString, A_LoopField, С€Р°РЅСЃ РїРѕР»СѓС‡РёС‚СЊ РќРµС‡РµСЃС‚РёРІРѕРµ РјРѕРіСѓС‰РµСЃС‚РІРѕ РЅР° 4 СЃРµРєСѓРЅРґС‹ РїСЂРё СѓР±РёР№СЃС‚РІРµ РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ
 				{
 					LookupAffixAndSetInfoLine(["40|2-3","80|4-5"], "Suffix", ItemLevel, CurrValue)
 					Continue
@@ -4988,37 +4988,37 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 			
 			;IfInString, A_LoopField, increased Area Damage
-			IfInString, A_LoopField, увеличение урона по области
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РїРѕ РѕР±Р»Р°СЃС‚Рё
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AreaDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Attack and Cast Speed
-			IfInString, A_LoopField, повышение скорости атаки и сотворения чар
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackAndCastSpeed.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Attack Speed with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*повышение скорости атаки (одноручным|двуручным) оружием ближнего боя")
+			If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё (РѕРґРЅРѕСЂСѓС‡РЅС‹Рј|РґРІСѓСЂСѓС‡РЅС‹Рј) РѕСЂСѓР¶РёРµРј Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Attack Speed while holding a Shield
-			IfInString, A_LoopField, повышение скорости атаки со щитом в руках
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё СЃРѕ С‰РёС‚РѕРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWhileHoldingShield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Attack Speed while Dual Wielding
-			IfInString, A_LoopField, повышение скорости атаки парным оружием
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё РїР°СЂРЅС‹Рј РѕСЂСѓР¶РёРµРј
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWhileDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Attack Speed with (Axes|Bows|Claws|Daggers|Maces|Staves|Swords|Wands)")
-			If RegExMatch(A_LoopField, ".*повышение скорости атаки (топорами|луками|когтями|кинжалами|булавами|посохами|мечами|жезлами)")
+			If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё (С‚РѕРїРѕСЂР°РјРё|Р»СѓРєР°РјРё|РєРѕРіС‚СЏРјРё|РєРёРЅР¶Р°Р»Р°РјРё|Р±СѓР»Р°РІР°РјРё|РїРѕСЃРѕС…Р°РјРё|РјРµС‡Р°РјРё|Р¶РµР·Р»Р°РјРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWithWeapontype.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
@@ -5026,14 +5026,14 @@ ParseAffixes(ItemDataAffixes, Item)
 			
 			; Pure Attack Speed must be checked last if RegEx line end isn't used
 			;If RegExMatch(A_LoopField, ".*increased Attack Speed$")
-			If RegExMatch(A_LoopField, ".*повышение скорости атаки$")
+			If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё$")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeed_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 
 			;IfInString, A_LoopField, increased Accuracy Rating
-			IfInString, A_LoopField, повышение меткости
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјРµС‚РєРѕСЃС‚Рё
 			{
 				If (Item.SubType = "Cobalt Jewel" or Item.SubType = "Crimson Jewel")
 				{
@@ -5049,26 +5049,26 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 
 			;IfInString, A_LoopField, to all Attributes
-			IfInString, A_LoopField, ко всем атрибутам
+			IfInString, A_LoopField, РєРѕ РІСЃРµРј Р°С‚СЂРёР±СѓС‚Р°Рј
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ToAllAttributes_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 
 			;If RegExMatch(A_LoopField, ".*to (Strength|Dexterity|Intelligence) and (Strength|Dexterity|Intelligence)")
-			If RegExMatch(A_LoopField, ".*к (силе|ловкости|интеллекту) и (силе|ловкости|интеллекту)")
+			If RegExMatch(A_LoopField, ".*Рє (СЃРёР»Рµ|Р»РѕРІРєРѕСЃС‚Рё|РёРЅС‚РµР»Р»РµРєС‚Сѓ) Рё (СЃРёР»Рµ|Р»РѕРІРєРѕСЃС‚Рё|РёРЅС‚РµР»Р»РµРєС‚Сѓ)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To2Attributes_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*to (Strength|Dexterity|Intelligence)")
-			If RegExMatch(A_LoopField, ".*к (силе|ловкости|интеллекту)")
+			If RegExMatch(A_LoopField, ".*Рє (СЃРёР»Рµ|Р»РѕРІРєРѕСЃС‚Рё|РёРЅС‚РµР»Р»РµРєС‚Сѓ)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To1Attribute_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Cast Speed (with|while) .*")
-			If RegExMatch(A_LoopField, ".*(увеличение|повышение) скорости сотворения чар (с|для) .*")
+			If RegExMatch(A_LoopField, ".*(СѓРІРµР»РёС‡РµРЅРёРµ|РїРѕРІС‹С€РµРЅРёРµ) СЃРєРѕСЂРѕСЃС‚Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ (СЃ|РґР»СЏ) .*")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CastSpeedWithWhile.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
@@ -5076,49 +5076,49 @@ ParseAffixes(ItemDataAffixes, Item)
 
 			; pure Cast Speed must be checked last if RegEx line end isn't used
 			;If RegExMatch(A_LoopField, ".*increased Cast Speed$")
-			If RegExMatch(A_LoopField, ".*повышение скорости сотворения чар$")
+			If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ$")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CastSpeed_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Critical Strike Chance for Spells
-			IfInString, A_LoopField, повышение шанса критического удара для чар
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РґР»СЏ С‡Р°СЂ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceSpells_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Melee Critical Strike Chance
-			IfInString, A_LoopField, повышение шанса критического удара в ближнем бою
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MeleeCritChance.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Critical Strike Chance with Elemental Skills
-			IfInString, A_LoopField,  повышение шанса критического удара умениями стихий
+			IfInString, A_LoopField,  РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° СѓРјРµРЅРёСЏРјРё СЃС‚РёС…РёР№
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceElementalSkills.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Critical Strike Chance with (Fire|Cold|Lightning) Skills")
-			If RegExMatch(A_LoopField, ".*повышение шанса критического удара умениями (огня|холода|молнии)")
+			If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° СѓРјРµРЅРёСЏРјРё (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceFireColdLightningSkills.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Critical Strike Chance with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*повышение шанса критического удара (одноручным|двуручным) оружием ближнего боя")
+			If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° (РѕРґРЅРѕСЂСѓС‡РЅС‹Рј|РґРІСѓСЂСѓС‡РЅС‹Рј) РѕСЂСѓР¶РёРµРј Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Weapon Critical Strike Chance while Dual Wielding
-			IfInString, A_LoopField, повышение шанса критического удара оружием с парным оружием в руках
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РѕСЂСѓР¶РёРµРј СЃ РїР°СЂРЅС‹Рј РѕСЂСѓР¶РёРµРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\WeaponCritChanceDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Global Critical Strike Chance
-			IfInString, A_LoopField, повышение глобального шанса критического удара
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°
 			{
 				If not (Item.SubType = "Viridian Jewel" or Item.SubType = "Prismatic Jewel")
 				{
@@ -5133,230 +5133,230 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 			}
 			;IfInString, A_LoopField, to Melee Critical Strike Multiplier
-			IfInString, A_LoopField, к множителю критического удара в ближнем бою
+			IfInString, A_LoopField, Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMeleeMultiplier.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, to Critical Strike Multiplier for Spells
-			IfInString, A_LoopField, к множителю критического удара чарами
+			IfInString, A_LoopField, Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° С‡Р°СЂР°РјРё
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierSpells.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, to Critical Strike Multiplier with Elemental Skills
-			IfInString, A_LoopField, к множителю критического удара умениями стихий
+			IfInString, A_LoopField, Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° СѓРјРµРЅРёСЏРјРё СЃС‚РёС…РёР№
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierElementalSkills.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*to Critical Strike Multiplier with (Fire|Cold|Lightning) Skills")
-			If RegExMatch(A_LoopField, ".*к множителю критического удара умениями (огня|холода|молнии)")
+			If RegExMatch(A_LoopField, ".*Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° СѓРјРµРЅРёСЏРјРё (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierFireColdLightningSkills.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*to Critical Strike Multiplier with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*к множителю критического удара (одноручным|двуручным) оружием ближнего боя")
+			If RegExMatch(A_LoopField, ".*Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° (РѕРґРЅРѕСЂСѓС‡РЅС‹Рј|РґРІСѓСЂСѓС‡РЅС‹Рј) РѕСЂСѓР¶РёРµРј Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, to Critical Strike Multiplier while Dual Wielding
-			IfInString, A_LoopField, к множителю критического удара с парным оружием в руках
+			IfInString, A_LoopField, Рє РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° СЃ РїР°СЂРЅС‹Рј РѕСЂСѓР¶РёРµРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierWhileDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Critical Strike Multiplier
-			IfInString, A_LoopField, увеличение глобального множителя критического удара
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ РјРЅРѕР¶РёС‚РµР»СЏ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierGlobal_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to Ignite
-			IfInString, A_LoopField, шанс поджечь
+			IfInString, A_LoopField, С€Р°РЅСЃ РїРѕРґР¶РµС‡СЊ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToIgnite.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Ignite Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности поджога на врагах
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё РїРѕРґР¶РѕРіР° РЅР° РІСЂР°РіР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IgniteDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to Freeze
-			IfInString, A_LoopField, шанс заморозить
+			IfInString, A_LoopField, С€Р°РЅСЃ Р·Р°РјРѕСЂРѕР·РёС‚СЊ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToFreeze.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Freeze Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности заморозки на врагах
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё Р·Р°РјРѕСЂРѕР·РєРё РЅР° РІСЂР°РіР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\FreezeDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to Shock
-			IfInString, A_LoopField, шанс наложить шок
+			IfInString, A_LoopField, С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ С€РѕРє
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToShock.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Shock Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности шока на врагах
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё С€РѕРєР° РЅР° РІСЂР°РіР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ShockDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to Poison
-			; ? наложить яд?
-			IfInString, A_LoopField,  шанс отравить при нанесении удара
+			; ? РЅР°Р»РѕР¶РёС‚СЊ СЏРґ?
+			IfInString, A_LoopField,  С€Р°РЅСЃ РѕС‚СЂР°РІРёС‚СЊ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToPoison.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Poison Duration on Enemies
 			;?
-			IfInString, A_LoopField, увеличение длительности яда
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё СЏРґР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\PoisonDuration.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to cause Bleeding
-			IfInString, A_LoopField, шанс наложить кровотечение
+			IfInString, A_LoopField, С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ РєСЂРѕРІРѕС‚РµС‡РµРЅРёРµ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToBleed.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Bleed duration
-			IfInString, A_LoopField, увеличение длительности кровотечения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\BleedingDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Burning Damage
-			IfInString, A_LoopField, увеличение урона от горения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РіРѕСЂРµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrBurningDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Damage with Bleeding
-			IfInString, A_LoopField, увеличение урона от кровотечения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrBleedingDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Damage with Poison
-			IfInString, A_LoopField, увеличение урона от яда
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ СЏРґР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPoisonDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased (Fire|Cold|Lightning) Damage")
-			If RegExMatch(A_LoopField, ".*увеличение урона от (огня|холода|молнии)")
+			If RegExMatch(A_LoopField, ".*СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ (РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrFireColdLightningDamage_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, "Minions have .* Chance to Block")
-			If RegExMatch(A_LoopField, "Ваши приспешники имеют .* шанс на блок")
+			If RegExMatch(A_LoopField, "Р’Р°С€Рё РїСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ .* С€Р°РЅСЃ РЅР° Р±Р»РѕРє")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MinionBlockChance.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*(Chance to Block|Block Chance).*")\
-			If RegExMatch(A_LoopField, ".*(шанс на блок|шанс блока).*")
+			If RegExMatch(A_LoopField, ".*(С€Р°РЅСЃ РЅР° Р±Р»РѕРє|С€Р°РЅСЃ Р±Р»РѕРєР°).*")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\BlockChance_ChanceToBlock_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Damage over Time
-			IfInString, A_LoopField, увеличение постепенного урона
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РїРѕСЃС‚РµРїРµРЅРЅРѕРіРѕ СѓСЂРѕРЅР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\DamageOverTime.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, "Minions deal .* increased Damage")
-			If RegExMatch(A_LoopField, "Приспешники имеют .* увеличение урона")
+			If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ .* СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MinionsDealIncrDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Damage$")
-			If RegExMatch(A_LoopField, ".* увеличение урона$")			
+			If RegExMatch(A_LoopField, ".* СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°$")			
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to Knock Enemies Back on hit
-			IfInString, A_LoopField, шанс отбросить врагов при ударе
+			IfInString, A_LoopField, С€Р°РЅСЃ РѕС‚Р±СЂРѕСЃРёС‚СЊ РІСЂР°РіРѕРІ РїСЂРё СѓРґР°СЂРµ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\KnockBackOnHit.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Life gained for each Enemy hit by your Attacks
-			;IfInString, A_LoopField, здоровья за каждого задетого атакой врага
-			; меняется от патча к патчу
-			If RegExMatch(A_LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")			
+			;IfInString, A_LoopField, Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґРѕРіРѕ Р·Р°РґРµС‚РѕРіРѕ Р°С‚Р°РєРѕР№ РІСЂР°РіР°
+			; РјРµРЅСЏРµС‚СЃСЏ РѕС‚ РїР°С‚С‡Р° Рє РїР°С‚С‡Сѓ
+			If RegExMatch(A_LoopField, "Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґРѕРіРѕ Р·Р°РґРµС‚РѕРіРѕ Р°С‚Р°РєРѕР№ РІСЂР°РіР°|Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґС‹Р№ СѓРґР°СЂ Р°С‚Р°РєР°РјРё РїРѕ РІСЂР°РіСѓ")			
 			{
 				LookupAffixAndSetInfoLine("data\jewel\LifeOnHit_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Energy Shield gained for each Enemy hit by your Attacks
-			IfInString, A_LoopField, энергетического щита за каждого задетого атакой врага
+			IfInString, A_LoopField, СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° Р·Р° РєР°Р¶РґРѕРіРѕ Р·Р°РґРµС‚РѕРіРѕ Р°С‚Р°РєРѕР№ РІСЂР°РіР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ESOnHit.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Mana gained for each Enemy hit by your Attacks
-			IfInString, A_LoopField, маны за каждого задетого атакой врага
+			IfInString, A_LoopField, РјР°РЅС‹ Р·Р° РєР°Р¶РґРѕРіРѕ Р·Р°РґРµС‚РѕРіРѕ Р°С‚Р°РєРѕР№ РІСЂР°РіР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ManaOnHit.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, reduced Mana Cost of Skills
-			IfInString, A_LoopField, снижение затрат маны умений
+			IfInString, A_LoopField, СЃРЅРёР¶РµРЅРёРµ Р·Р°С‚СЂР°С‚ РјР°РЅС‹ СѓРјРµРЅРёР№
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ReducedManaCost.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 
 			;IfInString, A_LoopField, increased Mana Regeneration Rate
-			IfInString, A_LoopField, повышение скорости регенерации маны
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЂРµРіРµРЅРµСЂР°С†РёРё РјР°РЅС‹
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ManaRegen_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Melee Damage
-			IfInString, A_LoopField, увеличение урона в ближнем бою
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MeleeDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Projectile Damage
-			IfInString, A_LoopField, увеличение урона снарядов
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° СЃРЅР°СЂСЏРґРѕРІ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ProjectileDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Projectile Speed
-			IfInString, A_LoopField, повышение скорости снарядов
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЃРЅР°СЂСЏРґРѕРІ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ProjectileSpeed_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, to all Elemental Resistances
-			IfInString, A_LoopField, к сопротивлению всем стихиям
+			IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РІСЃРµРј СЃС‚РёС…РёСЏРј
 			{
 				; "to all Elemental Resistances" matches multiple affixes
 				;If InStr(A_LoopField, "Minions have"){
-				If InStr(A_LoopField, "Приспешники имеют"){
+				If InStr(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚"){
 					File := "data\jewel\ToAllResist_Jewels_Minions.txt"
 				}
 				;Else If InStr(A_LoopField, "Totems gain")
-				Else If InStr(A_LoopField, "Тотемы получают"){
+				Else If InStr(A_LoopField, "РўРѕС‚РµРјС‹ РїРѕР»СѓС‡Р°СЋС‚"){
 					File := "data\jewel\ToAllResist_Jewels_Totems.txt"
 				}
 				Else{
@@ -5366,107 +5366,107 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*to (Fire|Cold|Lightning) and (Fire|Cold|Lightning) Resistances")
-			If RegExMatch(A_LoopField, ".*к сопротивлению (огню|холоду|молнии) и (огню|холоду|молнии)")
+			If RegExMatch(A_LoopField, ".*Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ (РѕРіРЅСЋ|С…РѕР»РѕРґСѓ|РјРѕР»РЅРёРё) Рё (РѕРіРЅСЋ|С…РѕР»РѕРґСѓ|РјРѕР»РЅРёРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To2Resist_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*to (Fire|Cold|Lightning) Resistance")
-			If RegExMatch(A_LoopField, ".*к сопротивлению (огню|холоду|молнии)")
+			If RegExMatch(A_LoopField, ".*Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ (РѕРіРЅСЋ|С…РѕР»РѕРґСѓ|РјРѕР»РЅРёРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To1Resist_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, to Chaos Resistance
-			IfInString, A_LoopField, к сопротивлению хаосу
+			IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С…Р°РѕСЃСѓ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ToChaosResist_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Stun Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности оглушения на врагах
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё РѕРіР»СѓС€РµРЅРёСЏ РЅР° РІСЂР°РіР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\StunDuration_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Physical Damage with (Axes|Bows|Claws|Daggers|Maces|Staves|Swords|Wands)")
-			If RegExMatch(A_LoopField, ".*увеличение физического урона (топорами|луками|когтями|кинжалами|булавами|посохами|мечами|жезлами)")
+			If RegExMatch(A_LoopField, ".*СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° (С‚РѕРїРѕСЂР°РјРё|Р»СѓРєР°РјРё|РєРѕРіС‚СЏРјРё|РєРёРЅР¶Р°Р»Р°РјРё|Р±СѓР»Р°РІР°РјРё|РїРѕСЃРѕС…Р°РјРё|РјРµС‡Р°РјРё|Р¶РµР·Р»Р°РјРё)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysDamageWithWeapontype.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Melee Physical Damage while holding a Shield
-			IfInString, A_LoopField, увеличение физического урона в ближнем бою со щитом в руках
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ СЃРѕ С‰РёС‚РѕРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMeleePhysDamageWhileHoldingShield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Physical Weapon Damage while Dual Wielding
-			;IfInString, A_LoopField, увеличение физического урона парным оружием
-			IfInString, A_LoopField, увеличение физического урона с парным оружием в руках
+			;IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РїР°СЂРЅС‹Рј РѕСЂСѓР¶РёРµРј
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° СЃ РїР°СЂРЅС‹Рј РѕСЂСѓР¶РёРµРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysWeaponDamageDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;If RegExMatch(A_LoopField, ".*increased Physical Damage with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*увеличение физического урона (одноручным|двуручным) оружием ближнего боя")
+			If RegExMatch(A_LoopField, ".*СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° (РѕРґРЅРѕСЂСѓС‡РЅС‹Рј|РґРІСѓСЂСѓС‡РЅС‹Рј) РѕСЂСѓР¶РёРµРј Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysDamageWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Physical Damage
-			;IfInString, A_LoopField, увеличение физического урона
+			;IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
 			;IfInString, A_LoopField, increased Global Physical Damage
-			IfInString, A_LoopField, увеличение глобального физического урона
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysDamage_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Totem Damage
-			IfInString, A_LoopField, увеличение урона от тотемов
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ С‚РѕС‚РµРјРѕРІ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTotemDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Totem Life
-			IfInString, A_LoopField, увеличение здоровья тотема
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ Р·РґРѕСЂРѕРІСЊСЏ С‚РѕС‚РµРјР°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTotemLife.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Trap Throwing Speed
-			IfInString, A_LoopField, повышение скорости броска ловушки
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р±СЂРѕСЃРєР° Р»РѕРІСѓС€РєРё
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTrapThrowingSpeed.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Trap Damage
-			IfInString, A_LoopField, увеличение урона от ловушек
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ Р»РѕРІСѓС€РµРє
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTrapDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Mine Laying Speed
-			IfInString, A_LoopField, повышение скорости установки мины
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СѓСЃС‚Р°РЅРѕРІРєРё РјРёРЅС‹
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMineLayingSpeed.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Mine Damage
-			IfInString, A_LoopField, увеличение урона от мин
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РјРёРЅ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMineDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Chaos Damage
-			IfInString, A_LoopField, увеличение урона хаосом
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° С…Р°РѕСЃРѕРј
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrChaosDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			/* ; в следствие того что в ru версии слово "increased" имеет два варианта перевода  "повышение"/"увеличение", код проверки нужно переписать разделив на два условия
+			/* ; РІ СЃР»РµРґСЃС‚РІРёРµ С‚РѕРіРѕ С‡С‚Рѕ РІ ru РІРµСЂСЃРёРё СЃР»РѕРІРѕ "increased" РёРјРµРµС‚ РґРІР° РІР°СЂРёР°РЅС‚Р° РїРµСЂРµРІРѕРґР°  "РїРѕРІС‹С€РµРЅРёРµ"/"СѓРІРµР»РёС‡РµРЅРёРµ", РєРѕРґ РїСЂРѕРІРµСЂРєРё РЅСѓР¶РЅРѕ РїРµСЂРµРїРёСЃР°С‚СЊ СЂР°Р·РґРµР»РёРІ РЅР° РґРІР° СѓСЃР»РѕРІРёСЏ
 			;If ( InStr(A_LoopField,"increased maximum Life"))
-			If ( InStr(A_LoopField,"повышение максимума здоровья"))
+			If ( InStr(A_LoopField,"РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° Р·РґРѕСЂРѕРІСЊСЏ"))
 			{
 				If InStr(A_LoopField,"Minions have")
 				{
@@ -5481,15 +5481,15 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 			*/
 			;If ( InStr(A_LoopField,"increased maximum Life"))
-			; "увеличение"
-			If RegExMatch(A_LoopField, "Приспешники имеют .* увеличение максимума здоровья")
+			; "СѓРІРµР»РёС‡РµРЅРёРµ"
+			If RegExMatch(A_LoopField, "РџСЂРёСЃРїРµС€РЅРёРєРё РёРјРµСЋС‚ .* СѓРІРµР»РёС‡РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° Р·РґРѕСЂРѕРІСЊСЏ")
 			{
 				FilePath := "data\jewel\MinionIncrMaximumLife.txt"				
 				LookupAffixAndSetInfoLine(FilePath, "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			; "повышение"
-			If ( InStr(A_LoopField,"повышение максимума здоровья"))
+			; "РїРѕРІС‹С€РµРЅРёРµ"
+			If ( InStr(A_LoopField,"РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° Р·РґРѕСЂРѕРІСЊСЏ"))
 			{		
 				FilePath := "data\jewel\IncrMaximumLife.txt"
 				LookupAffixAndSetInfoLine(FilePath, "Prefix", ItemLevel, CurrValue)
@@ -5498,81 +5498,81 @@ ParseAffixes(ItemDataAffixes, Item)
 			
 			
 			;IfInString, A_LoopField, increased Armour
-			IfInString, A_LoopField, повышение брони
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ Р±СЂРѕРЅРё
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrArmour_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Evasion Rating
-			IfInString, A_LoopField, увеличение уклонения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrEvasion_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Energy Shield Recharge Rate
-			IfInString, A_LoopField, повышение скорости перезарядки энергетического щита
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµР·Р°СЂСЏРґРєРё СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\EnergyShieldRechargeRate.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, faster start of Energy Shield Recharge
-			IfInString, A_LoopField, ускорение начала перезарядки энергетического щита
+			IfInString, A_LoopField, СѓСЃРєРѕСЂРµРЅРёРµ РЅР°С‡Р°Р»Р° РїРµСЂРµР·Р°СЂСЏРґРєРё СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\FasterStartOfEnergyShieldRecharge.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased maximum Energy Shield
-			IfInString, A_LoopField, повышение максимума энергетического щита
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMaxEnergyShield_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Physical Attack Damage Leeched as
-			IfInString, A_LoopField, от физического урона атак похищается в виде
+			IfInString, A_LoopField, РѕС‚ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° Р°С‚Р°Рє РїРѕС…РёС‰Р°РµС‚СЃСЏ РІ РІРёРґРµ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\PhysicalAttackDamageLeeched_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Spell Damage while Dual Wielding
-			IfInString, A_LoopField, увеличение урона чар с парным оружием в руках
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° С‡Р°СЂ СЃ РїР°СЂРЅС‹Рј РѕСЂСѓР¶РёРµРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamageDualWielding_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Spell Damage while holding a Shield
-			IfInString, A_LoopField, увеличение урона чар со щитом в руках
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° С‡Р°СЂ СЃРѕ С‰РёС‚РѕРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamageHoldingShield_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Spell Damage while wielding a Staff
-			IfInString, A_LoopField, увеличение урона чар с посохом в руках
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° С‡Р°СЂ СЃ РїРѕСЃРѕС…РѕРј РІ СЂСѓРєР°С…
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamageWieldingStaff_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Spell Damage
-			IfInString, A_LoopField, увеличение урона от чар
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ С‡Р°СЂ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamage_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased maximum Mana
-			IfInString, A_LoopField, повышение максимума маны
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° РјР°РЅС‹
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMaximumMana_Jewel.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Stun and Block Recovery
-			IfInString, A_LoopField, ускорение восстановления после оглушения
+			IfInString, A_LoopField, СѓСЃРєРѕСЂРµРЅРёРµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РїРѕСЃР»Рµ РѕРіР»СѓС€РµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\StunRecovery_Suffix_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Rarity
-			;IfInString, A_LoopField, повышение редкости выпадающих предметов
-			;IfInString, A_LoopField, повышение редкости находимых предметов
-			IfInString, A_LoopField, повышение редкости найденных предметов
+			;IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РІС‹РїР°РґР°СЋС‰РёС… РїСЂРµРґРјРµС‚РѕРІ
+			;IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РЅР°С…РѕРґРёРјС‹С… РїСЂРµРґРјРµС‚РѕРІ
+			IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РЅР°Р№РґРµРЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IIR_Suffix_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
@@ -5585,7 +5585,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		; Suffixes
 
 		;IfInString, A_LoopField, increased Attack Speed
-		IfInString, A_LoopField, повышение скорости атаки
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё
 		{
 			If (ItemSubType = "Wand" or ItemSubType = "Bow"){
 				File := "data\AttackSpeed_BowsAndWands.txt"
@@ -5603,7 +5603,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, to all Attributes
-		IfInString, A_LoopField, ко всем характеристикам
+		IfInString, A_LoopField, РєРѕ РІСЃРµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєР°Рј
 		{
 			If (ItemSubType = "Amulet"){
 				LookupAffixAndSetInfoLine("data\ToAllAttributes_Amulet.txt", "Suffix", ItemLevel, CurrValue)
@@ -5615,10 +5615,10 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;If RegExMatch(A_LoopField, ".*to (Strength|Dexterity|Intelligence)", match)
-		If RegExMatch(A_LoopField, ".*к (силе|ловкости|интеллекту)", match)
+		If RegExMatch(A_LoopField, ".*Рє (СЃРёР»Рµ|Р»РѕРІРєРѕСЃС‚Рё|РёРЅС‚РµР»Р»РµРєС‚Сѓ)", match)
 		{
 			;If ((match1 = "Strength" and ItemSubType = "Belt") or (match1 = "Dexterity" and (ItemSubType = "Gloves" or ItemSubType = "Quiver")) or (match1 = "Intelligence" and ItemSubType = "Helmet"))
-			If ((match1 = "силе" and ItemSubType = "Belt") or (match1 = "ловкости" and (ItemSubType = "Gloves" or ItemSubType = "Quiver")) or (match1 = "интеллекту" and ItemSubType = "Helmet"))
+			If ((match1 = "СЃРёР»Рµ" and ItemSubType = "Belt") or (match1 = "Р»РѕРІРєРѕСЃС‚Рё" and (ItemSubType = "Gloves" or ItemSubType = "Quiver")) or (match1 = "РёРЅС‚РµР»Р»РµРєС‚Сѓ" and ItemSubType = "Helmet"))
 			{
 				LookupAffixAndSetInfoLine("data\To1Attribute_ilvl85.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
@@ -5630,7 +5630,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;IfInString, A_LoopField, increased Cast Speed
-		IfInString, A_LoopField, повышение скорости сотворения чар
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ
 		{
 			If (ItemGripType = "1H"){
 				; wands and scepters
@@ -5660,7 +5660,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 
 		;IfInString, A_LoopField, increased Critical Strike Chance for Spells
-		IfInString, A_LoopField, повышение шанса критического удара для чар
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РґР»СЏ С‡Р°СЂ
 		{
 			LookupAffixAndSetInfoLine("data\CritChanceSpells.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
@@ -5668,7 +5668,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		; Pure Critical Strike Chance must be checked last
 		;IfInString, A_LoopField, Critical Strike Chance
-		If RegExMatch(A_LoopField, ".* шанса критического удара$")
+		If RegExMatch(A_LoopField, ".* С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°$")
 		{
 			If (ItemBaseType = "Weapon"){
 				File := "data\CritChance_Weapon.txt"
@@ -5683,8 +5683,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, Critical Strike Multiplier
-		;IfInString, A_LoopField, к глобальному множителю критического удара
-		If RegExMatch(A_LoopField, ".* множителю критического удара$")
+		;IfInString, A_LoopField, Рє РіР»РѕР±Р°Р»СЊРЅРѕРјСѓ РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°
+		If RegExMatch(A_LoopField, ".* РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°$")
 		{
 			If (ItemBaseType = "Weapon"){
 				File := "data\CritMultiplierLocal.txt"
@@ -5697,7 +5697,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 
 		;IfInString, A_LoopField, increased Light Radius
-		IfInString, A_LoopField, увеличение радиуса обзора
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СЂР°РґРёСѓСЃР° РѕР±Р·РѕСЂР°
 		{
 			; T1 comes with "#% increased Accuracy Rating", T2-3 with "+# to Accuracy Rating"
 			; This part can always be assigned now. The Accuracy will be solved later in case it's T2-3 and it forms a complex affix.
@@ -5711,7 +5711,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Accuracy Rating
-		IfInString, A_LoopField, повышение меткости
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјРµС‚РєРѕСЃС‚Рё
 		{
 			; This variant comes always with Light Radius, see part right above.
 			HasIncrLightRadius := False	; Second part is accounted for, no need to involve "+# to Accuracy Rating" or complex affixes.
@@ -5722,9 +5722,9 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, Chance to Block
-		;IfInString, A_LoopField, шанс блока
+		;IfInString, A_LoopField, С€Р°РЅСЃ Р±Р»РѕРєР°
 		;?
-		If RegExMatch(A_LoopField, ".* шанс блока$")
+		If RegExMatch(A_LoopField, ".* С€Р°РЅСЃ Р±Р»РѕРєР°$")
 		{
 			If (not HasChanceToBlockStrShield){
 				LookupAffixAndSetInfoLine("data\BlockChance.txt", "Suffix", ItemLevel, CurrValue)
@@ -5733,27 +5733,27 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		; Flask affixes (on belts)
 		;IfInString, A_LoopField, reduced Flask Charges used
-		IfInString, A_LoopField, уменьшение используемого количества зарядов флакона
+		IfInString, A_LoopField, СѓРјРµРЅСЊС€РµРЅРёРµ РёСЃРїРѕР»СЊР·СѓРµРјРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° Р·Р°СЂСЏРґРѕРІ С„Р»Р°РєРѕРЅР°
 		{
 			LookupAffixAndSetInfoLine("data\FlaskChargesUsed.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Flask Charges gained
-		IfInString, A_LoopField, увеличение получаемого количества зарядов флакона
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РїРѕР»СѓС‡Р°РµРјРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° Р·Р°СЂСЏРґРѕРІ С„Р»Р°РєРѕРЅР°
 		{
 			LookupAffixAndSetInfoLine("data\FlaskChargesGained.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Flask effect duration
-		IfInString, A_LoopField, увеличение длительности эффекта флакона
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё СЌС„С„РµРєС‚Р° С„Р»Р°РєРѕРЅР°
 		{
 			LookupAffixAndSetInfoLine("data\FlaskDuration.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 
 		;IfInString, A_LoopField, increased Quantity of Items found
-		;IfInString, A_LoopField, увеличение количества находимых предметов
-		IfInString, A_LoopField, увеличение количества найденных предметов
+		;IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РЅР°С…РѕРґРёРјС‹С… РїСЂРµРґРјРµС‚РѕРІ
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РЅР°Р№РґРµРЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ
 		{
 			If (Item.IsShaperBase)
 			{
@@ -5767,15 +5767,15 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, Life gained on Kill
-		IfInString, A_LoopField, здоровья за убийство
+		IfInString, A_LoopField, Р·РґРѕСЂРѕРІСЊСЏ Р·Р° СѓР±РёР№СЃС‚РІРѕ
 		{
 			LookupAffixAndSetInfoLine("data\LifeOnKill.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Life gained for each Enemy hit ; Cuts off the rest to accommodate both "by Attacks" and "by your Attacks"
-		;IfInString, A_LoopField, здоровья за каждого задетого атакой врага
-		;IfInString, A_LoopField, здоровья за каждый удар атаками по врагу
-		If RegExMatch(A_LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")
+		;IfInString, A_LoopField, Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґРѕРіРѕ Р·Р°РґРµС‚РѕРіРѕ Р°С‚Р°РєРѕР№ РІСЂР°РіР°
+		;IfInString, A_LoopField, Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґС‹Р№ СѓРґР°СЂ Р°С‚Р°РєР°РјРё РїРѕ РІСЂР°РіСѓ
+		If RegExMatch(A_LoopField, "Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґРѕРіРѕ Р·Р°РґРµС‚РѕРіРѕ Р°С‚Р°РєРѕР№ РІСЂР°РіР°|Р·РґРѕСЂРѕРІСЊСЏ Р·Р° РєР°Р¶РґС‹Р№ СѓРґР°СЂ Р°С‚Р°РєР°РјРё РїРѕ РІСЂР°РіСѓ")
 		{
 			If (ItemBaseType = "Weapon") {
 				File := "data\LifeOnHit_Weapon.txt"
@@ -5790,15 +5790,15 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, of Life Regenerated per second		
-		;If RegExMatch(A_LoopField, "Регенерирует \(.*\)% здоровья в секунду")
-		If RegExMatch(A_LoopField, "Регенерация .*% здоровья в секунду")
+		;If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂРёСЂСѓРµС‚ \(.*\)% Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ")
+		If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂР°С†РёСЏ .*% Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ")
 		{
 			LookupAffixAndSetInfoLine("data\LifeRegenPercent.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Life Regenerated per second
-		;If RegExMatch(A_LoopField, "Регенерирует \(.*\) здоровья в секунду")
-		If RegExMatch(A_LoopField, "Регенерация .* здоровья в секунду")
+		;If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂРёСЂСѓРµС‚ \(.*\) Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ")
+		If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂР°С†РёСЏ .* Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ")
 		{
 			If (ItemSubType = "BodyArmour"){
 				LookupAffixAndSetInfoLine("data\LifeRegen_BodyArmour.txt", "Suffix", ItemLevel, CurrValue)
@@ -5810,31 +5810,31 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;IfInString, A_LoopField, Mana Gained on Kill
-		IfInString, A_LoopField, маны за убийство
+		IfInString, A_LoopField, РјР°РЅС‹ Р·Р° СѓР±РёР№СЃС‚РІРѕ
 		{
 			LookupAffixAndSetInfoLine("data\ManaOnKill.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Mana Regeneration Rate
-		IfInString, A_LoopField, повышение скорости регенерации маны
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЂРµРіРµРЅРµСЂР°С†РёРё РјР°РЅС‹
 		{
 			LookupAffixAndSetInfoLine("data\ManaRegen.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Projectile Speed
-		IfInString, A_LoopField, повышение скорости снарядов
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СЃРЅР°СЂСЏРґРѕРІ
 		{
 			LookupAffixAndSetInfoLine("data\ProjectileSpeed.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, reduced Attribute Requirements
-		IfInString, A_LoopField, снижение требований к характеристикам
+		IfInString, A_LoopField, СЃРЅРёР¶РµРЅРёРµ С‚СЂРµР±РѕРІР°РЅРёР№ Рє С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєР°Рј
 		{
 			LookupAffixAndSetInfoLine("data\ReducedAttrReqs.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, to all Elemental Resistances
-		IfInString, A_LoopField, к сопротивлению всем стихиям
+		IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РІСЃРµРј СЃС‚РёС…РёСЏРј
 		{
 			If (ItemSubType = "Amulet"){
 				LookupAffixAndSetInfoLine("data\ToAllResist_Amulet.txt", "Suffix", ItemLevel, CurrValue)
@@ -5846,49 +5846,49 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;IfInString, A_LoopField, to Fire Resistance
-		IfInString, A_LoopField, к сопротивлению огню
+		IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РѕРіРЅСЋ
 		{
 			LookupAffixAndSetInfoLine("data\ToFireResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, to Cold Resistance
-		IfInString, A_LoopField, к сопротивлению холоду
+		IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С…РѕР»РѕРґСѓ
 		{
 			LookupAffixAndSetInfoLine("data\ToColdResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, to Lightning Resistance
-		IfInString, A_LoopField, к сопротивлению молнии
+		IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РјРѕР»РЅРёРё
 		{
 			LookupAffixAndSetInfoLine("data\ToLightningResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, to Chaos Resistance
-		IfInString, A_LoopField, к сопротивлению хаосу
+		IfInString, A_LoopField, Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С…Р°РѕСЃСѓ
 		{
 			LookupAffixAndSetInfoLine("data\ToChaosResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Stun Duration on Enemies
-		IfInString, A_LoopField, увеличение длительности оглушения на врагах
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё РѕРіР»СѓС€РµРЅРёСЏ РЅР° РІСЂР°РіР°С…
 		{
 			LookupAffixAndSetInfoLine("data\StunDuration.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, reduced Enemy Stun Threshold
-		IfInString, A_LoopField, снижение порога оглушения врагов
+		IfInString, A_LoopField, СЃРЅРёР¶РµРЅРёРµ РїРѕСЂРѕРіР° РѕРіР»СѓС€РµРЅРёСЏ РІСЂР°РіРѕРІ
 		{
 			LookupAffixAndSetInfoLine("data\StunThreshold.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, additional Physical Damage Reduction
-		IfInString, A_LoopField, дополнительного снижения получаемого физического урона
+		IfInString, A_LoopField, РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРіРѕ СЃРЅРёР¶РµРЅРёСЏ РїРѕР»СѓС‡Р°РµРјРѕРіРѕ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
 		{
 			LookupAffixAndSetInfoLine("data\AdditionalPhysicalDamageReduction.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, chance to Dodge Attacks
-		IfInString, A_LoopField, шанс увернуться от атак
+		IfInString, A_LoopField, С€Р°РЅСЃ СѓРІРµСЂРЅСѓС‚СЊСЃСЏ РѕС‚ Р°С‚Р°Рє
 		{
 			If (ItemSubType = "BodyArmour")
 			{
@@ -5902,55 +5902,55 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;IfInString, A_LoopField, of Energy Shield Regenerated per second
-		If RegExMatch(A_LoopField, "Регенерирует .*% энергетического щита в секунду|Регенерация .*% энергетического щита в секунду")
+		If RegExMatch(A_LoopField, "Р РµРіРµРЅРµСЂРёСЂСѓРµС‚ .*% СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° РІ СЃРµРєСѓРЅРґСѓ|Р РµРіРµРЅРµСЂР°С†РёСЏ .*% СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° РІ СЃРµРєСѓРЅРґСѓ")
 		{
 			LookupAffixAndSetInfoLine("data\EnergyShieldRegeneratedPerSecond.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, additional Block Chance against Projectiles
-		IfInString, A_LoopField, дополнительный шанс блока против снарядов
+		IfInString, A_LoopField, РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ С€Р°РЅСЃ Р±Р»РѕРєР° РїСЂРѕС‚РёРІ СЃРЅР°СЂСЏРґРѕРІ
 		{
 			LookupAffixAndSetInfoLine("data\AdditionalBlockChanceAgainstProjectiles.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, chance to Avoid being Stunned
-		IfInString, A_LoopField, шанс избежать оглушения
+		IfInString, A_LoopField, С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ РѕРіР»СѓС€РµРЅРёСЏ
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToAvoidBeingStunned.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, chance to Avoid Elemental Ailments
-		IfInString, A_LoopField, шанс избежать стихийного состояния
+		IfInString, A_LoopField, С€Р°РЅСЃ РёР·Р±РµР¶Р°С‚СЊ СЃС‚РёС…РёР№РЅРѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToAvoidElementalAilments.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, chance to Dodge Spell Damage
-		IfInString, A_LoopField, шанс увернуться от урона от чар
+		IfInString, A_LoopField, С€Р°РЅСЃ СѓРІРµСЂРЅСѓС‚СЊСЃСЏ РѕС‚ СѓСЂРѕРЅР° РѕС‚ С‡Р°СЂ
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToDodgeSpellDamage.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Chance to Block Spells
-		IfInString, A_LoopField, шанс блока чар
+		IfInString, A_LoopField, С€Р°РЅСЃ Р±Р»РѕРєР° С‡Р°СЂ
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToBlockSpells.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Life gained when you Block
-		IfInString, A_LoopField, здоровья при блоке
+		IfInString, A_LoopField, Р·РґРѕСЂРѕРІСЊСЏ РїСЂРё Р±Р»РѕРєРµ
 		{
 			LookupAffixAndSetInfoLine("data\LifeOnBlock.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Mana gained when you Block
-		IfInString, A_LoopField, маны при блоке
+		IfInString, A_LoopField, РјР°РЅС‹ РїСЂРё Р±Р»РѕРєРµ
 		{
 			LookupAffixAndSetInfoLine("data\ManaOnBlock.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Attack and Cast Speed
-		If RegExMatch(A_LoopField, ".*повышение скорости атаки и сотворения чар$")
+		If RegExMatch(A_LoopField, ".*РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё Рё СЃРѕС‚РІРѕСЂРµРЅРёСЏ С‡Р°СЂ$")
 		{
 			LookupAffixAndSetInfoLine("data\AttackAndCastSpeed_Shield.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
@@ -5958,25 +5958,25 @@ ParseAffixes(ItemDataAffixes, Item)
 		If (ItemBaseType = "Weapon")
 		{
 			;IfInString, A_LoopField, Chance to Ignite
-			IfInString, A_LoopField, шанс поджечь
+			IfInString, A_LoopField, С€Р°РЅСЃ РїРѕРґР¶РµС‡СЊ
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToIgnite.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Chance to Freeze
-			IfInString, A_LoopField, шанс заморозить
+			IfInString, A_LoopField, С€Р°РЅСЃ Р·Р°РјРѕСЂРѕР·РёС‚СЊ
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToFreeze.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, Chance to Shock
-			IfInString, A_LoopField, шанс наложить шок
+			IfInString, A_LoopField, С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ С€РѕРє
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToShock.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to cause Bleeding on Hit
-			IfInString, A_LoopField, шанс наложить кровотечение при нанесении удара
+			IfInString, A_LoopField, С€Р°РЅСЃ РЅР°Р»РѕР¶РёС‚СЊ РєСЂРѕРІРѕС‚РµС‡РµРЅРёРµ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР°
 			{
 				If (CurrValue = 25)
 				{
@@ -5989,39 +5989,39 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			;IfInString, A_LoopField, chance to Poison on Hit
-			IfInString, A_LoopField, шанс отравить при нанесении удара
+			IfInString, A_LoopField, С€Р°РЅСЃ РѕС‚СЂР°РІРёС‚СЊ РїСЂРё РЅР°РЅРµСЃРµРЅРёРё СѓРґР°СЂР°
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToPoison.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Burning Damage
-			IfInString, A_LoopField, увеличение урона от горения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РіРѕСЂРµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\IncrBurningDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Damage with Poison
-			IfInString, A_LoopField, увеличение урона от яда
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ СЏРґР°
 			{
 				LookupAffixAndSetInfoLine("data\IncrPoisonDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Damage with Bleeding
-			IfInString, A_LoopField, увеличение урона от кровотечения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\IncrBleedingDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Poison Duration
-			;IfInString, A_LoopField, увеличение длительности яда
-			;IfInString, A_LoopField, увеличение длительности отравления
-			If RegExMatch(A_LoopField, "увеличение длительности (яда|отравления)")
+			;IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё СЏРґР°
+			;IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё РѕС‚СЂР°РІР»РµРЅРёСЏ
+			If RegExMatch(A_LoopField, "СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё (СЏРґР°|РѕС‚СЂР°РІР»РµРЅРёСЏ)")
 			{
 				LookupAffixAndSetInfoLine("data\PoisonDuration.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Bleed duration
-			IfInString, A_LoopField, увеличение длительности кровотечения
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РґР»РёС‚РµР»СЊРЅРѕСЃС‚Рё РєСЂРѕРІРѕС‚РµС‡РµРЅРёСЏ
 			{
 				LookupAffixAndSetInfoLine("data\BleedDuration.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
@@ -6032,7 +6032,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		; Prefixes
 		
 		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Physical Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? физического урона")
+		If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°")
 		{
 			If (ItemBaseType = "Weapon")
 			{
@@ -6064,10 +6064,10 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Cold Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от холода")
+		If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ С…РѕР»РѕРґР°")
 		{
 			;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Cold Damage to Spells")
-			If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от холода к чарам")
+			If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ С…РѕР»РѕРґР° Рє С‡Р°СЂР°Рј")
 			{
 				If (ItemGripType = "1H"){
 					File := "data\SpellAddsCold_1H.txt"
@@ -6097,10 +6097,10 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Fire Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от огня")
+		If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ РѕРіРЅСЏ")
 		{
 			;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Fire Damage to Spells")
-			If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от огня к чарам")
+			If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ РѕРіРЅСЏ Рє С‡Р°СЂР°Рј")
 			{
 				If (ItemGripType = "1H"){
 					File := "data\SpellAddsFire_1H.txt"
@@ -6130,10 +6130,10 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Lightning Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от молнии")
+		If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ РјРѕР»РЅРёРё")
 		{
 			;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Lightning Damage to Spells")
-			If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от молнии к чарам")
+			If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° РѕС‚ РјРѕР»РЅРёРё Рє С‡Р°СЂР°Рј")
 			{
 				If (ItemGripType = "1H"){
 					File := "data\SpellAddsLightning_1H.txt"
@@ -6164,7 +6164,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Chaos Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона хаосом")
+		If RegExMatch(A_LoopField, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ \d+? РґРѕ \d+? СѓСЂРѕРЅР° С…Р°РѕСЃРѕРј")
 		{
 			If ((ItemGripType = "1H") or (ItemSubType = "Bow")){
 				; Added damage for bows follows 1H tiers
@@ -6182,7 +6182,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		;IfInString, A_LoopField, increased maximum Energy Shield
-		IfInString, A_LoopField, повышение максимума энергетического щита
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
 		{
 			; Contrary to %Armour and %Evasion this one has a unique wording due to "maximum" and is clearly from Amulets (or Legacy Rings)
 			LookupAffixAndSetInfoLine("data\IncrMaxEnergyShield_Amulet.txt", "Prefix", ItemLevel, CurrValue)
@@ -6191,42 +6191,42 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 
 		;IfInString, A_LoopField, Physical Damage to Melee Attackers
-		IfInString, A_LoopField, физического урона атакующим в ближнем бою		
+		IfInString, A_LoopField, С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° Р°С‚Р°РєСѓСЋС‰РёРј РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ		
 		{
 			LookupAffixAndSetInfoLine("data\PhysDamagereturn.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 
 		;IfInString, A_LoopField, to Level of Socketed		
-		If (RegExMatch(A_LoopField, ".* к уровню размещённых .*"))
+		If (RegExMatch(A_LoopField, ".* Рє СѓСЂРѕРІРЅСЋ СЂР°Р·РјРµС‰С‘РЅРЅС‹С… .*"))
 		{
 			;If RegExMatch(A_LoopField, "(Fire|Cold|Lightning)"){
-			If RegExMatch(A_LoopField, "(огня|холода|молнии)"){
+			If RegExMatch(A_LoopField, "(РѕРіРЅСЏ|С…РѕР»РѕРґР°|РјРѕР»РЅРёРё)"){
 				File := "data\GemLevel_Elemental.txt"
 			}
 			;Else If (InStr(A_LoopField, "Chaos")){
-			Else If (InStr(A_LoopField, "хаоса")){
+			Else If (InStr(A_LoopField, "С…Р°РѕСЃР°")){
 				File := "data\GemLevel_Chaos.txt"
 			}
 			;Else If (InStr(A_LoopField, "Bow")){
-			Else If (InStr(A_LoopField, "лука")){
+			Else If (InStr(A_LoopField, "Р»СѓРєР°")){
 				File := "data\GemLevel_Bow.txt"
 			}
 			;Else If (InStr(A_LoopField, "Melee")){
-			Else If (InStr(A_LoopField, "ближнего боя")){
+			Else If (InStr(A_LoopField, "Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ")){
 				File := "data\GemLevel_Melee.txt"
 			}
 			;Else If (InStr(A_LoopField, "Minion")){
-			Else If (InStr(A_LoopField, "приспешников")){
+			Else If (InStr(A_LoopField, "РїСЂРёСЃРїРµС€РЅРёРєРѕРІ")){
 				File := "data\GemLevel_Minion.txt"
 			}
 			; Catarina prefix
 			;Else If (InStr(A_LoopField, "Support")){
-			Else If (InStr(A_LoopField, "поддержки")){
+			Else If (InStr(A_LoopField, "РїРѕРґРґРµСЂР¶РєРё")){
 				File := "data\GemLevel_Support.txt"
 			}
 			;Else If (InStr(A_LoopField, "Socketed Gems"))
-			Else If (InStr(A_LoopField, ".* размещённых камней$"))
+			Else If (InStr(A_LoopField, ".* СЂР°Р·РјРµС‰С‘РЅРЅС‹С… РєР°РјРЅРµР№$"))
 			{
 				If (ItemSubType = "Ring"){
 					File := "data\GemLevel_UnsetRing.txt"
@@ -6239,13 +6239,13 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, Physical Attack Damage Leeched as
-		IfInString, A_LoopField, физического урона от атак похищается в виде
+		IfInString, A_LoopField, С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РѕС‚ Р°С‚Р°Рє РїРѕС…РёС‰Р°РµС‚СЃСЏ РІ РІРёРґРµ
 		{
 			LookupAffixAndSetInfoLine("data\PhysicalAttackDamageLeeched.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, Movement Speed
-		If (RegExMatch(A_LoopField, ".*% повышение скорости передвижения$"))
+		If (RegExMatch(A_LoopField, ".*% РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРµСЂРµРґРІРёР¶РµРЅРёСЏ$"))
 		{
 			If (ItemSubType = "Boots")
 			{
@@ -6259,7 +6259,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		;IfInString, A_LoopField, increased Elemental Damage with Attack Skills
-		IfInString, A_LoopField, увеличение урона от стихий от умений атак
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ СЃС‚РёС…РёР№ РѕС‚ СѓРјРµРЅРёР№ Р°С‚Р°Рє
 		{
 			If (ItemBaseType = "Weapon"){
 				; Because GGG apparently thought having the exact same iLvls and tiers except for one single percentage point is necessary. T1-2: 31-37|38-42 vs. 31-36|37-42
@@ -6278,34 +6278,34 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		; Flask effects (on belts)
 		;IfInString, A_LoopField, increased Flask Mana Recovery rate
-		IfInString, A_LoopField, повышение скорости восстановления маны от флакона
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РјР°РЅС‹ РѕС‚ С„Р»Р°РєРѕРЅР°
 		{
 			LookupAffixAndSetInfoLine("data\FlaskManaRecoveryRate.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Flask Life Recovery rate
-		IfInString, A_LoopField, повышение скорости восстановления здоровья от флакона
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ РѕС‚ С„Р»Р°РєРѕРЅР°
 		{
 			LookupAffixAndSetInfoLine("data\FlaskLifeRecoveryRate.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		If (ItemSubType == "Shield"){
 			;IfInString, A_LoopField, increased Global Physical Damage
-			;IfInString, A_LoopField, увеличение физического урона
-			IfInString, A_LoopField, увеличение глобального физического урона
+			;IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
 			{
 				HasIncrPhysDmg := False	; No worries about hybrid here.
 				LookupAffixAndSetInfoLine("data\IncrPhysDamage_Shield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Elemental Damage
-			IfInString, A_LoopField, увеличение урона от стихий
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ СЃС‚РёС…РёР№
 			{
 				LookupAffixAndSetInfoLine("data\IncrEleDamage_Shield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			;IfInString, A_LoopField, increased Attack Damage
-			IfInString, A_LoopField, увеличение урона от атак
+			IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ Р°С‚Р°Рє
 			{
 				LookupAffixAndSetInfoLine("data\IncrAttackDamage_Shield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
@@ -6316,21 +6316,21 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		; Can be either Leo prefix or jewel suffix. Jewels are checked already, so it's Leo.
 		;If RegExMatch(A_LoopField, ".*increased Damage$")
-		If RegExMatch(A_LoopField, ".*увеличение урона$")
+		If RegExMatch(A_LoopField, ".*СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°$")
 		{
 			LookupAffixAndSetInfoLine("data\IncrDamageLeo.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Haku prefix
 		;IfInString, A_LoopField, to Quality of Socketed Support Gems
-		IfInString, A_LoopField, к качеству размещённых камней поддержки
+		IfInString, A_LoopField, Рє РєР°С‡РµСЃС‚РІСѓ СЂР°Р·РјРµС‰С‘РЅРЅС‹С… РєР°РјРЅРµР№ РїРѕРґРґРµСЂР¶РєРё
 		{
 			LookupAffixAndSetInfoLine("data\GemQuality_Support.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Elreon prefix
 		;IfInString, A_LoopField, to Mana Cost of Skills
-		IfInString, A_LoopField, к затратам маны умений
+		IfInString, A_LoopField, Рє Р·Р°С‚СЂР°С‚Р°Рј РјР°РЅС‹ СѓРјРµРЅРёР№
 		{
 			CurrValue := Abs(CurrValue)	; Turn potentially negative number into positive.
 			LookupAffixAndSetInfoLine("data\ManaCostOfSkills.txt", "Prefix", ItemLevel, CurrValue)
@@ -6338,39 +6338,39 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		; Vorici prefix
 		;IfInString, A_LoopField, increased Life Leeched per Second
-		IfInString, A_LoopField, повышение скорости похищения здоровья в секунду
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё РїРѕС…РёС‰РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ РІ СЃРµРєСѓРЅРґСѓ
 		{
 			LookupAffixAndSetInfoLine("data\LifeLeechedPerSecond.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Tora dual suffixes
 		;IfInString, A_LoopField, increased Trap Throwing Speed
-		IfInString, A_LoopField, повышение скорости броска ловушки
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р±СЂРѕСЃРєР° Р»РѕРІСѓС€РєРё
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapThrowingMineLayingSpeed.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Mine Laying Speed
-		IfInString, A_LoopField, повышение скорости установки мины
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё СѓСЃС‚Р°РЅРѕРІРєРё РјРёРЅС‹
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapThrowingMineLayingSpeed.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Trap Damage
-		IfInString, A_LoopField, увеличение урона от ловушек
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ Р»РѕРІСѓС€РµРє
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapMineDamage.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		;IfInString, A_LoopField, increased Mine Damage
-		IfInString, A_LoopField, увеличение урона от мин
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ РјРёРЅ
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapMineDamage.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Vagan suffix
 		;IfInString, A_LoopField, to Weapon range
-		IfInString, A_LoopField, к дальности оружия
+		IfInString, A_LoopField, Рє РґР°Р»СЊРЅРѕСЃС‚Рё РѕСЂСѓР¶РёСЏ
 		{
 			LookupAffixAndSetInfoLine("data\ToWeaponRange.txt", "Suffix", ItemLevel, CurrValue)
 		}
@@ -6378,15 +6378,15 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		; Vagan prefix
 		;IfInString, A_LoopField, Gems in this item are Supported by Lvl 1 Blood Magic
-		; мод Вилмара - уточнить
-		IfInString, A_LoopField, Размещённые камни усилены Магией крови 1 уровня
+		; РјРѕРґ Р’РёР»РјР°СЂР° - СѓС‚РѕС‡РЅРёС‚СЊ
+		IfInString, A_LoopField, Р Р°Р·РјРµС‰С‘РЅРЅС‹Рµ РєР°РјРЅРё СѓСЃРёР»РµРЅС‹ РњР°РіРёРµР№ РєСЂРѕРІРё 1 СѓСЂРѕРІРЅСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Vagan 7", ""), A_Index)
 			Continue
 		}
 		; Vagan prefix
 		;IfInString, A_LoopField, Hits can't be Evaded
-		IfInString, A_LoopField, От ударов нельзя уклониться
+		IfInString, A_LoopField, РћС‚ СѓРґР°СЂРѕРІ РЅРµР»СЊР·СЏ СѓРєР»РѕРЅРёС‚СЊСЃСЏ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Buy:Vagan 4", ""), A_Index)
 			Continue
@@ -6396,37 +6396,37 @@ ParseAffixes(ItemDataAffixes, Item)
 		; Meta Craft Mods
 		
 		;IfInString, A_LoopField, Can have multiple Crafted Mods
-		IfInString, A_LoopField, Может иметь несколько ремесленных свойств
+		IfInString, A_LoopField, РњРѕР¶РµС‚ РёРјРµС‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ СЂРµРјРµСЃР»РµРЅРЅС‹С… СЃРІРѕР№СЃС‚РІ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Elreon 8", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Prefixes Cannot Be Changed
-		IfInString, A_LoopField, Префиксы нельзя изменить
+		IfInString, A_LoopField, РџСЂРµС„РёРєСЃС‹ РЅРµР»СЊР·СЏ РёР·РјРµРЅРёС‚СЊ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Haku 8", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Suffixes Cannot Be Changed
-		IfInString, A_LoopField, Суффиксы нельзя изменить
+		IfInString, A_LoopField, РЎСѓС„С„РёРєСЃС‹ РЅРµР»СЊР·СЏ РёР·РјРµРЅРёС‚СЊ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Tora 8", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Attack Mods
-		IfInString, A_LoopField, Невозможно сгенерировать свойства атак
+		IfInString, A_LoopField, РќРµРІРѕР·РјРѕР¶РЅРѕ СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ СЃРІРѕР№СЃС‚РІР° Р°С‚Р°Рє
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Cata 8", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Caster Mods
-		IfInString, A_LoopField, Невозможно сгенерировать свойства чар
+		IfInString, A_LoopField, РќРµРІРѕР·РјРѕР¶РЅРѕ СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ СЃРІРѕР№СЃС‚РІР° С‡Р°СЂ
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Vagan 8", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Mods with Required Lvl above Lvl 28
-		IfInString, A_LoopField, Невозможно сгенерировать свойства, требующие уровень выше 28
+		IfInString, A_LoopField, РќРµРІРѕР·РјРѕР¶РЅРѕ СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ СЃРІРѕР№СЃС‚РІР°, С‚СЂРµР±СѓСЋС‰РёРµ СѓСЂРѕРІРµРЅСЊ РІС‹С€Рµ 28
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Leo 8", ""), A_Index)
 			Continue
@@ -6813,8 +6813,8 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		If (HasStunBlockRecovery and HasIncrDefences and (ItemBaseType = "Armour") )
 		{
-			/* ; i--- шанс блока на ростовом щите
-			   ; включить после того как починят -- отключение этого блока позволяет отображать больше аффиксов на предмете - необработанным остаётся только шанс блока щитом
+			/* ; i--- С€Р°РЅСЃ Р±Р»РѕРєР° РЅР° СЂРѕСЃС‚РѕРІРѕРј С‰РёС‚Рµ
+			   ; РІРєР»СЋС‡РёС‚СЊ РїРѕСЃР»Рµ С‚РѕРіРѕ РєР°Рє РїРѕС‡РёРЅСЏС‚ -- РѕС‚РєР»СЋС‡РµРЅРёРµ СЌС‚РѕРіРѕ Р±Р»РѕРєР° РїРѕР·РІРѕР»СЏРµС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊ Р±РѕР»СЊС€Рµ Р°С„С„РёРєСЃРѕРІ РЅР° РїСЂРµРґРјРµС‚Рµ - РЅРµРѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹Рј РѕСЃС‚Р°С‘С‚СЃСЏ С‚РѕР»СЊРєРѕ С€Р°РЅСЃ Р±Р»РѕРєР° С‰РёС‚РѕРј
 			If (HasChanceToBlockStrShield)
 			{
 				; TODO: UNHANDLED CASE. Special case: 5 mods can combine into 3 lines here. Implementing this later, because it is so rare.
@@ -7057,7 +7057,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 		;IfInString, ItemNamePlate, Spirit Shield
-		If RegExMatch(ItemNamePlate, "i)щит духа")
+		If RegExMatch(ItemNamePlate, "i)С‰РёС‚ РґСѓС…Р°")
 		{
 			FilePrefix := "data\IncrEleTypeDamage_Prefix_WandSceptreFocus.txt"
 			FileSuffixEnd := False
@@ -7123,7 +7123,7 @@ ParseAffixes(ItemDataAffixes, Item)
 		Itemdata.UncAffTmpAffixLines[A_Index] := AffixLines[A_Index]
 	}
 	;If (Itemdata.Rarity = "Magic"){
-	If (Itemdata.Rarity = "Волшебный"){
+	If (Itemdata.Rarity = "Р’РѕР»С€РµР±РЅС‹Р№"){
 		PrefixLimit := 1
 		SuffixLimit := 1
 	} Else {
@@ -7489,10 +7489,10 @@ PreProcessContents(CBContents)
 		; Could be improved, should suffice though because the alternative would be the item name/type, which can't have any dots.
 		; This should work regardless of the selected language.
 		;If (RegExMatch(match2, "\.")) {
-		; в русском языке вместо точки в фразе используется запятая
+		; РІ СЂСѓСЃСЃРєРѕРј СЏР·С‹РєРµ РІРјРµСЃС‚Рѕ С‚РѕС‡РєРё РІ С„СЂР°Р·Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ Р·Р°РїСЏС‚Р°СЏ
 		;If (RegExMatch(match2, "\,")) {
-		; есть предметы в именах которых присутствует запятая, поэтому будем использовать часть фразы
-		If (RegExMatch(match2, "Вы не можете использовать этот предмет\, его параметры не будут учтены")) {
+		; РµСЃС‚СЊ РїСЂРµРґРјРµС‚С‹ РІ РёРјРµРЅР°С… РєРѕС‚РѕСЂС‹С… РїСЂРёСЃСѓС‚СЃС‚РІСѓРµС‚ Р·Р°РїСЏС‚Р°СЏ, РїРѕСЌС‚РѕРјСѓ Р±СѓРґРµРј РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ С‡Р°СЃС‚СЊ С„СЂР°Р·С‹
+		If (RegExMatch(match2, "Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЌС‚РѕС‚ РїСЂРµРґРјРµС‚\, РµРіРѕ РїР°СЂР°РјРµС‚СЂС‹ РЅРµ Р±СѓРґСѓС‚ СѓС‡С‚РµРЅС‹")) {
 			CBContents := match1 . match3	
 		}		
 	}
@@ -7621,8 +7621,8 @@ WriteToLogFile(data, file, project) {
 ParseAddedDamage(String, DmgType, ByRef DmgLo, ByRef DmgHi)
 {
 	;If (RegExMatch(String, "Adds (\d+) to (\d+) " DmgType " Damage", Match))
-	;If (RegExMatch(String, "Добавляет от (\d+) до (\d+) урона от " DmgType, Match))
-	If (RegExMatch(String, "Добавляет от (\d+) до (\d+) урона " DmgType, Match))
+	;If (RegExMatch(String, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ (\d+) РґРѕ (\d+) СѓСЂРѕРЅР° РѕС‚ " DmgType, Match))
+	If (RegExMatch(String, "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ (\d+) РґРѕ (\d+) СѓСЂРѕРЅР° " DmgType, Match))
 	{
 	;StringSplit, Arr, Match, %A_Space%
 	;StringSplit, Arr, Arr2, -
@@ -7671,7 +7671,7 @@ AssembleDamageDetails(FullItemData)
 	{
 		; Get quality
 		;IfInString, A_LoopField, Quality:
-		IfInString, A_LoopField, Качество:
+		IfInString, A_LoopField, РљР°С‡РµСЃС‚РІРѕ:
 		{
 			StringSplit, Arr, A_LoopField, %A_Space%, +`%
 			Quality := Arr2
@@ -7680,7 +7680,7 @@ AssembleDamageDetails(FullItemData)
 		
 		; Get total physical damage
 		;IfInString, A_LoopField, Physical Damage:
-		IfInString, A_LoopField, Физический урон:
+		IfInString, A_LoopField, Р¤РёР·РёС‡РµСЃРєРёР№ СѓСЂРѕРЅ:
 		{
 			StringSplit, Arr, A_LoopField, %A_Space%
 			StringSplit, Arr, Arr3, -
@@ -7691,7 +7691,7 @@ AssembleDamageDetails(FullItemData)
 		
 		; Get attack speed
 		;IfInString, A_LoopField, Attacks per Second:
-		IfInString, A_LoopField, Атак в секунду:
+		IfInString, A_LoopField, РђС‚Р°Рє РІ СЃРµРєСѓРЅРґСѓ:
 		{
 			StringSplit, Arr, A_LoopField, %A_Space%
 			AttacksPerSecond := Arr4
@@ -7700,7 +7700,7 @@ AssembleDamageDetails(FullItemData)
 		
 		; Get percentage attack speed increase
 		;IfInString, A_LoopField, increased Attack Speed
-		IfInString, A_LoopField, повышение скорости атаки
+		IfInString, A_LoopField, РїРѕРІС‹С€РµРЅРёРµ СЃРєРѕСЂРѕСЃС‚Рё Р°С‚Р°РєРё
 		{
 			StringSplit, Arr, A_LoopField, %A_Space%, `%
 			AttackSpeedIncr += Arr1		; There are a few weapons with an AS implicit, so we ADD all relevant lines here
@@ -7709,7 +7709,7 @@ AssembleDamageDetails(FullItemData)
 		
 		; Get percentage physical damage increase
 		;IfInString, A_LoopField, increased Physical Damage
-		IfInString, A_LoopField, увеличение физического урона
+		IfInString, A_LoopField, СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР°
 		{
 			StringSplit, Arr, A_LoopField, %A_Space%, `%
 			PhysIncr := Arr1
@@ -7718,47 +7718,47 @@ AssembleDamageDetails(FullItemData)
 		
 		; Skip "ele/chaos damage to spells" being counted as "added damage" (implying to attacks)
 		;IfNotInString, A_LoopField, Damage to Spells
-		IfNotInString, A_LoopField, урона от чар
+		IfNotInString, A_LoopField, СѓСЂРѕРЅР° РѕС‚ С‡Р°СЂ
 		{
 			; Parse added damage
 			; Differentiate general mods from main hand and off hand only
 			; Examples for main/off: Dyadus, Wings of Entropy
 			
 			;IfInString, A_LoopField, in Main Hand
-			IfInString, A_LoopField, в правой руке 
+			IfInString, A_LoopField, РІ РїСЂР°РІРѕР№ СЂСѓРєРµ 
 			{
 				;ParseAddedDamage(A_LoopField, "Fire", MainHFireLo, MainHFireHi)
-				ParseAddedDamage(A_LoopField, "от огня", MainHFireLo, MainHFireHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ РѕРіРЅСЏ", MainHFireLo, MainHFireHi)
 				;ParseAddedDamage(A_LoopField, "Cold", MainHColdLo, MainHColdHi)
-				ParseAddedDamage(A_LoopField, "от холода", MainHColdLo, MainHColdHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ С…РѕР»РѕРґР°", MainHColdLo, MainHColdHi)
 				;ParseAddedDamage(A_LoopField, "Lightning", MainHLighLo, MainHLighHi)
-				ParseAddedDamage(A_LoopField, "от молнии", MainHLighLo, MainHLighHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ РјРѕР»РЅРёРё", MainHLighLo, MainHLighHi)
 				;ParseAddedDamage(A_LoopField, "Chaos", MainHChaoLo, MainHChaoHi)
-				ParseAddedDamage(A_LoopField, "хаосом", MainHChaoLo, MainHChaoHi)
+				ParseAddedDamage(A_LoopField, "С…Р°РѕСЃРѕРј", MainHChaoLo, MainHChaoHi)
 			}
 			;Else IfInString, A_LoopField, in Off Hand
-			Else IfInString, A_LoopField, в левой руке 
+			Else IfInString, A_LoopField, РІ Р»РµРІРѕР№ СЂСѓРєРµ 
 			{
 				;ParseAddedDamage(A_LoopField, "Fire", OffHFireLo, OffHFireHi)
-				ParseAddedDamage(A_LoopField, "от огня", OffHFireLo, OffHFireHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ РѕРіРЅСЏ", OffHFireLo, OffHFireHi)
 				;ParseAddedDamage(A_LoopField, "Cold", OffHColdLo, OffHColdHi)
-				ParseAddedDamage(A_LoopField, "от холода", OffHColdLo, OffHColdHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ С…РѕР»РѕРґР°", OffHColdLo, OffHColdHi)
 				;ParseAddedDamage(A_LoopField, "Lightning", OffHLighLo, OffHLighHi)
-				ParseAddedDamage(A_LoopField, "от молнии", OffHLighLo, OffHLighHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ РјРѕР»РЅРёРё", OffHLighLo, OffHLighHi)
 				;ParseAddedDamage(A_LoopField, "Chaos", OffHChaoLo, OffHChaoHi)
-				ParseAddedDamage(A_LoopField, "хаосом", OffHChaoLo, OffHChaoHi)
+				ParseAddedDamage(A_LoopField, "С…Р°РѕСЃРѕРј", OffHChaoLo, OffHChaoHi)
 			}
 			Else
 			{
 				;ParseAddedDamage(A_LoopField, "Fire", FireLo, FireHi)
-				ParseAddedDamage(A_LoopField, "от огня", FireLo, FireHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ РѕРіРЅСЏ", FireLo, FireHi)
 				;ParseAddedDamage(A_LoopField, "Cold", ColdLo, ColdHi)
-				ParseAddedDamage(A_LoopField, "от холода", ColdLo, ColdHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ С…РѕР»РѕРґР°", ColdLo, ColdHi)
 				;ParseAddedDamage(A_LoopField, "Lightning", LighLo, LighHi)
-				ParseAddedDamage(A_LoopField, "от молнии", LighLo, LighHi)
+				ParseAddedDamage(A_LoopField, "РѕС‚ РјРѕР»РЅРёРё", LighLo, LighHi)
 				;ParseAddedDamage(A_LoopField, "Chaos", ChaoLo, ChaoHi)
-				;ParseAddedDamage(A_LoopField, "хаоса", ChaoLo, ChaoHi)
-				ParseAddedDamage(A_LoopField, "хаосом", ChaoLo, ChaoHi)
+				;ParseAddedDamage(A_LoopField, "С…Р°РѕСЃР°", ChaoLo, ChaoHi)
+				ParseAddedDamage(A_LoopField, "С…Р°РѕСЃРѕРј", ChaoLo, ChaoHi)
 			}
 		}
 		
@@ -7816,24 +7816,24 @@ AssembleDamageDetails(FullItemData)
 		If ( MainHEleDps > 0 or OffHEleDps > 0 )
 		{
 			;Result = %Result%`nEle DPS:    %TotalMainHEleDps% MainH | %TotalOffHEleDps% OffH
-			Result = %Result%`nEle DPS:    %TotalMainHEleDps% ПрРук | %TotalOffHEleDps% ЛевРук
+			Result = %Result%`nEle DPS:    %TotalMainHEleDps% РџСЂР СѓРє | %TotalOffHEleDps% Р›РµРІР СѓРє
 		}
 		Else Result = %Result%`nEle DPS:    %EleDps%
 		
 		If ( MainHChaosDps > 0 or OffHChaosDps > 0 )
 		{
 			;Result = %Result%`nChaos DPS:  %TotalMainHChaosDps% MainH | %TotalOffHChaosDps% OffH
-			Result = %Result%`nChaos DPS:  %TotalMainHChaosDps% ПрРук | %TotalOffHChaosDps% ЛевРук
+			Result = %Result%`nChaos DPS:  %TotalMainHChaosDps% РџСЂР СѓРє | %TotalOffHChaosDps% Р›РµРІР СѓРє
 		}
 		Else Result = %Result%`nChaos DPS:  %ChaosDps%
 		
 		;Result = %Result%`nTotal DPS:  %TotalMainHDps% MainH | %TotalOffHDps% OffH
-		Result = %Result%`nTotal DPS:  %TotalMainHDps% ПрРук | %TotalOffHDps% ЛевРук
+		Result = %Result%`nTotal DPS:  %TotalMainHDps% РџСЂР СѓРє | %TotalOffHDps% Р›РµРІР СѓРє
 		
 		If (Quality < 20)
 		{
 			;Result		= %Result%`nQ20 Total:  %Q20MainHDps% MainH | %Q20OffHDps% OffH
-			Result		= %Result%`nQ20 Total:  %Q20MainHDps% ПрРук | %Q20OffHDps% ЛевРук
+			Result		= %Result%`nQ20 Total:  %Q20MainHDps% РџСЂР СѓРє | %Q20OffHDps% Р›РµРІР СѓРє
 		}
 	}
 	Else
@@ -7906,15 +7906,15 @@ AssembleProphecyDetails(name) {
 	TT := ""
 	If (prophecy.objective) {
 		;TT .= "`n" "Objective:" "`n" prophecy.objective "`n"
-		TT .= "`n" "Цель:" "`n" prophecy.objective "`n"
+		TT .= "`n" "Р¦РµР»СЊ:" "`n" prophecy.objective "`n"
 	}
 	If (prophecy.reward) {
 		;TT .= "`n" "Reward:" "`n" prophecy.reward "`n"
-		TT .= "`n" "Награда:" "`n" prophecy.reward "`n"
+		TT .= "`n" "РќР°РіСЂР°РґР°:" "`n" prophecy.reward "`n"
 	}
 	If (StrLen(prophecy["seal cost"])) {
 		;TT .= "`n" "Seal Cost:" " " prophecy["seal cost"] "`n"
-		TT .= "`n" "Стоимость запечатывания:" " " prophecy["seal cost"] "`n"
+		TT .= "`n" "РЎС‚РѕРёРјРѕСЃС‚СЊ Р·Р°РїРµС‡Р°С‚С‹РІР°РЅРёСЏ:" " " prophecy["seal cost"] "`n"
 	}
 	
 	Return TT
@@ -7925,7 +7925,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 {
 	isVaalGem := false
 	;If (RegExMatch(Trim(ItemData.Parts[1]), "i)^Rarity: Gem") and RegExMatch(Trim(ItemData.Parts[2]), "i)Vaal")) {
-	If (RegExMatch(Trim(ItemData.Parts[1]), "i)^Редкость: Камень") and RegExMatch(Trim(ItemData.Parts[2]), "i)Ваал")) {
+	If (RegExMatch(Trim(ItemData.Parts[1]), "i)^Р РµРґРєРѕСЃС‚СЊ: РљР°РјРµРЅСЊ") and RegExMatch(Trim(ItemData.Parts[2]), "i)Р’Р°Р°Р»")) {
 		isVaalGem := true
 	}
 	
@@ -7934,7 +7934,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 		If (A_Index == 1)
 		{
 			;IfNotInString, A_LoopField, Rarity:
-			IfNotInString, A_LoopField, Редкость:
+			IfNotInString, A_LoopField, Р РµРґРєРѕСЃС‚СЊ:
 			{
 				return
 			}
@@ -7960,7 +7960,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 			{
 				ItemName := A_LoopField
 				;If (isVaalGem and not RegExMatch(ItemName, "i)^Vaal ")) {
-				If (isVaalGem and not RegExMatch(ItemName, "i) ваал$")) {					
+				If (isVaalGem and not RegExMatch(ItemName, "i) РІР°Р°Р»$")) {					
 										
 					; examples of name differences
 					; summon skeleton - vaal summon skeletons
@@ -7969,7 +7969,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 
 					For k, part in ItemData.Parts {
 						;If (RegExMatch(part, "im)(^Vaal .*?" ItemName ".*)", vaalName)) {	; TODO: make sure this is safer
-						If (RegExMatch(part, "im)(.*?" ItemName ".* ваал$)", vaalName)) {
+						If (RegExMatch(part, "im)(.*?" ItemName ".* РІР°Р°Р»$)", vaalName)) {
 							ItemName := vaalName1
 							Break
 						}
@@ -7978,14 +7978,14 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 			}
 			; Normal items don't have a third line and the item name equals the BaseName if we sanitize it ("superior").
 			;If (RegExMatch(ItemDataChunk, "i)Rarity.*?:.*?Normal"))
-			If (RegExMatch(ItemDataChunk, "i)Редкость.*?:.*?Обычный"))
+			If (RegExMatch(ItemDataChunk, "i)Р РµРґРєРѕСЃС‚СЊ.*?:.*?РћР±С‹С‡РЅС‹Р№"))
 			{
 				;ItemBaseName := Trim(RegExReplace(ItemName, "i)Superior", ""))
-				ItemBaseName := Trim(RegExReplace(ItemName, "i)высокого качества", ""))
+				ItemBaseName := Trim(RegExReplace(ItemName, "i)РІС‹СЃРѕРєРѕРіРѕ РєР°С‡РµСЃС‚РІР°", ""))
 				Return
 			}
-			; базовое имя волшебных карт
-			Else If  (RegExMatch(ItemDataChunk, "i)Редкость.*?:.*?Волшебный") and RegExMatch(ItemName, "^Карта| Карта|Изменённая Карта "))
+			; Р±Р°Р·РѕРІРѕРµ РёРјСЏ РІРѕР»С€РµР±РЅС‹С… РєР°СЂС‚
+			Else If  (RegExMatch(ItemDataChunk, "i)Р РµРґРєРѕСЃС‚СЊ.*?:.*?Р’РѕР»С€РµР±РЅС‹Р№") and RegExMatch(ItemName, "^РљР°СЂС‚Р°| РљР°СЂС‚Р°|РР·РјРµРЅС‘РЅРЅР°СЏ РљР°СЂС‚Р° "))
 			{
 				Global mapMatchListRu
 				
@@ -7994,9 +7994,9 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 					mapMatch := mapMatchListRu[A_Index]
 					IfInString, ItemName, %mapMatch%
 					{
-						If (RegExMatch(ItemName, "Изменённая " . mapMatch))
+						If (RegExMatch(ItemName, "РР·РјРµРЅС‘РЅРЅР°СЏ " . mapMatch))
 						{
-							ItemBaseName := "Изменённая " mapMatch
+							ItemBaseName := "РР·РјРµРЅС‘РЅРЅР°СЏ " mapMatch
 						}
 						Else
 						{
@@ -8013,9 +8013,9 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 			; We need to know the AffixCount for this though.
 			Else If (AffixCount > 0) {
 			;If (RegExMatch(ItemDataChunk, "i)Rarity.*?:.*?Magic"))
-			If (RegExMatch(ItemDataChunk, "i)Редкость.*?:.*?Волшебный"))
+			If (RegExMatch(ItemDataChunk, "i)Р РµРґРєРѕСЃС‚СЊ.*?:.*?Р’РѕР»С€РµР±РЅС‹Р№"))
 				{
-					/* ; в русской версии суффикс не отделяется от базового имени частицей, поэтому данный способ не пригоден
+					/* ; РІ СЂСѓСЃСЃРєРѕР№ РІРµСЂСЃРёРё СЃСѓС„С„РёРєСЃ РЅРµ РѕС‚РґРµР»СЏРµС‚СЃСЏ РѕС‚ Р±Р°Р·РѕРІРѕРіРѕ РёРјРµРЅРё С‡Р°СЃС‚РёС†РµР№, РїРѕСЌС‚РѕРјСѓ РґР°РЅРЅС‹Р№ СЃРїРѕСЃРѕР± РЅРµ РїСЂРёРіРѕРґРµРЅ
 					ItemBaseName := Trim(RegExReplace(ItemName, "i) of .*", "", matchCount))
 					If ((matchCount and AffixCount > 1) or (not matchCount and AffixCount = 1))
 					{
@@ -8026,23 +8026,23 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 					}
 					*/
 
-					; базовое имя, как и префикс начинаются с большой буквы
-					RegExReplace(ItemName, "([А-ЯЁ])", "", matchCount)
+					; Р±Р°Р·РѕРІРѕРµ РёРјСЏ, РєР°Рє Рё РїСЂРµС„РёРєСЃ РЅР°С‡РёРЅР°СЋС‚СЃСЏ СЃ Р±РѕР»СЊС€РѕР№ Р±СѓРєРІС‹
+					RegExReplace(ItemName, "([Рђ-РЇРЃ])", "", matchCount)
 					If (matchCount>1)
 					{
-						ItemBaseName := RegExReplace(ItemName, "^[А-ЯЁ][а-яё]+ ", "")
+						ItemBaseName := RegExReplace(ItemName, "^[Рђ-РЇРЃ][Р°-СЏС‘]+ ", "")
 					}
 					Else
 					{
 						ItemBaseName := ItemName
 					}
 					
-					; для волшебных предметов у которых не распознаны аффиксы, базовое имя предмета не будет корректно определяться
-					; TODO необходимо как-то обработать этот случай
+					; РґР»СЏ РІРѕР»С€РµР±РЅС‹С… РїСЂРµРґРјРµС‚РѕРІ Сѓ РєРѕС‚РѕСЂС‹С… РЅРµ СЂР°СЃРїРѕР·РЅР°РЅС‹ Р°С„С„РёРєСЃС‹, Р±Р°Р·РѕРІРѕРµ РёРјСЏ РїСЂРµРґРјРµС‚Р° РЅРµ Р±СѓРґРµС‚ РєРѕСЂСЂРµРєС‚РЅРѕ РѕРїСЂРµРґРµР»СЏС‚СЊСЃСЏ
+					; TODO РЅРµРѕР±С…РѕРґРёРјРѕ РєР°Рє-С‚Рѕ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ СЌС‚РѕС‚ СЃР»СѓС‡Р°Р№
 					If ((matchCount > 1 and AffixCount > 1) or (matchCount = 1 and AffixCount = 1))					
 					{
-						; если суффикс состоит из двух слов - будем его отбрасывать по словарю,
-						; все не учтенные суффиксы добавлять в файл \data\ru\SuffixTwoWord.txt
+						; РµСЃР»Рё СЃСѓС„С„РёРєСЃ СЃРѕСЃС‚РѕРёС‚ РёР· РґРІСѓС… СЃР»РѕРІ - Р±СѓРґРµРј РµРіРѕ РѕС‚Р±СЂР°СЃС‹РІР°С‚СЊ РїРѕ СЃР»РѕРІР°СЂСЋ,
+						; РІСЃРµ РЅРµ СѓС‡С‚РµРЅРЅС‹Рµ СЃСѓС„С„РёРєСЃС‹ РґРѕР±Р°РІР»СЏС‚СЊ РІ С„Р°Р№Р» \data\ru\SuffixTwoWord.txt
 						Loop, Read, %A_ScriptDir%\data\ru\SuffixTwoWord.txt
 						{
 							strres := RegExReplace(ItemBaseName, "i)" A_LoopReadLine, "", mCount)
@@ -8052,7 +8052,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 								Return
 							}
 						}
-						ItemBaseName := RegExReplace(ItemBaseName, " [а-яё]+$", "")
+						ItemBaseName := RegExReplace(ItemBaseName, " [Р°-СЏС‘]+$", "")
 					}
 					Return
 				}
@@ -8088,7 +8088,7 @@ ParseLinks(ItemDataText)
 	Loop, Parse, ItemDataText, `n, `r
 	{
 		;IfInString, A_LoopField, Sockets
-		IfInString, A_LoopField, Гнезда
+		IfInString, A_LoopField, Р“РЅРµР·РґР°
 		{
 			LinksString := GetColonValue(A_LoopField)
 			If (RegExMatch(LinksString, ".-.-.-.-.-."))
@@ -8127,7 +8127,7 @@ ParseSockets(ItemDataText)
 	Loop, Parse, ItemDataText, `n, `r
 	{
 		;IfInString, A_LoopField, Sockets
-		IfInString, A_LoopField, Гнезда
+		IfInString, A_LoopField, Р“РЅРµР·РґР°
 		{
 			LinksString	:= GetColonValue(A_LoopField)
 			before		:= StrLen(LinksString)
@@ -8147,21 +8147,21 @@ ParseCharges(stats)
 		LoopField := RegExReplace(A_Loopfield, "i)\s\(augmented\)", "")
 		; Flasks
 		;RegExMatch(LoopField, "i)Consumes (\d+) of (\d+) Charges on use.*", max)		
-		RegExMatch(LoopField, "i)Расходует (\d+) из (\d+) зарядов при использовании.*", max)		
+		RegExMatch(LoopField, "i)Р Р°СЃС…РѕРґСѓРµС‚ (\d+) РёР· (\d+) Р·Р°СЂСЏРґРѕРІ РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё.*", max)		
 
 		If (max) {
 			charges.usage	:= max1
 			charges.max	:= max2
 		}
 		;RegExMatch(LoopField, "i)Currently has (\d+) Charge.*", current)
-		RegExMatch(LoopField, "i)Содержит зарядов: (\d+).*", current)
+		RegExMatch(LoopField, "i)РЎРѕРґРµСЂР¶РёС‚ Р·Р°СЂСЏРґРѕРІ: (\d+).*", current)
 		If (current) {
 			charges.current:= current1
 		}
 
 		; Leaguestones
 		;RegExMatch(LoopField, "i)Currently has (\d+) of (\d+) Charge.*", max)
-		RegExMatch(LoopField, "i)Содержит (\d+) из (\d+) зарядов.*", max)
+		RegExMatch(LoopField, "i)РЎРѕРґРµСЂР¶РёС‚ (\d+) РёР· (\d+) Р·Р°СЂСЏРґРѕРІ.*", max)
 		If (max) {
 			charges.usage	:= 1
 			charges.max	:= max2
@@ -8207,7 +8207,7 @@ ParseBeastData(data) {
 	Loop, Parse, parts, `n, `r
 	{
 		;RegExMatch(A_LoopField, "i)(Genus|Family|Group):\s+?(.*)", match)
-		RegExMatch(A_LoopField, "i)(Род|Семейство|Группа):\s+?(.*)", match)
+		RegExMatch(A_LoopField, "i)(Р РѕРґ|РЎРµРјРµР№СЃС‚РІРѕ|Р“СЂСѓРїРїР°):\s+?(.*)", match)
 		a[match1] := Trim(match2)
 	}
 	
@@ -8218,7 +8218,7 @@ ParseBeastData(data) {
 		_A_LoopField_ := AdpRu_ConvertRuItemNameToEn(A_LoopField)
 		;If (RegExMatch(A_LoopField, "i)(Aspect of the Hellion|Blood Geyser|Churning Claws|Craicic Presence|Crimson Flock|Crushing Claws|Deep One's Presence|Erupting Winds|Farric Presence|Fenumal Presence|Fertile Presence|Hadal Dive|Incendiary Mite|Infested Earth|Putrid Flight|Raven Caller|Saqawine Presence|Satyr Storm|Spectral Stampede|Spectral Swipe|Tiger Prey|Unstable Swarm|Vile Hatchery|Winter Bloom)", match))
 		If (RegExMatch(_A_LoopField_, "i)(Aspect of the Hellion|Blood Geyser|Churning Claws|Craicic Presence|Crimson Flock|Crushing Claws|Deep One's Presence|Erupting Winds|Farric Presence|Fenumal Presence|Fertile Presence|Hadal Dive|Incendiary Mite|Infested Earth|Putrid Flight|Raven Caller|Saqawine Presence|Satyr Storm|Spectral Stampede|Spectral Swipe|Tiger Prey|Unstable Swarm|Vile Hatchery|Winter Bloom)", match))
-		;If (RegExMatch(A_LoopField, "i)(Дух Адского льва|Кровавый гейзер|Цепкие клешни|Присутствие Краценна|Багровая стая|Сокрушающие клешни|Присутствие Глубоководного|Порывы ветра|Присутствие Фаррул|Присутствие Фенумы|Плодородное присутствие|Глубокая пучина|Взрывной клещ|Заражённая земля|Мерзкий полёт|Призыватель воронов|Присутствие Сакаваля|Козлопад|Призрачный табун|Призрачный взмах|Жертва тигра|Нестабильный рой|Нечестивый выводок|Зимнее цветение)", match))
+		;If (RegExMatch(A_LoopField, "i)(Р”СѓС… РђРґСЃРєРѕРіРѕ Р»СЊРІР°|РљСЂРѕРІР°РІС‹Р№ РіРµР№Р·РµСЂ|Р¦РµРїРєРёРµ РєР»РµС€РЅРё|РџСЂРёСЃСѓС‚СЃС‚РІРёРµ РљСЂР°С†РµРЅРЅР°|Р‘Р°РіСЂРѕРІР°СЏ СЃС‚Р°СЏ|РЎРѕРєСЂСѓС€Р°СЋС‰РёРµ РєР»РµС€РЅРё|РџСЂРёСЃСѓС‚СЃС‚РІРёРµ Р“Р»СѓР±РѕРєРѕРІРѕРґРЅРѕРіРѕ|РџРѕСЂС‹РІС‹ РІРµС‚СЂР°|РџСЂРёСЃСѓС‚СЃС‚РІРёРµ Р¤Р°СЂСЂСѓР»|РџСЂРёСЃСѓС‚СЃС‚РІРёРµ Р¤РµРЅСѓРјС‹|РџР»РѕРґРѕСЂРѕРґРЅРѕРµ РїСЂРёСЃСѓС‚СЃС‚РІРёРµ|Р“Р»СѓР±РѕРєР°СЏ РїСѓС‡РёРЅР°|Р’Р·СЂС‹РІРЅРѕР№ РєР»РµС‰|Р—Р°СЂР°Р¶С‘РЅРЅР°СЏ Р·РµРјР»СЏ|РњРµСЂР·РєРёР№ РїРѕР»С‘С‚|РџСЂРёР·С‹РІР°С‚РµР»СЊ РІРѕСЂРѕРЅРѕРІ|РџСЂРёСЃСѓС‚СЃС‚РІРёРµ РЎР°РєР°РІР°Р»СЏ|РљРѕР·Р»РѕРїР°Рґ|РџСЂРёР·СЂР°С‡РЅС‹Р№ С‚Р°Р±СѓРЅ|РџСЂРёР·СЂР°С‡РЅС‹Р№ РІР·РјР°С…|Р–РµСЂС‚РІР° С‚РёРіСЂР°|РќРµСЃС‚Р°Р±РёР»СЊРЅС‹Р№ СЂРѕР№|РќРµС‡РµСЃС‚РёРІС‹Р№ РІС‹РІРѕРґРѕРє|Р—РёРјРЅРµРµ С†РІРµС‚РµРЅРёРµ)", match))
 		{
 			a["Mods"].Push(match1)
 		}
@@ -8250,10 +8250,10 @@ ParseAreaMonsterLevelRequirement(stats)
 ; conversion ratio from CurrencyRates.txt or downloaded ratios from poe.ninja
 ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 {
-	; используем расширенный массив соответствий базовых имен предметов на русском языке их английским вариантам
+	; РёСЃРїРѕР»СЊР·СѓРµРј СЂР°СЃС€РёСЂРµРЅРЅС‹Р№ РјР°СЃСЃРёРІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёР№ Р±Р°Р·РѕРІС‹С… РёРјРµРЅ РїСЂРµРґРјРµС‚РѕРІ РЅР° СЂСѓСЃСЃРєРѕРј СЏР·С‹РєРµ РёС… Р°РЅРіР»РёР№СЃРєРёРј РІР°СЂРёР°РЅС‚Р°Рј
 	;ItemNameRu := Globals.Get("nameItemRuToEn")
 	;ItemNameEn := ItemNameRu[ItemName]
-	; используем функцию конвертации для котроля процесса конвертации имен
+	; РёСЃРїРѕР»СЊР·СѓРµРј С„СѓРЅРєС†РёСЋ РєРѕРЅРІРµСЂС‚Р°С†РёРё РґР»СЏ РєРѕС‚СЂРѕР»СЏ РїСЂРѕС†РµСЃСЃР° РєРѕРЅРІРµСЂС‚Р°С†РёРё РёРјРµРЅ
 	ItemNameEn := AdpRu_ConvertRuItemNameToEn(ItemName, true)
 	If (ItemNameEn)
 	{
@@ -8271,7 +8271,7 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 		ItemName	:= "Scroll of Wisdom"
 	}
 	;StackSize := SubStr(ItemStats, StrLen("Stack Size:  "))
-	StackSize := SubStr(ItemStats, StrLen("Размер стопки: "))
+	StackSize := SubStr(ItemStats, StrLen("Р Р°Р·РјРµСЂ СЃС‚РѕРїРєРё: "))
 	StringSplit, StackSizeParts, StackSize, /
 	If (IsShard or IsFragment)
 	{
@@ -8297,7 +8297,7 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 	fallback		:= A_ScriptDir . "\data\CurrencyRates.txt"
 	result		:= []
 
-	leagueRu := {"Standard":"Стандарт", "Hardcore":"Хардкор "}
+	leagueRu := {"Standard":"РЎС‚Р°РЅРґР°СЂС‚", "Hardcore":"РҐР°СЂРґРєРѕСЂ "}
 	CurrencyDataRates := Globals.Get("CurrencyDataRates")
 	For idx, league in ["tmpstandard", "tmphardcore", "Standard", "Hardcore", "eventstandard", "eventhardcore"] {
 		ninjaRates	:= CurrencyDataRates[league]
@@ -8307,14 +8307,14 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 		
 		If (league == "tmpstandard" or league == "tmphardcore" ) {
 			;leagueName := InStr(league, "standard") ? "Challenge Standard" : "Challenge Hardcore"
-			leagueName := InStr(league, "standard") ? "Временная  Стандарт" : "Временная  Хардкор "
+			leagueName := InStr(league, "standard") ? "Р’СЂРµРјРµРЅРЅР°СЏ  РЎС‚Р°РЅРґР°СЂС‚" : "Р’СЂРµРјРµРЅРЅР°СЏ  РҐР°СЂРґРєРѕСЂ "
 		}
 		Else If (league = "eventstandard" or league = "eventhardcore") {
 			leagueName := InStr(league, "standard") ? "Event Standard    " : "Event Hardcore    "
 		}
 		Else {
 			;leagueName := "Permanent " . league
-			leagueName := "Постоянная " . leagueRu[league]
+			leagueName := "РџРѕСЃС‚РѕСЏРЅРЅР°СЏ " . leagueRu[league]
 		}
 		
 		If (ValueInChaos) {
@@ -8327,8 +8327,8 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 	If (!result.Length()) {
 		ValueInChaos	:= 0
 		;dataSource	:= "Fallback <\data\CurrencyRates.txt>`n`n"
-		dataSource	:= "Невозможно получить текущие курсы валют.`nИспользуются значения из файла <\data\CurrencyRates.txt>`n`n"
-		leagueName	:= "Фиксированный курс: "
+		dataSource	:= "РќРµРІРѕР·РјРѕР¶РЅРѕ РїРѕР»СѓС‡РёС‚СЊ С‚РµРєСѓС‰РёРµ РєСѓСЂСЃС‹ РІР°Р»СЋС‚.`nРСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏ РёР· С„Р°Р№Р»Р° <\data\CurrencyRates.txt>`n`n"
+		leagueName	:= "Р¤РёРєСЃРёСЂРѕРІР°РЅРЅС‹Р№ РєСѓСЂСЃ: "
 		
 		Loop, Read, %fallback%
 		{
@@ -8488,7 +8488,7 @@ ItemIsMirrored(ItemDataText)
 	Loop, Parse, ItemDataText, `n, `r
 	{
 		;RegExMatch(Trim(A_LoopField), "i)^Mirrored$", match)
-		RegExMatch(Trim(A_LoopField), "i)^Отражено$", match)
+		RegExMatch(Trim(A_LoopField), "i)^РћС‚СЂР°Р¶РµРЅРѕ$", match)
 		If (match) {
 			return True
 		}
@@ -8502,7 +8502,7 @@ ItemIsHybridBase(ItemDataText)
 	Loop, Parse, ItemDataText, `n, `r
 	{
 		;If RegExMatch(Trim(A_LoopField), "^(Armour|Evasion Rating|Energy Shield): \d+( \(augmented\))?$")
-		If RegExMatch(Trim(A_LoopField), "^(Броня|Уклонение|Энерг. щит): \d+( \(augmented\))?$")
+		If RegExMatch(Trim(A_LoopField), "^(Р‘СЂРѕРЅСЏ|РЈРєР»РѕРЅРµРЅРёРµ|Р­РЅРµСЂРі. С‰РёС‚): \d+( \(augmented\))?$")
 		{
 			DefenceStatCount += 1
 		}
@@ -8568,17 +8568,17 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	ItemData.FullText := ItemDataText
 	
-	itemEldShRuEn := {"Древний предмет":"Elder","Предмет Создателя":"Shaper"}
+	itemEldShRuEn := {"Р”СЂРµРІРЅРёР№ РїСЂРµРґРјРµС‚":"Elder","РџСЂРµРґРјРµС‚ РЎРѕР·РґР°С‚РµР»СЏ":"Shaper"}
 	
 	Loop, Parse, ItemDataText, `n, `r
 	{
 		;RegExMatch(Trim(A_LoopField), "i)^Corrupted$", corrMatch)
-		RegExMatch(Trim(A_LoopField), "i)^Осквернено$", corrMatch)
+		RegExMatch(Trim(A_LoopField), "i)^РћСЃРєРІРµСЂРЅРµРЅРѕ$", corrMatch)
 		If (corrMatch) {
 			Item.IsCorrupted := True
 		}
 		;RegExMatch(Trim(A_LoopField), "i)^(Elder|Shaper) Item$", match)
-		RegExMatch(Trim(A_LoopField), "i)^(Предмет Создателя|Древний предмет)$", match)
+		RegExMatch(Trim(A_LoopField), "i)^(РџСЂРµРґРјРµС‚ РЎРѕР·РґР°С‚РµР»СЏ|Р”СЂРµРІРЅРёР№ РїСЂРµРґРјРµС‚)$", match)
 		If (match) {
 			;Item["Is" match1 "Base"] := True			
 			Item["Is" itemEldShRuEn[match1] "Base"] := True
@@ -8616,14 +8616,14 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	Item.Name		:= ItemName
 	Item.BaseName	:= ItemBaseName
 	
-	; инициализация английских названий предметов
+	; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р°РЅРіР»РёР№СЃРєРёС… РЅР°Р·РІР°РЅРёР№ РїСЂРµРґРјРµС‚РѕРІ
 	AdpRu_InitNameEnItem()
 
 	;IfInString, ItemDataText, Unidentified
-	IfInString, ItemDataText, Неопознано
+	IfInString, ItemDataText, РќРµРѕРїРѕР·РЅР°РЅРѕ
 	{
 		;If (Item.Name != "Scroll of Wisdom")
-		If (Item.Name != "Свиток мудрости")
+		If (Item.Name != "РЎРІРёС‚РѕРє РјСѓРґСЂРѕСЃС‚Рё")
 		{
 			Item.IsUnidentified := True
 		}
@@ -8642,13 +8642,13 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 
 	Item.IsUnique := False
 	;If (InStr(ItemData.Rarity, "Unique"))
-	If (InStr(ItemData.Rarity, "Уникальный"))
+	If (InStr(ItemData.Rarity, "РЈРЅРёРєР°Р»СЊРЅС‹Р№"))
 	{
 		Item.IsUnique := True
 	}
 	
 	;If (InStr(ItemData.Rarity, "Rare"))
-	If (InStr(ItemData.Rarity, "Редкий"))
+	If (InStr(ItemData.Rarity, "Р РµРґРєРёР№"))
 	{
 		Item.IsRare := True
 	}
@@ -8656,7 +8656,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	; Divination Card detection = Normal rarity with stack size (100% valid??)
 	; Cards like "The Void" don't have a stack size
 	;If (InStr(ItemData.Rarity, "Divination Card"))
-	If (InStr(ItemData.Rarity, "Гадальная карта"))
+	If (InStr(ItemData.Rarity, "Р“Р°РґР°Р»СЊРЅР°СЏ РєР°СЂС‚Р°"))
 	{
 		Item.IsDivinationCard := True
 		Item.BaseType := "Divination Card"
@@ -8664,7 +8664,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 
 	; Prophecy Orb detection
 	;If (InStr(ItemData.PartsLast, "to add this prophecy to"))
-	If (InStr(ItemData.PartsLast, "добавить это пророчество вашему"))
+	If (InStr(ItemData.PartsLast, "РґРѕР±Р°РІРёС‚СЊ СЌС‚Рѕ РїСЂРѕСЂРѕС‡РµСЃС‚РІРѕ РІР°С€РµРјСѓ"))
 	{
 		Item.IsProphecy := True
 		Item.BaseType := "Prophecy"
@@ -8674,7 +8674,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	; Beast detection
 	;If (RegExMatch(ItemData.Parts[2], "i)Genus|Family"))
-	If (RegExMatch(ItemData.Parts[2], "i)Род|Семейство"))
+	If (RegExMatch(ItemData.Parts[2], "i)Р РѕРґ|РЎРµРјРµР№СЃС‚РІРѕ"))
 	{
 		Item.IsBeast := True
 		Item.BeastData := ParseBeastData(ItemData)
@@ -8682,14 +8682,14 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	}
 	
 	;Item.IsGem	:= (InStr(ItemData.Rarity, "Gem"))
-	Item.IsGem	:= (InStr(ItemData.Rarity, "Камень"))
+	Item.IsGem	:= (InStr(ItemData.Rarity, "РљР°РјРµРЅСЊ"))
 	;Item.IsCurrency:= (InStr(ItemData.Rarity, "Currency"))
-	Item.IsCurrency:= (InStr(ItemData.Rarity, "Валюта"))
+	Item.IsCurrency:= (InStr(ItemData.Rarity, "Р’Р°Р»СЋС‚Р°"))
 
 	;If (Not (InStr(ItemDataText, "Itemlevel:") or InStr(ItemDataText, "Item Level:")) and Not Item.IsGem and Not Item.IsCurrency and Not Item.IsDivinationCard and Not Item.IsProphecy)
 	;----
-	;нет уверенности в корректности "УровеньПредмета:", возможно такая строка не используется в ru версии
-	If (Not (InStr(ItemDataText, "УровеньПредмета:") or InStr(ItemDataText, "Уровень предмета:")) and Not Item.IsGem and Not Item.IsCurrency and Not Item.IsDivinationCard and Not Item.IsProphecy)
+	;РЅРµС‚ СѓРІРµСЂРµРЅРЅРѕСЃС‚Рё РІ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё "РЈСЂРѕРІРµРЅСЊРџСЂРµРґРјРµС‚Р°:", РІРѕР·РјРѕР¶РЅРѕ С‚Р°РєР°СЏ СЃС‚СЂРѕРєР° РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ ru РІРµСЂСЃРёРё
+	If (Not (InStr(ItemDataText, "РЈСЂРѕРІРµРЅСЊРџСЂРµРґРјРµС‚Р°:") or InStr(ItemDataText, "РЈСЂРѕРІРµРЅСЊ РїСЂРµРґРјРµС‚Р°:")) and Not Item.IsGem and Not Item.IsCurrency and Not Item.IsDivinationCard and Not Item.IsProphecy)
 	{
 		return Item.Name
 	}
@@ -8698,15 +8698,15 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	{
 		RarityLevel	:= 0
 		;Item.Level	:= ParseGemLevel(ItemDataText, "Level:")
-		Item.Level	:= ParseGemLevel(ItemDataText, "Уровень:")
+		Item.Level	:= ParseGemLevel(ItemDataText, "РЈСЂРѕРІРµРЅСЊ:")
 		ItemExperienceFlat := ""
 		;Item.Experience:= ParseGemXP(ItemDataText, "Experience:", ItemExperienceFlat)
-		Item.Experience:= ParseGemXP(ItemDataText, "Опыт:", ItemExperienceFlat)
+		Item.Experience:= ParseGemXP(ItemDataText, "РћРїС‹С‚:", ItemExperienceFlat)
 		Item.ExperienceFlat := ItemExperienceFlat
 		;ItemLevelWord	:= "Gem Level:"
-		ItemLevelWord	:= "Уровень камня:"
+		ItemLevelWord	:= "РЈСЂРѕРІРµРЅСЊ РєР°РјРЅСЏ:"
 		;ItemXPWord	:= "Experience:"
-		ItemXPWord	:= "Опыт:"
+		ItemXPWord	:= "РћРїС‹С‚:"
 		Item.BaseType	:= "Gem"
 	}
 	Else
@@ -8716,7 +8716,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			dataSource	:= ""
 			ValueInChaos	:= ConvertCurrency(Item.Name, ItemData.Stats, dataSource)
 			;If (ValueInChaos.Length() and not Item.Name == "Chaos Orb")
-			If (ValueInChaos.Length() and not Item.Name == "Сфера хаоса")
+			If (ValueInChaos.Length() and not Item.Name == "РЎС„РµСЂР° С…Р°РѕСЃР°")
 			{
 				CurrencyDetails := "`n" . dataSource
 				CurrencyValueLength := 0
@@ -8739,7 +8739,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		Else If (Not Item.IsCurrency and Not Item.IsDivinationCard and Not Item.IsProphecy)
 		{
 			;regex := ["^Sacrifice At", "^Fragment of", "^Mortal ", "^Offering to ", "'s Key$", "Ancient Reliquary Key"]
-			regex := ["^Жертва в", "^Жертва на", "^Фрагмент ", "Смертное уныние", "Смертное невежество", "Смертный гнев", "Смертная надежда", "Подношение Богине", "Ключ Эвера", "Ключ Иньи", "Ключ Ириэла", "Ключ Волкуур", "Ключ от Древнего Реликвария", "Ключ от Ветхого Реликвария"]
+			regex := ["^Р–РµСЂС‚РІР° РІ", "^Р–РµСЂС‚РІР° РЅР°", "^Р¤СЂР°РіРјРµРЅС‚ ", "РЎРјРµСЂС‚РЅРѕРµ СѓРЅС‹РЅРёРµ", "РЎРјРµСЂС‚РЅРѕРµ РЅРµРІРµР¶РµСЃС‚РІРѕ", "РЎРјРµСЂС‚РЅС‹Р№ РіРЅРµРІ", "РЎРјРµСЂС‚РЅР°СЏ РЅР°РґРµР¶РґР°", "РџРѕРґРЅРѕС€РµРЅРёРµ Р‘РѕРіРёРЅРµ", "РљР»СЋС‡ Р­РІРµСЂР°", "РљР»СЋС‡ РРЅСЊРё", "РљР»СЋС‡ РСЂРёСЌР»Р°", "РљР»СЋС‡ Р’РѕР»РєСѓСѓСЂ", "РљР»СЋС‡ РѕС‚ Р”СЂРµРІРЅРµРіРѕ Р РµР»РёРєРІР°СЂРёСЏ", "РљР»СЋС‡ РѕС‚ Р’РµС‚С…РѕРіРѕ Р РµР»РёРєРІР°СЂРёСЏ"]
 			For key, val in regex {
 				If (RegExMatch(Item.Name, "i)" val "")) {
 					Item.IsMapFragment := True
@@ -8750,7 +8750,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			RarityLevel	:= CheckRarityLevel(ItemData.Rarity)
 			Item.Level	:= ParseItemLevel(ItemDataText)
 			;ItemLevelWord	:= "Item Level:"
-			ItemLevelWord	:= "Уровень предмета:"
+			ItemLevelWord	:= "РЈСЂРѕРІРµРЅСЊ РїСЂРµРґРјРµС‚Р°:"
 			If (Not Item.IsBeast) {
 				ParseItemType(ItemData.Stats, ItemData.NamePlate, ItemBaseType, ItemSubType, ItemGripType, Item.IsMapFragment, RarityLevel)
 				Item.BaseType	:= ItemBaseType
@@ -8767,10 +8767,10 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	Item.IsBelt		:= (Item.SubType == "Belt")
 	Item.IsRing		:= (Item.SubType == "Ring")
 	;Item.IsUnsetRing	:= (Item.IsRing and InStr(ItemData.NamePlate, "Unset Ring"))
-	Item.IsUnsetRing	:= (Item.IsRing and InStr(ItemData.NamePlate, "Кольцо без камня"))
+	Item.IsUnsetRing	:= (Item.IsRing and InStr(ItemData.NamePlate, "РљРѕР»СЊС†Рѕ Р±РµР· РєР°РјРЅСЏ"))
 	Item.IsAmulet		:= (Item.SubType == "Amulet")
 	;Item.IsTalisman	:= (Item.IsAmulet and InStr(ItemData.NamePlate, "Talisman") and !InStr(ItemData.NamePlate, "Amulet"))
-	Item.IsTalisman	:= (Item.IsAmulet and RegExMatch(ItemData.NamePlate, "i)Талисман") and !RegExMatch(ItemData.NamePlate, "i)Амулет"))
+	Item.IsTalisman	:= (Item.IsAmulet and RegExMatch(ItemData.NamePlate, "i)РўР°Р»РёСЃРјР°РЅ") and !RegExMatch(ItemData.NamePlate, "i)РђРјСѓР»РµС‚"))
 	Item.IsSingleSocket	:= (IsUnsetRing)
 	Item.IsFourSocket	:= (Item.SubType == "Gloves" or Item.SubType == "Boots" or Item.SubType == "Helmet")
 	Item.IsThreeSocket	:= (Item.GripType == "1H" or Item.SubType == "Shield")
@@ -8784,7 +8784,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	Item.IsAbyssJewel	:= (Item.IsJewel and RegExMatch(Item.SubType, "i)(Murderous|Hypnotic|Searching|Ghastly) Eye"))
 	Item.IsMirrored		:= (ItemIsMirrored(ItemDataText) and Not Item.IsCurrency)
 	;Item.IsEssence		:= Item.IsCurrency and RegExMatch(Item.Name, "i)Essence of |Remnant of Corruption")
-	Item.IsEssence		:= Item.IsCurrency and RegExMatch(Item.Name, "i)Сущность |След порчи")
+	Item.IsEssence		:= Item.IsCurrency and RegExMatch(Item.Name, "i)РЎСѓС‰РЅРѕСЃС‚СЊ |РЎР»РµРґ РїРѕСЂС‡Рё")
 	Item.Note			:= Globals.Get("ItemNote")	
 	
 	If (Item.IsLeaguestone) {
@@ -8800,7 +8800,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 		; parse item variations like relics (variation of it's unique counterpart)
 		;If (RegExMatch(Trim(A_LoopField), "i)Relic Unique", match)) {
-		If (RegExMatch(Trim(A_LoopField), "i)Уникальная Реликвия", match)) {
+		If (RegExMatch(Trim(A_LoopField), "i)РЈРЅРёРєР°Р»СЊРЅР°СЏ Р РµР»РёРєРІРёСЏ", match)) {
 			Item.IsRelic := true
 		}
 	}
@@ -8831,7 +8831,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		ItemDataIndexAffixes := ItemDataIndexAffixes - 1
 	}
 	;ItemData.Affixes := RegExReplace(ItemDataParts%ItemDataIndexAffixes%, "[\r\n]+([a-z])", " $1")
-	ItemData.Affixes := RegExReplace(ItemDataParts%ItemDataIndexAffixes%, "[\r\n]+([a-zа-яё])", " $1")
+	ItemData.Affixes := RegExReplace(ItemDataParts%ItemDataIndexAffixes%, "[\r\n]+([a-zР°-СЏС‘])", " $1")
 	ItemData.IndexAffixes := ItemDataIndexAffixes
 
 	; Retrieve items implicit mod if it has one
@@ -8851,7 +8851,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			Loop, Parse, tempImplicit, `n, `r
 			{
 				;Item.Implicit.push(A_LoopField)
-				If (A_LoopField) { ; иногда на обычных предметах к имплициту добавляется пустая строка
+				If (A_LoopField) { ; РёРЅРѕРіРґР° РЅР° РѕР±С‹С‡РЅС‹С… РїСЂРµРґРјРµС‚Р°С… Рє РёРјРїР»РёС†РёС‚Сѓ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РїСѓСЃС‚Р°СЏ СЃС‚СЂРѕРєР°
 					Item.Implicit.push(A_LoopField)
 				}
 			}
@@ -8902,21 +8902,21 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	; Start assembling the text for the tooltip
 	TT := Item.Name
 	
-	; инициализация английских названий предметов
+	; РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р°РЅРіР»РёР№СЃРєРёС… РЅР°Р·РІР°РЅРёР№ РїСЂРµРґРјРµС‚РѕРІ
 	AdpRu_InitNameEnItem()
 
 	If ((Item.IsUnique or Item.IsDivinationCard or Item.IsCurrency or Item.IsMapFragment or Item.IsGem or Item.IsProphecy or Item.IsMap or Item.RarityLevel = 1 or (Item.IsFlask and Item.RarityLevel = 2)) and (Item.Name != Item.Name_En)) {
-		TT := TT . " (англ. " Item.Name_En ")"
+		TT := TT . " (Р°РЅРіР». " Item.Name_En ")"
 	}
 	
-	NameNotQ := Trim(StrReplace(Item.Name, "высокого качества", ""))
+	NameNotQ := Trim(StrReplace(Item.Name, "РІС‹СЃРѕРєРѕРіРѕ РєР°С‡РµСЃС‚РІР°", ""))
 	
 	;If (Item.BaseName && (Item.BaseName != Item.Name))
 	If (Item.BaseName && (Item.BaseName != NameNotQ))
 	{
 		TT := TT . "`n" . Item.BaseName
 		If (not Item.IsUnique and not (Item.IsFlask and Item.RarityLevel = 2) and (Item.BaseName != Item.BaseName_En)){
-			TT := TT . " (англ. " Item.BaseName_En ")"
+			TT := TT . " (Р°РЅРіР». " Item.BaseName_En ")"
 		}
 	}
 	
@@ -8938,7 +8938,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		
 		If Item.IsTalisman {
 			;TT := TT . "`nTalisman Tier: " . StrPad(Item.TalismanTier, 2, Side="left")
-			TT := TT . "`nРанг талисмана: " . StrPad(Item.TalismanTier, 2, Side="left")
+			TT := TT . "`nР Р°РЅРі С‚Р°Р»РёСЃРјР°РЅР°: " . StrPad(Item.TalismanTier, 2, Side="left")
 		}
 		If (Not Item.IsFlask)
 		{
@@ -8961,7 +8961,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			If (Item.BaseLevel)
 			{
 				;TT := TT . "     Base Level:   " . StrPad(Item.BaseLevel, 3, Side="left")
-				TT := TT . "     Базовый уровень:   " . StrPad(Item.BaseLevel, 3, Side="left")
+				TT := TT . "     Р‘Р°Р·РѕРІС‹Р№ СѓСЂРѕРІРµРЅСЊ:   " . StrPad(Item.BaseLevel, 3, Side="left")
 			}
 		}
 	}
@@ -9002,12 +9002,12 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		{
 			TT := TT . "`n"
 			;TT := TT . "Max Sockets:    "
-			TT := TT . "Макс. гнезд:    "
+			TT := TT . "РњР°РєСЃ. РіРЅРµР·Рґ:    "
 			If (IlvlSocket < Item.MaxSockets)
 			{
 				Item.MaxSockets := IlvlSocket
 				;TT := TT . Item.MaxSockets . " (ilvl impacts max!)"
-				TT := TT . Item.MaxSockets . " (кол-во гнезд на предмете больше, чем макс. возможное на данном ilvl!)"
+				TT := TT . Item.MaxSockets . " (РєРѕР»-РІРѕ РіРЅРµР·Рґ РЅР° РїСЂРµРґРјРµС‚Рµ Р±РѕР»СЊС€Рµ, С‡РµРј РјР°РєСЃ. РІРѕР·РјРѕР¶РЅРѕРµ РЅР° РґР°РЅРЅРѕРј ilvl!)"
 			}
 			Else
 			{
@@ -9053,7 +9053,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		Item.MapLevel := Item.MapTier + 67
 		
 		;MapDescription := " (Tier: " Item.MapTier ", Level: " Item.MapLevel ")`n`n"
-		MapDescription := " (Тир: " Item.MapTier ", Уровень: " Item.MapLevel ")`n`n"
+		MapDescription := " (РўРёСЂ: " Item.MapTier ", РЈСЂРѕРІРµРЅСЊ: " Item.MapLevel ")`n`n"
 		
 		If (Item.IsUnique)
 		{
@@ -9064,7 +9064,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			If (RegExMatch(Item.SubType, "Shaped (.+ Map)", match))
 			{
 				;MapDescription .= "Infos from non-shaped version:`n" mapList[match1]
-				MapDescription .= "Информация о не изменённой версии:`n" mapList[match1]
+				MapDescription .= "РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РЅРµ РёР·РјРµРЅС‘РЅРЅРѕР№ РІРµСЂСЃРёРё:`n" mapList[match1]
 			}
 			Else
 			{
@@ -9081,17 +9081,17 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			AffixDetails := AssembleMapAffixes()
 			MapAffixCount := AffixTotals.NumPrefixes + AffixTotals.NumSuffixes
 			;TT = %TT%`n`nMods (%MapAffixCount%):%AffixDetails%
-			TT = %TT%`n`nМоды (%MapAffixCount%):%AffixDetails%
+			TT = %TT%`n`nРњРѕРґС‹ (%MapAffixCount%):%AffixDetails%
 			
 			If (MapModWarnings)
 			{
 				;TT = %TT%`n`nMod warnings:%MapModWarnings%
-				TT = %TT%`n`nОпасные моды:%MapModWarnings%
+				TT = %TT%`n`nРћРїР°СЃРЅС‹Рµ РјРѕРґС‹:%MapModWarnings%
 			}
 			Else
 			{
 				;TT = %TT%`n`nMod warnings:`nnone
-				TT = %TT%`n`nОпасные моды:`nнет
+				TT = %TT%`n`nРћРїР°СЃРЅС‹Рµ РјРѕРґС‹:`nРЅРµС‚
 			}
 		}
 	}
@@ -9108,7 +9108,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 		
 		;TT := TT . "`nQuality 20%:`n" . GemQualityDescription
-		TT := TT . "`nКачество 20%:`n" . GemQualityDescription
+		TT := TT . "`nРљР°С‡РµСЃС‚РІРѕ 20%:`n" . GemQualityDescription
 	}
 	
 	If (Item.IsBeast)
@@ -9121,7 +9121,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		; Append affix info if rarity is greater than normal (white)
 		; Affix total statistic
 		;If (Itemdata.Rarity = "Magic"){
-		If (Itemdata.Rarity = "Волшебный"){
+		If (Itemdata.Rarity = "Р’РѕР»С€РµР±РЅС‹Р№"){
 			PrefixLimit := 1
 			SuffixLimit := 1
 		}Else{
@@ -9133,9 +9133,9 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		WordSuffixes := NumSuffixesMax > SuffixLimit ? "?! " : " "
 		
 		;WordPrefixes .= NumPrefixesMax = 1 ? "Prefix" : "Prefixes"
-		WordPrefixes .= NumPrefixesMax = 1 ? "Префикс" : "Префикса"
+		WordPrefixes .= NumPrefixesMax = 1 ? "РџСЂРµС„РёРєСЃ" : "РџСЂРµС„РёРєСЃР°"
 		;WordSuffixes .= NumSuffixesMax = 1 ? "Suffix" : "Suffixes"
-		WordSuffixes .= NumSuffixesMax = 1 ? "Суффикс" : "Суффикса"
+		WordSuffixes .= NumSuffixesMax = 1 ? "РЎСѓС„С„РёРєСЃ" : "РЎСѓС„С„РёРєСЃР°"
 		
 		If (NumPrefixesMax = 0){
 			PrefixText := ""
@@ -9165,7 +9165,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		If (NumTotalAffixes > 0 and Not Item.IsUnidentified and Not Item.IsMap)
 		{
 			;TT = %TT%`n--------`nAffixes (%TotalsText%): %PrefixText%%SuffixText%
-			TT = %TT%`n--------`nАффиксы (%TotalsText%): %PrefixText%%SuffixText%
+			TT = %TT%`n--------`nРђС„С„РёРєСЃС‹ (%TotalsText%): %PrefixText%%SuffixText%
 		}
 	}
 	
@@ -9175,7 +9175,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		
 		maxIndex 	:= Item.Implicit.MaxIndex()
 		TextLineWidth := ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]) ? 20 : 50
-		; ширина поля для собственного свойства предмета - будем определять в зависимости от настроек, либо полную, либо краткую
+		; С€РёСЂРёРЅР° РїРѕР»СЏ РґР»СЏ СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ СЃРІРѕР№СЃС‚РІР° РїСЂРµРґРјРµС‚Р° - Р±СѓРґРµРј РѕРїСЂРµРґРµР»СЏС‚СЊ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РЅР°СЃС‚СЂРѕРµРє, Р»РёР±Рѕ РїРѕР»РЅСѓСЋ, Р»РёР±Рѕ РєСЂР°С‚РєСѓСЋ
 		If (!Opts.ShortAffix){
 			TextLineWidth := ParseModLength(Item.Implicit, true, ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]))
 		}
@@ -9206,7 +9206,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	}
 	
 	;Else If (ItemData.Rarity == "Unique")
-	Else If (ItemData.Rarity == "Уникальный")
+	Else If (ItemData.Rarity == "РЈРЅРёРєР°Р»СЊРЅС‹Р№")
 	{
 		;If (FindUnique(Item.Name) == False and Not Item.IsUnidentified)
 		If (FindUnique(Item.Name_En) == False and Not Item.IsUnidentified)
@@ -9228,16 +9228,16 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		For key, val in pseudoMods
 		{
 			;pseudoMod := "(pseudo) " val.name_orig
-			pseudoMod := "(псевдо) " val.name_orig
+			pseudoMod := "(РїСЃРµРІРґРѕ) " val.name_orig
 			TT = %TT%`n%pseudoMod%
 		}
 	}
 	
 	;If (Item.IsUnidentified and (Item.Name != "Scroll of Wisdom") and Not Item.IsMap)
-	If (Item.IsUnidentified and (Item.Name != "Свиток мудрости") and Not Item.IsMap)
+	If (Item.IsUnidentified and (Item.Name != "РЎРІРёС‚РѕРє РјСѓРґСЂРѕСЃС‚Рё") and Not Item.IsMap)
 	{
 		;TT = %TT%`n--------`nUnidentified
-		TT = %TT%`n--------`nНеопознано
+		TT = %TT%`n--------`nРќРµРѕРїРѕР·РЅР°РЅРѕ
 	}
 	
 	If (UniqueHasFatedVariant(Item.Name))
@@ -9249,7 +9249,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	If (Item.IsMirrored)
 	{
 		;TT = %TT%`n--------`nMirrored
-		TT = %TT%`n--------`nОтражено
+		TT = %TT%`n--------`nРћС‚СЂР°Р¶РµРЅРѕ
 	}
 	
 	If (Opts.ShowExplanationForUsedNotation)
@@ -9257,30 +9257,30 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		Notation := ""
 		
 		;If (RegExMatch(AffixDetails, "(HybP|HybS)")){
-		If (RegExMatch(AffixDetails, "(ГибПр|ГибСу)")){
+		If (RegExMatch(AffixDetails, "(Р“РёР±РџСЂ|Р“РёР±РЎСѓ)")){
 			;Notation .= "`n Hyb: Hybrid. One mod with two parts in two lines."
-			Notation .= "`n Гиб: Гибридный. Один мод состоящий из двух частей в двух строках."
+			Notation .= "`n Р“РёР±: Р“РёР±СЂРёРґРЅС‹Р№. РћРґРёРЅ РјРѕРґ СЃРѕСЃС‚РѕСЏС‰РёР№ РёР· РґРІСѓС… С‡Р°СЃС‚РµР№ РІ РґРІСѓС… СЃС‚СЂРѕРєР°С…."
 		}
 		;If (RegExMatch(AffixDetails, "HDP")){
 		If (RegExMatch(AffixDetails, "HDP")){
 			;Notation .= "`n HDP: Hybrid Defence Prefix. Flat Def on Hybrid Base Armour."
-			Notation .= "`n HDP: Гибридный защитный префикс. Плоская защита от гибридной базовой брони."
+			Notation .= "`n HDP: Р“РёР±СЂРёРґРЅС‹Р№ Р·Р°С‰РёС‚РЅС‹Р№ РїСЂРµС„РёРєСЃ. РџР»РѕСЃРєР°СЏ Р·Р°С‰РёС‚Р° РѕС‚ РіРёР±СЂРёРґРЅРѕР№ Р±Р°Р·РѕРІРѕР№ Р±СЂРѕРЅРё."
 		}
 		;If (RegExMatch(AffixDetails, "(CrP|CrS)")){
-		If (RegExMatch(AffixDetails, "(КрфПр|КрфСу)")){
+		If (RegExMatch(AffixDetails, "(РљСЂС„РџСЂ|РљСЂС„РЎСѓ)")){
 			;Notation .= "`n Cr: Craft. Master tiers not in yet, treated as normal mod."
-			Notation .= "`n Крф: Крафт. Уровни мастеров не определяются, обрабатывается как обычный мод."
+			Notation .= "`n РљСЂС„: РљСЂР°С„С‚. РЈСЂРѕРІРЅРё РјР°СЃС‚РµСЂРѕРІ РЅРµ РѕРїСЂРµРґРµР»СЏСЋС‚СЃСЏ, РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ РєР°Рє РѕР±С‹С‡РЅС‹Р№ РјРѕРґ."
 		}
 		matchpattern := "\d\" Opts.DoubleRangeSeparator "\d"
 		If (RegExMatch(AffixDetails, matchpattern)){
 			;Notation .= "`n a-b" Opts.DoubleRangeSeparator "c-d: For added damage mods. (a-b) to (c-d)"
-			Notation .= "`n a-b" Opts.DoubleRangeSeparator "c-d: Для модов добавляющих урон: от (a-b) до (c-d)"
+			Notation .= "`n a-b" Opts.DoubleRangeSeparator "c-d: Р”Р»СЏ РјРѕРґРѕРІ РґРѕР±Р°РІР»СЏСЋС‰РёС… СѓСЂРѕРЅ: РѕС‚ (a-b) РґРѕ (c-d)"
 		}
 		matchpattern := "\d\" Opts.MultiTierRangeSeparator "\d"
 		If (RegExMatch(AffixDetails, matchpattern)){
 			;Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: Multi tier uncertainty. WorstCaseRange" Opts.MultiTierRangeSeparator "BestCaseRange"
-			;Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: Неопределенность в уровнях. ХудшийДиапазон" Opts.MultiTierRangeSeparator "ЛучшийДиапазон"
-			Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: Невозможно однозначно определить тир. ХудшийДиапазон" Opts.MultiTierRangeSeparator "ЛучшийДиапазон"
+			;Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: РќРµРѕРїСЂРµРґРµР»РµРЅРЅРѕСЃС‚СЊ РІ СѓСЂРѕРІРЅСЏС…. РҐСѓРґС€РёР№Р”РёР°РїР°Р·РѕРЅ" Opts.MultiTierRangeSeparator "Р›СѓС‡С€РёР№Р”РёР°РїР°Р·РѕРЅ"
+			Notation .= "`n a-b" Opts.MultiTierRangeSeparator "c-d: РќРµРІРѕР·РјРѕР¶РЅРѕ РѕРґРЅРѕР·РЅР°С‡РЅРѕ РѕРїСЂРµРґРµР»РёС‚СЊ С‚РёСЂ. РҐСѓРґС€РёР№Р”РёР°РїР°Р·РѕРЅ" Opts.MultiTierRangeSeparator "Р›СѓС‡С€РёР№Р”РёР°РїР°Р·РѕРЅ"
 		}
 		
 		If (Itemdata.SpecialCaseNotation != "")
@@ -9291,7 +9291,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		If (Notation)
 		{
 			;TT .= "`n--------`nNotation:" Notation
-			TT .= "`n--------`nПримечание:" Notation
+			TT .= "`n--------`nРџСЂРёРјРµС‡Р°РЅРёРµ:" Notation
 			
 		}
 	}
@@ -9402,7 +9402,7 @@ ModStringToObject(string, isImplicit) {
 	Matches := []
 
 	;If (RegexMatch(val, "i)to (Strength|Dexterity|Intelligence) and (Strength|Dexterity|Intelligence)$", attribute)) {
-	If (RegexMatch(val, "i)к (силе|ловкости|интеллекту) и (силе|ловкости|интеллекту)$", attribute)) {
+	If (RegexMatch(val, "i)Рє (СЃРёР»Рµ|Р»РѕРІРєРѕСЃС‚Рё|РёРЅС‚РµР»Р»РµРєС‚Сѓ) Рё (СЃРёР»Рµ|Р»РѕРІРєРѕСЃС‚Рё|РёРЅС‚РµР»Р»РµРєС‚Сѓ)$", attribute)) {
 		IF ( attribute1 AND attribute2 ) {
 			Matches.push(attribute1)
 			Matches.push(attribute2)
@@ -9412,55 +9412,55 @@ ModStringToObject(string, isImplicit) {
 	type := ""
 	; Matching "x% fire and cold resistance" or "x% to cold resist", excluding "to maximum cold resistance" and "damage penetrates x% cold resistance" and minion/totem related mods
 	;If (RegExMatch(val, "i)to ((cold|fire|lightning)( and (cold|fire|lightning))?) resistance") and not RegExMatch(val, "i)Minion|Totem")) {
-	If (RegExMatch(val, "i)к сопротивлению ((холоду|огню|молнии)( и (холоду|огню|молнии))?)") and not RegExMatch(val, "i)Приспешник|Тотем")) {
+	If (RegExMatch(val, "i)Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ ((С…РѕР»РѕРґСѓ|РѕРіРЅСЋ|РјРѕР»РЅРёРё)( Рё (С…РѕР»РѕРґСѓ|РѕРіРЅСЋ|РјРѕР»РЅРёРё))?)") and not RegExMatch(val, "i)РџСЂРёСЃРїРµС€РЅРёРє|РўРѕС‚РµРј")) {
 		type := "Resistance"
 		;If (RegExMatch(val, "i)fire")) {
-		If (RegExMatch(val, "i)огню")) {
+		If (RegExMatch(val, "i)РѕРіРЅСЋ")) {
 			;Matches.push("Fire")
-			Matches.push("огню")
+			Matches.push("РѕРіРЅСЋ")
 		}
 		;If (RegExMatch(val, "i)cold")) {
-		If (RegExMatch(val, "i)холоду")) {
+		If (RegExMatch(val, "i)С…РѕР»РѕРґСѓ")) {
 			;Matches.push("Cold")
-			Matches.push("холоду")
+			Matches.push("С…РѕР»РѕРґСѓ")
 		}
 		;If (RegExMatch(val, "i)lightning")) {
-		If (RegExMatch(val, "i)молнии")) {
+		If (RegExMatch(val, "i)РјРѕР»РЅРёРё")) {
 			;Matches.push("Lightning")
-			Matches.push("молнии")
+			Matches.push("РјРѕР»РЅРёРё")
 		}
 	}
 
 	; Vanguard Belt implicit for example (flat AR + EV)
 	;If (RegExMatch(val, "i)([.0-9]+) to (Armour|Evasion Rating|Energy Shield) and (Armour|Evasion Rating|Energy Shield)")) {
-	; требуется уточнение по написанию энергетического щита
-	If (RegExMatch(val, "i)([.0-9]+) к (броне|уклонению|энергетическому щиту|максимуму энергетического щита) и (броне|уклонению|энергетическому щиту|максимуму энергетического щита)")) {
+	; С‚СЂРµР±СѓРµС‚СЃСЏ СѓС‚РѕС‡РЅРµРЅРёРµ РїРѕ РЅР°РїРёСЃР°РЅРёСЋ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°
+	If (RegExMatch(val, "i)([.0-9]+) Рє (Р±СЂРѕРЅРµ|СѓРєР»РѕРЅРµРЅРёСЋ|СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРјСѓ С‰РёС‚Сѓ|РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°) Рё (Р±СЂРѕРЅРµ|СѓРєР»РѕРЅРµРЅРёСЋ|СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРјСѓ С‰РёС‚Сѓ|РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°)")) {
 		type := "Defence"
 		;If (RegExMatch(val, "i)Armour")) {
-		If (RegExMatch(val, "i)броне")) {
+		If (RegExMatch(val, "i)Р±СЂРѕРЅРµ")) {
 			;Matches.push("Armour")
-			Matches.push("броне")
+			Matches.push("Р±СЂРѕРЅРµ")
 		}
 		;If (RegExMatch(val, "i)Evasion Rating")) {
-		If (RegExMatch(val, "i)уклонению")) {
+		If (RegExMatch(val, "i)СѓРєР»РѕРЅРµРЅРёСЋ")) {
 			;Matches.push("Evasion Rating")
-			Matches.push("уклонению")
+			Matches.push("СѓРєР»РѕРЅРµРЅРёСЋ")
 		}
 		;If (RegExMatch(val, "i)Energy Shield")) {
-		If (RegExMatch(val, "i)(энергетическому щиту|максимуму энергетического щита)")) {
+		If (RegExMatch(val, "i)(СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРјСѓ С‰РёС‚Сѓ|РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°)")) {
 			;Matches.push("Energy Shield")
-			Matches.push("максимуму энергетического щита")
+			Matches.push("РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°")
 		}
 	}
 
 	; Create single mod from every collected resist/attribute
 	Loop % Matches.Length() {
 		;RegExMatch(val, "i)(Resistance)", match)
-		RegExMatch(val, "i)(сопротивлению)", match)
+		RegExMatch(val, "i)(СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ)", match)
 		; differentiate between negative and positive values; flat and increased attributes
 		sign := "+"
 		;type := RegExMatch(val, "i)increased", inc) ? "% increased " : " to "		
-		type := RegExMatch(val, "i)increased", inc) ? "% increased " : " к "		
+		type := RegExMatch(val, "i)increased", inc) ? "% increased " : " Рє "		
 		If (inc) {
 			sign := ""
 		}
@@ -9468,18 +9468,18 @@ ModStringToObject(string, isImplicit) {
 			sign := "-"
 		}
 		;Matches[A_Index] := match1 ? sign . "#% to " . Matches[A_Index] . " " . match1 : sign . "#" . type . "" . Matches[A_Index]
-		Matches[A_Index] := match1 ? sign . "#% к " . match1 . " " . Matches[A_Index] : sign . "#" . type . "" . Matches[A_Index]
+		Matches[A_Index] := match1 ? sign . "#% Рє " . match1 . " " . Matches[A_Index] : sign . "#" . type . "" . Matches[A_Index]
 	}
 
 	;If (RegExMatch(val, "i)to all attributes|to all elemental (Resistances)", match) and not RegExMatch(val, "i)Minion|Totem")) {
-	If (RegExMatch(val, "i)ко всем характеристикам|к (сопротивлению) всем стихиям", match) and not RegExMatch(val, "i)Приспешник|Тотем")) {
+	If (RegExMatch(val, "i)РєРѕ РІСЃРµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєР°Рј|Рє (СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ) РІСЃРµРј СЃС‚РёС…РёСЏРј", match) and not RegExMatch(val, "i)РџСЂРёСЃРїРµС€РЅРёРє|РўРѕС‚РµРј")) {
 		resist := match1 ? true : false
 		;Matches[1] := resist ? "+#% to Fire Resistance" : "+# to Strength"
-		Matches[1] := resist ? "+#% к сопротивлению огню" : "+# к силе"
+		Matches[1] := resist ? "+#% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РѕРіРЅСЋ" : "+# Рє СЃРёР»Рµ"
 		;Matches[2] := resist ? "+#% to Lightning Resistance" : "+# to Intelligence"
-		Matches[2] := resist ? "+#% к сопротивлению молнии" : "+# к интеллекту"
+		Matches[2] := resist ? "+#% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РјРѕР»РЅРёРё" : "+# Рє РёРЅС‚РµР»Р»РµРєС‚Сѓ"
 		;Matches[3] := resist ? "+#% to Cold Resistance" : "+# to Dexterity"
-		Matches[3] := resist ? "+#% к сопротивлению холоду" : "+# к ловкости"
+		Matches[3] := resist ? "+#% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ С…РѕР»РѕРґСѓ" : "+# Рє Р»РѕРІРєРѕСЃС‚Рё"
 	}
 
 	; Use original mod-string if no combination is found
@@ -9502,8 +9502,8 @@ ModStringToObject(string, isImplicit) {
 		; unless there is a mod "-# maximum charges"
 		s			:= RegExReplace(Matches[A_Index], "i)(-?)[.0-9]+", "$1#")
 		;temp.name		:= RegExReplace(s, "i)# ?to ? #", "#", isRange)
-		temp.name		:= RegExReplace(s, "i)# ?к ? #", "#", isRange)
-		; попытаемся сконвертировать имя мода содержащего константу
+		temp.name		:= RegExReplace(s, "i)# ?Рє ? #", "#", isRange)
+		; РїРѕРїС‹С‚Р°РµРјСЃСЏ СЃРєРѕРЅРІРµСЂС‚РёСЂРѕРІР°С‚СЊ РёРјСЏ РјРѕРґР° СЃРѕРґРµСЂР¶Р°С‰РµРіРѕ РєРѕРЅСЃС‚Р°РЅС‚Сѓ
 		nameModNum := AdpRu_nameModNumToConst(temp.name)
 		temp.name := nameModNum.nameModConst
 
@@ -9568,12 +9568,12 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		%type%Dmg_FlatHi := 0
 	}
 
-	; соответствие русских наименований английским
-	nameRuToEn := {"атакам":"Attacks", "чарам":"Spells", "стихий":"Elemental", "огня":"Fire", "холода":"Cold", "холоду":"Cold", "огню":"Fire", "молнии":"Lightning", "хаосу":"Chaos", "силы":"Strength", "интеллекта":"Intelligence", "силе":"Strength", "ловкости":"Dexterity", "интеллекту":"Intelligence", "маны":"Mana","здоровья":"Life" }
-	; и наооборот
-	nameEnToRu := {"Strength":"силе", "Dexterity":"ловкости", "Intelligence":"интеллекту", "Cold":"холоду", "Fire":"огню", "Lightning":"молнии"}
-	; второй вариант написания
-	nameEnToRu2 := {"Cold":"холода", "Fire":"огня", "Lightning":"молнии", "Elemental":"стихий"}
+	; СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ СЂСѓСЃСЃРєРёС… РЅР°РёРјРµРЅРѕРІР°РЅРёР№ Р°РЅРіР»РёР№СЃРєРёРј
+	nameRuToEn := {"Р°С‚Р°РєР°Рј":"Attacks", "С‡Р°СЂР°Рј":"Spells", "СЃС‚РёС…РёР№":"Elemental", "РѕРіРЅСЏ":"Fire", "С…РѕР»РѕРґР°":"Cold", "С…РѕР»РѕРґСѓ":"Cold", "РѕРіРЅСЋ":"Fire", "РјРѕР»РЅРёРё":"Lightning", "С…Р°РѕСЃСѓ":"Chaos", "СЃРёР»С‹":"Strength", "РёРЅС‚РµР»Р»РµРєС‚Р°":"Intelligence", "СЃРёР»Рµ":"Strength", "Р»РѕРІРєРѕСЃС‚Рё":"Dexterity", "РёРЅС‚РµР»Р»РµРєС‚Сѓ":"Intelligence", "РјР°РЅС‹":"Mana","Р·РґРѕСЂРѕРІСЊСЏ":"Life" }
+	; Рё РЅР°РѕРѕР±РѕСЂРѕС‚
+	nameEnToRu := {"Strength":"СЃРёР»Рµ", "Dexterity":"Р»РѕРІРєРѕСЃС‚Рё", "Intelligence":"РёРЅС‚РµР»Р»РµРєС‚Сѓ", "Cold":"С…РѕР»РѕРґСѓ", "Fire":"РѕРіРЅСЋ", "Lightning":"РјРѕР»РЅРёРё"}
+	; РІС‚РѕСЂРѕР№ РІР°СЂРёР°РЅС‚ РЅР°РїРёСЃР°РЅРёСЏ
+	nameEnToRu2 := {"Cold":"С…РѕР»РѕРґР°", "Fire":"РѕРіРЅСЏ", "Lightning":"РјРѕР»РЅРёРё", "Elemental":"СЃС‚РёС…РёР№"}
 
 	
 	/* BREAKPOINT
@@ -9589,20 +9589,20 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### Base stats
 		; life and mana
 		;If (RegExMatch(mod.name, "i)to maximum (Life|Mana)$", stat)) {
-		If (RegExMatch(mod.name, "i)к максимуму (здоровья|маны)$", stat)) {
+		If (RegExMatch(mod.name, "i)Рє РјР°РєСЃРёРјСѓРјСѓ (Р·РґРѕСЂРѕРІСЊСЏ|РјР°РЅС‹)$", stat)) {
 			stat1 := nameRuToEn[stat1]
 			%stat1%Flat := %stat1%Flat + mod.values[1]
 			mod.simplifiedName := "xToMaximum" stat1
 		}
 		; flat energy shield
 		;Else If (RegExMatch(mod.name, "i)to maximum Energy Shield$")) {
-		Else If (RegExMatch(mod.name, "i)к максимуму энергетического щита$")) {
+		Else If (RegExMatch(mod.name, "i)Рє РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°$")) {
 			energyShieldFlat := energyShieldFlat + mod.values[1]
 			mod.simplifiedName := "xToMaximumEnergyShield"
 		}
 		; percent energy shield
 		;Else If (RegExMatch(mod.name, "i)increased maximum Energy Shield$")) {
-		Else If (RegExMatch(mod.name, "i)повышение максимума энергетического щита$")) {
+		Else If (RegExMatch(mod.name, "i)РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°$")) {
 			energyShieldPercent := energyShieldPercent + mod.values[1]
 			mod.simplifiedName := "xIncreasedMaximumEnergyShield"
 		}
@@ -9610,24 +9610,24 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### Items found
 		; rarity
 		;Else If (RegExMatch(mod.name, "i)increased Rarity of items found$")) {
-		Else If (RegExMatch(mod.name, "i)повышение редкости найденных предметов$")) {
+		Else If (RegExMatch(mod.name, "i)РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РЅР°Р№РґРµРЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ$")) {
 			rarityItemsFoundPercent := rarityItemsFoundPercent + mod.values[1]
 			mod.simplifiedName := "xIncreasedRarityOfItemsFound"
 		}
 
 		; ### crits
 		;Else If (RegExMatch(mod.name, "i)increased Global Critical Strike Chance$")) {
-		Else If (RegExMatch(mod.name, "i)повышение глобального шанса критического удара$")) {
+		Else If (RegExMatch(mod.name, "i)РїРѕРІС‹С€РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°$")) {
 			globalCritChancePercent := globalCritChancePercent + mod.values[1]
 			mod.simplifiedName := "xIncreasedGlobalCriticalChance"
 		}
 		;Else If (RegExMatch(mod.name, "i)to Global Critical Strike Multiplier$")) {
-		Else If (RegExMatch(mod.name, "i)к глобальному множителю критического удара$")) {
+		Else If (RegExMatch(mod.name, "i)Рє РіР»РѕР±Р°Р»СЊРЅРѕРјСѓ РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°$")) {
 			globalCritMultiplierPercent := globalCritMultiplierPercent + mod.values[1]
 			mod.simplifiedName := "xIncreasedGlobalCriticalMultiplier"
 		}
 		;Else If (RegExMatch(mod.name, "i)increased Critical Strike Chance for Spells$")) {
-		Else If (RegExMatch(mod.name, "i)повышение шанса критического удара для чар$")) {
+		Else If (RegExMatch(mod.name, "i)РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РґР»СЏ С‡Р°СЂ$")) {
 			critChanceForSpellsPercent := critChanceForSpellsPercent + mod.values[1]
 			mod.simplifiedName := "xIncreasedCriticalSpells"
 		}
@@ -9635,20 +9635,20 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### Attributes
 		; all flat attributes
 		;Else If (RegExMatch(mod.name, "i)to All Attributes$")) {
-		Else If (RegExMatch(mod.name, "i)ко всем характеристикам$")) {
+		Else If (RegExMatch(mod.name, "i)РєРѕ РІСЃРµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєР°Рј$")) {
 			allAttributesFlat := allAttributesFlat + mod.values[1]
 			mod.simplifiedName := "xToAllAttributes"
 		}
 		; single flat attributes
 		;Else If (RegExMatch(mod.name, "i)to (Intelligence|Dexterity|Strength)$", attribute)) {
-		Else If (RegExMatch(mod.name, "i)к (интеллекту|ловкости|силе)$", attribute)) {
+		Else If (RegExMatch(mod.name, "i)Рє (РёРЅС‚РµР»Р»РµРєС‚Сѓ|Р»РѕРІРєРѕСЃС‚Рё|СЃРёР»Рµ)$", attribute)) {
 			attribute1 := nameRuToEn[attribute1]
 			%attribute1%Flat := %attribute1%Flat + mod.values[1]
 			mod.simplifiedName := "xTo" . attribute1
 		}
 		; % increased attributes
 		;Else If (RegExMatch(mod.name, "i)increased (Intelligence|Dexterity|Strength)$", attribute)) {
-		Else If (RegExMatch(mod.name, "i)повышение (интеллекта|ловкости|силы)$", attribute)) {
+		Else If (RegExMatch(mod.name, "i)РїРѕРІС‹С€РµРЅРёРµ (РёРЅС‚РµР»Р»РµРєС‚Р°|Р»РѕРІРєРѕСЃС‚Рё|СЃРёР»С‹)$", attribute)) {
 			attribute1 := nameRuToEn[attribute1]
 			%attribute1%Percent := %attribute1%Percent + mod.values[1]
 			mod.simplifiedName := "xIncreased" . attribute1 . "Percentage"
@@ -9657,13 +9657,13 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### Resistances
 		; % to all resistances ( careful about 'max all resistances' )
 		;Else If (RegExMatch(mod.name, "i)to all Elemental Resistances$") and not RegExMatch(mod.name, "i)Minion|Totem")) {
-		Else If (RegExMatch(mod.name, "i)к сопротивлению всем стихиям$") and not RegExMatch(mod.name, "i)Приспешник|Тотем")) {
+		Else If (RegExMatch(mod.name, "i)Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РІСЃРµРј СЃС‚РёС…РёСЏРј$") and not RegExMatch(mod.name, "i)РџСЂРёСЃРїРµС€РЅРёРє|РўРѕС‚РµРј")) {
 			toAllElementalResist := toAllElementalResist + mod.values[1]
 			mod.simplifiedName := "xToAllElementalResistances"
 		}
 		; % to base resistances
 		;Else If (RegExMatch(mod.name, "i)to (Cold|Fire|Lightning|Chaos) Resistance$", resistType) and not RegExMatch(mod.name, "i)Minion|Totem")) {
-		Else If (RegExMatch(mod.name, "i)к сопротивлению (холоду|огню|молнии|хаосу)$", resistType) and not RegExMatch(mod.name, "i)Приспешник|Тотем")) {
+		Else If (RegExMatch(mod.name, "i)Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ (С…РѕР»РѕРґСѓ|РѕРіРЅСЋ|РјРѕР»РЅРёРё|С…Р°РѕСЃСѓ)$", resistType) and not RegExMatch(mod.name, "i)РџСЂРёСЃРїРµС€РЅРёРє|РўРѕС‚РµРј")) {
 			resistType1 := nameRuToEn[resistType1]
 			%resistType1%Resist := %resistType1%Resist + mod.values[1]
 			mod.simplifiedName := "xTo" resistType1 "Resistance"
@@ -9672,14 +9672,14 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### Percent damages
 		; % increased elemental damage
 		;Else If (RegExMatch(mod.name, "i)increased (Cold|Fire|Lightning|Elemental) damage$", element)) {
-		Else If (RegExMatch(mod.name, "i)увеличение урона от (холода|огня|молнии|стихий)$", element)) {
+		Else If (RegExMatch(mod.name, "i)СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ (С…РѕР»РѕРґР°|РѕРіРЅСЏ|РјРѕР»РЅРёРё|СЃС‚РёС…РёР№)$", element)) {
 			element1 := nameRuToEn[element1]
 			%element1%Dmg_Percent := %element1%Dmg_Percent + mod.values[1]
 			mod.simplifiedName := "xIncreased" element1 "Damage"
 		}
 		; % elemental damage with weapons
 		;Else If (RegExMatch(mod.name, "i)(Cold|Fire|Lightning|Elemental) damage with attack skills", element)) {
-		Else If (RegExMatch(mod.name, "i)увеличение урона от (холода|огня|молнии|стихий) от умений атак", element)) {
+		Else If (RegExMatch(mod.name, "i)СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ (С…РѕР»РѕРґР°|РѕРіРЅСЏ|РјРѕР»РЅРёРё|СЃС‚РёС…РёР№) РѕС‚ СѓРјРµРЅРёР№ Р°С‚Р°Рє", element)) {
 			element1 := nameRuToEn[element1]
 			%element1%Dmg_AttacksPercent := %element1%Dmg_AttacksPercent + mod.values[1]
 			mod.simplifiedName := "xIncreased" element1 "DamageAttacks"
@@ -9688,13 +9688,13 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### Flat Damages
 		; flat 'element' damage; source: weapons
 		;Else If (RegExMatch(mod.name, "i)adds .* (Cold|Fire|Lightning|Elemental) damage$", element)) {
-		Else If (RegExMatch(mod.name, "i)Добавляет .* урона от (холода|огня|молнии|стихий)$", element)) {
+		Else If (RegExMatch(mod.name, "i)Р”РѕР±Р°РІР»СЏРµС‚ .* СѓСЂРѕРЅР° РѕС‚ (С…РѕР»РѕРґР°|РѕРіРЅСЏ|РјРѕР»РЅРёРё|СЃС‚РёС…РёР№)$", element)) {
 			element1 := nameRuToEn[element1]
 			element := element1
 			%element%Dmg_FlatLow := %element%Dmg_FlatLow + mod.values[1]
 			%element%Dmg_FlatHi  := %element%Dmg_FlatHi  + mod.values[2]
-			; на poe.trade нет такого мода - отключаем
-			;---добавляет псевдо стихийного урона на оружии---
+			; РЅР° poe.trade РЅРµС‚ С‚Р°РєРѕРіРѕ РјРѕРґР° - РѕС‚РєР»СЋС‡Р°РµРј
+			;---РґРѕР±Р°РІР»СЏРµС‚ РїСЃРµРІРґРѕ СЃС‚РёС…РёР№РЅРѕРіРѕ СѓСЂРѕРЅР° РЅР° РѕСЂСѓР¶РёРё---
 			;ElementalDmg_FlatLow  += %element1%Dmg_FlatLow
 			;ElementalDmg_FlatHi   += %element1%Dmg_FlatHi
 			;-------------------------------------------------
@@ -9702,7 +9702,7 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		}
 		; flat 'element' damage; source: various (wands/rings/amulets etc)
 		;Else If (RegExMatch(mod.name, "i)adds .* (Cold|Fire|Lightning|Elemental) damage to (Attacks|Spells)$", element)) {
-		Else If (RegExMatch(mod.name, "i)Добавляет .* урона от (холода|огня|молнии|стихий) к (чарам|атакам)$", element)) {
+		Else If (RegExMatch(mod.name, "i)Р”РѕР±Р°РІР»СЏРµС‚ .* СѓСЂРѕРЅР° РѕС‚ (С…РѕР»РѕРґР°|РѕРіРЅСЏ|РјРѕР»РЅРёРё|СЃС‚РёС…РёР№) Рє (С‡Р°СЂР°Рј|Р°С‚Р°РєР°Рј)$", element)) {
 			element1 := nameRuToEn[element1]
 			element2 := nameRuToEn[element2]
 			%element1%Dmg_%element2%FlatLow := %element1%Dmg_%element2%FlatLow + mod.values[1]
@@ -9713,7 +9713,7 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		}
 		; this would catch any * Spell * Damage * ( we might need to be more precise here )
 		;Else If (RegExMatch(mod.name, "i)spell") and RegExMatch(mod.name, "i)damage") and not RegExMatch(mod.name, "i)chance|multiplier")) {
-		Else If (RegExMatch(mod.name, "i)чар") and RegExMatch(mod.name, "i)урон") and not RegExMatch(mod.name, "i)шанс|множител")) {
+		Else If (RegExMatch(mod.name, "i)С‡Р°СЂ") and RegExMatch(mod.name, "i)СѓСЂРѕРЅ") and not RegExMatch(mod.name, "i)С€Р°РЅСЃ|РјРЅРѕР¶РёС‚РµР»")) {
 			spellDmg_Percent := spellDmg_Percent + mod.values[1]
 			mod.simplifiedName := "xIncreasedSpellDamage"
 		}
@@ -9721,7 +9721,7 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		; ### remaining mods that can be derived from attributes (str|dex|int)
 		; flat accuracy rating
 		;Else If (RegExMatch(mod.name, "i)to accuracy rating$")) {
-		Else If (RegExMatch(mod.name, "i)к меткости$")) {
+		Else If (RegExMatch(mod.name, "i)Рє РјРµС‚РєРѕСЃС‚Рё$")) {
 			accuracyRatingFlat := accuracyRatingFlat + mod.values[1]
 		}
 	}
@@ -9795,8 +9795,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [lifeFlat]
 		;temp.name_orig		:= "+" . lifeFlat . " to maximum Life"
 		;temp.name			:= "+# to maximum Life"
-		temp.name_orig		:= "+" . lifeFlat . " к максимуму здоровья"
-		temp.name			:= "+# к максимуму здоровья"
+		temp.name_orig		:= "+" . lifeFlat . " Рє РјР°РєСЃРёРјСѓРјСѓ Р·РґРѕСЂРѕРІСЊСЏ"
+		temp.name			:= "+# Рє РјР°РєСЃРёРјСѓРјСѓ Р·РґРѕСЂРѕРІСЊСЏ"
 		temp.simplifiedName	:= "xToMaximumLife"
 		temp.exception		:= true
 		temp.possibleParentSimplifiedNames := ["xToMaximumLife"]
@@ -9807,8 +9807,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [manaFlat]
 		;temp.name_orig		:= "+" . manaFlat . " to maximum Mana"
 		;temp.name			:= "+# to maximum Mana"
-		temp.name_orig		:= "+" . manaFlat . " к максимуму маны"
-		temp.name			:= "+# к максимуму маны"
+		temp.name_orig		:= "+" . manaFlat . " Рє РјР°РєСЃРёРјСѓРјСѓ РјР°РЅС‹"
+		temp.name			:= "+# Рє РјР°РєСЃРёРјСѓРјСѓ РјР°РЅС‹"
 		temp.simplifiedName	:= "xToMaximumMana"
 		temp.possibleParentSimplifiedNames := ["xToMaximumMana"]
 		tempMods.push(temp)
@@ -9818,8 +9818,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [energyShieldFlat]
 		;temp.name_orig		:= "+" . energyShieldFlat . " to maximum Energy Shield"
 		;temp.name			:= "+# to maximum Energy Shield"
-		temp.name_orig		:= "+" . energyShieldFlat . " к максимуму энергетического щита"
-		temp.name			:= "+# к максимуму энергетического щита"
+		temp.name_orig		:= "+" . energyShieldFlat . " Рє РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°"
+		temp.name			:= "+# Рє РјР°РєСЃРёРјСѓРјСѓ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°"
 		temp.simplifiedName	:= "xToMaximumEnergyShield"
 		temp.possibleParentSimplifiedNames := ["xToMaximumEnergyShield"]
 		tempMods.push(temp)
@@ -9829,8 +9829,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [energyShieldPercent]
 		;temp.name_orig		:= energyShieldPercent . "% increased maximum Energy Shield"
 		;temp.name			:= "#% increased maximum Energy Shield"
-		temp.name_orig		:= energyShieldPercent . "% повышение максимума энергетического щита"
-		temp.name			:= "#% повышение максимума энергетического щита"
+		temp.name_orig		:= energyShieldPercent . "% РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°"
+		temp.name			:= "#% РїРѕРІС‹С€РµРЅРёРµ РјР°РєСЃРёРјСѓРјР° СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р°"
 		temp.simplifiedName	:= "xIncreasedMaximumEnergyShield"
 		temp.possibleParentSimplifiedNames := ["xIncreasedMaximumEnergyShield"]
 		tempMods.push(temp)
@@ -9841,8 +9841,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [rarityItemsFoundPercent]
 		;temp.name_orig		:= rarityItemsFoundPercent . "% increased Rarity of items found"
 		;temp.name			:= "#% increased Rarity of items found"
-		temp.name_orig		:= rarityItemsFoundPercent . "% повышение редкости найденных предметов"
-		temp.name			:= "#% повышение редкости найденных предметов"
+		temp.name_orig		:= rarityItemsFoundPercent . "% РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РЅР°Р№РґРµРЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ"
+		temp.name			:= "#% РїРѕРІС‹С€РµРЅРёРµ СЂРµРґРєРѕСЃС‚Рё РЅР°Р№РґРµРЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ"
 		temp.simplifiedName	:= "xIncreasedRarityOfItemsFound"
 		temp.possibleParentSimplifiedNames := ["xIncreasedRarityOfItemsFound"]
 		tempMods.push(temp)
@@ -9853,8 +9853,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [globalCritChancePercent]
 		;temp.name_orig		:= globalCritChancePercent . "% increased Global Critical Strike Chance"
 		;temp.name			:= "#% increased Global Critical Strike Chance"
-		temp.name_orig		:= globalCritChancePercent . "% повышение глобального шанса критического удара"
-		temp.name			:= "#% повышение глобального шанса критического удара"
+		temp.name_orig		:= globalCritChancePercent . "% РїРѕРІС‹С€РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°"
+		temp.name			:= "#% РїРѕРІС‹С€РµРЅРёРµ РіР»РѕР±Р°Р»СЊРЅРѕРіРѕ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°"
 		temp.simplifiedName	:= "xIncreasedGlobalCriticalChance"
 		temp.possibleParentSimplifiedNames := ["xIncreasedGlobalCriticalChance"]
 		tempMods.push(temp)
@@ -9864,8 +9864,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [globalCritMultiplierPercent]
 		;temp.name_orig		:= "+" . globalCritMultiplierPercent . "% to Global Critical Strike Multiplier"
 		;temp.name			:= "+#% to Global Critical Strike Multiplier"
-		temp.name_orig		:= "+" . globalCritMultiplierPercent . "% к глобальному множителю критического удара"
-		temp.name			:= "+#% к глобальному множителю критического удара"
+		temp.name_orig		:= "+" . globalCritMultiplierPercent . "% Рє РіР»РѕР±Р°Р»СЊРЅРѕРјСѓ РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°"
+		temp.name			:= "+#% Рє РіР»РѕР±Р°Р»СЊРЅРѕРјСѓ РјРЅРѕР¶РёС‚РµР»СЋ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР°"
 		temp.simplifiedName	:= "xIncreasedGlobalCriticalMultiplier"
 		temp.possibleParentSimplifiedNames := ["xIncreasedGlobalCriticalMultiplier"]
 		tempMods.push(temp)
@@ -9875,8 +9875,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [critChanceForSpellsPercent]
 		;temp.name_orig		:= critChanceForSpellsPercent . "% increased Critical Strike Chance for Spells"
 		;temp.name			:= "#% increased Critical Strike Chance for Spells"
-		temp.name_orig		:= critChanceForSpellsPercent . "% повышение шанса критического удара для чар"
-		temp.name			:= "#% повышение шанса критического удара для чар"
+		temp.name_orig		:= critChanceForSpellsPercent . "% РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РґР»СЏ С‡Р°СЂ"
+		temp.name			:= "#% РїРѕРІС‹С€РµРЅРёРµ С€Р°РЅСЃР° РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ СѓРґР°СЂР° РґР»СЏ С‡Р°СЂ"
 		temp.simplifiedName	:= "xIncreasedCriticalSpells"
 		temp.possibleParentSimplifiedNames := ["xIncreasedCriticalSpells"]
 		tempMods.push(temp)
@@ -9888,8 +9888,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 			temp.values		:= [%attribute%Flat]
 			;temp.name_orig		:= "+" .  %attribute%Flat . " to " .  attribute
 			;temp.name			:= "+# to " . attribute
-			temp.name_orig		:= "+" .  %attribute%Flat . " к " .  nameEnToRu[attribute]
-			temp.name			:= "+# к " . nameEnToRu[attribute]
+			temp.name_orig		:= "+" .  %attribute%Flat . " Рє " .  nameEnToRu[attribute]
+			temp.name			:= "+# Рє " . nameEnToRu[attribute]
 			temp.simplifiedName	:= "xTo" attribute
 			temp.possibleParentSimplifiedNames := ["xTo" attribute, "xToAllAttributes"]
 			tempMods.push(temp)
@@ -9901,8 +9901,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [allAttributesFlat]
 		;temp.name_orig		:= "+" . allAttributesFlat . " to all Attributes"
 		;temp.name			:= "+#% to all Attributes"
-		temp.name_orig		:= "+" . allAttributesFlat . " ко всем характеристикам"
-		temp.name			:= "+#% ко всем характеристикам"
+		temp.name_orig		:= "+" . allAttributesFlat . " РєРѕ РІСЃРµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєР°Рј"
+		temp.name			:= "+#% РєРѕ РІСЃРµРј С…Р°СЂР°РєС‚РµСЂРёСЃС‚РёРєР°Рј"
 		temp.simplifiedName	:= "xToAllAttributes"
 		temp.possibleParentSimplifiedNames := ["xToAllAttributes"]
 		tempMods.push(temp)
@@ -9915,8 +9915,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 			temp.values		:= [%element%Resist]
 			;temp.name_orig		:= "+" %element%Resist "% to " element " Resistance"
 			;temp.name			:= "+#% to " element " Resistance"
-			temp.name_orig		:= "+" %element%Resist "% к сопротивлению " nameEnToRu[element]
-			temp.name			:= "+#% к сопротивлению " nameEnToRu[element]
+			temp.name_orig		:= "+" %element%Resist "% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ " nameEnToRu[element]
+			temp.name			:= "+#% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ " nameEnToRu[element]
 			temp.simplifiedName	:= "xTo" element "Resistance"
 			temp.possibleParentSimplifiedNames := ["xTo" element "Resistance", "xToAllElementalResistances"]
 			temp.hideForTradeMacro := true
@@ -9928,8 +9928,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [toAllElementalResist]
 		;temp.name_orig		:= "+" . toAllElementalResist . "% to all Elemental Resistances"
 		;temp.name			:= "+#% to all Elemental Resistances"
-		temp.name_orig		:= "+" . toAllElementalResist . "% к сопротивлению всем стихиям"
-		temp.name			:= "+#% к сопротивлению всем стихиям"
+		temp.name_orig		:= "+" . toAllElementalResist . "% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РІСЃРµРј СЃС‚РёС…РёСЏРј"
+		temp.name			:= "+#% Рє СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЋ РІСЃРµРј СЃС‚РёС…РёСЏРј"
 		temp.simplifiedName	:= "xToAllElementalResistances"
 		temp.exception		:= true
 		temp.possibleParentSimplifiedNames := ["xToAllElementalResistances"]
@@ -9942,10 +9942,10 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [totalElementalResistance]
 		;temp.name_orig		:= "+" . totalElementalResistance . "% total Elemental Resistance"
 		;temp.name			:= "+#% total Elemental Resistance"
-		;temp.name_orig		:= "+" . totalElementalResistance . "% общего сопротивления стихиям"
-		;temp.name			:= "+#% общего сопротивления стихиям"
-		temp.name_orig		:= "Всего +" . totalElementalResistance . "% сопротивления стихиям"
-		temp.name			:= "Всего +#% сопротивления стихиям"
+		;temp.name_orig		:= "+" . totalElementalResistance . "% РѕР±С‰РµРіРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ СЃС‚РёС…РёСЏРј"
+		;temp.name			:= "+#% РѕР±С‰РµРіРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ СЃС‚РёС…РёСЏРј"
+		temp.name_orig		:= "Р’СЃРµРіРѕ +" . totalElementalResistance . "% СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ СЃС‚РёС…РёСЏРј"
+		temp.name			:= "Р’СЃРµРіРѕ +#% СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ СЃС‚РёС…РёСЏРј"
 		temp.exception		:= true
 		temp.possibleParentSimplifiedNames := ["xToFireResistance", "xToColdResistance", "xToLightningResistance", "xToAllElementalResistances"]
 		tempMods.push(temp)
@@ -9956,10 +9956,10 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [totalResistance]
 		;temp.name_orig		:= "+" . totalResistance . "% total Resistance"
 		;temp.name			:= "+#% total Resistance"
-		;temp.name_orig		:= "+" . totalResistance . "% общего сопротивления"
-		;temp.name			:= "+#% общего сопротивления"
-		temp.name_orig		:= "Всего +" . totalResistance . "% сопротивления"
-		temp.name			:= "Всего +#% сопротивления"
+		;temp.name_orig		:= "+" . totalResistance . "% РѕР±С‰РµРіРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ"
+		;temp.name			:= "+#% РѕР±С‰РµРіРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ"
+		temp.name_orig		:= "Р’СЃРµРіРѕ +" . totalResistance . "% СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ"
+		temp.name			:= "Р’СЃРµРіРѕ +#% СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ"
 		temp.exception		:= true
 		temp.possibleParentSimplifiedNames := ["xToFireResistance", "xToColdResistance", "xToLightningResistance", "xToAllElementalResistances", "xToChaosResistance"]
 		tempMods.push(temp)
@@ -9971,8 +9971,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [meleePhysDmgGlobal_Percent]
 		;temp.name_orig		:= meleePhysDmgGlobal_Percent . "% increased Melee Physical Damage"
 		;temp.name			:= "#% increased Melee Physical Damage"
-		temp.name_orig		:= meleePhysDmgGlobal_Percent . "% увеличение физического урона в ближнем бою"
-		temp.name			:= "#% увеличение физического урона в ближнем бою"
+		temp.name_orig		:= meleePhysDmgGlobal_Percent . "% СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ"
+		temp.name			:= "#% СѓРІРµР»РёС‡РµРЅРёРµ С„РёР·РёС‡РµСЃРєРѕРіРѕ СѓСЂРѕРЅР° РІ Р±Р»РёР¶РЅРµРј Р±РѕСЋ"
 		temp.simplifiedName	:= "xIncreasedMeleePhysicalDamage"
 		temp.possibleParentSimplifiedNames := ["xIncreasedMeleePhysicalDamage"]
 		temp.hideForTradeMacro := true
@@ -9983,8 +9983,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [energyShieldPercentGlobal]
 		;temp.name_orig		:= energyShieldPercentGlobal . "% increased Energy Shield (Global)"
 		;temp.name			:= "#% increased Energy Shield (Global)"
-		temp.name_orig		:= energyShieldPercentGlobal . "% увеличение энергетического щита (Глобально)"
-		temp.name			:= "#% увеличение энергетического щита (Глобально)"
+		temp.name_orig		:= energyShieldPercentGlobal . "% СѓРІРµР»РёС‡РµРЅРёРµ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° (Р“Р»РѕР±Р°Р»СЊРЅРѕ)"
+		temp.name			:= "#% СѓРІРµР»РёС‡РµРЅРёРµ СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ С‰РёС‚Р° (Р“Р»РѕР±Р°Р»СЊРЅРѕ)"
 		temp.simplifiedName	:= "xIncreasedEnergyShieldPercentGlobal"
 		temp.possibleParentSimplifiedNames := ["xIncreasedEnergyShieldPercentGlobal"]
 		temp.hideForTradeMacro := true
@@ -9995,8 +9995,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [evasionRatingPercentGlobal]
 		;temp.name_orig		:= evasionRatingPercentGlobal . "% increased Evasion (Global)"
 		;temp.name			:= "#% increased Evasion (Global)"
-		temp.name_orig		:= evasionRatingPercentGlobal . "% увеличение уклонения (Глобально)"
-		temp.name			:= "#% увеличение уклонения (Глобально)"
+		temp.name_orig		:= evasionRatingPercentGlobal . "% СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ (Р“Р»РѕР±Р°Р»СЊРЅРѕ)"
+		temp.name			:= "#% СѓРІРµР»РёС‡РµРЅРёРµ СѓРєР»РѕРЅРµРЅРёСЏ (Р“Р»РѕР±Р°Р»СЊРЅРѕ)"
 		temp.simplifiedName	:= "xIncreasedEvasionRatingPercentGlobal"
 		temp.possibleParentSimplifiedNames := ["xIncreasedEvasionRatingPercentGlobal"]
 		temp.hideForTradeMacro := true
@@ -10007,8 +10007,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [accuracyRatingFlat]
 		;temp.name_orig		:= "+" . accuracyRatingFlat . " to Accuracy Rating"
 		;temp.name			:= "+# to Accuracy Rating"
-		temp.name_orig		:= "+" . accuracyRatingFlat . " к меткости"
-		temp.name			:= "+# к меткости"
+		temp.name_orig		:= "+" . accuracyRatingFlat . " Рє РјРµС‚РєРѕСЃС‚Рё"
+		temp.name			:= "+# Рє РјРµС‚РєРѕСЃС‚Рё"
 		temp.simplifiedName	:= "xToAccuracyRating"
 		temp.possibleParentSimplifiedNames := ["xToAccuracyRating"]
 		tempMods.push(temp)
@@ -10021,8 +10021,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		temp.values		:= [spellDmg_Percent]
 		;temp.name_orig		:= spellDmg_Percent . "% increased Spell Damage"
 		;temp.name			:= "#% increased Spell Damage"
-		temp.name_orig		:= spellDmg_Percent . "% увеличение урона чарами"
-		temp.name			:= "#% увеличение урона чарами"
+		temp.name_orig		:= spellDmg_Percent . "% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° С‡Р°СЂР°РјРё"
+		temp.name			:= "#% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° С‡Р°СЂР°РјРё"
 		temp.simplifiedName	:= "xIncreasedSpellDamage"
 		temp.possibleParentSimplifiedNames := ["xIncreasedSpellDamage"]
 		tempMods.push(temp)
@@ -10030,11 +10030,11 @@ CreatePseudoMods(mods, returnAllMods := False) {
 
 	; other damages
 	;percentDamageModSuffixes := [" Damage", " Damage with Attack Skills", " Spell Damage"]
-	;percentDamageModSuffixes := ["", " от умений атак", " для чар"]
-	;percentDamageModSuffixes := ["", " от умений атак", " чарами"]
-	percentDamageModSuffixes := ["", " умениями атак", " чарами"]
+	;percentDamageModSuffixes := ["", " РѕС‚ СѓРјРµРЅРёР№ Р°С‚Р°Рє", " РґР»СЏ С‡Р°СЂ"]
+	;percentDamageModSuffixes := ["", " РѕС‚ СѓРјРµРЅРёР№ Р°С‚Р°Рє", " С‡Р°СЂР°РјРё"]
+	percentDamageModSuffixes := ["", " СѓРјРµРЅРёСЏРјРё Р°С‚Р°Рє", " С‡Р°СЂР°РјРё"]
 	;flatDamageModSuffixes    := ["", " to Attacks", " to Spells"]
-	flatDamageModSuffixes    := ["", " к атакам", " к чарам"]
+	flatDamageModSuffixes    := ["", " Рє Р°С‚Р°РєР°Рј", " Рє С‡Р°СЂР°Рј"]
 
 	For i, element in dmgTypes {
 		StringUpper, element, element, T
@@ -10047,8 +10047,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 				temp.values		:= [%element%Dmg_%dmgType%Percent]
 				;temp.name_orig		:= %element%Dmg_%dmgType%Percent "% increased " element . modSuffix
 				;temp.name			:= "#% increased " element . modSuffix
-				temp.name_orig		:= %element%Dmg_%dmgType%Percent "% увеличение урона от " nameEnToRu2[element] . modSuffix
-				temp.name			:= "#% увеличение урона от " nameEnToRu2[element] . modSuffix
+				temp.name_orig		:= %element%Dmg_%dmgType%Percent "% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ " nameEnToRu2[element] . modSuffix
+				temp.name			:= "#% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР° РѕС‚ " nameEnToRu2[element] . modSuffix
 				temp.simplifiedName	:= "xIncreased" element "Damage" dmgType
 				temp.possibleParentSimplifiedNames := ["xIncreased" element "Damage" dmgType, "xIncreased" element "Damage"]
 				( element != "Elemental" ) ? temp.possibleParentSimplifiedNames.push("xIncreasedElementalDamage" dmgType) : False
@@ -10062,8 +10062,8 @@ CreatePseudoMods(mods, returnAllMods := False) {
 				temp.values		:= [%element%Dmg_%dmgType%FlatLow, %element%Dmg_%dmgType%FlatHi]
 				;temp.name_orig		:= "Adds " %element%Dmg_%dmgType%FlatLow " to " %element%Dmg_%dmgType%FlatHi " " element " Damage" modSuffix
 				;temp.name			:= "Adds # " element " Damage" modSuffix
-				temp.name_orig		:= "Добавляет от " %element%Dmg_%dmgType%FlatLow " до " %element%Dmg_%dmgType%FlatHi " урона от " nameEnToRu2[element] . modSuffix
-				temp.name			:= "Добавляет # урона от " nameEnToRu2[element] . modSuffix
+				temp.name_orig		:= "Р”РѕР±Р°РІР»СЏРµС‚ РѕС‚ " %element%Dmg_%dmgType%FlatLow " РґРѕ " %element%Dmg_%dmgType%FlatHi " СѓСЂРѕРЅР° РѕС‚ " nameEnToRu2[element] . modSuffix
+				temp.name			:= "Р”РѕР±Р°РІР»СЏРµС‚ # СѓСЂРѕРЅР° РѕС‚ " nameEnToRu2[element] . modSuffix
 				temp.simplifiedName	:= "xFlat" element "Damage" dmgType
 				temp.possibleParentSimplifiedNames := ["xFlat" element "Damage" dmgType]
 				If (element != "Elemental") {
@@ -10565,7 +10565,7 @@ CreateSettingsUI()
 	; ItemInfo is not included in other scripts
 	If (not SkipItemInfoUpdateCall) {	
 		;Fonts.SetUIFont()
-		; необходимо указать размер шрифта окна настроек
+		; РЅРµРѕР±С…РѕРґРёРјРѕ СѓРєР°Р·Р°С‚СЊ СЂР°Р·РјРµСЂ С€СЂРёС„С‚Р° РѕРєРЅР° РЅР°СЃС‚СЂРѕРµРє
 		Fonts.SetUIFont(8)
 		Scripts := Globals.Get("SettingsScriptList")
 		TabNames := ""
@@ -10584,41 +10584,41 @@ CreateSettingsUI()
 	
 	; General
 	;GuiAddGroupBox("General", "x7 ym" 30 " w310 h" generalHeight " Section")
-	GuiAddGroupBox("Общие", "x7 ym" 30 " w310 h" generalHeight " Section")
+	GuiAddGroupBox("РћР±С‰РёРµ", "x7 ym" 30 " w310 h" generalHeight " Section")
 	;GuiAddCheckbox("Only show tooltip if PoE is frontmost", "xs10 yp+20 w250 h30", Opts.OnlyActiveIfPOEIsFront, "OnlyActiveIfPOEIsFront", "OnlyActiveIfPOEIsFrontH")
-	GuiAddCheckbox("Показывать подсказку только когда PoE является активным окном", "xs10 yp+20 w250 h30", Opts.OnlyActiveIfPOEIsFront, "OnlyActiveIfPOEIsFront", "OnlyActiveIfPOEIsFrontH")	
+	GuiAddCheckbox("РџРѕРєР°Р·С‹РІР°С‚СЊ РїРѕРґСЃРєР°Р·РєСѓ С‚РѕР»СЊРєРѕ РєРѕРіРґР° PoE СЏРІР»СЏРµС‚СЃСЏ Р°РєС‚РёРІРЅС‹Рј РѕРєРЅРѕРј", "xs10 yp+20 w250 h30", Opts.OnlyActiveIfPOEIsFront, "OnlyActiveIfPOEIsFront", "OnlyActiveIfPOEIsFrontH")	
 	;AddToolTip(OnlyActiveIfPOEIsFrontH, "When checked the script only activates while you are ingame`n(technically while the game window is the frontmost)")
-	AddToolTip(OnlyActiveIfPOEIsFrontH, "Скрипт будет активироваться только во время игры (когда игровое окно является самым передним).`nЕсли нужно, чтобы скрипт распознавал текстовую информацию о предметах вне игры, тогда следует снять отметку.")
+	AddToolTip(OnlyActiveIfPOEIsFrontH, "РЎРєСЂРёРїС‚ Р±СѓРґРµС‚ Р°РєС‚РёРІРёСЂРѕРІР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РІРѕ РІСЂРµРјСЏ РёРіСЂС‹ (РєРѕРіРґР° РёРіСЂРѕРІРѕРµ РѕРєРЅРѕ СЏРІР»СЏРµС‚СЃСЏ СЃР°РјС‹Рј РїРµСЂРµРґРЅРёРј).`nР•СЃР»Рё РЅСѓР¶РЅРѕ, С‡С‚РѕР±С‹ СЃРєСЂРёРїС‚ СЂР°СЃРїРѕР·РЅР°РІР°Р» С‚РµРєСЃС‚РѕРІСѓСЋ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РїСЂРµРґРјРµС‚Р°С… РІРЅРµ РёРіСЂС‹, С‚РѕРіРґР° СЃР»РµРґСѓРµС‚ СЃРЅСЏС‚СЊ РѕС‚РјРµС‚РєСѓ.")
 	
 	;GuiAddHotkey(Opts.ParseItemHotKey, "xs75 yp+37 w120 h20", "ParseItemHotKey")
 	;GuiAddText("Hotkey:", "xs27 yp+2 w50 h20 0x0100", "LblParseItemHotKey")
 	; Change next from yp+30 to yp+25 when this is implemented.
 	
 	;GuiAddCheckbox("Put tooltip results on clipboard", "xs10 yp+30 w250 h30", Opts.PutResultsOnClipboard, "PutResultsOnClipboard", "PutResultsOnClipboardH")
-	GuiAddCheckbox("Поместить результаты всплывающей подсказки в буфер обмена", "xs10 yp+30 w250 h30", Opts.PutResultsOnClipboard, "PutResultsOnClipboard", "PutResultsOnClipboardH")
+	GuiAddCheckbox("РџРѕРјРµСЃС‚РёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚С‹ РІСЃРїР»С‹РІР°СЋС‰РµР№ РїРѕРґСЃРєР°Р·РєРё РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°", "xs10 yp+30 w250 h30", Opts.PutResultsOnClipboard, "PutResultsOnClipboard", "PutResultsOnClipboardH")
 	;AddToolTip(PutResultsOnClipboardH, "Put tooltip result text into the system clipboard`n(overwriting the raw text PoE itself put there to begin with)")
-	AddToolTip(PutResultsOnClipboardH, "Поместить текст результата всплывающей подсказки в системный буфер обмена`n(перезаписывая исходный текст, который туда разместил PoE)")
+	AddToolTip(PutResultsOnClipboardH, "РџРѕРјРµСЃС‚РёС‚СЊ С‚РµРєСЃС‚ СЂРµР·СѓР»СЊС‚Р°С‚Р° РІСЃРїР»С‹РІР°СЋС‰РµР№ РїРѕРґСЃРєР°Р·РєРё РІ СЃРёСЃС‚РµРјРЅС‹Р№ Р±СѓС„РµСЂ РѕР±РјРµРЅР°`n(РїРµСЂРµР·Р°РїРёСЃС‹РІР°СЏ РёСЃС…РѕРґРЅС‹Р№ С‚РµРєСЃС‚, РєРѕС‚РѕСЂС‹Р№ С‚СѓРґР° СЂР°Р·РјРµСЃС‚РёР» PoE)")
 	
 	;GuiAddCheckbox("Enable Map Mod Warnings", "xs10 yp+30 w250 h30", Opts.EnableMapModWarnings, "EnableMapModWarnings", "EnableMapModWarningsH")
-	GuiAddCheckbox("Включить предупреждения о модификаторах карт", "xs10 yp+30 w250 h30", Opts.EnableMapModWarnings, "EnableMapModWarnings", "EnableMapModWarningsH")
+	GuiAddCheckbox("Р’РєР»СЋС‡РёС‚СЊ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёСЏ Рѕ РјРѕРґРёС„РёРєР°С‚РѕСЂР°С… РєР°СЂС‚", "xs10 yp+30 w250 h30", Opts.EnableMapModWarnings, "EnableMapModWarnings", "EnableMapModWarningsH")
 	;AddToolTip(EnableMapModWarningsH, "Enables or disables the entire Map Mod Warnings function.")
-	AddToolTip(EnableMapModWarningsH, "Включает или отключает отображение предупреждений о модификаторах карт")
+	AddToolTip(EnableMapModWarningsH, "Р’РєР»СЋС‡Р°РµС‚ РёР»Рё РѕС‚РєР»СЋС‡Р°РµС‚ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёР№ Рѕ РјРѕРґРёС„РёРєР°С‚РѕСЂР°С… РєР°СЂС‚")
 	
 	If (!SkipItemInfoUpdateCall) {
 		;GuiAddCheckbox("Update: Show Notifications", "xs10 yp+30 w250 h30", Opts.ShowUpdateNotification, "ShowUpdateNotification", "ShowUpdateNotificationH")
-		GuiAddCheckbox("Обновление: Показывать оповещения", "xs10 yp+30 w250 h30", Opts.ShowUpdateNotification, "ShowUpdateNotification", "ShowUpdateNotificationH")
+		GuiAddCheckbox("РћР±РЅРѕРІР»РµРЅРёРµ: РџРѕРєР°Р·С‹РІР°С‚СЊ РѕРїРѕРІРµС‰РµРЅРёСЏ", "xs10 yp+30 w250 h30", Opts.ShowUpdateNotification, "ShowUpdateNotification", "ShowUpdateNotificationH")
 		;AddToolTip(ShowUpdateNotificationH, "Notifies you when there's a new release available.")
-		AddToolTip(ShowUpdateNotificationH, "Уведомляет вас о доступности новой версии.")
+		AddToolTip(ShowUpdateNotificationH, "РЈРІРµРґРѕРјР»СЏРµС‚ РІР°СЃ Рѕ РґРѕСЃС‚СѓРїРЅРѕСЃС‚Рё РЅРѕРІРѕР№ РІРµСЂСЃРёРё.")
 		
 		;GuiAddCheckbox("Update: Skip folder selection", "xs10 yp+30 w250 h30", Opts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH")
-		GuiAddCheckbox("Обновление: Пропустить выбор папки", "xs10 yp+30 w250 h30", Opts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH")
+		GuiAddCheckbox("РћР±РЅРѕРІР»РµРЅРёРµ: РџСЂРѕРїСѓСЃС‚РёС‚СЊ РІС‹Р±РѕСЂ РїР°РїРєРё", "xs10 yp+30 w250 h30", Opts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH")
 		;AddToolTip(UpdateSkipSelectionH, "Skips selecting an update location.`nThe current script directory will be used as default.")
-		AddToolTip(UpdateSkipSelectionH, "Пропускает выбор местоположения для размещения обновления. `nПо умолчанию будет использоваться текущий каталог сценария.")
+		AddToolTip(UpdateSkipSelectionH, "РџСЂРѕРїСѓСЃРєР°РµС‚ РІС‹Р±РѕСЂ РјРµСЃС‚РѕРїРѕР»РѕР¶РµРЅРёСЏ РґР»СЏ СЂР°Р·РјРµС‰РµРЅРёСЏ РѕР±РЅРѕРІР»РµРЅРёСЏ. `nРџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С‚РµРєСѓС‰РёР№ РєР°С‚Р°Р»РѕРі СЃС†РµРЅР°СЂРёСЏ.")
 		
 		;GuiAddCheckbox("Update: Skip backup", "xs10 yp+30 w250 h30", Opts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH")
-		GuiAddCheckbox("Обновление: Пропустить создание резервной копии", "xs10 yp+30 w250 h30", Opts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH")
+		GuiAddCheckbox("РћР±РЅРѕРІР»РµРЅРёРµ: РџСЂРѕРїСѓСЃС‚РёС‚СЊ СЃРѕР·РґР°РЅРёРµ СЂРµР·РµСЂРІРЅРѕР№ РєРѕРїРёРё", "xs10 yp+30 w250 h30", Opts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH")
 		;AddToolTip(UpdateSkipBackupH, "Skips making a backup of the install location/folder.")
-		AddToolTip(UpdateSkipBackupH, "Пропускает создание резервной копии папки в которую установлен скрипт.")
+		AddToolTip(UpdateSkipBackupH, "РџСЂРѕРїСѓСЃРєР°РµС‚ СЃРѕР·РґР°РЅРёРµ СЂРµР·РµСЂРІРЅРѕР№ РєРѕРїРёРё РїР°РїРєРё РІ РєРѕС‚РѕСЂСѓСЋ СѓСЃС‚Р°РЅРѕРІР»РµРЅ СЃРєСЂРёРїС‚.")
 	}	
 	
 	; GDI+
@@ -10626,69 +10626,69 @@ CreateSettingsUI()
 	GuiAddGroupBox("GDI+", "x7 ym+" GDIShift " w310 h320 Section")
 	
 	;GuiAddCheckBox("Enable GDI+", "xs10 yp+20 w115", Opts.UseGDI, "UseGDI", "UseGDIH", "SettingsUI_ChkUseGDI")
-	GuiAddCheckBox("Включить GDI+", "xs10 yp+20 w100", Opts.UseGDI, "UseGDI", "UseGDIH", "SettingsUI_ChkUseGDI")
+	GuiAddCheckBox("Р’РєР»СЋС‡РёС‚СЊ GDI+", "xs10 yp+20 w100", Opts.UseGDI, "UseGDI", "UseGDIH", "SettingsUI_ChkUseGDI")
 	;AddToolTip(UseGDIH, "Enables rendering of tooltips using Windows gdip.dll`n(allowing limited styling options).")
-	AddToolTip(UseGDIH, "Позволяет выводить всплывающие подсказки с помощью Windows gdip.dll`n(разрешая определенные варианты стилизации).")
+	AddToolTip(UseGDIH, "РџРѕР·РІРѕР»СЏРµС‚ РІС‹РІРѕРґРёС‚СЊ РІСЃРїР»С‹РІР°СЋС‰РёРµ РїРѕРґСЃРєР°Р·РєРё СЃ РїРѕРјРѕС‰СЊСЋ Windows gdip.dll`n(СЂР°Р·СЂРµС€Р°СЏ РѕРїСЂРµРґРµР»РµРЅРЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ СЃС‚РёР»РёР·Р°С†РёРё).")
 	;GuiAddCheckBox("Rendering Fix", "xs10 yp+30 w115", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH")
-	GuiAddCheckBox("Исправление визуализации", "xs10 yp+30 w100", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH")
+	GuiAddCheckBox("РСЃРїСЂР°РІР»РµРЅРёРµ РІРёР·СѓР°Р»РёР·Р°С†РёРё", "xs10 yp+30 w100", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH")
 	;AddToolTip(GDIRenderingFixH, "In the case that rendered graphics (window, border and text) are`nunsharp/blurry this should fix the issue.")
-	AddToolTip(GDIRenderingFixH, "В случае, если визуализированная графика (окно, граница и текст) является `nнерезким/размытым, это должно устранить проблему.")
+	AddToolTip(GDIRenderingFixH, "Р’ СЃР»СѓС‡Р°Рµ, РµСЃР»Рё РІРёР·СѓР°Р»РёР·РёСЂРѕРІР°РЅРЅР°СЏ РіСЂР°С„РёРєР° (РѕРєРЅРѕ, РіСЂР°РЅРёС†Р° Рё С‚РµРєСЃС‚) СЏРІР»СЏРµС‚СЃСЏ `nРЅРµСЂРµР·РєРёРј/СЂР°Р·РјС‹С‚С‹Рј, СЌС‚Рѕ РґРѕР»Р¶РЅРѕ СѓСЃС‚СЂР°РЅРёС‚СЊ РїСЂРѕР±Р»РµРјСѓ.")
 	;GuiAddText("(Restart script after disabling GDI+. Enabling might cause general FPS drops.)", "xs120 ys+20 w185 cRed", "")
-	GuiAddText("(Перезапустите скрипт после отключения GDI+. Включение может привести к общему снижению FPS.)", "xs120 ys+20 w185 cRed", "")
+	GuiAddText("(РџРµСЂРµР·Р°РїСѓСЃС‚РёС‚Рµ СЃРєСЂРёРїС‚ РїРѕСЃР»Рµ РѕС‚РєР»СЋС‡РµРЅРёСЏ GDI+. Р’РєР»СЋС‡РµРЅРёРµ РјРѕР¶РµС‚ РїСЂРёРІРµСЃС‚Рё Рє РѕР±С‰РµРјСѓ СЃРЅРёР¶РµРЅРёСЋ FPS.)", "xs120 ys+20 w185 cRed", "")
 	
 	;GuiAddButton("Edit Window", "xs9 ys80 w80 h23", "SettingsUI_BtnGDIWindowColor", "BtnGDIWindowColor")
-	GuiAddButton("Ред. окно", "xs9 ys80 w90 h23", "SettingsUI_BtnGDIWindowColor", "BtnGDIWindowColor")
+	GuiAddButton("Р РµРґ. РѕРєРЅРѕ", "xs9 ys80 w90 h23", "SettingsUI_BtnGDIWindowColor", "BtnGDIWindowColor")
 	;GuiAddText("Color (hex RGB):", "xs100 ys85 w200", "LblGDIWindowColor")
-	GuiAddText("Цвет (hex RGB):", "xs110 ys85 w200", "LblGDIWindowColor")
+	GuiAddText("Р¦РІРµС‚ (hex RGB):", "xs110 ys85 w200", "LblGDIWindowColor")
 	GuiAddEdit(Opts.GDIWindowColor, "xs240 ys82 w60", "GDIWindowColor", "GDIWindowColorH")
 	;GuiAddText("Opactiy (0-100):", "xs100 ys115 w200", "LblGDIWindowOpacity")
-	GuiAddText("Затенён. (0-100):", "xs110 ys115 w200", "LblGDIWindowOpacity")
+	GuiAddText("Р—Р°С‚РµРЅС‘РЅ. (0-100):", "xs110 ys115 w200", "LblGDIWindowOpacity")
 	GuiAddEdit(Opts.GDIWindowOpacity, "xs240 ys112 w60", "GDIWindowOpacity", "GDIWindowOpacityH")	
 	;GuiAddButton("Edit Border", "xs9 ys140 w80 h23", "SettingsUI_BtnGDIBorderColor", "BtnGDIBorderColor")
-	GuiAddButton("Ред. границу", "xs9 ys140 w90 h23", "SettingsUI_BtnGDIBorderColor", "BtnGDIBorderColor")
+	GuiAddButton("Р РµРґ. РіСЂР°РЅРёС†Сѓ", "xs9 ys140 w90 h23", "SettingsUI_BtnGDIBorderColor", "BtnGDIBorderColor")
 	;GuiAddText("Color (hex RGB):", "xs100 ys145 w200", "LblGDIBorderColor")
-	GuiAddText("Цвет (hex RGB):", "xs110 ys145 w200", "LblGDIBorderColor")
+	GuiAddText("Р¦РІРµС‚ (hex RGB):", "xs110 ys145 w200", "LblGDIBorderColor")
 	GuiAddEdit(Opts.GDIBorderColor, "xs240 ys142 w60", "GDIBorderColor", "GDIBorderColorH")	
 	;GuiAddText("Opacity (0-100):", "xs100 ys175 w200", "LblGDIBorderOpacity")
-	GuiAddText("Затенён. (0-100):", "xs110 ys175 w200", "LblGDIBorderOpacity")
+	GuiAddText("Р—Р°С‚РµРЅС‘РЅ. (0-100):", "xs110 ys175 w200", "LblGDIBorderOpacity")
 	GuiAddEdit(Opts.GDIBorderOpacity, "xs240 ys172 w60", "GDIBorderOpacity", "GDIBorderOpacityH")	
 	;GuiAddButton("Edit Text", "xs9 ys200 w80 h23", "SettingsUI_BtnGDITextColor", "BtnGDITextColor")
-	GuiAddButton("Ред. текст", "xs9 ys200 w90 h23", "SettingsUI_BtnGDITextColor", "BtnGDITextColor")
+	GuiAddButton("Р РµРґ. С‚РµРєСЃС‚", "xs9 ys200 w90 h23", "SettingsUI_BtnGDITextColor", "BtnGDITextColor")
 	;GuiAddText("Color (hex RGB):", "xs100 ys205 w200", "LblGDITextColor")
-	GuiAddText("Цвет (hex RGB):", "xs110 ys205 w200", "LblGDITextColor")
+	GuiAddText("Р¦РІРµС‚ (hex RGB):", "xs110 ys205 w200", "LblGDITextColor")
 	GuiAddEdit(Opts.GDITextColor, "xs240 ys202 w60", "GDITextColor", "GDITextColorH")
 	;GuiAddText("Opacity (0-100):", "xs100 ys235 w200", "LblGDITextOpacity")
-	GuiAddText("Затенён. (0-100):", "xs110 ys235 w200", "LblGDITextOpacity")
+	GuiAddText("Р—Р°С‚РµРЅС‘РЅ. (0-100):", "xs110 ys235 w200", "LblGDITextOpacity")
 	GuiAddEdit(Opts.GDITextOpacity, "xs240 ys232 w60", "GDITextOpacity", "GDITextOpacityH")
 	
 	;GuiAddCheckBox("Style border depending on checked item.", "xs10 ys260 w260", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH")
-	GuiAddCheckBox("Стиль границы в зависимости от проверяемого предмета.", "xs10 ys260 w210", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH")
+	GuiAddCheckBox("РЎС‚РёР»СЊ РіСЂР°РЅРёС†С‹ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РїСЂРѕРІРµСЂСЏРµРјРѕРіРѕ РїСЂРµРґРјРµС‚Р°.", "xs10 ys260 w210", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH")
 	
 	;GuiAddButton("GDI Defaults", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH")
-	GuiAddButton("GDI по умолч.", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH")
+	GuiAddButton("GDI РїРѕ СѓРјРѕР»С‡.", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH")
 	;GuiAddButton("Preview", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH")
-	GuiAddButton("Предпросм.", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH")
+	GuiAddButton("РџСЂРµРґРїСЂРѕСЃРј.", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH")
 
 	; Tooltip
 	;GuiAddGroupBox("Tooltip", "x327 ym" 30 " w310 h140 Section")
-	GuiAddGroupBox("Всплывающая подсказка", "x327 ym" 30 " w310 h140 Section")
+	GuiAddGroupBox("Р’СЃРїР»С‹РІР°СЋС‰Р°СЏ РїРѕРґСЃРєР°Р·РєР°", "x327 ym" 30 " w310 h140 Section")
 	
 	GuiAddEdit(Opts.MouseMoveThreshold, "xs250 yp+22 w50 h20 Number", "MouseMoveThreshold", "MouseMoveThresholdH")
 	;GuiAddText("Mouse move threshold (px):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH")
-	GuiAddText("Порог движения мышью (px):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH")
+	GuiAddText("РџРѕСЂРѕРі РґРІРёР¶РµРЅРёСЏ РјС‹С€СЊСЋ (px):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH")
 	;AddToolTip(LblMouseMoveThresholdH, "Hide tooltip when the mouse cursor moved x pixel away from the initial position.`nEffectively permanent tooltip when using a value larger than the monitor diameter.")
-	AddToolTip(LblMouseMoveThresholdH, "Скрыть всплывающую подсказку, когда курсор мыши перемещается на X пикселей от исходной позиции.`nВозможно постоянное отображение подсказки, если использовать значение, большее, чем текущее разрешение экрана.")
+	AddToolTip(LblMouseMoveThresholdH, "РЎРєСЂС‹С‚СЊ РІСЃРїР»С‹РІР°СЋС‰СѓСЋ РїРѕРґСЃРєР°Р·РєСѓ, РєРѕРіРґР° РєСѓСЂСЃРѕСЂ РјС‹С€Рё РїРµСЂРµРјРµС‰Р°РµС‚СЃСЏ РЅР° X РїРёРєСЃРµР»РµР№ РѕС‚ РёСЃС…РѕРґРЅРѕР№ РїРѕР·РёС†РёРё.`nР’РѕР·РјРѕР¶РЅРѕ РїРѕСЃС‚РѕСЏРЅРЅРѕРµ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ РїРѕРґСЃРєР°Р·РєРё, РµСЃР»Рё РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ Р·РЅР°С‡РµРЅРёРµ, Р±РѕР»СЊС€РµРµ, С‡РµРј С‚РµРєСѓС‰РµРµ СЂР°Р·СЂРµС€РµРЅРёРµ СЌРєСЂР°РЅР°.")
 	
 	GuiAddEdit(Opts.ToolTipTimeoutSeconds, "xs250 yp+27 w50 Number", "ToolTipTimeoutSeconds")
 	;GuiAddCheckBox("Use tooltip timeout (seconds)", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout")
-	GuiAddCheckBox("Длительность показа подсказки (в сек.)", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout")
+	GuiAddCheckBox("Р”Р»РёС‚РµР»СЊРЅРѕСЃС‚СЊ РїРѕРєР°Р·Р° РїРѕРґСЃРєР°Р·РєРё (РІ СЃРµРє.)", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout")
 	;AddToolTip(UseTooltipTimeoutH, "Hide tooltip automatically after defined time.")
-	AddToolTip(UseTooltipTimeoutH, "Скрыть всплывающую подсказку через определенное время.")
+	AddToolTip(UseTooltipTimeoutH, "РЎРєСЂС‹С‚СЊ РІСЃРїР»С‹РІР°СЋС‰СѓСЋ РїРѕРґСЃРєР°Р·РєСѓ С‡РµСЂРµР· РѕРїСЂРµРґРµР»РµРЅРЅРѕРµ РІСЂРµРјСЏ.")
 	
 	;GuiAddCheckbox("Display at fixed coordinates", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords")
-	GuiAddCheckbox("Отображение с фиксир. координатами", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords")
+	GuiAddCheckbox("РћС‚РѕР±СЂР°Р¶РµРЅРёРµ СЃ С„РёРєСЃРёСЂ. РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords")
 	;AddToolTip(DisplayToolTipAtFixedCoordsH, "Show tooltip in virtual screen space at the fixed`ncoordinates given below. Virtual screen space means`nthe full desktop frame, including any secondary`nmonitors. Coords are relative to the top left edge`nand increase going down and to the right.")
-	AddToolTip(DisplayToolTipAtFixedCoordsH, "Показывать подсказку в виртуальном пространстве экрана с фиксированными `nкоординатами, указанными ниже. Виртуальное пространство экрана означает `nполный рабочий стол, включая любые вторичные мониторы.`nНачало координат находится в верхнем левом углу и увеличивается вниз и вправо.")
+	AddToolTip(DisplayToolTipAtFixedCoordsH, "РџРѕРєР°Р·С‹РІР°С‚СЊ РїРѕРґСЃРєР°Р·РєСѓ РІ РІРёСЂС‚СѓР°Р»СЊРЅРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ СЌРєСЂР°РЅР° СЃ С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹РјРё `nРєРѕРѕСЂРґРёРЅР°С‚Р°РјРё, СѓРєР°Р·Р°РЅРЅС‹РјРё РЅРёР¶Рµ. Р’РёСЂС‚СѓР°Р»СЊРЅРѕРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ СЌРєСЂР°РЅР° РѕР·РЅР°С‡Р°РµС‚ `nРїРѕР»РЅС‹Р№ СЂР°Р±РѕС‡РёР№ СЃС‚РѕР», РІРєР»СЋС‡Р°СЏ Р»СЋР±С‹Рµ РІС‚РѕСЂРёС‡РЅС‹Рµ РјРѕРЅРёС‚РѕСЂС‹.`nРќР°С‡Р°Р»Рѕ РєРѕРѕСЂРґРёРЅР°С‚ РЅР°С…РѕРґРёС‚СЃСЏ РІ РІРµСЂС…РЅРµРј Р»РµРІРѕРј СѓРіР»Сѓ Рё СѓРІРµР»РёС‡РёРІР°РµС‚СЃСЏ РІРЅРёР· Рё РІРїСЂР°РІРѕ.")
 		GuiAddEdit(Opts.ScreenOffsetX, "xs50 yp+22 w50", "ScreenOffsetX")
 		GuiAddEdit(Opts.ScreenOffsetY, "xs130 yp+0 w50", "ScreenOffsetY")
 		GuiAddText("X", "xs35 yp+3 w15", "LblScreenOffsetX")
@@ -10697,71 +10697,71 @@ CreateSettingsUI()
 	
 	; Display
 	;GuiAddGroupBox("Display", "x327 ym+" 180 " w310 h295 Section")
-	GuiAddGroupBox("Отображение", "x327 ym+" 180 " w310 h335 Section")
+	GuiAddGroupBox("РћС‚РѕР±СЂР°Р¶РµРЅРёРµ", "x327 ym+" 180 " w310 h335 Section")
 	
 	;GuiAddCheckbox("Show header for affix overview", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH")
-	GuiAddCheckbox("Показывать заголовок к значениям аффиксов", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH")
+	GuiAddCheckbox("РџРѕРєР°Р·С‹РІР°С‚СЊ Р·Р°РіРѕР»РѕРІРѕРє Рє Р·РЅР°С‡РµРЅРёСЏРј Р°С„С„РёРєСЃРѕРІ", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH")
 	;AddToolTip(ShowHeaderForAffixOverviewH, "Include a header above the affix overview:`n   TierRange ilvl   Total ilvl  Tier")
-	AddToolTip(ShowHeaderForAffixOverviewH, "Включает отображение заголовка над значениями аффиксов:`n   TierRange ilvl   Total ilvl  Tier")
+	AddToolTip(ShowHeaderForAffixOverviewH, "Р’РєР»СЋС‡Р°РµС‚ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ Р·Р°РіРѕР»РѕРІРєР° РЅР°Рґ Р·РЅР°С‡РµРЅРёСЏРјРё Р°С„С„РёРєСЃРѕРІ:`n   TierRange ilvl   Total ilvl  Tier")
 	
 	;GuiAddCheckbox("Show explanation for used notation", "xs10 yp+30 w260 h30", Opts.ShowExplanationForUsedNotation, "ShowExplanationForUsedNotation", "ShowExplanationForUsedNotationH")
-	GuiAddCheckbox("Показывать пояснения к используемому обозначению", "xs10 yp+30 w260 h30", Opts.ShowExplanationForUsedNotation, "ShowExplanationForUsedNotation", "ShowExplanationForUsedNotationH")
+	GuiAddCheckbox("РџРѕРєР°Р·С‹РІР°С‚СЊ РїРѕСЏСЃРЅРµРЅРёСЏ Рє РёСЃРїРѕР»СЊР·СѓРµРјРѕРјСѓ РѕР±РѕР·РЅР°С‡РµРЅРёСЋ", "xs10 yp+30 w260 h30", Opts.ShowExplanationForUsedNotation, "ShowExplanationForUsedNotation", "ShowExplanationForUsedNotationH")
 	;AddToolTip(ShowExplanationForUsedNotationH, "Explain abbreviations and special notation symbols at`nthe end of the tooltip when they are used")
-	AddToolTip(ShowExplanationForUsedNotationH, "Расшифровка аббревиатуры и специальных обозначений`nв конце подсказки, когда они используются")
+	AddToolTip(ShowExplanationForUsedNotationH, "Р Р°СЃС€РёС„СЂРѕРІРєР° Р°Р±Р±СЂРµРІРёР°С‚СѓСЂС‹ Рё СЃРїРµС†РёР°Р»СЊРЅС‹С… РѕР±РѕР·РЅР°С‡РµРЅРёР№`nРІ РєРѕРЅС†Рµ РїРѕРґСЃРєР°Р·РєРё, РєРѕРіРґР° РѕРЅРё РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ")
 	
-	; краткие, либо полные аффиксы
-	GuiAddCheckbox("Краткие аффиксы", "xs10 yp+30 w260 h30", Opts.ShortAffix, "ShortAffix", "ShortAffixH")
-	AddToolTip(ShortAffixH, "Включает отображение укороченных описаний аффиксов, например:`n50% увеличение урона…")
+	; РєСЂР°С‚РєРёРµ, Р»РёР±Рѕ РїРѕР»РЅС‹Рµ Р°С„С„РёРєСЃС‹
+	GuiAddCheckbox("РљСЂР°С‚РєРёРµ Р°С„С„РёРєСЃС‹", "xs10 yp+30 w260 h30", Opts.ShortAffix, "ShortAffix", "ShortAffixH")
+	AddToolTip(ShortAffixH, "Р’РєР»СЋС‡Р°РµС‚ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ СѓРєРѕСЂРѕС‡РµРЅРЅС‹С… РѕРїРёСЃР°РЅРёР№ Р°С„С„РёРєСЃРѕРІ, РЅР°РїСЂРёРјРµСЂ:`n50% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°вЂ¦")
 	
 	GuiAddEdit(Opts.AffixTextEllipsis, "xs260 y+5 w40 h20", "AffixTextEllipsis")
 	;GuiAddText("Affix text ellipsis:", "xs10 yp+3 w120 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH")
-	GuiAddText("Многоточие в конце аффикса:", "xs10 yp+3 w200 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH")
-	;AddToolTip(AffixTextEllipsisH, "Symbol used when affix text is shortened, such as:`n50% increased Spell…")
-	AddToolTip(AffixTextEllipsisH, "Используемый символ в конце строки, когда укорачивается описание аффикса, например:`n50% увеличение урона…")
+	GuiAddText("РњРЅРѕРіРѕС‚РѕС‡РёРµ РІ РєРѕРЅС†Рµ Р°С„С„РёРєСЃР°:", "xs10 yp+3 w200 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH")
+	;AddToolTip(AffixTextEllipsisH, "Symbol used when affix text is shortened, such as:`n50% increased SpellвЂ¦")
+	AddToolTip(AffixTextEllipsisH, "РСЃРїРѕР»СЊР·СѓРµРјС‹Р№ СЃРёРјРІРѕР» РІ РєРѕРЅС†Рµ СЃС‚СЂРѕРєРё, РєРѕРіРґР° СѓРєРѕСЂР°С‡РёРІР°РµС‚СЃСЏ РѕРїРёСЃР°РЅРёРµ Р°С„С„РёРєСЃР°, РЅР°РїСЂРёРјРµСЂ:`n50% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°вЂ¦")
 	
 	GuiAddEdit(Opts.AffixColumnSeparator, "xs260 y+7 w40 h20", "AffixColumnSeparator")
 	;GuiAddText("Affix column separator:", "xs10 yp+3 w170 h20 0x0100", "LblAffixColumnSeparator", "AffixColumnSeparatorH")
-	GuiAddText("Разделитель столбцов:", "xs10 yp+3 w170 h20 0x0100", "LblAffixColumnSeparator", "AffixColumnSeparatorH")
-	;AddToolTip(AffixColumnSeparatorH, "Select separator (default: 2 spaces) for the \\ spots:`n50% increased Spell…\\50-59 (46)\\75-79 (84)\\T4 P")
-	AddToolTip(AffixColumnSeparatorH, "Выберите разделитель значений аффикса (по умолчанию: 2 пробела) вместо \\:`n50% увеличение урона…\\50-59 (46)\\75-79 (84)\\T4 P")
+	GuiAddText("Р Р°Р·РґРµР»РёС‚РµР»СЊ СЃС‚РѕР»Р±С†РѕРІ:", "xs10 yp+3 w170 h20 0x0100", "LblAffixColumnSeparator", "AffixColumnSeparatorH")
+	;AddToolTip(AffixColumnSeparatorH, "Select separator (default: 2 spaces) for the \\ spots:`n50% increased SpellвЂ¦\\50-59 (46)\\75-79 (84)\\T4 P")
+	AddToolTip(AffixColumnSeparatorH, "Р’С‹Р±РµСЂРёС‚Рµ СЂР°Р·РґРµР»РёС‚РµР»СЊ Р·РЅР°С‡РµРЅРёР№ Р°С„С„РёРєСЃР° (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ: 2 РїСЂРѕР±РµР»Р°) РІРјРµСЃС‚Рѕ \\:`n50% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°вЂ¦\\50-59 (46)\\75-79 (84)\\T4 P")
 	
 	GuiAddEdit(Opts.DoubleRangeSeparator, "xs260 y+7 w40 h20", "DoubleRangeSeparator")
 	;GuiAddText("Double range separator:", "xs10 yp+3 w170 h20 0x0100", "LblDoubleRangeSeparator", "DoubleRangeSeparatorH")
-	GuiAddText("Разделитель 2-х диапазонов:", "xs10 yp+3 w200 h20 0x0100", "LblDoubleRangeSeparator", "DoubleRangeSeparatorH")
+	GuiAddText("Р Р°Р·РґРµР»РёС‚РµР»СЊ 2-С… РґРёР°РїР°Р·РѕРЅРѕРІ:", "xs10 yp+3 w200 h20 0x0100", "LblDoubleRangeSeparator", "DoubleRangeSeparatorH")
 	;AddToolTip(DoubleRangeSeparatorH, "Select separator (default: | ) for double ranges from 'added damage' mods:`na-b to c-d is displayed as a-b|c-d")
-	AddToolTip(DoubleRangeSeparatorH, "Выберите разделитель (по умолчанию: | ) для двойных диапазонов с модификатором 'Добавляет урона':`nот a-b до c-d  отображается как  a-b|c-d")
+	AddToolTip(DoubleRangeSeparatorH, "Р’С‹Р±РµСЂРёС‚Рµ СЂР°Р·РґРµР»РёС‚РµР»СЊ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ: | ) РґР»СЏ РґРІРѕР№РЅС‹С… РґРёР°РїР°Р·РѕРЅРѕРІ СЃ РјРѕРґРёС„РёРєР°С‚РѕСЂРѕРј 'Р”РѕР±Р°РІР»СЏРµС‚ СѓСЂРѕРЅР°':`nРѕС‚ a-b РґРѕ c-d  РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РєР°Рє  a-b|c-d")
 	
 	;GuiAddCheckbox("Use compact double ranges", "xs10 y+3 w210 h30", Opts.UseCompactDoubleRanges, "UseCompactDoubleRanges", "UseCompactDoubleRangesH", "SettingsUI_ChkUseCompactDoubleRanges")
-	GuiAddCheckbox("Использовать компактные двойные диапазоны", "xs10 y+3 w210 h30", Opts.UseCompactDoubleRanges, "UseCompactDoubleRanges", "UseCompactDoubleRangesH", "SettingsUI_ChkUseCompactDoubleRanges")
+	GuiAddCheckbox("РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєРѕРјРїР°РєС‚РЅС‹Рµ РґРІРѕР№РЅС‹Рµ РґРёР°РїР°Р·РѕРЅС‹", "xs10 y+3 w210 h30", Opts.UseCompactDoubleRanges, "UseCompactDoubleRanges", "UseCompactDoubleRangesH", "SettingsUI_ChkUseCompactDoubleRanges")
 	;AddToolTip(UseCompactDoubleRangesH, "Show double ranges from 'added damage' mods as one range,`ne.g. a-b to c-d becomes a-d")
-	AddToolTip(UseCompactDoubleRangesH, "Показывать двойные диапазоны модов добавленного урона как один диапазон, `nт.е. от a-b до c-d становится a-d")
+	AddToolTip(UseCompactDoubleRangesH, "РџРѕРєР°Р·С‹РІР°С‚СЊ РґРІРѕР№РЅС‹Рµ РґРёР°РїР°Р·РѕРЅС‹ РјРѕРґРѕРІ РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ СѓСЂРѕРЅР° РєР°Рє РѕРґРёРЅ РґРёР°РїР°Р·РѕРЅ, `nС‚.Рµ. РѕС‚ a-b РґРѕ c-d СЃС‚Р°РЅРѕРІРёС‚СЃСЏ a-d")
 	
 	;GuiAddCheckbox("Only compact for 'Total' column", "xs30 yp+30 w210 h30", Opts.OnlyCompactForTotalColumn, "OnlyCompactForTotalColumn", "OnlyCompactForTotalColumnH")
-	GuiAddCheckbox("Компактный вид только для столбца 'Total'", "xs30 yp+30 w210 h30", Opts.OnlyCompactForTotalColumn, "OnlyCompactForTotalColumn", "OnlyCompactForTotalColumnH")
+	GuiAddCheckbox("РљРѕРјРїР°РєС‚РЅС‹Р№ РІРёРґ С‚РѕР»СЊРєРѕ РґР»СЏ СЃС‚РѕР»Р±С†Р° 'Total'", "xs30 yp+30 w210 h30", Opts.OnlyCompactForTotalColumn, "OnlyCompactForTotalColumn", "OnlyCompactForTotalColumnH")
 	;AddToolTip(OnlyCompactForTotalColumnH, "Only use compact double ranges for the second range column`nin the affix overview (with the header 'total')")
-	AddToolTip(OnlyCompactForTotalColumnH, "Использовать компактные двойные диапазоны только для второго столбца значений аффикса `n(с заголовком 'total')")
+	AddToolTip(OnlyCompactForTotalColumnH, "РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєРѕРјРїР°РєС‚РЅС‹Рµ РґРІРѕР№РЅС‹Рµ РґРёР°РїР°Р·РѕРЅС‹ С‚РѕР»СЊРєРѕ РґР»СЏ РІС‚РѕСЂРѕРіРѕ СЃС‚РѕР»Р±С†Р° Р·РЅР°С‡РµРЅРёР№ Р°С„С„РёРєСЃР° `n(СЃ Р·Р°РіРѕР»РѕРІРєРѕРј 'total')")
 	
 	GuiAddEdit(Opts.MultiTierRangeSeparator, "xs260 y+6 w40 h20", "MultiTierRangeSeparator")
 	;GuiAddText("Multi tier range separator:", "xs10 yp+3 w170 h20 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH")
-	GuiAddText("Разделитель многоуровневого диапазона:", "xs10 yp+3 w200 h30 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH")
-	;AddToolTip(MultiTierRangeSeparatorH, "Select separator (default: … ) for a multi tier roll range with uncertainty:`n83% increased Light…   73-85…83-95   102-109 (84)  T1-4 P + T1-6 S`n	                     There--^")
-	AddToolTip(MultiTierRangeSeparatorH, "Выберите разделитель (по умолчанию: … ) для  многоуровневого диапазона с неопределенным роллом`n83% увеличение урона…   73-85…83-95   102-109 (84)  T1-4 Пр + T1-6 Су`n                                           Здесь--^")
+	GuiAddText("Р Р°Р·РґРµР»РёС‚РµР»СЊ РјРЅРѕРіРѕСѓСЂРѕРІРЅРµРІРѕРіРѕ РґРёР°РїР°Р·РѕРЅР°:", "xs10 yp+3 w200 h30 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH")
+	;AddToolTip(MultiTierRangeSeparatorH, "Select separator (default: вЂ¦ ) for a multi tier roll range with uncertainty:`n83% increased LightвЂ¦   73-85вЂ¦83-95   102-109 (84)  T1-4 P + T1-6 S`n	                     There--^")
+	AddToolTip(MultiTierRangeSeparatorH, "Р’С‹Р±РµСЂРёС‚Рµ СЂР°Р·РґРµР»РёС‚РµР»СЊ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ: вЂ¦ ) РґР»СЏ  РјРЅРѕРіРѕСѓСЂРѕРІРЅРµРІРѕРіРѕ РґРёР°РїР°Р·РѕРЅР° СЃ РЅРµРѕРїСЂРµРґРµР»РµРЅРЅС‹Рј СЂРѕР»Р»РѕРј`n83% СѓРІРµР»РёС‡РµРЅРёРµ СѓСЂРѕРЅР°вЂ¦   73-85вЂ¦83-95   102-109 (84)  T1-4 РџСЂ + T1-6 РЎСѓ`n                                           Р—РґРµСЃСЊ--^")
 	
 	GuiAddEdit(Opts.FontSize, "xs260 y+6 w40 h20 Number", "FontSize")
 	;GuiAddText("Font Size:", "xs10 yp+3 w180 h20 0x0100")
-	GuiAddText("Размер шрифта:", "xs10 yp+3 w180 h20 0x0100")
+	GuiAddText("Р Р°Р·РјРµСЂ С€СЂРёС„С‚Р°:", "xs10 yp+3 w180 h20 0x0100")
 	
 	; Buttons
 	ButtonsShiftX := "x659 "
 	;GuiAddText("Mouse over settings or see the GitHub Wiki page for comments on what these settings do exactly.", ButtonsShiftX "y40 w290 h30 0x0100")
-	GuiAddText("Наведите указатель мыши на строки или посетите страницу GitHub Wiki чтобы получить больше информации по настройкам.", ButtonsShiftX "y35 w290 h40 0x0100")
+	GuiAddText("РќР°РІРµРґРёС‚Рµ СѓРєР°Р·Р°С‚РµР»СЊ РјС‹С€Рё РЅР° СЃС‚СЂРѕРєРё РёР»Рё РїРѕСЃРµС‚РёС‚Рµ СЃС‚СЂР°РЅРёС†Сѓ GitHub Wiki С‡С‚РѕР±С‹ РїРѕР»СѓС‡РёС‚СЊ Р±РѕР»СЊС€Рµ РёРЅС„РѕСЂРјР°С†РёРё РїРѕ РЅР°СЃС‚СЂРѕР№РєР°Рј.", ButtonsShiftX "y35 w290 h40 0x0100")
 	
 	;GuiAddButton("Defaults", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
-	GuiAddButton("По умолч.", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
+	GuiAddButton("РџРѕ СѓРјРѕР»С‡.", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
 	;GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	;GuiAddButton("Cancel", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
-	GuiAddButton("Отмена", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
+	GuiAddButton("РћС‚РјРµРЅР°", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
 
 	If (SkipItemInfoUpdateCall) {
 		GuiAddText("Use these buttons to change ItemInfo and AdditionalMacros settings (TradeMacro has it's own buttons).", ButtonsShiftX "y+10 w250 h50 cRed")
@@ -11490,13 +11490,13 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			rarity := ""
 			If (Item.RarityLevel = 2) {
 				;rarity := "magic"
-				rarity := "волшебный"
+				rarity := "РІРѕР»С€РµР±РЅС‹Р№"
 			} Else If (Item.RarityLevel = 3) {
 				;rarity := "rare"
-				rarity := "редкий"
+				rarity := "СЂРµРґРєРёР№"
 			} Else If (Item.RarityLevel = 4) {
 				;rarity := "unique"
-				rarity := "уникальный"
+				rarity := "СѓРЅРёРєР°Р»СЊРЅС‹Р№"
 			}
 
 			terms := []
@@ -11505,18 +11505,18 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 				If (broadTerms) {
 					If (Item.IsUnique) {
 						;terms.push("Rarity: Unique")
-						terms.push("Редкость: Уникальный")
+						terms.push("Р РµРґРєРѕСЃС‚СЊ: РЈРЅРёРєР°Р»СЊРЅС‹Р№")
 					} Else {
 						;terms.push("Rarity: " Item.BaseType)
-						terms.push("Редкость: " Item.BaseType_Ru)
+						terms.push("Р РµРґРєРѕСЃС‚СЊ: " Item.BaseType_Ru)
 					}
 				} Else {
 					If (Item.IsUnique) {
 						;terms.push("Rarity: Unique")
-						terms.push("Редкость: Уникальный")
+						terms.push("Р РµРґРєРѕСЃС‚СЊ: РЈРЅРёРєР°Р»СЊРЅС‹Р№")
 					} Else {
 						;terms.push("Rarity: " Item.BaseType)
-						terms.push("Редкость: " Item.BaseType_Ru)
+						terms.push("Р РµРґРєРѕСЃС‚СЊ: " Item.BaseType_Ru)
 					}
 					terms.push(Item.Name)
 				}
@@ -11525,10 +11525,10 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			Else If (Item.IsProphecy) {
 				If (broadTerms) {
 					;terms.push("this prophecy")
-					terms.push("это пророчество")
+					terms.push("СЌС‚Рѕ РїСЂРѕСЂРѕС‡РµСЃС‚РІРѕ")
 				} Else {
 					;terms.push("this prophecy")
-					terms.push("это пророчество")
+					terms.push("СЌС‚Рѕ РїСЂРѕСЂРѕС‡РµСЃС‚РІРѕ")
 					terms.push(Item.Name)
 				}
 			}
@@ -11536,9 +11536,9 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			Else If (Item.IsEssence) {
 				If (broadTerms) {
 					;terms.push("Rarity: Currency")
-					terms.push("Редкость: Валюта")
+					terms.push("Р РµРґРєРѕСЃС‚СЊ: Р’Р°Р»СЋС‚Р°")
 					;terms.push("Essence")
-					terms.push("Сущность")
+					terms.push("РЎСѓС‰РЅРѕСЃС‚СЊ")
 				} Else {
 					terms.push(Item.Name)
 				}
@@ -11547,7 +11547,7 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			Else If (Item.IsCurrency) {
 				If (broadTerms) {
 					;terms.push("Currency")
-					terms.push("Валюта")
+					terms.push("Р’Р°Р»СЋС‚Р°")
 				} Else {
 					terms.push(Item.Name)
 				}
@@ -11556,11 +11556,11 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			Else If (Item.IsMap) {
 				If (broadTerms) {
 					;terms.push(" Map")
-					terms.push(" Карта")
+					terms.push(" РљР°СЂС‚Р°")
 				} Else {
 					terms.push(Item.SubType)
 					;terms.push("tier:" Item.MapTier)
-					terms.push("Уровень карты:" Item.MapTier)
+					terms.push("РЈСЂРѕРІРµРЅСЊ РєР°СЂС‚С‹:" Item.MapTier)
 				}
 			}
 			; flasks
@@ -11600,7 +11600,7 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 			Else If (RegExMatch(Item.Name_En, "i)Sacrifice At") or RegExMatch(Item.Name_En, "i)Fragment of") or RegExMatch(Item.Name_En, "i)Mortal ") or RegExMatch(Item.Name_En, "i)Offering to ") or RegExMatch(Item.Name_En, "i)'s Key") or RegExMatch(Item.Name_En, "i)Breachstone") or RegExMatch(Item.Name_En, "i)Reliquary Key")) {
 				If (broadTerms) {
 					;tmpName := RegExReplace(Item.Name, "i)(Sacrifice At).*|(Fragment of).*|(Mortal).*|.*('s Key)|.*(Breachstone)|(Reliquary Key)", "$1$2$3$4$5$6")
-					tmpName := RegExReplace(Item.Name, "i)(Жертва в).*|(Жертва на).*|(Фрагмент).*|(Смертная|Смертное|Смертный).*|.*(Ключ)|.*(Камень Разлома)|(Ключ от )", "$1$2$3$4$5$6$7")
+					tmpName := RegExReplace(Item.Name, "i)(Р–РµСЂС‚РІР° РІ).*|(Р–РµСЂС‚РІР° РЅР°).*|(Р¤СЂР°РіРјРµРЅС‚).*|(РЎРјРµСЂС‚РЅР°СЏ|РЎРјРµСЂС‚РЅРѕРµ|РЎРјРµСЂС‚РЅС‹Р№).*|.*(РљР»СЋС‡)|.*(РљР°РјРµРЅСЊ Р Р°Р·Р»РѕРјР°)|(РљР»СЋС‡ РѕС‚ )", "$1$2$3$4$5$6$7")
 					terms.push(tmpName)
 				} Else {
 					terms.push(Item.Name)
@@ -11613,22 +11613,22 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 						; add the term "Chance to Block" to remove items with "Energy Shield" from "Shield" searches
 						If (InStr(Item.SubType, "Shield")) {
 							;terms.push("Chance to Block")
-							terms.push("Шанс заблокировать удар")
+							terms.push("РЁР°РЅСЃ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ СѓРґР°СЂ")
 						}
 
 						; add grip type to differentiate 1 and 2 handed weapons
 						If (Item.GripType == "1H" and RegExMatch(Item.Subtype, "i)Sword|Mace|Axe")) {
 							;prefix := "One Handed"
-							prefix := "Одноручный"
+							prefix := "РћРґРЅРѕСЂСѓС‡РЅС‹Р№"
 						} Else If (Item.GripType == "2H") {
 							;prefix := "Two Handed"
-							prefix := "Двуручный"
+							prefix := "Р”РІСѓСЂСѓС‡РЅС‹Р№"
 						}
 
 						; Handle Talismans, they have SubType "Amulet" but this won't be found ingame.
 						If (Item.IsTalisman) {
 							;term := "Talisman Tier:"
-							term := "Уровень талисмана:"
+							term := "РЈСЂРѕРІРµРЅСЊ С‚Р°Р»РёСЃРјР°РЅР°:"
 						} Else {
 							; add a space since all these terms have a preceding one, this reduces the chance of accidental matches
 							; for example "Ring" found in "Voidbringers" or "during Flask effect"
@@ -11642,7 +11642,7 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 					Else If (InStr(Item.BaseType, "Armour")) {
 						For key, val in ItemData.Parts {
 							;If (RegExMatch(val, "i)(Energy Shield:)|(Armour:)|(Evasion Rating:)", match)) {
-							If (RegExMatch(val, "i)(Энерг. щит:)|(Броня:)|(Уклонение:)", match)) {
+							If (RegExMatch(val, "i)(Р­РЅРµСЂРі. С‰РёС‚:)|(Р‘СЂРѕРЅСЏ:)|(РЈРєР»РѕРЅРµРЅРёРµ:)", match)) {
 								Loop, 3 {
 									If (StrLen(match%A_Index%)) {
 										terms.push(match%A_Index%)
@@ -11786,7 +11786,7 @@ OpenItemOnPoEAntiquary() {
 				
 				If (length == 0) {
 					;ShowToolTip("Item not available on http://poe-antiquary.xyz.")
-					ShowToolTip("Предмет не доступен на http://poe-antiquary.xyz.")
+					ShowToolTip("РџСЂРµРґРјРµС‚ РЅРµ РґРѕСЃС‚СѓРїРµРЅ РЅР° http://poe-antiquary.xyz.")
 				}
 				Else If (length == 1) {
 					id := items[1].id
@@ -11798,7 +11798,7 @@ OpenItemOnPoEAntiquary() {
 			}
 		} Else {			
 			;ShowToolTip("Item parsing failed, no name recognized.")
-			ShowToolTip("Ошибка анализа предмета, не распознано имя.")
+			ShowToolTip("РћС€РёР±РєР° Р°РЅР°Р»РёР·Р° РїСЂРµРґРјРµС‚Р°, РЅРµ СЂР°СЃРїРѕР·РЅР°РЅРѕ РёРјСЏ.")
 		}
 		SuspendPOEItemScript = 0
 	}
@@ -11983,9 +11983,9 @@ LookUpAffixes() {
 }
 
 ;-------------------------
-; Вычисляем максимальную длину аффикса
-; В одном из релизов английской версии была удалена возможность выбора между отображением полных и кратких аффиксов, оставив только краткие
-; Данная функция позволит отображать полные аффиксы в зависимости от их размера
+; Р’С‹С‡РёСЃР»СЏРµРј РјР°РєСЃРёРјР°Р»СЊРЅСѓСЋ РґР»РёРЅСѓ Р°С„С„РёРєСЃР°
+; Р’ РѕРґРЅРѕРј РёР· СЂРµР»РёР·РѕРІ Р°РЅРіР»РёР№СЃРєРѕР№ РІРµСЂСЃРёРё Р±С‹Р»Р° СѓРґР°Р»РµРЅР° РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹Р±РѕСЂР° РјРµР¶РґСѓ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµРј РїРѕР»РЅС‹С… Рё РєСЂР°С‚РєРёС… Р°С„С„РёРєСЃРѕРІ, РѕСЃС‚Р°РІРёРІ С‚РѕР»СЊРєРѕ РєСЂР°С‚РєРёРµ
+; Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РїРѕР·РІРѕР»РёС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊ РїРѕР»РЅС‹Рµ Р°С„С„РёРєСЃС‹ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РёС… СЂР°Р·РјРµСЂР°
 ParseModLength(modStr, impl=false, isImplVal=false)
 {
 	Global Item
@@ -12004,14 +12004,14 @@ ParseModLength(modStr, impl=false, isImplVal=false)
 		}
 	}
 
-	; из-за отсутствия дополнительных столбцов у обычных самоцветов большое пустое поле между аффиксом и значением, 
-	; поэтому немного уменьшим длину
+	; РёР·-Р·Р° РѕС‚СЃСѓС‚СЃС‚РІРёСЏ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… СЃС‚РѕР»Р±С†РѕРІ Сѓ РѕР±С‹С‡РЅС‹С… СЃР°РјРѕС†РІРµС‚РѕРІ Р±РѕР»СЊС€РѕРµ РїСѓСЃС‚РѕРµ РїРѕР»Рµ РјРµР¶РґСѓ Р°С„С„РёРєСЃРѕРј Рё Р·РЅР°С‡РµРЅРёРµРј, 
+	; РїРѕСЌС‚РѕРјСѓ РЅРµРјРЅРѕРіРѕ СѓРјРµРЅСЊС€РёРј РґР»РёРЅСѓ
 	If (Item.IsJewel and not Item.IsAbyssJewel)
 	{
 		maxLen := maxLen - 10
 	}
 
-	; у собственных свойств без значений немного увеличим длину поля
+	; Сѓ СЃРѕР±СЃС‚РІРµРЅРЅС‹С… СЃРІРѕР№СЃС‚РІ Р±РµР· Р·РЅР°С‡РµРЅРёР№ РЅРµРјРЅРѕРіРѕ СѓРІРµР»РёС‡РёРј РґР»РёРЅСѓ РїРѕР»СЏ
 	If (impl and !isImplVal)
 	{
 		maxLen := maxLen + 10
@@ -12319,10 +12319,10 @@ SettingsUI_BtnGDIPreviewTooltip:
 		Base Level:    55
 		Max Sockets:    4
 		--------
-		+1 to Level of Socketed Elem…          
-		Increased Critical Strike Ch… 125-150  
+		+1 to Level of Socketed ElemвЂ¦          
+		Increased Critical Strike ChвЂ¦ 125-150  
 		Increased Energy Shield       180-250  
-		Increased Mana Cost of Skill…   80-40  
+		Increased Mana Cost of SkillвЂ¦   80-40  
 		Energy Shield gained on Kill    15-20
 	)
 	
@@ -12584,7 +12584,7 @@ CheckForUpdates:
 	hasUpdate := PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, globalUpdateInfo.skipUpdateCheck, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup)
 	If (hasUpdate = "no update" and not firstUpdateCheck) {
 		;SplashTextOn, , , No update available
-		SplashTextOn, , , Нет доступных обновлений
+		SplashTextOn, , , РќРµС‚ РґРѕСЃС‚СѓРїРЅС‹С… РѕР±РЅРѕРІР»РµРЅРёР№
 		Sleep 2000
 		SplashTextOff
 	}
