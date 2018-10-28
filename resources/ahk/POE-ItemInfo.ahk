@@ -497,8 +497,7 @@ Menu, PreviewTextFiles, Add, Additional Macros, PreviewAdditionalMacros
 
 ; Menu tooltip
 RelVer := Globals.Get("ReleaseVersion")
-;Menu, Tray, Tip, Path of Exile Item Info %RelVer%
-Menu, Tray, Tip, Path of Exile Item Info %RelVer% _ %RelVerRu%
+Menu, Tray, Tip, Path of Exile Item Info %RelVer%
 
 Menu, Tray, NoStandard
 ;Menu, Tray, Add, Reload Script (Use only this), ReloadScript

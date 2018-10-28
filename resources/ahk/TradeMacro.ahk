@@ -174,13 +174,13 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 			; uses poedb.tw
 			UrlPage := "item.php?n="
 			
-			;Указание URL для опознанных уникальных предметов! Проверять на исправление!!!
-			If (Item.IsUnique and !Item.IsUnidentified) {
-				UrlPage := "unique.php?n="
-				UrlAffix := Item.Name_En
 			;If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) { ;По этому URL нельзя искать опознанные уникальные предметы! Проверять на исправление!!!
-			} Else If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
+			If ((Item.IsUnique and Item.IsUnidentified) or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
 				;UrlAffix := Item.Name
+				UrlAffix := Item.Name_En
+			;URL для опознанных уникальных предметов!
+			} Else If (Item.IsUnique) {
+				UrlPage := "unique.php?n="
 				UrlAffix := Item.Name_En
 			} Else If (Item.IsFlask) {
 				UrlPage := "search.php?Search="
@@ -5672,7 +5672,7 @@ OverwriteSettingsNameTimer:
 	If (o) {
 		RelVer := TradeGlobals.Get("ReleaseVersion")
 		;Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%
-		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer%
+		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer% by MegaEzik
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel

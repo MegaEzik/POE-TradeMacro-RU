@@ -909,9 +909,6 @@ TradeFunc_CreateTradeAboutWindow() {
 		(c) %A_YYYY% Eruyome and contributors:
 		)
 		Gui, About:Add, Text, x461 y297 w270 h80, %authors%
-		
-		RuAuthors := "Адаптация русской версии: idae, MegaEzik"
-		Gui, About:Add, Text, x461 y377 w400 h16, %RuAuthors%
 	}
 }
 
