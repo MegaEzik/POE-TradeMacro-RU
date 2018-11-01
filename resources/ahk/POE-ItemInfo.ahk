@@ -501,7 +501,7 @@ Menu, Tray, Tip, Path of Exile Item Info %RelVer%
 
 Menu, Tray, NoStandard
 ;Menu, Tray, Add, Reload Script (Use only this), ReloadScript
-Menu, Tray, Add, Перезагрузить скрипт (Используйте только этот способ), ReloadScript
+Menu, Tray, Add, Перезапустить (Используйте только этот способ), ReloadScript
 Menu, Tray, Add ; Separator
 ;Menu, Tray, Add, About..., MenuTray_About
 Menu, Tray, Add, О скрипте..., MenuTray_About
@@ -510,16 +510,20 @@ Menu, Tray, Add, О скрипте..., MenuTray_About
 	Menu, Tray, Add, Translate Item, ShowTranslationUI
 */
 ;Menu, Tray, Add, Show all assigned Hotkeys, ShowAssignedHotkeys
-Menu, Tray, Add, Показать все назначенные горячие клавиши, ShowAssignedHotkeys
+Menu, Tray, Add, Показать настроенные горячие клавиши, ShowAssignedHotkeys
 Menu, Tray, Add, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings"), ShowSettingsUI
 ;Menu, Tray, Add, Check for updates, CheckForUpdates
-;Menu, Tray, Add, Проверить наличие обновлений, CheckForUpdates
+Menu, Tray, Add, Проверка обновлений, CheckForUpdates
+Menu, Tray, Disable, Проверка обновлений ;Данная функция не работает в русской версии
 ;Menu, Tray, Add, Show Update Notes, ShowUpdateNotes
-Menu, Tray, Add, Об оновлении, ShowUpdateNotes
+Menu, Tray, Add, История изменений, ShowUpdateNotes
 Menu, Tray, Add ; Separator
-Menu, Tray, Add, Edit Files, :TextFiles
-Menu, Tray, Add, Preview Files, :PreviewTextFiles
-Menu, Tray, Add, Open User Folder, EditOpenUserSettings
+;Menu, Tray, Add, Edit Files, :TextFiles
+Menu, Tray, Add, Редактирование файлов, :TextFiles
+;Menu, Tray, Add, Preview Files, :PreviewTextFiles
+Menu, Tray, Add, Просмотр файлов, :PreviewTextFiles
+;Menu, Tray, Add, Open User Folder, EditOpenUserSettings
+Menu, Tray, Add, Открыть папку пользователя, EditOpenUserSettings
 Menu, Tray, Add ; Separator
 Menu, Tray, Standard
 Menu, Tray, Default, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings")
@@ -10629,11 +10633,11 @@ CreateSettingsUI()
 	;AddToolTip(UseGDIH, "Enables rendering of tooltips using Windows gdip.dll`n(allowing limited styling options).")
 	AddToolTip(UseGDIH, "Позволяет выводить всплывающие подсказки с помощью Windows gdip.dll`n(разрешая определенные варианты стилизации).")
 	;GuiAddCheckBox("Rendering Fix", "xs10 yp+30 w115", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH")
-	GuiAddCheckBox("Исправление визуализации", "xs10 yp+30 w100", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH")
+	GuiAddCheckBox("Исправление отрисовки", "xs10 yp+30 w100", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH")
 	;AddToolTip(GDIRenderingFixH, "In the case that rendered graphics (window, border and text) are`nunsharp/blurry this should fix the issue.")
-	AddToolTip(GDIRenderingFixH, "В случае, если визуализированная графика (окно, граница и текст) является `nнерезким/размытым, это должно устранить проблему.")
+	AddToolTip(GDIRenderingFixH, "В случае, если визуализированная графика (окно, рамка и текст) является `nнерезким/размытым, это должно устранить проблему.")
 	;GuiAddText("(Restart script after disabling GDI+. Enabling might cause general FPS drops.)", "xs120 ys+20 w185 cRed", "")
-	GuiAddText("(Перезапустите скрипт после отключения GDI+. Включение может привести к общему снижению FPS.)", "xs120 ys+20 w185 cRed", "")
+	GuiAddText("Перезапустите скрипт после отключения GDI+. Включение может привести снижению частоты кадров!", "xs120 ys+20 w185 cRed", "")
 	
 	;GuiAddButton("Edit Window", "xs9 ys80 w80 h23", "SettingsUI_BtnGDIWindowColor", "BtnGDIWindowColor")
 	GuiAddButton("Ред. окно", "xs9 ys80 w90 h23", "SettingsUI_BtnGDIWindowColor", "BtnGDIWindowColor")
@@ -10644,7 +10648,7 @@ CreateSettingsUI()
 	GuiAddText("Затенён. (0-100):", "xs110 ys115 w200", "LblGDIWindowOpacity")
 	GuiAddEdit(Opts.GDIWindowOpacity, "xs240 ys112 w60", "GDIWindowOpacity", "GDIWindowOpacityH")	
 	;GuiAddButton("Edit Border", "xs9 ys140 w80 h23", "SettingsUI_BtnGDIBorderColor", "BtnGDIBorderColor")
-	GuiAddButton("Ред. границу", "xs9 ys140 w90 h23", "SettingsUI_BtnGDIBorderColor", "BtnGDIBorderColor")
+	GuiAddButton("Ред. рамку", "xs9 ys140 w90 h23", "SettingsUI_BtnGDIBorderColor", "BtnGDIBorderColor")
 	;GuiAddText("Color (hex RGB):", "xs100 ys145 w200", "LblGDIBorderColor")
 	GuiAddText("Цвет (hex RGB):", "xs110 ys145 w200", "LblGDIBorderColor")
 	GuiAddEdit(Opts.GDIBorderColor, "xs240 ys142 w60", "GDIBorderColor", "GDIBorderColorH")	
@@ -10661,12 +10665,12 @@ CreateSettingsUI()
 	GuiAddEdit(Opts.GDITextOpacity, "xs240 ys232 w60", "GDITextOpacity", "GDITextOpacityH")
 	
 	;GuiAddCheckBox("Style border depending on checked item.", "xs10 ys260 w260", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH")
-	GuiAddCheckBox("Стиль границы в зависимости от проверяемого предмета.", "xs10 ys260 w210", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH")
+	GuiAddCheckBox("Стиль рамки в зависимости от предмета", "xs10 ys260 w260", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH")
 	
 	;GuiAddButton("GDI Defaults", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH")
-	GuiAddButton("GDI по умолч.", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH")
+	GuiAddButton("Сбросить", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH")
 	;GuiAddButton("Preview", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH")
-	GuiAddButton("Предпросм.", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH")
+	GuiAddButton("Просмотр", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH")
 
 	; Tooltip
 	;GuiAddGroupBox("Tooltip", "x327 ym" 30 " w310 h140 Section")
@@ -10674,18 +10678,18 @@ CreateSettingsUI()
 	
 	GuiAddEdit(Opts.MouseMoveThreshold, "xs250 yp+22 w50 h20 Number", "MouseMoveThreshold", "MouseMoveThresholdH")
 	;GuiAddText("Mouse move threshold (px):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH")
-	GuiAddText("Порог движения мышью (px):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH")
+	GuiAddText("Смещение указателя (пиксели):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH")
 	;AddToolTip(LblMouseMoveThresholdH, "Hide tooltip when the mouse cursor moved x pixel away from the initial position.`nEffectively permanent tooltip when using a value larger than the monitor diameter.")
-	AddToolTip(LblMouseMoveThresholdH, "Скрыть всплывающую подсказку, когда курсор мыши перемещается на X пикселей от исходной позиции.`nВозможно постоянное отображение подсказки, если использовать значение, большее, чем текущее разрешение экрана.")
+	AddToolTip(LblMouseMoveThresholdH, "Убрать всплывающую подсказку, когда курсор мыши смещается на указанное колличество пикселей от исходной позиции.`nВозможно постоянное отображение подсказки, если использовать значение, большее, чем текущее разрешение экрана.")
 	
 	GuiAddEdit(Opts.ToolTipTimeoutSeconds, "xs250 yp+27 w50 Number", "ToolTipTimeoutSeconds")
 	;GuiAddCheckBox("Use tooltip timeout (seconds)", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout")
-	GuiAddCheckBox("Длительность показа подсказки (в сек.)", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout")
+	GuiAddCheckBox("Время показа (секунды):", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout")
 	;AddToolTip(UseTooltipTimeoutH, "Hide tooltip automatically after defined time.")
-	AddToolTip(UseTooltipTimeoutH, "Скрыть всплывающую подсказку через определенное время.")
+	AddToolTip(UseTooltipTimeoutH, "Убрать всплывающую подсказку через указанное колличество секунд.")
 	
 	;GuiAddCheckbox("Display at fixed coordinates", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords")
-	GuiAddCheckbox("Отображение с фиксир. координатами", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords")
+	GuiAddCheckbox("Фиксированное расположение", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords")
 	;AddToolTip(DisplayToolTipAtFixedCoordsH, "Show tooltip in virtual screen space at the fixed`ncoordinates given below. Virtual screen space means`nthe full desktop frame, including any secondary`nmonitors. Coords are relative to the top left edge`nand increase going down and to the right.")
 	AddToolTip(DisplayToolTipAtFixedCoordsH, "Показывать подсказку в виртуальном пространстве экрана с фиксированными `nкоординатами, указанными ниже. Виртуальное пространство экрана означает `nполный рабочий стол, включая любые вторичные мониторы.`nНачало координат находится в верхнем левом углу и увеличивается вниз и вправо.")
 		GuiAddEdit(Opts.ScreenOffsetX, "xs50 yp+22 w50", "ScreenOffsetX")
@@ -10756,14 +10760,15 @@ CreateSettingsUI()
 	GuiAddText("Наведите указатель мыши на строки или посетите страницу GitHub Wiki чтобы получить больше информации по настройкам.", ButtonsShiftX "y35 w290 h40 0x0100")
 	
 	;GuiAddButton("Defaults", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
-	GuiAddButton("По умолч.", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
+	GuiAddButton("Сбросить", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
 	;GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	;GuiAddButton("Cancel", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
 	GuiAddButton("Отмена", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
 
 	If (SkipItemInfoUpdateCall) {
-		GuiAddText("Use these buttons to change ItemInfo and AdditionalMacros settings (TradeMacro has it's own buttons).", ButtonsShiftX "y+10 w250 h50 cRed")
+		;GuiAddText("Use these buttons to change ItemInfo and AdditionalMacros settings (TradeMacro has it's own buttons).", ButtonsShiftX "y+10 w250 h50 cRed")
+		GuiAddText("Используйте эту вкладку для настройки ItemInfo и AdditionalMacros. (TradeMacro имеет свою вкладку).", ButtonsShiftX "y+10 w250 h50 cRed")
 		GuiAddText("", "x10 y10 w250 h10")
 	}	
 	

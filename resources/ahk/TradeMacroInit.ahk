@@ -24,8 +24,10 @@ If (A_AhkVersion < TradeAHKVersionRequired)
 }
 
 Menu, Tray, Icon, %A_ScriptDir%\resources\images\poe-trade-bl.ico
-Menu, Tray, Add, Donate, OpenPayPal
-Menu, Tray, Add, Open Wiki/FAQ, OpenGithubWikiFromMenu
+;Menu, Tray, Add, Donate, OpenPayPal
+Menu, Tray, Add, Пожертвовать, OpenPayPal
+;Menu, Tray, Add, Open Wiki/FAQ, OpenGithubWikiFromMenu
+Menu, Tray, Add, Открыть Wiki/FAQ, OpenGithubWikiFromMenu
 
 argumentSkipSplash = %6%
 If (not argumentSkipSplash) {
@@ -78,7 +80,8 @@ globalUpdateInfo.skipBackup 		:= 0
 globalUpdateInfo.skipUpdateCheck 	:= 0
 
 TradeGlobals.Set("SettingsScriptList", ["TradeMacro", "ItemInfo", "Additional Macros"])
-TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Settings")
+;TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Settings")
+TradeGlobals.Set("SettingsUITitle", "Настройки PoE (Trade) Item Info")
 argumentProjectName		= %1%
 argumentUserDirectory	= %2%
 argumentIsDevVersion	= %3%
@@ -685,11 +688,13 @@ CreateTradeSettingsUI()
 	; option group start
 	GuiAddCheckbox("Use predicted pricing.", "x337 yp+25 w145 h20", TradeOpts.UsePredictedItemPricing, "UsePredictedItemPricing", "UsePredictedItemPricingH")
 	AddToolTip(UsePredictedItemPricingH, "Use predicted item pricing via machine-learning algorithms.`nReplaces the default search, works with magic/rare/unique items.`n`nProvided by poeprices.info.")
-
+	GuiControl, Disable, UsePredictedItemPricing ;Данная функция не работает в русской версии
+	
 	; option group start
 	GuiAddCheckbox("Use feedback Gui.", "x482 yp+0 w120 h20", TradeOpts.UsePredictedItemPricingGui, "UsePredictedItemPricingGui", "UsePredictedItemPricingGuiH")
 	AddToolTip(UsePredictedItemPricingGuiH, "Use a Gui instead of the default tooltip to display results.`nYou can send some feedback to improve this feature.")
-
+	GuiControl, Disable, UsePredictedItemPricingGui ;Данная функция не работает в русской версии
+	
 	; header
 	GuiAddText("Pre-Select Options (Advanced Search)", "x337 yp+43 w280 h20 0x0100 cDA4F49", "", "")
 	GuiAddText("-------------------------------------------------------------", "x337 yp+6 w280 h20 0x0100 cDA4F49", "", "")
@@ -764,6 +769,8 @@ CreateTradeSettingsUI()
 	AddToolTip(OpenSearchOnPoEAppEnabledH, "Open your search on poeapp.com instead of showing`na tooltip with results.")
 	GuiAddHotkey(TradeOpts.OpenSearchOnPoEAppHotKey, "x+1 yp-2 w124 h20", "OpenSearchOnPoEAppHotKey", "OpenSearchOnPoEAppHotKeyH")
 	AddToolTip(OpenSearchOnPoEAppHotKeyH, "Press key/key combination.`nDefault: ctrl + shift + q")
+	GuiControl, Disable, OpenSearchOnPoEAppEnabled ;Данная функция не работает в русской версии
+	
 
 	GuiAddCheckbox("Open Item (Wiki):", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenWikiEnabled, "OpenWikiEnabled", "OpenWikiEnabledH")
 	AddToolTip(OpenWikiEnabledH, "Open your items page on the PoE-Wiki.")

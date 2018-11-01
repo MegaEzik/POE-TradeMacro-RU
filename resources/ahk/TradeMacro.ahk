@@ -175,11 +175,11 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 			UrlPage := "item.php?n="
 			
 			;If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) { ;По этому URL нельзя искать опознанные уникальные предметы! Проверять на исправление!!!
-			If ((Item.IsUnique and Item.IsUnidentified) or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
+			If (((Item.IsUnique or Item.IsRelic) and Item.IsUnidentified) or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
 				;UrlAffix := Item.Name
 				UrlAffix := Item.Name_En
 			;URL для опознанных уникальных предметов!
-			} Else If (Item.IsUnique) {
+			} Else If (Item.IsUnique or Item.IsRelic) {
 				UrlPage := "unique.php?n="
 				UrlAffix := Item.Name_En
 			} Else If (Item.IsFlask) {
@@ -1453,7 +1453,7 @@ TradeFunc_GetPoENinjaItemUrl(league, item) {
 	
 	; filters
 	url_params := "?"
-	url_param_1 := "filter="
+	url_param_1 := "name="
 	url_param_2 := "&tier="
 	
 	If (item.IsMap) {
