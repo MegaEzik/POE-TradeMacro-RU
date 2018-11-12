@@ -164,6 +164,12 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 			return itemEn
 		}
 	}
+	Else If (Item.IsUnique or Item.IsRelic) {
+		itemEn := sameNameItem.Unique[itemRu_]
+		If (itemEn) {
+			return itemEn
+		}
+	}
 
 	; массив соответствий базовых имен предметов на русском языке их английским вариантам
 	nameItemRuToEn := Globals.Get("nameItemRuToEn")	

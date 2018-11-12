@@ -1,8 +1,12 @@
 ﻿{
  "DivinationCard": {
-  "Удар молнии": "Struck by Lightning"
+  "Удар молнии": "Struck by Lightning",
+  "Договор": "The Pact"
  },
  "Gem": {
   "Удар молнии": "Lightning Strike"
+ },
+ "Unique": {
+  "Договор": "The Covenant"
  }
 }
