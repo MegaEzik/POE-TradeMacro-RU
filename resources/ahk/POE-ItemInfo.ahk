@@ -8157,7 +8157,9 @@ ParseSockets(ItemDataText, ByRef AbyssalSockets)
 		If (RegExMatch(A_LoopField, "i)^Гнезда\s?+:"))
 		{
 			LinksString	:= GetColonValue(A_LoopField)
-			RegExReplace(LinksString, "i)[RGBWDA]", "", SocketsCount) 	; "D" is being used for Resonator sockets, "A" for Abyssal Sockets
+			;Fix abyss sockets
+			;RegExReplace(LinksString, "i)[RGBWDA]", "", SocketsCount) 	; "D" is being used for Resonator sockets, "A" for Abyssal Sockets
+			RegExReplace(LinksString, "i)[RGBWD]", "", SocketsCount)
 			RegExReplace(LinksString, "i)[A]", "", AbyssalSockets) 	; "A" for Abyssal Sockets
 			Break
 		}
