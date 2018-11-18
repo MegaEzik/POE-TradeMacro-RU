@@ -75,6 +75,7 @@ tradeInit := ReadFileToMerge(scriptDir "\resources\ahk\TradeMacroInit.ahk")
 trade	:= ReadFileToMerge(scriptDir "\resources\ahk\TradeMacro.ahk")
 addMacros := ReadFileToMerge(scriptDir "\resources\ahk\AdditionalMacros.ahk")
 
+;Подключение AdaptationRu.ahk
 adaptationRu := ReadFileToMerge(scriptDir "\resources\ahk\AdaptationRu.ahk")
 
 info		:= "`n`r`n`r" . info . "`n`r`n`r"
@@ -87,6 +88,7 @@ FileDelete, %scriptDir%\_TradeMacroMain.ahk
 FileDelete, %scriptDir%\_ItemInfoMain.ahk
 FileCopy,   %scriptDir%\resources\ahk\TradeMacroInit.ahk, %scriptDir%\_TradeMacroMain.ahk
 
+;Добавление AdaptationRu.ahk
 FileAppend, %adaptationRu%	, %scriptDir%\_TradeMacroMain.ahk 
 
 FileAppend, %info%		, %scriptDir%\_TradeMacroMain.ahk

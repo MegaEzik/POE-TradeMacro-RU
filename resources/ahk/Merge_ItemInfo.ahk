@@ -50,6 +50,7 @@ PoEScripts_CompareUserFolderWithScriptFolder(userDirectory, scriptDir, projectNa
 info		:= ReadFileToMerge(scriptDir "\resources\ahk\POE-ItemInfo.ahk")
 addMacros := ReadFileToMerge(scriptDir "\resources\ahk\AdditionalMacros.ahk")
 
+;Подключение AdaptationRu.ahk
 adaptationRu := ReadFileToMerge(scriptDir "\resources\ahk\AdaptationRu.ahk")
 
 info		:= info . "`n`r`n`r"
@@ -60,6 +61,7 @@ CloseScript("ItemInfoMain.ahk")
 FileDelete, %scriptDir%\_ItemInfoMain.ahk
 FileCopy,   %scriptDir%\resources\ahk\POE-ItemInfo.ahk, %scriptDir%\_ItemInfoMain.ahk
 
+;Добавление AdaptationRu.ahk
 FileAppend, %adaptationRu%	, %scriptDir%\_ItemInfoMain.ahk
 
 FileAppend, %addMacros%	, %scriptDir%\_ItemInfoMain.ahk

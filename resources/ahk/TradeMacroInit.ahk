@@ -565,12 +565,15 @@ CreateTradeSettingsUI()
 
 	GuiAddCheckbox("Update: Show Notifications", "x17 yp+30 w260 h30", TradeOpts.ShowUpdateNotifications, "ShowUpdateNotifications", "ShowUpdateNotificationsH")
 	AddToolTip(ShowUpdateNotificationsH, "Notifies you when there's a new release available.")
+	GuiControl, Disable, ShowUpdateNotifications ;Данная функция не работает в русской версии	
 
 	GuiAddCheckbox("Update: Skip folder selection", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH")
 	AddToolTip(UpdateSkipSelectionH, "Skips selecting an update location.`nThe current script directory will be used as default.")
+	GuiControl, Disable, UpdateSkipSelection ;Данная функция не работает в русской версии
 
 	GuiAddCheckbox("Update: Skip backup", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH")
 	AddToolTip(UpdateSkipBackupH, "Skips making a backup of the install location/folder.")
+	GuiControl, Disable, UpdateSkipBackup ;Данная функция не работает в русской версии
 
 	GuiAddCheckbox("Open browser Win10 fix", "x17 yp+30 w260 h30", TradeOpts.OpenWithDefaultWin10Fix, "OpenWithDefaultWin10Fix", "OpenWithDefaultWin10FixH")
 	AddToolTip(OpenWithDefaultWin10FixH, " If your PC always asks you what program to use to open`n the wiki-link, enable this to let ahk find your default`nprogram from the registry.")
@@ -1546,7 +1549,7 @@ TradeFunc_StartSplashScreen() {
 	initArray := ["Отправляем Эйнара ловить канареек...", "Предаем забвению Раскол и Кинетический взрыв в Глубинах...", "Нанимаем Киану Ривза водителем тележки...", "Нанимаем хороший эскорт...", "Подготовка GPU к майнингу Азурита...",  "Загрузка Блока заклинаний... 3%... прерывание...", "Исследование реддиторами первой бесконечной соляной шахты...", "Пробуждение балрогов...", "Отправка темных эльфов в бесконечные делвы..."]
 	Random, randomNum, 1, initArray.MaxIndex()
 	;Вычисление места под строку
-	runmeslen:=StrLen(initArray[randomNum])*7+20
+	runmeslen:=StrLen(initArray[randomNum])*8
 	;SplashTextOn, 300, 20, PoE-TradeMacro, % initArray[randomNum]	
 	SplashTextOn, runmeslen, 20, PoE-TradeMacro, % initArray[randomNum]	
 }
