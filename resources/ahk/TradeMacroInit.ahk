@@ -1546,7 +1546,9 @@ TradeFunc_GetOSInfo() {
 TradeFunc_StartSplashScreen() {
 	;SplashTextOn, , 20, PoE-TradeMacro, Initializing script...
 	;initArray := ["Sending Einhar to catch some canaries...", "Burying Sunder and KB in the Depths...", "Hiring Keanu Reeves as a cart driver...", "Hiring a wheely good escort...", "Preparing GPU to mine Azurite...",  "Loading spell block... 3%... aborting...", "Exploring reddit's first infinite salt mine...", "Awakening the balrogs...", "Sending the dark elves into some arc delves..."]
-	initArray := ["Отправляем Эйнара ловить канареек...", "Предаем забвению Раскол и Кинетический взрыв в Глубинах...", "Нанимаем Киану Ривза водителем тележки...", "Нанимаем хороший эскорт...", "Подготовка GPU к майнингу Азурита...",  "Загрузка Блока заклинаний... 3%... прерывание...", "Исследование реддиторами первой бесконечной соляной шахты...", "Пробуждение балрогов...", "Отправка темных эльфов в бесконечные делвы..."]
+	;initArray := ["Отправляем Эйнара ловить канареек...", "Предаем забвению Раскол и Кинетический взрыв в Глубинах...", "Нанимаем Киану Ривза водителем тележки...", "Нанимаем хороший эскорт...", "Подготовка GPU к майнингу Азурита...",  "Загрузка Блока заклинаний... 3%... прерывание...", "Исследование реддиторами первой бесконечной соляной шахты...", "Пробуждение балрогов...", "Отправка темных эльфов в бесконечные делвы..."]
+ 	;initArray := ["Initializing script...", "Preparing Einhars welcoming party...", "Uninstalling Battle.net...", "Investigating the so-called ""Immortals""...", "Starting mobile app...", "Hunting some old friends..."] 
+	initArray := ["Инициализация скрипта...", "Устраиваем приветсвенную вечеринку Эйнара...", "Удаление Battle.net...", "Исследование так называемого ""Бессмертия""...", "Запуск мобильного приложения...", "Охота на старых друйзей..."] 
 	Random, randomNum, 1, initArray.MaxIndex()
 	;Вычисление места под строку
 	runmeslen:=StrLen(initArray[randomNum])*8

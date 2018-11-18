@@ -868,6 +868,16 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.Type := (Item.xtype) ? Item.GripType . " " . Item.SubType : Item.SubType	
 		}
 	}
+	
+
+	;handle abyssal sockets for the default search
+	If (AdvancedPriceCheckItem.mods.length() <= 0) {
+		If (Item.AbyssalSockets > 0) {
+			RequestParams.sockets_a_min := Item.AbyssalSockets
+			RequestParams.sockets_a_max := Item.AbyssalSockets
+			Item.UsedInSearch.AbyssalSockets := (Item.AbyssalSockets > 0) ? Item.AbyssalSockets : ""
+		}	
+	}
 
 	; make sure to not look for unique items when searching rare/white/magic items
 	If (!Item.IsUnique) {
@@ -2839,6 +2849,8 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 			;Title .= (Item.UsedInSearch.CorruptedMod) ? "Corr. Implicit " : ""
 			Title .= (Item.UsedInSearch.CorruptedMod) ? "Оскверн. мод " : ""
 			Title .= (Item.UsedInSearch.Sockets)      ? "| " . Item.UsedInSearch.Sockets . "S " : ""
+			;Title .= (Item.UsedInSearch.AbyssalSockets) ? "| " . Item.UsedInSearch.AbyssalSockets . " Abyss Sockets " : "" 
+			Title .= (Item.UsedInSearch.AbyssalSockets) ? "| " . Item.UsedInSearch.AbyssalSockets . " Гнёзд бездны " : "" 
 			Title .= (Item.UsedInSearch.Links)        ? "| " . Item.UsedInSearch.Links   . "L " : ""
 			If (Item.UsedInSearch.iLvl.min and Item.UsedInSearch.iLvl.max) {
 				Title .= "| iLvl (" . Item.UsedInSearch.iLvl.min . "-" . Item.UsedInSearch.iLvl.max . ")"
