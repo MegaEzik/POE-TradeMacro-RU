@@ -28,6 +28,8 @@ Menu, Tray, Icon, %A_ScriptDir%\resources\images\poe-trade-bl.ico
 Menu, Tray, Add, Пожертвовать, OpenPayPal
 ;Menu, Tray, Add, Open Wiki/FAQ, OpenGithubWikiFromMenu
 Menu, Tray, Add, Открыть Wiki/FAQ, OpenGithubWikiFromMenu
+;Добавляем пункт меню для открытия темы TradeMacro на русском форуме
+Menu, Tray, Add, Открыть тему на русском форуме, OpenRuForumTradeMacroFromMenu
 
 argumentSkipSplash = %6%
 If (not argumentSkipSplash) {
@@ -166,10 +168,17 @@ TradeFunc_StopSplashScreen()
 
 ; ----------------------------------------------------------- Functions ----------------------------------------------------------------
 AdpRu_InintAdaptationRu()
+; сюда размещаем все собственные функции инициализации
 AdpRu_InintAdaptationRu()
 {
+	; функция инициализации массива соответствий для названий валюты с poe.trade
 	AdpRu_InitBuyoutCurrencyEnToRu()
+	; функция инициализации массива соответствий перфиксов и суффиксов в названиях волшебных флаконов русских вариантов английским
 	AdpRu_InitRuPrefSufFlask()
+	; функция инициализации массива уникальных предметов:
+	; - с переменным составом модов
+	; - с модами которые ещё не добавлены в служебный файл uniques.json оригинального скрипта.
+	; необходим для функции AdpRu_AddUniqueVariableMods(uniqueItem)
 	AdpRu_InitUniquesItemModEmpty()
 }
 
@@ -1548,7 +1557,7 @@ TradeFunc_StartSplashScreen() {
 	;initArray := ["Sending Einhar to catch some canaries...", "Burying Sunder and KB in the Depths...", "Hiring Keanu Reeves as a cart driver...", "Hiring a wheely good escort...", "Preparing GPU to mine Azurite...",  "Loading spell block... 3%... aborting...", "Exploring reddit's first infinite salt mine...", "Awakening the balrogs...", "Sending the dark elves into some arc delves..."]
 	;initArray := ["Отправляем Эйнара ловить канареек...", "Предаем забвению Раскол и Кинетический взрыв в Глубинах...", "Нанимаем Киану Ривза водителем тележки...", "Нанимаем хороший эскорт...", "Подготовка GPU к майнингу Азурита...",  "Загрузка Блока заклинаний... 3%... прерывание...", "Исследование реддиторами первой бесконечной соляной шахты...", "Пробуждение балрогов...", "Отправка темных эльфов в бесконечные делвы..."]
  	;initArray := ["Initializing script...", "Preparing Einhars welcoming party...", "Uninstalling Battle.net...", "Investigating the so-called ""Immortals""...", "Starting mobile app...", "Hunting some old friends..."] 
-	initArray := ["Инициализация скрипта...", "Устраиваем приветсвенную вечеринку Эйнара...", "Удаление Battle.net...", "Исследование так называемого ""Бессмертия""...", "Запуск мобильного приложения...", "Охота на старых друйзей..."] 
+	initArray := ["Инициализация скрипта...", "Устраиваем вечеринку приветствия Эйнара...", "Удаление Battle.net...", "Исследование так называемого ""Бессмертия""...", "Запуск мобильного приложения...", "Охота на старых друзей..."] 
 	Random, randomNum, 1, initArray.MaxIndex()
 	;Вычисление места под строку
 	runmeslen:=StrLen(initArray[randomNum])*8

@@ -640,15 +640,15 @@ OpenUserDirFile(Filename)
 
 OpenUserSettingsFolder(ProjectName, Dir = "")
 {
-		If (!StrLen(Dir)) {
-			Dir := userDirectory
-		}
+	If (!StrLen(Dir)) {
+		Dir := userDirectory
+	}
 
-		If (!InStr(FileExist(Dir), "D")) {
-			FileCreateDir, %Dir%
-		}
-		Run, Explorer %Dir%
-		return
+	If (!InStr(FileExist(Dir), "D")) {
+		FileCreateDir, %Dir%
+	}
+	Run, Explorer %Dir%
+	return
 }
 
 ; Function that checks item type name against entries
@@ -3247,6 +3247,7 @@ ParseMapAffixes(ItemDataAffixes)
 		If (MapModWarn.MultiDmgWarning)
 		{
 			String_DmgMod := SubStr(String_DmgMod, 3)
+			;MapModWarnings := MapModWarnings . "`nMulti Damage: " . String_DmgMod															
 			MapModWarnings := MapModWarnings . "`n Множественный урон: " . String_DmgMod
 		}
 	}
@@ -11651,7 +11652,7 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 					terms.push(Item.BaseType)
 				} Else {
 					terms.push(Item.BaseName)
-										If (Item.BaseName) {
+					If (Item.BaseName) {
 						terms.push(Item.BaseName)	
 					} Else {
 						terms.push("Jewel")
@@ -11715,7 +11716,7 @@ HighlightItems(broadTerms = false, leaveSearchField = true) {
 							}
 						}
 					}
-				} Else {			
+				} Else {
 					If (Item.BaseName) {
 						terms.push(Item.BaseName)	
 					} Else {
@@ -13124,7 +13125,8 @@ GetItemDefaultColor(item, cType) {
 			return "170 158 130 1"
 		}
 		; create text color based on map fragments classes
-		Else If (RegExMatch(item.Name, "i)Offering of the Goddess") or item.IsMap)
+		;Else If (RegExMatch(item.Name, "i)Offering of the Goddess") or item.IsMap)
+		Else If (RegExMatch(item.Name_En, "i)Offering of the Goddess") or item.IsMap)
 		{
 			return "200 200 200 1"
 		}
@@ -13173,9 +13175,8 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 	}
 	; Parse the item filter if it wasn't used the last time or fall back to parsing it if using the already parsed data fails
 	If (parsingNeeded or rules.MaxIndex() > 1) {
-		/*
-			Parse filter rules to object
-		*/
+		
+		;Parse filter rules to object
 		Loop, Read, %filter%
 		{
 			If (RegExMatch(A_LoopReadLine, "i)^#") or not StrLen(A_LoopReadLine)) {
@@ -13427,13 +13428,16 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 		}
 		conditions := RegExReplace(Trim(conditions), "i),(\n|\r|\s)+?$")
 		line := "--------------------------------------------"
-		tt := "Loaded Item Filter: """ filterName """`n`n"
-		tt .= "Inline comments:" "`n" line "`n" 
+		;tt := "Loaded Item Filter: """ filterName """`n`n"
+		tt := "Загруженный фильтр: """ filterName """`n`n"
+		;tt .= "Inline comments:" "`n" line "`n" 
+		tt .= "В соответствии с правилом:" "`n" line "`n" 
 		tt .= comments "`n"
-		tt .= "Matching conditions:" "`n" line "`n" 
+		tt .= "Условия соответвия:" "`n" line "`n" 
 		tt .= conditions "`n`n"
-		tt .= "  Disclaimer: Matching explicit mods is only possible for magic items. In rare" "`n"
-		tt .= "              cases this can cause a wrong match, depending on the used filter."
+		;tt .= "  Disclaimer: Matching explicit mods is only possible for magic items. In rare" "`n"
+		;tt .= "              cases this can cause a wrong match, depending on the used filter."
+		tt .= "  Предупреждение: Из-за разногласия имен в русской версии TradeMacro данная функция работает некорректно."
 		
 		ShowToolTip(tt)	
 	}

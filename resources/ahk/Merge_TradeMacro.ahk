@@ -37,8 +37,9 @@ If (InStr(arguments, "-mergeonly", 0)) {
 /*
 	Set ProjectName to create user settings folder in A_MyDocuments
 */
+;projectName := "PoE-TradeMacro"
+; новое имя проекта, соответственно и другая папка с настройками отличная от английйской версии
 projectName := "PoE-TradeMacro_ru"
-
 /*
 	Check some folder permissions
 */
@@ -75,7 +76,7 @@ tradeInit := ReadFileToMerge(scriptDir "\resources\ahk\TradeMacroInit.ahk")
 trade	:= ReadFileToMerge(scriptDir "\resources\ahk\TradeMacro.ahk")
 addMacros := ReadFileToMerge(scriptDir "\resources\ahk\AdditionalMacros.ahk")
 
-;Подключение AdaptationRu.ahk
+; дополнительные функции
 adaptationRu := ReadFileToMerge(scriptDir "\resources\ahk\AdaptationRu.ahk")
 
 info		:= "`n`r`n`r" . info . "`n`r`n`r"
@@ -88,7 +89,7 @@ FileDelete, %scriptDir%\_TradeMacroMain.ahk
 FileDelete, %scriptDir%\_ItemInfoMain.ahk
 FileCopy,   %scriptDir%\resources\ahk\TradeMacroInit.ahk, %scriptDir%\_TradeMacroMain.ahk
 
-;Добавление AdaptationRu.ahk
+; дополнительные функции
 FileAppend, %adaptationRu%	, %scriptDir%\_TradeMacroMain.ahk 
 
 FileAppend, %info%		, %scriptDir%\_TradeMacroMain.ahk

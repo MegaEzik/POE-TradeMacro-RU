@@ -174,7 +174,8 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 			; uses poedb.tw
 			UrlPage := "item.php?n="
 			
-			;If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) { ;По этому URL нельзя искать опознанные уникальные предметы! Проверять на исправление!!!
+			;По этому URL нельзя искать опознанные уникальные предметы! Проверять на исправление!!!
+			;If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
 			If (((Item.IsUnique or Item.IsRelic) and Item.IsUnidentified) or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
 				;UrlAffix := Item.Name
 				UrlAffix := Item.Name_En
@@ -2850,7 +2851,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 			Title .= (Item.UsedInSearch.CorruptedMod) ? "Оскверн. мод " : ""
 			Title .= (Item.UsedInSearch.Sockets)      ? "| " . Item.UsedInSearch.Sockets . "S " : ""
 			;Title .= (Item.UsedInSearch.AbyssalSockets) ? "| " . Item.UsedInSearch.AbyssalSockets . " Abyss Sockets " : "" 
-			Title .= (Item.UsedInSearch.AbyssalSockets) ? "| " . Item.UsedInSearch.AbyssalSockets . " Гнёзд бездны " : "" 
+			Title .= (Item.UsedInSearch.AbyssalSockets) ? "| " . "Гнезд бездны " . Item.UsedInSearch.AbyssalSockets . " " : "" 
 			Title .= (Item.UsedInSearch.Links)        ? "| " . Item.UsedInSearch.Links   . "L " : ""
 			If (Item.UsedInSearch.iLvl.min and Item.UsedInSearch.iLvl.max) {
 				Title .= "| iLvl (" . Item.UsedInSearch.iLvl.min . "-" . Item.UsedInSearch.iLvl.max . ")"
@@ -3068,6 +3069,9 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 	Else If (response.error = "1") {
 		ShowToolTip("")
 		;ShowTooltip("No price prediction available. `n`nItem not found, insufficient sample data. ")
+		;ShowTooltip("Прогноз цены недоступен. `n`nПредмет не найден, недостаточно данных образца. ")
+		;ShowTooltip("Прогноз цены отсутствует. `n`nПредмет не найден, недостаточно данных образца. ")
+		;ShowTooltip("Невозможно спрогнозировать цену. `n`nПредмет не найден, недостаточно данных для прогноза. ")
 		ShowTooltip("Невозможно спрогнозировать цену. `n`nПредмет не найден, недостаточно данных для прогноза. ")
 		Return 0
 	}
@@ -4050,7 +4054,8 @@ TradeFunc_GetCorruption(_item) {
 	
 	For key, val in _item.Implicit {
 		RegExMatch(_item.Implicit[key], "i)([-.0-9]+)", value)
-		If (RegExMatch(imp, "i)Limited to:")) {
+		;If (RegExMatch(imp, "i)Limited to:")) {
+		If (RegExMatch(imp, "i)Максимум:")) {
 			;return false
 		}
 		imp      := RegExReplace(_item.Implicit[key], "i)([-.0-9]+)", "#")
@@ -4107,6 +4112,7 @@ TradeFunc_GetEnchantment(_item, type) {
 	}
 
 	For key, val in _item.Implicit {
+		;RegExMatch(_item.implicit[key], "i)([.0-9]+)(%? to([.0-9]+))?", values)
 		RegExMatch(_item.implicit[key], "i)([.0-9]+)(%? до([.0-9]+))?", values)
 		imp      := RegExReplace(_item.implicit[key], "i)([.0-9]+)", "#")
 
@@ -5121,7 +5127,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	
 	If (abyssalSockets) {
 		;Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseAbyssalSockets Checked, % "Abyssal Sockets: " abyssalSockets
-		Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseAbyssalSockets Checked, % "Гнёзд Бездны: " abyssalSockets
+		Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseAbyssalSockets Checked, % "Гнезд Бездны: " abyssalSockets
 		Gui, SelectModsGui:Add, Edit, x+0 yp+0 w0 vTradeAdvancedAbyssalSockets, % abyssalSockets
 	}
 
@@ -5684,7 +5690,7 @@ OverwriteSettingsNameTimer:
 	If (o) {
 		RelVer := TradeGlobals.Get("ReleaseVersion")
 		;Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%
-		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer% by MegaEzik
+		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer%
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel
@@ -5713,6 +5719,11 @@ OpenGithubWikiFromMenu:
 	repo := TradeGlobals.Get("GithubRepo")
 	user := TradeGlobals.Get("GithubUser")
 	TradeFunc_OpenUrlInBrowser("https://github.com/" user "/" repo "/wiki")
+Return
+
+;Функция для открытия темы TradeMacro на русском форуме
+OpenRuForumTradeMacroFromMenu:
+	TradeFunc_OpenUrlInBrowser("https://ru.pathofexile.com/forum/view-post/359261")
 Return
 
 OpenPayPal:
