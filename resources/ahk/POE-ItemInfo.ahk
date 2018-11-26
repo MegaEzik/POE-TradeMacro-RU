@@ -8158,8 +8158,8 @@ ParseSockets(ItemDataText, ByRef AbyssalSockets)
 		If (RegExMatch(A_LoopField, "i)^Гнезда\s?+:"))
 		{
 			LinksString	:= GetColonValue(A_LoopField)
-			;Fix abyss sockets
 			;RegExReplace(LinksString, "i)[RGBWDA]", "", SocketsCount) 	; "D" is being used for Resonator sockets, "A" for Abyssal Sockets
+			;Исправление подсчета гнезд на предметах с гнездами бездны при быстром поиске! Проверять на исправление!!!
 			RegExReplace(LinksString, "i)[RGBWD]", "", SocketsCount)
 			RegExReplace(LinksString, "i)[A]", "", AbyssalSockets) 	; "A" for Abyssal Sockets
 			Break

@@ -172,16 +172,16 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 		UrlPage := ""
 		If (TradeOpts.WikiAlternative) {
 			; uses poedb.tw
-			UrlPage := "item.php?n="
-			
-			;По этому URL нельзя искать опознанные уникальные предметы! Проверять на исправление!!!
-			;If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
-			If (((Item.IsUnique or Item.IsRelic) and Item.IsUnidentified) or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
-				;UrlAffix := Item.Name
-				UrlAffix := Item.Name_En
-			;URL для опознанных уникальных предметов!
-			} Else If (Item.IsUnique or Item.IsRelic) {
+			;If (Item.IsUnique) {
+			;Нельзя отправлять неопознаные предметы, так же стоит обрабатывать предметы с реликвария! Проверять на исправление!!!
+			If ((Item.IsUnique or Item.IsRelic) and !Item.IsUnidentified) {
 				UrlPage := "unique.php?n="
+			} Else {
+				UrlPage := "item.php?n="
+			}
+			
+			If (Item.IsUnique or Item.IsGem or Item.IsDivinationCard or Item.IsCurrency) {
+				;UrlAffix := Item.Name
 				UrlAffix := Item.Name_En
 			} Else If (Item.IsFlask) {
 				UrlPage := "search.php?Search="
