@@ -94,7 +94,12 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 		
 		newRelease := CompareVersions(versions.latest, versions.current)
 		If (newRelease) {
-			return
+		
+			;Вывод сообщения и блокировка обновления
+			msgtextupdru:="Обнаружено обновление " versions.latest.label " для англоязычной версии.`n`nВозможно ваша версия так же является устаревшей, рекомендуется проверить наличие обновленной адаптированной русской версии на форуме."
+			MsgBox, 0x1040, Возможно ваша версия устарела, %msgtextupdru%
+			return		
+			
 			If (SplashScreenTitle) {
 				Try {
 					WinSet, AlwaysOnTop, Off, %SplashScreenTitle%
