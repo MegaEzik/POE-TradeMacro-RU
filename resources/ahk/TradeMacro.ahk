@@ -1,7 +1,6 @@
 ﻿; TradeMacro Add-on to POE-ItemInfo
 ; IGN: Eruyome
 
-
 PriceCheck:
 	IfWinActive, ahk_group PoEWindowGrp
 	{
@@ -44,7 +43,7 @@ TradeFunc_AdvancedPriceCheckHotkey(priceCheckTest = false, itemData = "") {
 	; simulate clipboard change to test item pricing
 	If (priceCheckTest) {
 		Clipboard :=
-		Clipboard := itemData
+		CLipboard := itemData
 	} Else {
 		scancode_c := Globals.Get("Scancodes").c
 		Send ^{%scancode_c%}
@@ -106,7 +105,6 @@ TradeFunc_OpenSearchOnPoeAppHotkey(priceCheckTest = false, itemData = "") {
 	Sleep 250
 	
 	TradeFunc_DoParseClipboard()
-	
 	If (Item.Name or Item.BaseName) {
 		itemContents := TradeUtils.UriEncode(Clipboard)
 		url := "https://poeapp.com/#/item-import/" + itemContents
@@ -150,9 +148,10 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 
 	If (priceCheckTest) {
 		Clipboard :=
-		Clipboard := itemData
+		CLipboard := itemData
 	} Else {
-		Send ^{sc02E}
+		scancode_c := Globals.Get("Scancodes").c
+		Send ^{%scancode_c%}
 	}
 	Sleep 250
 	TradeFunc_DoParseClipboard()
@@ -399,10 +398,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	if(!isAdvancedPriceCheckRedirect) {
 		TradeFunc_DoParseClipboard()
 	}
-
 	iLvl     := Item.Level
 
-	; cancel search If Item is empty
+	; cancel search if Item is empty
 	If (!Item.Name) {
 		If (TradeOpts.OpenUrlsOnEmptyItem and openSearchInBrowser) {
 			TradeFunc_OpenUrlInBrowser("https://poe.trade")
@@ -424,7 +422,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	;Name := Item.Name
 	Name := Item.Name_En	
 	Name_Ru := Item.Name
-	
+
 	Item.xtype		:= ""
 	Item.UsedInSearch	:= {}
 	Item.UsedInSearch.iLvl	:= {}
@@ -440,7 +438,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	RequestParams.league	:= LeagueName
 	RequestParams.has_buyout := "1"
 
-	 	If (!Item.IsJewel and !Item.IsLeaguestone and Item.RarityLevel > 1 and Item.RarityLevel < 4 and !Item.IsFlask or (Item.IsJewel and not Item.RarityLevel = 4 and isAdvancedPriceCheckRedirect)) { 
+	;ignore item name in certain cases
+		
+	If (!Item.IsJewel and !Item.IsLeaguestone and Item.RarityLevel > 1 and Item.RarityLevel < 4 and !Item.IsFlask or (Item.IsJewel and not Item.RarityLevel = 4 and isAdvancedPriceCheckRedirect)) { 
 		IgnoreName := true
 	}
 	If (Item.RarityLevel > 0 and Item.RarityLevel < 4 and (Item.IsWeapon or Item.IsArmour or Item.IsRing or Item.IsBelt or Item.IsAmulet)) {
@@ -454,7 +454,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			IgnoreName := false
 		} Else {
 			IgnoreName := true
-		}		
+		}
 	}
 
 	If (Item.IsLeagueStone) {
@@ -483,6 +483,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		Item.IsUnique 	:= false
 	}
 
+	;further item parsing and preparation								  
 	If (!Item.IsUnique or Item.IsBeast) {
 		; TODO: improve this
 		If (Item.IsBeast) {
@@ -491,7 +492,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.BeastData.GenusMod.name		:= RegExReplace(Item.BeastData.GenusMod.name_orig, "i)\d+", "#")
 			Item.BeastData.GenusMod.param		:= TradeFunc_FindInModGroup(TradeGlobals.Get("ModsData")["bestiary"], Item.BeastData.GenusMod)
 		}
-
+		
 		preparedItem  := TradeFunc_PrepareNonUniqueItemMods(ItemData.Affixes, Item.Implicit, Item.RarityLevel, Enchantment, Corruption, Item.IsMap, Item.IsBeast)
 		preparedItem.maxSockets	:= Item.maxSockets
 		preparedItem.iLvl		:= Item.level
@@ -542,14 +543,13 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			ShowToolTip("Расширенный поиск недоступен для этого предмета (моды не распознаны)`nили предмет является новым, и необходимые данные еще недоступны / не обновлены.")
 			return
 		}
-
+		
 		UniqueStats := TradeFunc_GetUniqueStats(Name, Item.IsRelic)
-			
- 		If (uniqueWithVariableMods or Corruption.Length() or Enchantment.Length()) { 
-		Gui, SelectModsGui:Destroy
+		If (uniqueWithVariableMods or Corruption.Length() or Enchantment.Length()) {
+			Gui, SelectModsGui:Destroy
 
 			preparedItem :=
-			preparedItem := TradeFunc_GetItemsPoeTradeUniqueMods(uniqueWithVariableMods)	
+			preparedItem := TradeFunc_GetItemsPoeTradeUniqueMods(uniqueWithVariableMods)
 			preparedItem := TradeFunc_RemoveAlternativeVersionsMods(preparedItem, ItemData.Affixes)
 			If (not preparedItem.Name and not preparedItem.mods.length()) {
 				preparedItem := {}
@@ -557,7 +557,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				preparedItem.maxSockets := Item.maxSockets
 				preparedItem.IsUnique := Item.IsUnique
 				preparedItem.class := Item.SubType
-			}						
+			}
 			preparedItem.maxSockets 	:= Item.maxSockets
 			preparedItem.isCorrupted	:= Item.isCorrupted
 			preparedItem.isRelic	:= Item.isRelic
@@ -754,7 +754,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		If (s.useAbyssalSockets) {
 			RequestParams.sockets_a_min := s.abyssalSockets
 			RequestParams.sockets_a_max := s.abyssalSockets
-		}		
+		}
 	}
 
 	; prepend the item.subtype to match the options used on poe.trade
@@ -762,13 +762,12 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	; в русской версии ItemInfo тип Sceptre определяется корректно
 	If (RegExMatch(Item.SubType, "i)Mace|Axe|Sword|Sceptre")) {
 		If (Item.IsThreeSocket) {
-			;If (RegExMatch(Item.BaseName, "i)Sceptre")) {			
+			;If (RegExMatch(Item.BaseName, "i)Sceptre")) {
 			If (RegExMatch(Item.SubType, "i)Sceptre")) {
 				Item.xtype := "Sceptre"
 			} Else {
 				Item.xtype := "One Hand " . Item.SubType	
-			}
-			
+			}			
 		}
 		Else {
 			Item.xtype := "Two Hand " . Item.SubType
@@ -792,26 +791,28 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			RequestParams.xbase  := Item.BaseName_En
 		}
 		Item.UsedInSearch.FullName := true
-	} Else If (!Item.isUnique and AdvancedPriceCheckItem.mods.length() <= 0) {
+	}
+	Else If (!Item.isUnique and AdvancedPriceCheckItem.mods.length() <= 0) {
 		;isCraftingBase         := TradeFunc_CheckIfItemIsCraftingBase(Item.BaseName)
 		isCraftingBase         := TradeFunc_CheckIfItemIsCraftingBase(Item.BaseName_En)
 		hasHighestCraftingILvl := TradeFunc_CheckIfItemHasHighestCraftingLevel(Item.SubType, iLvl)
 		; xtype = Item.SubType (Helmet)
 		; xbase = Item.BaseName (Eternal Burgonet)
 
-		;If desired crafting base and not isAdvancedPriceCheckRedirect
- 		If (isCraftingBase and not Enchantment.Length() and not Corruption.Length() and not isAdvancedPriceCheckRedirect) { 
+		; If desired crafting base and not isAdvancedPriceCheckRedirect
+		If (isCraftingBase and not Enchantment.Length() and not Corruption.Length() and not isAdvancedPriceCheckRedirect) {
 			;RequestParams.xbase := Item.BaseName
 			RequestParams.xbase := Item.BaseName_En
 			;Item.UsedInSearch.ItemBase := Item.BaseName
 			Item.UsedInSearch.ItemBaseRu := Item.BaseName
 			Item.UsedInSearch.ItemBase := Item.BaseName_En
-			; If highest item level needed for crafting
+			; if highest item level needed for crafting
 			If (hasHighestCraftingILvl) {
 				RequestParams.ilvl_min := hasHighestCraftingILvl
 				Item.UsedInSearch.iLvl.min := hasHighestCraftingILvl
 			}
-		} Else If (Enchantment.param and not isAdvancedPriceCheckRedirect) {
+		}
+		Else If (Enchantment.param and not isAdvancedPriceCheckRedirect) {
 			modParam := new _ParamMod()
 			modParam.mod_name := Enchantment.param
 			modParam.mod_min  := Enchantment.min
@@ -840,8 +841,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 					RequestParams.modGroups[key].AddMod(modParam)
 					Item.UsedInSearch.CorruptedMod := true		
 				}			
-			}	
-		} Else {
+			}			
+		}
+		Else {
 			RequestParams.xtype := (Item.xtype) ? Item.xtype : Item.SubType
 			If (not Item.IsBeast) {
 				Item.UsedInSearch.Type := (Item.xtype) ? Item.xtype : Item.SubType
@@ -852,22 +854,25 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			RequestParams.Shaper := 1
 			Item.UsedInSearch.specialBase := "Shaper"
 			Item.UsedInSearch.specialBaseRu := "Создателя"
-		} Else {		
+		}
+		Else {		
 			RequestParams.Shaper := 0
-		} 
+		}
 		
 		If (Item.IsElderBase) {
 			RequestParams.Elder := 1
 			Item.UsedInSearch.specialBase := "Elder"
 			Item.UsedInSearch.specialBaseRu := "Древнего"
-		} Else {			
+		}
+		Else {			
 			RequestParams.Elder := 0
 		}
-	} Else {
+	} 
+	Else {
 		RequestParams.xtype := (Item.xtype) ? Item.xtype : Item.SubType
 		If (not Item.IsBeast) {
 			Item.UsedInSearch.Type := (Item.xtype) ? Item.GripType . " " . Item.SubType : Item.SubType	
-		}
+		}		
 	}
 	
 
@@ -898,14 +903,14 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		
 		/*
 			add genus
-			*/		
+			*/
 		If (not isAdvancedPriceCheckRedirect) {
 			modParam := new _ParamMod()
 			modParam.mod_name := TradeFunc_FindInModGroup(TradeGlobals.Get("ModsData")["bestiary"], Item.BeastData.GenusMod)
 			modParam.mod_min  := ""
 			RequestParams.modGroups[1].AddMod(modParam)	
 		}
-
+		
 		; legendary beasts:
 		; Farric Wolf Alpha, Fenumal Scorpion, Fenumal Plaqued Arachnid, Farric Frost Hellion Alpha,  Farric Lynx ALpha, Saqawine Vulture,
 		; Craicic Chimeral, Saqawine Cobra, Craicic Maw, Farric Ape, Farric Magma Hound, Craicic Vassal, Farric Pit Hound, Craicic Squid,  
@@ -951,7 +956,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 					If (RegExMatch(imod.param, "i)(Crimson Flock|Putrid Flight|Unstable Swarm)", match) and Item.Level >= 80) {
 						useOnlyThisBeastMod := match1
 					}
-				}
+				}				
 				
 				For key, imod in preparedItem.mods {
 					If (imod.param) {	; exists on poe.trade
@@ -1072,7 +1077,8 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		Item.UsedInSearch.Corruption := "Нет"
 	}
 
-	If (Item.IsMap) {
+	; maps
+	If (Item.IsMap) {		
 		; add Item.subtype to make sure to only find maps
 		;RegExMatch(Item.Name, "i)The Beachhead.*", isHarbingerMap)
 		RegExMatch(Item.Name_En, "i)The Beachhead.*", isHarbingerMap)
@@ -1092,12 +1098,12 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		} Else {
 			RequestParams.xbase := ""
 			RequestParams.xtype := "Map"
-		}
-		
+		}		
+
 		If (not Item.IsUnique) {
 			If (StrLen(isHarbingerMap)) {
 				; Beachhead Map workaround (unique but not flagged as such on poe.trade)
-				;RequestParams.name := Item.Name				
+				;RequestParams.name := Item.Name
 				RequestParams.name := Item.Name_En
 			} Else If (not typeFound) {
 				;RequestParams.name := Item.Name
@@ -1108,7 +1114,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				RequestParams.name := ""
 			}
 		}
-		
+	
 		If (StrLen(isUnknownMap)) {
 			;RequestParams.xbase := Item.BaseName
 			RequestParams.xbase := Item.BaseName_En
@@ -1118,7 +1124,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		}
 	}
 
-	; handle gems
+	; gems
 	If (Item.IsGem) {
 		RequestParams.xtype := Item.BaseType
 		
@@ -1164,7 +1170,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		}	
 	}
 
-	; handle divination cards and jewels
+	; divination cards and jewels
 	If (Item.IsDivinationCard or Item.IsJewel) {
 		RequestParams.xtype := Item.BaseType
 		If (Item.IsJewel and Item.IsUnique) {
@@ -1198,7 +1204,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		; если имя не конвертируется в английское (для редких предметов и не только), то будем использовать базовое имя
 		; данный способ не совсем корректен, т.к. возможен случай продажи двух редких предметов с одинаковой базой
 		RequestParams.name        := (RegExMatch(Item.Name_En, "[а-яА-ЯёЁ]+")) ? Item.BaseName_En : Item.Name_En
-		RequestParams.has_buyout  := ""
+		RequestParams.has_buyout      := ""
 		RequestParams.seller      := TradeOpts.AccountName
 		RequestParams.q_min       := Item.Quality
 		RequestParams.q_max       := Item.Quality
@@ -1228,10 +1234,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		}
 	}
 	
-		
-	/*
-		parameter fixes
-	*/
+
+	; parameter fixes
+
 	If (StrLen(RequestParams.xtype) and StrLen(RequestParams.xbase)) {
 		; Some type and base combinations on poe.trade are different than the ones in-game (Tyrant's Sekhem for example)
 		; If we have the base we don't need the type though.
@@ -1260,6 +1265,8 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		return
 	}
 	
+	; create payload
+	
 	Payload := RequestParams.ToPayload()
 
 	/*
@@ -1280,7 +1287,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	
 	/*
 		decide how to handle the request (open in browser on a specific site or make a POST/GET request to parse the results)
-		*/	
+		*/		
 	If (openSearchInBrowser) {
 		;ShowToolTip("Opening search in your browser... ")
 		ShowToolTip("Открытие страницы поиска в браузере... ")
@@ -1290,7 +1297,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	}
 
 	ParsingError	:= ""
-	currencyUrl	:= ""
+	currencyUrl	:= ""	
 	;If (Item.IsCurrency and !Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name)) {
 	If (Item.IsCurrency and not Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name_En)) {
 		If (!TradeOpts.AlternativeCurrencySearch) {
@@ -1345,7 +1352,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 					SetClipboardContents("")	
 				}
 			}
-		}
+		}	
 	}
 	;Else If (Item.isCurrency and !Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name)) {
 	Else If (Item.isCurrency and !Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name_En)) {
@@ -1400,7 +1407,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		}
 		Else {
 			ParsedData := TradeFunc_ParseHtml(Html, Payload, iLvl, Enchantment, isItemAgeRequest, isAdvancedPriceCheckRedirect)	
-		}
+		}		
 
 		SetClipboardContents("")
 		ShowToolTip("")
@@ -1540,7 +1547,7 @@ TradeFunc_ParseItemDefenseStats(stats, mods){
 	baseES := TradeFunc_CalculateBase(EnergyShield1, affixPercentES1, Quality1, affixFlatES1)
 	baseAR := TradeFunc_CalculateBase(Armour1      , affixPercentAR1, Quality1, affixFlatAR1)
 	baseEV := TradeFunc_CalculateBase(Evasion1     , affixPercentEV1, Quality1, affixFlatEV1)
-	
+
 	; calculate items Q20 total defense stats
 	Armour       := TradeFunc_CalculateQ20(baseAR, affixFlatAR1, affixPercentAR1)
 	EnergyShield := TradeFunc_CalculateQ20(baseES, affixFlatES1, affixPercentES1)
@@ -1555,7 +1562,7 @@ TradeFunc_ParseItemDefenseStats(stats, mods){
 			affix := RegExReplace(affix, "((\d+){1,3})", "#")
 			affix := RegExReplace(affix, "i)# %", "#%")
 			affix := Trim(RegExReplace(affix, "\s", " "))
-			name :=  Trim(mod.name)			
+			name :=  Trim(mod.name)
 
 			; конвертируем названия аффиксов в английские варианты
 			affix := AdpRu_ConvertRuOneModToEn(affix)
@@ -1563,7 +1570,6 @@ TradeFunc_ParseItemDefenseStats(stats, mods){
 			If ( affix = name ){
 				; ignore mods like " ... per X dexterity"
 				If (RegExMatch(affix, "i) per ")) {
-				;If (RegExMatch(affix, "i) за ")) {
 					continue
 				}
 				If (RegExMatch(affix, "i)#.*to maximum.*?Energy Shield"  , affixFlatES)) {
@@ -1754,9 +1760,9 @@ TradeFunc_ParseItemOffenseStats(Stats, mods) {
 			}
 			affix := RegExReplace(affix, "i)# %", "#%")
 			affix := Trim(RegExReplace(affix, "\s", " "))
-			;nname := StrLen(nname) ? Trim(nname) : Trim(mod.name)			
+			;nname := StrLen(nname) ? Trim(nname) : Trim(mod.name)
 			nname := StrLen(nname) ? Trim(nname) : Trim(RegExReplace(mod.name_ru, "от # до #", "#"))
-			
+
 			If ( affix = nname ){
 				match :=
 				; ignore mods like " ... per X dexterity" and "damage to spells"
@@ -1869,7 +1875,6 @@ TradeFunc_ParseItemOffenseStats(Stats, mods) {
 
 	If (TradeOpts.Debug) {
 		;console.log(debugOutput)
-		console.log(debugOutput)
 	}
 	SetFormat, FloatFast, 5.2
 
@@ -1887,7 +1892,6 @@ TradeFunc_CalculateEleDps(fireLo, fireHi, coldLo, coldHi, lightLo, lightHi, aps)
 
 	If (TradeOpts.Debug) {
 		;console.log("((" fireLo " + " fireHi " + " coldLo " + " coldHi " + " lightLo " + " lightHi ") / 2) * " aps " )")
-		console.log("((" fireLo " + " fireHi " + " coldLo " + " coldHi " + " lightLo " + " lightHi ") / 2) * " aps " )")
 	}
 	dps := ((fireLo + fireHi + coldLo + coldHi + lightLo + lightHi) / 2) * aps
 	dps := Round(dps, 1)
@@ -1897,7 +1901,8 @@ TradeFunc_CalculateEleDps(fireLo, fireHi, coldLo, coldHi, lightLo, lightHi, aps)
 
 TradeFunc_CompareGemNames(name, ByRef found = false) {
 	poeTradeNames := TradeGlobals.Get("GemNameList")
-	If(poeTradeNames.Length() < 1) {
+
+	If (poeTradeNames.Length() < 1) {
 		return name
 	}
 	Else {
@@ -2035,7 +2040,7 @@ TradeFunc_DoPoePricesRequest(RawItemData, ByRef retCurl) {
 	options	.= "`n" "ReturnHeaders: skip"
 	options	.= "`n" "TimeOut: 10"
 	reqHeaders := []
-	
+
 	reqHeaders.push("Connection: keep-alive")
 	reqHeaders.push("Cache-Control: max-age=0")
 	reqHeaders.push("Origin: https://poeprices.info")
@@ -2121,7 +2126,7 @@ TradeFunc_DoCurrencyRequest(currencyName = "", openSearchInBrowser = false, init
 		minStockSize := 0
 
 		If (idWant and idHave) {
- 			Url := "http://currency.poe.trade/search?league=" . TradeUtils.UriEncode(LeagueName) . "&online=x&want=" . idWant . "&have=" . idHave . "&stock=" . minStockSize 
+			Url := "http://currency.poe.trade/search?league=" . TradeUtils.UriEncode(LeagueName) . "&online=x&want=" . idWant . "&have=" . idHave . "&stock=" . minStockSize
 			currencyURL := Url
 		} Else {
 			errorMsg = Couldn't find currency "%currencyname%" on poe.trade's currency search.`n`nThis search needs to know the currency names used on poe.trades currency page.`n`nEither this item doesn't exist on that page or parsing and mapping the poe.trade`nnames to the actual names failed. Please report this issue.
@@ -2288,7 +2293,7 @@ TradeFunc_ParseCurrencyHtml(html, payload, ParsingError = "") {
 	;Title .= StrPad("--------",8)
 	Title .= StrPad("----------------",8)
 	Title .= "`n"
-	
+
 	SetFormat, float, 0.4
 
 	While A_Index < NoOfItemsToShow {
@@ -2488,14 +2493,14 @@ TradeFunc_ParseAlternativeCurrencySearch(name, payload) {
 }
 
 ; Calculate average and median price of X listings
-TradeFunc_GetMeanMedianPrice(html, payload, ByRef errorMsg = ""){
+TradeFunc_GetMeanMedianPrice(html, payload, ByRef errorMsg = "") {
 	itemCount := 1
 	prices := []
 	average := 0
 	Title := ""
 	error := 0
 
-	; loop over the first 99 results If possible, otherwise over as many as are available
+	; loop over the first 99 results if possible, otherwise over as many as are available
 	accounts := []
 	NoOfItemsToCount := 99
 	NoOfItemsSkipped := 0
@@ -2503,7 +2508,7 @@ TradeFunc_GetMeanMedianPrice(html, payload, ByRef errorMsg = ""){
 		ItemBlock 	:= TradeUtils.HtmlParseItemData(html, "<tbody id=""item-container-" A_Index - 1 """(.*?)<\/tbody>", html)
 		AccountName 	:= TradeUtils.HtmlParseItemData(ItemBlock, "data-seller=""(.*?)""")
 		AccountName	:= RegexReplace(AccountName, "i)^\+", "")
-		;ChaosValue 	:= TradeUtils.HtmlParseItemData(ItemBlock, "data-name=""price_in_chaos""(.*?)>")
+		;ChaosValue 	:= TradeUtils.HtmlParseItemData(ItemBlock, "data-name=""price_in_chaos_new""(.*?)>")
 		Currency	 	:= TradeUtils.HtmlParseItemData(ItemBlock, "has-tip.*currency-(.*?)""", rest)
 		CurrencyV	 	:= TradeUtils.HtmlParseItemData(rest, ">(.*?)<", rest)
 		RegExMatch(CurrencyV, "i)\d+(\.|,?\d+)?", match)
@@ -2551,11 +2556,11 @@ TradeFunc_GetMeanMedianPrice(html, payload, ByRef errorMsg = ""){
 		errorMsg := "Couldn't find the chaos equiv. value for " error " item(s). Please report this."
 	}
 
-	; calculate average and median prices (truncated median, too)
+	; calculate average and median prices (truncated median, too)	
 	If (prices.MaxIndex() > 0) {
 		; average
 		average := average / (itemCount - 1)
-
+		
 		; truncated mean
 		trimPercent := 20
 		topTrim	:= prices.MaxIndex() - prices.MaxIndex() * (trimPercent / 100)
@@ -2572,7 +2577,7 @@ TradeFunc_GetMeanMedianPrice(html, payload, ByRef errorMsg = ""){
 		}
 		truncMean := Round(avg / avgCount, 2)
 		
-		; median
+		; median		
 		If (prices.MaxIndex()&1) {
 			; results count is odd
 			index1 := Floor(prices.MaxIndex()/2)
@@ -2620,6 +2625,7 @@ TradeFunc_GetMeanMedianPrice(html, payload, ByRef errorMsg = ""){
 		Title .= (NoOfItemsSkipped > 0) ? ", " NoOfItemsSkipped " удалено фильтром уч.зап." : ""
 		Title .= ") `n`n"		
 	}
+	
 	Return Title
 }
 
@@ -2930,10 +2936,8 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 
 	; add table head underline
 	Title .= TradeFunc_ShowAcc(StrPad("------------",12), "-")
-	;Title .= StrPad("--------------------",20)
-	Title .= StrPad("---------------------------",20)
-	;Title .= StrPad("--------------------",19,"left")	
-	Title .= StrPad("---------------------",19,"left")	
+	Title .= StrPad("--------------------------",20)
+	Title .= StrPad("--------------------",19,"left")
 	If (Item.IsGem) {
 		Title .= StrPad("------",6,"left")
 		Title .= StrPad("------",6,"left")
@@ -2942,8 +2946,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	If (showItemLevel) {
 		Title .= StrPad("-------",8,"left")
 	}
-	;Title .= StrPad("----------",8,"left")
-	Title .= StrPad("------------- ",11,"left")
+	Title .= StrPad("----------",8,"left")
 	Title .= "`n"
 
 	; add search results to tooltip in table format
@@ -3111,7 +3114,7 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 
 TradeFunc_LogPoePricesRequest(response, request, filename = "poeprices_log.txt") {
 	text := "#####"
- 	text .= "`n### " "Please post this log file below to https://www.pathofexile.com/forum/view-thread/1216141/."	
+	text .= "`n### " "Please post this log file below to https://www.pathofexile.com/forum/view-thread/1216141/."	
 	text .= "`n### " "Try not to ""spam"" their thread if a few other reports with the same error description were posted in the last hours."	
 	text .= "`n#####"	
 	
@@ -3121,7 +3124,8 @@ TradeFunc_LogPoePricesRequest(response, request, filename = "poeprices_log.txt")
 		text .= JSON.Dump(response, "", 4)
 	} Catch e {
 		text .= response
-	}	
+	}
+	
 	FileDelete, %A_ScriptDir%\temp\%filename%
 	FileAppend, %text%, %A_ScriptDir%\temp\%filename%
 	
@@ -3444,7 +3448,7 @@ class _ParamMod {
 	mod_min	:= ""
 	mod_max	:= ""
 	mod_weight := ""
-
+	
 	ToPayload()
 	{
 		If (StrLen(this.mod_name)) {
@@ -3603,7 +3607,8 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 			
 			If (not t) { ; если аффиксы не подготовлены, то подготовим их
 				
-				; remove negative sign also			
+				; remove negative sign also
+				;t := TradeUtils.CleanUp(RegExReplace(val, "i)-?[\d\.]+", "#"))
 				t_ru_full := TradeUtils.CleanUp(RegExReplace(val, "i)-?[\d\.]+", "#"))
 		
 				; для модов с константами
@@ -3627,7 +3632,7 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 			}
 
 			;n := TradeUtils.CleanUp(RegExReplace(v.name_orig, "i)-?[\d\.]+|-?\(.+?\)", "#"))
-			;n := TradeUtils.CleanUp(RegExReplace(v.param, "i)-?[\d\.]+", "#"))
+			;n := TradeUtils.CleanUp(n)
 			n := TradeUtils.CleanUp(RegExReplace(v.param, "i)-?[\d\.]+|-?\(.+?\)", "#"))
 			
 			; избавляемся от +
@@ -3648,7 +3653,6 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 
 			If (match) {
 				modFound := true
-				
 				mod_name_full := Trim(val, " `t`n`r")
 				; добавляем оригинальную строку мода с предмета
 				;v.name_orig_item := mod_name_full
@@ -3758,8 +3762,8 @@ TradeFunc_PrepareNonUniqueItemMods(Affixes, Implicit, Rarity, Enchantment = fals
 			}
 		}
 	}
-;console_log(i, "i")
-;console_log(Implicit, "Implicit")
+
+	
 	For key, val in Affixes {
 		;If (!val or RegExMatch(val, "i)---")) {
 		If (!val or RegExMatch(val, "i)---") or RegExMatch(val, "i)Неопознано")) { ; исключим строку "Неопознано" как аффикс
@@ -3773,7 +3777,6 @@ TradeFunc_PrepareNonUniqueItemMods(Affixes, Implicit, Rarity, Enchantment = fals
 		}
 
 		temp := ModStringToObject(val, false)
-		
 		;combine mods if they have the same name and add their values
 		For tempkey, tempmod in temp {
 			found := false
@@ -3906,7 +3909,7 @@ TradeFunc_GetItemsPoeTradeMods(_item, isMap = false) {
 			}
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["crafted"], _item.mods[k])
-			}
+			}		
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["implicit"], _item.mods[k])
 			}
@@ -3935,7 +3938,7 @@ TradeFunc_GetItemsPoeTradeMods(_item, isMap = false) {
 }
 
 ; Add poe.trades mod names to the items mods to use as POST parameter
-TradeFunc_GetItemsPoeTradeUniqueMods(_item) {
+TradeFunc_GetItemsPoeTradeUniqueMods(_item) {	
 	mods := TradeGlobals.Get("ModsData")
 	For k, imod in _item.mods {
 		_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["unique explicit"], _item.mods[k])
@@ -3963,7 +3966,6 @@ TradeFunc_GetItemsPoeTradeUniqueMods(_item) {
 		If (RegExMatch(_item.mods[k].name, "i)Has # Abyssal (Socket|Sockets)")) {
 			_item.mods[k].showModAsSeperateOption := true
 		}
-;console_log(imod, "imod")		
 	}
 	
 	; имплицит
@@ -3989,40 +3991,31 @@ TradeFunc_GetItemsPoeTradeUniqueMods(_item) {
 TradeFunc_FindInModGroup(modgroup, needle, simpleRange = true, recurse = true) {
 	matches := []
 	editedNeedle := ""
-		
 	For j, mod in modgroup {
 		s  := Trim(RegExReplace(mod, "i)\(pseudo\)|\(total\)|\(crafted\)|\(implicit\)|\(explicit\)|\(enchant\)|\(prophecy\)|\(leaguestone\)|\(beastiary\)", ""))
 		If (simpleRange) {
 			s  := RegExReplace(s, "# ?to ? #", "#")
 		}
+		
 		s  := TradeUtils.CleanUp(s)
 		ss := TradeUtils.CleanUp(needle.name)
-		ss := RegExReplace(ss, "# ?to ?#", "#")
 		st := TradeUtils.CleanUp(needle.name_orig)
-		
-		; для модов с числами, например "Имеет 1 гнездо" - для таких модов в файле должно быть соответствие полному названию с числовыми значениями
-		;If (needle.name_orig_en != st)
-		If (needle.name_orig_en and (needle.name_orig_en != st))
-		{
-			st := TradeUtils.CleanUp(needle.name_orig_en)
-		}
 		
 		If (simpleRange) {
 			; matches "1 to" in for example "adds 1 to (20-40) lightning damage"
 			ss := RegExReplace(ss, "\d+ ?to ?#", "#")
-		}
-
+		}		
 		;ss := RegExReplace(ss, "Monsters' skills Chain # additional times", "Monsters' skills Chain 2 additional times")
 		;ss := RegExReplace(ss, "Has # socket", "Has 1 socket")
 		editedNeedle := ss
-
+		
 		; push matches to array to find multiple matches (case sensitive variations)
 		If (s = ss or s = st) {
 			temp := {}
 			temp.s := s
 			temp.mod := mod
 			matches.push(temp)
-		}		
+		}
 	}
 
 	If (matches.Length()) {
@@ -4059,6 +4052,7 @@ TradeFunc_GetCorruption(_item) {
 			;return false
 		}
 		imp      := RegExReplace(_item.Implicit[key], "i)([-.0-9]+)", "#")
+
 		corrMod  := {}
 		For i, corr in corrMods {
 			If (imp = corr) {
@@ -4130,6 +4124,7 @@ TradeFunc_GetEnchantment(_item, type) {
 				}
 			}
 		}
+
 		valueCount := 0
 		Loop {
 			If (!values%A_Index%) {
@@ -4165,13 +4160,13 @@ TradeFunc_GetModValueGivenPoeTradeMod(itemModifiers, poeTradeMod, mods_const_ru)
 		Return ErrorMsg
 	}
 	poeTradeMod_ValueTypes := TradeFunc_CountValuesAndReplacedValues(poeTradeMod)
-	
+
 	Loop, Parse, itemModifiers, `n, `r
-	{
+	{		
 		If StrLen(A_LoopField) = 0
 		{
 			Continue ; Not interested in blank lines
-		}
+		}		
 		
 		ModStr := ""
 		CurrValues := []
@@ -4203,7 +4198,7 @@ TradeFunc_GetModValueGivenPoeTradeMod(itemModifiers, poeTradeMod, mods_const_ru)
 				CurrValues.Push(CurrValue)
 				ModStr := StrReplace(A_LoopField, CurrValue, "#")
 			}
-
+			
 			; remove negative sign since poe.trade mods are always positive
 			ModStr := RegExReplace(ModStr, "^-#", "#")
 			ModStr := StrReplace(ModStr, "+")
@@ -4221,6 +4216,7 @@ TradeFunc_GetModValueGivenPoeTradeMod(itemModifiers, poeTradeMod, mods_const_ru)
 				Return CurrValues
 			}
 		}
+		
 	}
 }
 
@@ -4293,7 +4289,7 @@ TradeFunc_GetNonUniqueModValueGivenPoeTradeMod(itemModifiers, poeTradeMod, ByRef
 		ErrorMsg := "Мод не найден на poe.trade!"
 		Return ErrorMsg
 	}
-
+	
 	CurrValue	:= ""
 	CurrValues:= []
 	CurrValue := GetActualValue(itemModifiers.name_orig)
@@ -4431,6 +4427,7 @@ TradeFunc_CreateItemPricingTestGUI() {
 TradeFunc_PreparePredictedPricingContributionDetails(details, nameLength) {
 	arr := []
 	longest := 0
+
 	For key, val in details {
 		obj := {}
 		name := val[1]
@@ -4443,9 +4440,11 @@ TradeFunc_PreparePredictedPricingContributionDetails(details, nameLength) {
 		
 		arr.push(obj)
 	}
+
 	For key, val in arr {
 		val.percentage := StrPad(val.percentage, longest, "left", " ")
 	}
+
 	Return arr
 }
 
@@ -4455,7 +4454,6 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 	;_Name := (Item.IsRare and not Item.IsMap) ? Item.Name " " Item.BaseName : Item.Name
 	_Name := (Item.IsRare and not Item.IsMap) ? Item.Name_En " " Item.BaseName_En : Item.Name_En
 	_NameRu := (Item.IsRare and not Item.IsMap) ? Item.Name " " Item.BaseName : Item.Name
-	
 	_headLine := Trim(StrReplace(_Name, "Superior", ""))
 	; add corrupted tag
 	If (Item.IsCorrupted) {
@@ -4496,14 +4494,11 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 	_groupBoxHeight := _contributionOffset + 83
 	
 	Gui, PredictedPricing:Add, GroupBox, w400 h%_groupBoxHeight% y+10 x10, Results
-	;Gui, PredictedPricing:Font, norm s10, Consolas
 	Gui, PredictedPricing:Font, norm s10, Consolas
 	Gui, PredictedPricing:Add, Text, yp+25 x20 w380 BackgroundTrans, % _headLine
-	;Gui, PredictedPricing:Font, norm bold, Consolas
 	Gui, PredictedPricing:Font, norm bold, Consolas
 	;Gui, PredictedPricing:Add, Text, x20 w90 y+10 BackgroundTrans, % "Price range: "
 	Gui, PredictedPricing:Add, Text, x20 w90 y+10 BackgroundTrans, % "Ценовой диапазон: "
-	;Gui, PredictedPricing:Font, norm, Consolas
 	Gui, PredictedPricing:Font, norm, Consolas
 	Gui, PredictedPricing:Add, Text, x+5 yp+0 BackgroundTrans, % Round(Trim(data.min), 2) " ~ " Round(Trim(data.max), 2) " " Trim(data.currency)
 	Gui, PredictedPricing:Add, Text, x20 w300 y+10 BackgroundTrans, % "Contribution to predicted price: "	
@@ -4522,9 +4517,11 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 	Gui, PredictedPricing:Add, Link, x245 y+12 cBlue BackgroundTrans, <a href="%_url%">Open on poeprices.info</a>
 	
 	Gui, PredictedPricing:Font, norm s8 italic, Verdana
+	;Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y135 w390, % "You can disable this GUI in favour of a simple result tooltip. Settings menu -> under 'Search' group. Or even disable this predicted search entirely."
 	Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y+20 w390, % "You can disable this GUI in favour of a simple result tooltip. Settings menu -> under 'Search' group. Or even disable this predicted search entirely."
-		
+	
 	Gui, PredictedPricing:Font, bold s8, Verdana
+	;Gui, PredictedPricing:Add, GroupBox, w400 h230 y180 x10, Feedback
 	Gui, PredictedPricing:Add, GroupBox, w400 h230 y+20 x10, Feedback
 	Gui, PredictedPricing:Font, norm, Verdana
 	
@@ -4607,11 +4604,9 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	Gui, SelectModsGui:Destroy
 	Gui, SelectModsGui:Color, ffffff, ffffff
 	;Gui, SelectModsGui:Add, Text, x10 y12, Percentage to pre-calculate min/max values (halved for non-unique items):
-	;Gui, SelectModsGui:Add, Text, x10 y12, Процентный диапазон для предварительного расчета мин./макс. значений (в два раза меньше для не-уникальных предметов):
 	Gui, SelectModsGui:Add, Text, x10 y12, Диапазон мин./макс. значений (для не-уникальных предметов в два раза меньше):
 	Gui, SelectModsGui:Add, Text, x+5 yp+0 cGreen, % ValueRangeMin "`% / " ValueRangeMax "`%"
 	;Gui, SelectModsGui:Add, Text, x10 y+8, This calculation considers the (unique) item's mods difference between their min and max value as 100`%.
-	;Gui, SelectModsGui:Add, Text, x10 y+8, Этот расчет учитывает для модов (уникальных) предметов разницу между их мин. и макс. значением как 100`%.
 	Gui, SelectModsGui:Add, Text, x10 y+8, Этот расчет учитывает разницу между мин. и макс. значениями как 100`%.
 
 	line :=
@@ -4619,8 +4614,10 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		line := line . "-"
 	}
 
-	; Item "nameplate" including sockets and links
-	If (true) {
+	
+	; Add item "nameplate" including sockets and links
+
+  If (true) {
 		;itemName := advItem.name
 		itemName := advItem.name_ru
 		itemNameEn := ""
@@ -4648,7 +4645,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		image := A_ScriptDir "\resources\images\" iPic ".png"
 		If (FileExist(image)) {
 			Gui, SelectModsGui:Add, Picture, w800 h30 x0 yp+20, %image%
-		}	
+		}		
 		;Gui, SelectModsGui:Add, Text, x14 yp+9 %tColor% BackgroundTrans, %itemName%
 		Gui, SelectModsGui:Add, Text, x14 yp+9 %tColor% BackgroundTrans, %itemName%%itemNameEn%
 		If (advItem.Rarity > 2 or advItem.isUnique) {
@@ -4810,8 +4807,9 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		Gui, SelectModsGui:Add, Text, x0 w700 yp+18 cc9cacd, %line%
 	}
 
-	k := 1
-	;add dmg stats
+	; add dmg stats
+
+	k := 1	
 	For i, stat in Stats.Offense {
 		If (stat.value) {
 			xPosMin := modGroupBox + 25
@@ -4876,12 +4874,13 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		Gui, SelectModsGui:Add, Text, x0 w700 yp+18 cc9cacd, %line%
 	}
 
-	e := 0
 	; Enchantment or Corrupted Implicit
-	If (ChangedImplicit.Length()) {
+
+	e := 0
+	If (ChangedImplicit.Length()) {		
 		xPosMin := modGroupBox + 25
 		yPosFirst := 20 ; ( j > 1 ) ? 20 : 30
-		xPosMin := xPosMin + 40 + 5 + 45 + 10 + 45 + 10 + 40 + 5 + 45 + 10 ; edit/text field widths and offsets	
+		xPosMin := xPosMin + 40 + 5 + 45 + 10 + 45 + 10 + 40 + 5 + 45 + 10 ; edit/text field widths and offsets
 		
 		For key, val in ChangedImplicit {
 			e++
@@ -4900,7 +4899,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 			TradeAdvancedModMax%e% 		:= val.max
 			TradeAdvancedParam%e%  		:= val.param
 			TradeAdvancedIsImplicit%e%	:= true	
-			}
+		}		
 	}
 	TradeAdvancedImplicitCount := e
 
@@ -4914,7 +4913,8 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	TradeAdvancedNormalModCount := 0
 	ModNotFound := false
 	PreCheckNormalMods := TradeOpts.AdvancedSearchCheckMods ? "Checked" : ""
-	Loop % advItem.mods.Length() {
+
+	Loop % advItem.mods.Length() {		
 		hidePseudo := advItem.mods[A_Index].hideForTradeMacro ? true : false
 		; allow non-variable mods if the item has variants to better identify the specific version/variant
 		invalidUnique := (not advItem.mods[A_Index].isVariable and not advItem.hasVariant and advItem.IsUnique)
@@ -4936,6 +4936,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 			displayName := RegExReplace(displayName, "i)от # до #", "#")
 			staticValue :=
 		}
+
 		; оригинальный код здесь работает некорректно - не проходит проверка ">1" и дальнейший код работает с учетом этой ошибки ;)
 		If (advItem.mods[A_Index].ranges.Length() > 1) {
 			theoreticalMinValue := advItem.mods[A_Index].ranges[1][1]
@@ -4952,12 +4953,12 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 				theoreticalMaxValue := advItem.mods[A_Index].ranges[1][2] ? advItem.mods[A_Index].ranges[1][2] : 0
 			}
 		}
-
+		
 		SetFormat, FloatFast, 5.2
 		ErrorMsg :=
 		If (advItem.IsUnique) {
 			;modValues := TradeFunc_GetModValueGivenPoeTradeMod(ItemData.Affixes, advItem.mods[A_Index].param)
-			modValues := TradeFunc_GetModValueGivenPoeTradeMod(ItemData.Affixes, advItem.mods[A_Index].param, advItem.mods_const_ru)
+			modValues := TradeFunc_GetModValueGivenPoeTradeMod(ItemData.Affixes, advItem.mods[A_Index].param, advItem.mods_const_ru)			
 			; извлекаем значение имплицита
 			If (advItem.mods[A_Index].IsImplicit and advItem.mods[A_Index].isVariable) {
 				;modValues := TradeFunc_GetModValueGivenPoeTradeMod(advItem.mods[A_Index].name_orig_item, advItem.mods[A_Index].param, advItem.mods[A_Index].name_ru, advItem.mods[A_Index].IsNameRuConst)
@@ -4969,7 +4970,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 			modValues := TradeFunc_GetNonUniqueModValueGivenPoeTradeMod(advItem.mods[A_Index], advItem.mods[A_Index].param, useOriginalModName)
 			If (useOriginalModName) {
 				displayName := advItem.mods[A_Index].name_orig
-			}
+			}			
 		}
 		
 		If (modValues.Length() > 1) {
@@ -4983,7 +4984,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 			}
 			modValue := modValues[1]
 		}
-
+		
 		switchValue :=
 		; make sure that the lower vaule is always min (reduced mana cost of minion skills)
 		If (StrLen(theoreticalMinValue) and StrLen(theoreticalMaxValue)) {
@@ -4993,7 +4994,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 				theoreticalMaxValue := switchValue
 			}
 		}
-
+		
 		If (advItem.mods[A_Index].isVariable or not advItem.IsUnique) {	
 			; calculate values to prefill min/max fields
 			; assume the difference between the theoretical max and min value as 100%
@@ -5084,6 +5085,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		Gui, SelectModsGui:Add, Edit, x+10 yp-3       w40 vTradeAdvancedModMax%index% r1 Disabled%state% 	, % modValueMax
 		Gui, SelectModsGui:Add, Text, x+5  yp+3       w45 cGreen 			                       		, % (advItem.mods[A_Index].ranges[1]) ? maxLabelFirst : ""
 		checkEnabled := ErrorMsg ? 0 : 1
+		
 		; pre-select mods according to the options in the settings menu
 		If (checkEnabled) {
 			checkedState := (advItem.mods[A_Index].PreSelected or TradeOpts.AdvancedSearchCheckMods or (not advItem.mods[A_Index].isVariable and advItem.IsUnique)) ? "Checked" : ""
@@ -5118,19 +5120,19 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		}
 	}
 	
-	m := 1
-
 	; Links and Sockets
+	
+	m := 1
 	If (advItem.mods.Length()) {
 		Gui, SelectModsGui:Add, Text, x0 w700 y+5 cc9cacd, %line%
-	}
+	}	
 	
 	If (abyssalSockets) {
 		;Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseAbyssalSockets Checked, % "Abyssal Sockets: " abyssalSockets
 		Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseAbyssalSockets Checked, % "Гнезд Бездны: " abyssalSockets
 		Gui, SelectModsGui:Add, Edit, x+0 yp+0 w0 vTradeAdvancedAbyssalSockets, % abyssalSockets
-	}
-
+	}	
+	
 	If (Sockets >= 5) {
 		m++
 		;text := "Sockets: " . Trim(Sockets)
@@ -5176,7 +5178,9 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		Gui, SelectModsGui:Add, CheckBox, x%offset% yp+0 vTradeAdvancedUseLinksMaxThree, % text
 	}
 
+	
 	; ilvl
+		
 	offsetX := (m = 1) ? "15" : "+10"
 	offsetY := (m = 1) ? "20" : "+0"
 	iLvlCheckState := ""
@@ -5239,7 +5243,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	; override online state
 	;Gui, SelectModsGui:Add, CheckBox, x+10 yp+5 vTradeAdvancedOverrideOnlineState, % "Show offline results"
 	Gui, SelectModsGui:Add, CheckBox, x+10 yp+5 vTradeAdvancedOverrideOnlineState, % "Показ. офлайн-результ."
-	
+
 	; защита на определенные случаи вариантов предметов, когда xPosMin пустой
 	If (not xPosMin) {
 		xPosMin := 0
@@ -5769,6 +5773,7 @@ ReadPoeNinjaCurrencyData:
 	loggedCurrencyRequestAtStartup := loggedCurrencyRequestAtStartup ? loggedCurrencyRequestAtStartup : false
 	loggedTempLeagueCurrencyRequest := loggedTempLeagueCurrencyRequest ? loggedTempLeagueCurrencyRequest : false
 	usedFallback := false
+	
 	If (TempChangingLeagueInProgress) {
 		;ShowToolTip("Changing league to " . TradeOpts.SearchLeague " (" . TradeGlobals.Get("LeagueName") . ")...", true)
 		ShowToolTip("Изменение лиги на " . TradeOpts.SearchLeague " (" . TradeGlobals.Get("LeagueName") . ")...", true)
@@ -5795,17 +5800,17 @@ ReadPoeNinjaCurrencyData:
 
 		url			:= "https://poe.ninja/api/Data/GetCurrencyOverview?league=" . league
 		parsedJSON	:= CurrencyDataDowloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest)
-	}
+	}	
 	global CurrencyHistoryData := parsedJSON.lines
 	TradeGlobals.Set("LastAltCurrencyUpdate", A_NowUTC)
-
+	
 	global ChaosEquivalents	:= {}
 	For key, val in CurrencyHistoryData {
 		currencyBaseName	:= RegexReplace(val.currencyTypeName, "[^a-z A-Z]", "")
 		ChaosEquivalents[currencyBaseName] := val.chaosEquivalent
 	}
 	ChaosEquivalents["Chaos Orb"] := 1
-
+	
 	If (TempChangingLeagueInProgress) {
 		;msg := "Changing league to " . TradeOpts.SearchLeague " (" . TradeGlobals.Get("LeagueName") . ") finished."
 		msg := "Изменение лиги на " . TradeOpts.SearchLeague " (" . TradeGlobals.Get("LeagueName") . ") завершено."
@@ -6277,7 +6282,7 @@ TradeFunc_PredictedPricingSendFeedback(selector, comment, encodedData, league, p
 	url 		:= "https://www.poeprices.info/send_feedback"
 	options	:= "ReturnHeaders: skip"
 	options	.= "`n" "ValidateResponse: false"
-
+	
 	reqHeaders	:= []
 	reqHeaders.push("Connection: keep-alive")
 	reqHeaders.push("Cache-Control: max-age=0")
