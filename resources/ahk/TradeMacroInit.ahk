@@ -570,7 +570,6 @@ CreateTradeSettingsUI()
 
 	GuiAddCheckbox("Update: Show Notifications", "x17 yp+30 w260 h30", TradeOpts.ShowUpdateNotifications, "ShowUpdateNotifications", "ShowUpdateNotificationsH")
 	AddToolTip(ShowUpdateNotificationsH, "Notifies you when there's a new release available.")
-	GuiControl, Disable, ShowUpdateNotifications ;Данная функция не работает в русской версии
 
 	GuiAddCheckbox("Update: Skip folder selection", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH")
 	AddToolTip(UpdateSkipSelectionH, "Skips selecting an update location.`nThe current script directory will be used as default.")
@@ -1560,11 +1559,11 @@ TradeFunc_StartSplashScreen() {
 	;initArray := ["Initializing script...", "Preparing Einhars welcoming party...", "Uninstalling Battle.net...", "Investigating the so-called ""Immortals""...", "Starting mobile app..."
 	;	, "Hunting some old friends...", "Interrogating Master Krillson about fishing secrets...", "Trying to open Voricis chest...", "Setting up lab carries for the other 99%..."
 	;	, "Helping Alva discover the Jungle Hideout...", "Conning EngineeringEternity with the Atlas City Shuffle..."]
-	initArray := ["Инициализируем скрипт...", "Устраиваем вечеринку приветствия Эйнара...", "Удаляем Battle.net...", "Исследуем так называемое ""Бессмертие""...", "Запускаем мобильное приложение...", "Охотимся на старых друзей...", "Допрашиваем Мастера Криллсона о секретах рыбалки...", "Открываем сундук Фотиса...", "Помогаем Альве в поисках Джунглевого Убежища...", "Продаем торговцам Стат стики...", "Изучаем 'новые' имена...", "Подбираем билд Курседону ... Святой Кудуку, покажи мне путь..."] 
+	initArray := ["Инициализируем скрипт...", "Устраиваем вечеринку приветствия Эйнара...", "Удаляем Battle.net...", "Исследуем так называемое ""Бессмертие""...", "Запускаем мобильное приложение...", "Охотимся на старых друзей...", "Допрашиваем Мастера Криллсона о секретах рыбалки...", "Открываем сундук Воричи...", "Помогаем Альве в поисках Джунглевого Убежища...", "Продаем торговцам Стат стики...", "Изучаем 'новые' имена...", "Святой Кудуку, показывает нам путь..."] 
 	
 	Random, randomNum, 1, initArray.MaxIndex()
 	;Вычисление места под строку
-	runmeslen:=StrLen(initArray[randomNum])*9
+	runmeslen:=StrLen(initArray[randomNum])*8+20
 	;SplashTextOn, 370, 20, PoE-TradeMacro, % initArray[randomNum]	
 	SplashTextOn, runmeslen, 20, PoE-TradeMacro, % initArray[randomNum]	
 }
