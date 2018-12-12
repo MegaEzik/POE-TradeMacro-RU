@@ -2944,8 +2944,8 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 				Title .= "`n"
 				;Title .= (Item.UsedInSearch.veiledPrefix) ? "Veiled Prefixes: " Item.UsedInSearch.Charges . " | " : ""	
 				;Title .= (Item.UsedInSearch.veiledSuffix) ? "Veiled Suffixes: " Item.UsedInSearch.Charges . " | " : ""	
-				Title .= (Item.UsedInSearch.veiledPrefix) ? "Завуалированные Префиксы: " Item.UsedInSearch.Charges . " | " : ""	
-				Title .= (Item.UsedInSearch.veiledSuffix) ? "Завуалированные Суффиксы: " Item.UsedInSearch.Charges . " | " : ""	
+				Title .= (Item.UsedInSearch.veiledPrefix) ? "Завуалированные префиксы: " Item.UsedInSearch.Charges . " | " : ""	
+				Title .= (Item.UsedInSearch.veiledSuffix) ? "Завуалированные суффиксы: " Item.UsedInSearch.Charges . " | " : ""	
 			}
 			
 			If (Item.IsBeast and not Item.IsUnique) {
@@ -5374,18 +5374,18 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 
 	;	veiled mods
 
-	/*
 	If (advItem.veiledPrefixCount) {
-		Gui, SelectModsGui:Add, CheckBox, x15 yp+25 vTradeAdvancedSelectedVeiledPrefix Checked, % "Veiled Prefix"
+		;Gui, SelectModsGui:Add, CheckBox, x15 yp+25 vTradeAdvancedSelectedVeiledPrefix Checked, % "Veiled Prefix"
+		Gui, SelectModsGui:Add, CheckBox, x15 yp+25 vTradeAdvancedSelectedVeiledPrefix Checked, % "Завуалированный префикс"
 		Gui, SelectModsGui:Add, Edit    , x+1 yp-3 w30 vTradeAdvancedVeiledPrefixCount        , % advItem.veiledPrefixCount
 	}
 	If (advItem.veiledSuffixCount) {
 		voffsetX := advItem.veiledPrefixCount ? "+10" : "15"
 		voffsetY := advItem.veiledPrefixCount ? "+3"  : "+25"
-		Gui, SelectModsGui:Add, CheckBox, x%voffsetX% yp%voffsetY% vTradeAdvancedSelectedVeiledSuffix Checked, % "Veiled Suffix"
-		Gui, SelectModsGui:Add, Edit    , x+1 yp-3 w30 vTradeAdvancedVeiledSuffixCount        , % advItem.veiledPrefixCount
+		;Gui, SelectModsGui:Add, CheckBox, x%voffsetX% yp%voffsetY% vTradeAdvancedSelectedVeiledSuffix Checked, % "Veiled Suffix"
+		Gui, SelectModsGui:Add, CheckBox, x%voffsetX% yp%voffsetY% vTradeAdvancedSelectedVeiledSuffix Checked, % "Завуалированный суффикс"
+		Gui, SelectModsGui:Add, Edit    , x+1 yp-3 w30 vTradeAdvancedVeiledSuffixCount        , % advItem.veiledSuffixCount
 	}
-	*/
 
 	/*
 		corrupted state for jewels

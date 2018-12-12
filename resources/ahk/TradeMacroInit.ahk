@@ -570,6 +570,7 @@ CreateTradeSettingsUI()
 
 	GuiAddCheckbox("Update: Show Notifications", "x17 yp+30 w260 h30", TradeOpts.ShowUpdateNotifications, "ShowUpdateNotifications", "ShowUpdateNotificationsH")
 	AddToolTip(ShowUpdateNotificationsH, "Notifies you when there's a new release available.")
+	GuiControl, Disable, ShowUpdateNotifications ;Данная функция не работает в русской версии
 
 	GuiAddCheckbox("Update: Skip folder selection", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH")
 	AddToolTip(UpdateSkipSelectionH, "Skips selecting an update location.`nThe current script directory will be used as default.")

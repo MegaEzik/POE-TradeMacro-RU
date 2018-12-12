@@ -9006,8 +9006,10 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	}
 	
 	If (RarityLevel > 1 and Item.IsMap = False) {
-		Item.veiledPrefixCount := GetVeiledModCount(ItemData.Affixes, "Prefix")
-		Item.veiledSuffixCount := GetVeiledModCount(ItemData.Affixes, "Suffix")
+		;Item.veiledPrefixCount := GetVeiledModCount(ItemData.Affixes, "Prefix")
+		;Item.veiledSuffixCount := GetVeiledModCount(ItemData.Affixes, "Suffix")
+		Item.veiledPrefixCount := GetVeiledModCount(ItemData.Affixes, "префикс")
+		Item.veiledSuffixCount := GetVeiledModCount(ItemData.Affixes, "суффикс")
 	}
 
 	AffixTotals.FormatAll()
