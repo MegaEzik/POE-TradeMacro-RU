@@ -4092,6 +4092,7 @@ TradeFunc_FindInModGroup(modgroup, needle, simpleRange = true, recurse = true) {
 		
 		s  := TradeUtils.CleanUp(s)
 		ss := TradeUtils.CleanUp(needle.name)
+		ss := RegExReplace(ss, "# ?to ?#", "#")
 		st := TradeUtils.CleanUp(needle.name_orig)
 		
 		; для модов с числами, например "Имеет 1 гнездо" - для таких модов в файле должно быть соответствие полному названию с числовыми значениями

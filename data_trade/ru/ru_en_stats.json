@@ -2206,6 +2206,7 @@
  "Вызывает срабатывание умения Призыв фантома # уровня, когда вы поглощаете труп": "Trigger Level # Summon Phantasm Skill when you Consume a Corpse",
  "Выпадающие в этой области монеты Перандусов дублируются": "Number of Perandus Coins dropped in this Area is Doubled",
  "Выстрел шрапнелью наносит #% от физического урона в виде дополнительного урона от молнии": "#% of Shrapnel Shot Physical Damage gained as extra Lightning Damage",
+ "Вязкие лианы (Пойманное животное)": "Vine Snare (Captured Beast)",
  "Глашатай бури (Пойманное животное)": "Storm Herald (Captured Beast)",
  "Глубокая пучина (Пойманное животное)": "Hadal Dive (Captured Beast)",
  "Гнёзда нельзя изменять": "Sockets cannot be modified",
@@ -3935,5 +3936,12 @@
  "Ясность ума не удерживает ману": "Clarity Reserves no Mana",
  "всего # сопротивления стихиям": "# total Elemental Resistances",
  "всего # сопротивления": "# total Resistances",
+ "вуали Ашлинг": "of Aisling's Veil",
+ "вуали Йоргина": "of Jorgin's Veil",
+ "вуали Камерии": "of Cameria's Veil",
+ "вуали Райкера": "of Riker's Veil",
+ "вуали Хиллока": "of Hillock's Veil",
+ "вуали Януса": "of Janus' Veil",
+ "вуали": "of the Veil",
  "и ближайшие союзники регенерируют 200 здоровья в секунду": "and nearby Allies Regenerate 200 Life per second"
 }

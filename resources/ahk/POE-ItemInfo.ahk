@@ -2528,7 +2528,7 @@ ParseFlaskAffixes(ItemDataAffixes)
 			Continue
 		}
 		;IfInString, A_LoopField, 20`% chance to gain a Flask Charge when you deal a Critical Strike
-		IfInString, A_LoopField, 20`% шанс получить заряд флакона при нанесении критического удара
+		IfInString, A_LoopField, 20`% шанс получить заряд флакона, когда вы наносите критический удар
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Prefix", ["20"], ""), A_Index)
 			Continue
@@ -2596,8 +2596,7 @@ ParseFlaskAffixes(ItemDataAffixes)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Block and Stun Recovery during Flask effect 
-		IfInString, A_LoopField, `% ускорение восстановления после оглушения во время действия флакона 
-		{
+		IfInString, A_LoopField, `% ускорение восстановления после оглушения и блока во время действия флакона		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["40-60"], ""), A_Index)
 			Continue
 		}

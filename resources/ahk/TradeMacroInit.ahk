@@ -36,7 +36,7 @@ Menu, Tray, Add, Пожертвовать, OpenPayPal
 ;Menu, Tray, Add, Open Wiki/FAQ, OpenGithubWikiFromMenu
 Menu, Tray, Add, Открыть Wiki/FAQ, OpenGithubWikiFromMenu
 ;Добавляем пункт меню для открытия темы TradeMacro на русском форуме
-Menu, Tray, Add, Открыть тему на русском форуме, OpenRuForumTradeMacroFromMenu
+Menu, Tray, Add, Открыть пост на русском форуме, OpenRuForumTradeMacroFromMenu
 
 argumentSkipSplash = %6%
 If (not argumentSkipSplash) {
