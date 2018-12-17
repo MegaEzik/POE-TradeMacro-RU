@@ -2596,7 +2596,8 @@ ParseFlaskAffixes(ItemDataAffixes)
 			Continue
 		}
 		;IfInString, A_LoopField, `% increased Block and Stun Recovery during Flask effect 
-		IfInString, A_LoopField, `% ускорение восстановления после оглушения и блока во время действия флакона		{
+		IfInString, A_LoopField, `% ускорение восстановления после оглушения и блока во время действия флакона
+		{
 			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Suffix", ["40-60"], ""), A_Index)
 			Continue
 		}

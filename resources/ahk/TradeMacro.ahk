@@ -565,6 +565,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			}
 			preparedItem.maxSockets 	:= Item.maxSockets
 			preparedItem.isCorrupted	:= Item.isCorrupted
+			preparedItem.isJewel	:= Item.isJewel
 			preparedItem.isRelic	:= Item.isRelic
 			preparedItem.iLvl 		:= Item.level
 			preparedItem.Name_Ru	:= Item.Name
@@ -5388,11 +5389,11 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		Gui, SelectModsGui:Add, Edit    , x+1 yp-3 w30 vTradeAdvancedVeiledSuffixCount        , % advItem.veiledSuffixCount
 	}
 
-	/*
-		corrupted state for jewels
-		*/
+	;	corrupted state for jewels
+	
 	If (advItem.IsJewel and Item.IsCorrupted) {
-		Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedCorruptedState Checked, % "Corrupted"
+		;Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedCorruptedState Checked, % "Corrupted"
+		Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedCorruptedState Checked, % "Осквернено"
 	}
 
 	Item.UsedInSearch.SearchType := "Advanced"
