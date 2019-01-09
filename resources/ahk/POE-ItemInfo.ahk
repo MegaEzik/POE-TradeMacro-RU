@@ -398,6 +398,7 @@ class Item_ {
 		This.IsAbyssJewel	:= False
 		This.IsBeast		:= False
 		This.IsHideoutObject:= False
+		This.IsFossil		:= False
 	}
 }
 Global Item := new Item_
@@ -728,100 +729,41 @@ CheckRarityLevel(RarityString)
 	; Check stats section first as weapons usually have their sub type as first line
 	Loop, Parse, ItemDataStats, `n, `r
 	{
-		;IfInString, A_LoopField, One Handed Axe
-		IfInString, A_LoopField, Одноручный топор
+		typeWeaponRuToEn := {"Одноручный топор":"One Handed Axe","Двуручный топор":"Two Handed Axe","Одноручный меч":"One Handed Sword","Двуручный меч":"Two Handed Sword","Одноручная булава":"One Handed Mace","Двуручная булава":"Two Handed Mace","топор":"Axe","меч":"Sword","булава":"Mace","Скипетр":"Scepter","Посох":"Staff","Кинжал":"Dagger","Когти":"Claw","Лук":"Bow","Жезл":"Wand"}
+		;If (RegExMatch(A_LoopField, "i)\b((One Handed|Two Handed) (Axe|Sword|Mace)|Sceptre|Staff|Dagger|Claw|Bow|Wand)\b", match))
+		If (RegExMatch(A_LoopField, "i)(Одноручный топор|Двуручный топор|Одноручный меч|Двуручный меч|Одноручная булава|Двуручная булава|Скипетр|Посох|Кинжал|Когти|Лук|Жезл)", match))
 		{
-			BaseType = Weapon
-			SubType = Axe
-			GripType = 1H
-			return
-		}
-		;IfInString, A_LoopField, Two Handed Axe
-		IfInString, A_LoopField, Двуручный топор
-		{
-			BaseType = Weapon
-			SubType = Axe
-			GripType = 2H
-			return
-		}
-		;IfInString, A_LoopField, One Handed Mace
-		IfInString, A_LoopField, Одноручная булава
-		{
-			BaseType = Weapon
-			SubType = Mace
-			GripType = 1H
-			return
-		}
-		;IfInString, A_LoopField, Two Handed Mace
-		IfInString, A_LoopField, Двуручная булава
-		{
-			BaseType = Weapon
-			SubType = Mace
-			GripType = 2H
-			return
-		}
-		;IfInString, A_LoopField, Sceptre
-		If (RegExMatch(A_LoopField, "i)Скипетр"))
-		{
-			BaseType = Weapon
-			SubType = Sceptre
-			GripType = 1H
-			return
-		}
-		;IfInString, A_LoopField, Staff
-		IfInString, A_LoopField, Посох
-		{
-			BaseType = Weapon
-			SubType = Staff
-			GripType = 2H
-			return
-		}
-		;IfInString, A_LoopField, One Handed Sword
-		IfInString, A_LoopField, Одноручный меч
-		{
-			BaseType = Weapon
-			SubType = Sword
-			GripType = 1H
-			return
-		}
-		;IfInString, A_LoopField, Two Handed Sword
-		IfInString, A_LoopField, Двуручный меч
-		{
-			BaseType = Weapon
-			SubType = Sword
-			GripType = 2H
-			return
-		}
-		;IfInString, A_LoopField, Dagger
-		IfInString, A_LoopField, Кинжал
-		{
-			BaseType = Weapon
-			SubType = Dagger
-			GripType = 1H
-			return
-		}
-		;IfInString, A_LoopField, Claw
-		IfInString, A_LoopField, Когти
-		{
-			BaseType = Weapon
-			SubType = Claw
-			GripType = 1H
-			return
-		}
-		;IfInString, A_LoopField, Bow
-		IfInString, A_LoopField, Лук
-		{
-			BaseType = Weapon
-			SubType = Bow
-			GripType = 2H
-			return
-		}
-		;IfInString, A_LoopField, Wand
-		IfInString, A_LoopField, Жезл
-		{
-			BaseType = Weapon
-			SubType = Wand
-			GripType = 1H
+			BaseType	:= "Weapon"
+			;If (RegExMatch(match1, "i)(Sword|Axe|Mace)", subMatch)) {
+			If (RegExMatch(match1, "i)(меч|топор|булава)", subMatch)) {
+				SubType	:= typeWeaponRuToEn[subMatch1]
+			} Else {
+				SubType	:= typeWeaponRuToEn[match1]
+			}
+			;GripType	:= (RegExMatch(match1, "i)\b(Two Handed|Staff|Bow)\b")) ? "2H" : "1H"
+			GripType	:= (RegExMatch(match1, "i)Двуручный|Двуручная|Посох|Лук")) ? "2H" : "1H"
+			
+			; среди одноручных булав встречаются скипетры 
+			If (RegExMatch(match1, "i)Одноручная булава")) {
+				Loop, Parse, ItemDataNamePlate, `n, `r
+				{
+					LoopField := RegExReplace(A_LoopField, "<<.*>>", "")
+					If (RarityLevel > 2)
+					{
+						Loop, Parse, ItemDataNamePlate, `n, `r
+						{
+							If (A_Index = 3) {
+								LoopField := Trim(A_LoopField) ? Trim(A_LoopField) : LoopField
+							}
+						}
+					}
+					If (RegExMatch(LoopField, "i)Скипетр|Сехем|Фетиш"))
+					{
+						SubType = Sceptre				
+					}
+				}
+			}			
+			;console.log("-----------------------------`nВхождение: "match "`nБазовый тип: " BaseType "`nПодтип: " SubType "`nОдноручное/Двуручное: " GripType "`n-----------------------------")
 			return
 		}
 	}
@@ -841,74 +783,34 @@ CheckRarityLevel(RarityString)
 			}
 		}
 
-		/*
-		; Belts, Amulets, Rings, Quivers, Flasks
-		IfInString, LoopField, Rustic Sash
+		;If (RegExMatch(LoopField, "i)\b(Belt|Stygian Vise|Rustic Sash)\b"))
+		If (RegExMatch(LoopField, "i)Кушак|Цепочка|Ремень|Пояс|пояс|Тёмные тиски"))
 		{
 			BaseType = Item
 			SubType = Belt
 			return
 		}
-		IfInString, LoopField, Stygian Vise
-		{
-			BaseType = Item
-			SubType = Belt
-			return
-		}
-		IfInString, LoopField, Belt
-		{
-			BaseType = Item
-			SubType = Belt
-			return
-		}
-		*/
-		;----
-		; в русском переводе насчитывается 4-е наименования типов поясов и они могут стоять как в начале так и в середине названия пояса, поэтому определять тип пояса будем так
-		If (RegExMatch(LoopField, "i)Кушак|Цепочка|Ремень|Пояс"))
-		{
-			BaseType = Item
-			SubType = Belt
-			return
-		}
-		; пояс лиги Бездна
-		IfInString, LoopField, Тёмные тиски
-		{
-			BaseType = Item
-			SubType = Belt
-			return
-		}
-		;If (InStr(LoopField, "Amulet") or (InStr(LoopField, "Talisman") and not InStr(LoopField, "Leaguestone")))
-		If (RegExMatch(LoopField, "i)Амулет") or (RegExMatch(LoopField, "i)Талисман") and not InStr(LoopField, "Камень лиги")))
+
+		;If (RegExMatch(LoopField, "i)\b(Amulet|Talisman)\b")) and not (RegExMatch(LoopField, "i)\bLeaguestone\b"))
+		If (RegExMatch(LoopField, "i)Амулет|Талисман") and not (RegExMatch(LoopField, "Камень лиги")))
 		{
 			BaseType = Item
 			SubType = Amulet
 			return
 		}
-
-		;If (RegExMatch(LoopField, "\bRing\b")) ;оригинальная строка, но с кольцами на ru не работает 
-		If (RegExMatch(LoopField, "i)Кольцо"))
+		
+		typeRQFRuToEn := {"Кольцо":"Ring","флакон":"Flask","Колчан":"Quiver"}
+		;If (RegExMatch(LoopField, "\b(Ring|Quiver|Flask)\b", match))		
+		If (RegExMatch(LoopField, "i)Кольцо|Колчан|флакон", match))
 		{
-			BaseType = Item
-			SubType = Ring
+			BaseType := "Item"
+			;SubType := match1
+			SubType := typeRQFRuToEn[match]
 			return
 		}
-		;IfInString, LoopField, Quiver
-		IfInString, LoopField, Колчан
-		{
-			BaseType = Item
-			SubType = Quiver
-			return
-		}
-		;IfInString, LoopField, Flask
-		;IfInString, LoopField, Флакон
-		If (RegExMatch(LoopField, "i)Флакон"))
-		{
-			BaseType = Item
-			SubType = Flask
-			return
-		}
+		
 		;IfInString, LoopField, %A_Space%Map
-		If (RegExMatch(LoopField, "^Карта| Карта|Изменённая Карта "))
+		If (RegExMatch(LoopField, "i)Карта"))
 		{
 			Global mapMatchList, mapMatchListRu
 			BaseType = Map
@@ -932,8 +834,7 @@ CheckRarityLevel(RarityString)
 					}
 					return
 				}
-			}
-			
+			}			
 			SubType = Unknown%A_Space%Map
 			return
 		}
@@ -955,39 +856,20 @@ CheckRarityLevel(RarityString)
 			return
 		}
 		
-		; Leaguestones
-		;IfInString, LoopField, Leaguestone
-		IfInString, LoopField, Камень%A_Space%лиги
-		{
-			;RegexMatch(LoopField, "i)(.*)Leaguestone", match)
-			RegexMatch(LoopField, "i)(.*)Камень лиги", match)
-			RegexMatch(Trim(match1), "i)\b(\w+)\W*$", match) ; match last word
-			BaseType = Leaguestone
-			SubType := Trim(match1) " Leaguestone"
-			return
-		}
-		
-		; Скарабеи
-		IfInString, LoopField, Скарабей
-		{
-			RegexMatch(LoopField, "i)(.*)cкарабей", match)
-			RegexMatch(Trim(match1), "i)\b(\w+)\W*$", match) ; match last word
-			BaseType = Scarab
-			SubType := Trim(match1) " Scarab"
-			return
-		}
-		
-		/*
 		; Leaguestones and Scarabs
-		If (RegExMatch(Loopfield, "i)Leaguestone|Scarab"))
+		typeLSSRuToEn := {"Камень лиги":"Leaguestones","скарабей":"Scarab"}
+		;If (RegExMatch(Loopfield, "i)\b(Leaguestone|Scarab)\b"))
+		If (RegExMatch(Loopfield, "i)Камень лиги|скарабей"))
 		{
-			RegexMatch(LoopField, "i)(.*)(Leaguestone|Scarab)", typeMatch)
+			;RegexMatch(LoopField, "i)(.*)(Leaguestone|Scarab)", typeMatch)
+			RegexMatch(LoopField, "i)(.*)(Камень лиги|скарабей)", typeMatch)
 			RegexMatch(Trim(typeMatch1), "i)\b(\w+)\W*$", match) ; match last word
-			BaseType := Trim(typeMatch2)
-			SubType := Trim(match1) " " Trim(typeMatch2)
+			;BaseType := Trim(typeMatch2)
+			BaseType := Trim(typeLSSRuToEn[typeMatch2])
+			;SubType := Trim(match1) " " Trim(typeMatch2)
+			SubType := Trim(typeLSSRuToEn[match1]) " " Trim(typeLSSRuToEn[typeMatch2])
 			return
 		}
-		*/
 
 
 		; Matching armour types with regular expressions for compact code
@@ -1042,7 +924,7 @@ CheckRarityLevel(RarityString)
 		; BodyArmour
 		; Note: Not using "$" means "Leather" could match "Leather Belt", therefore we first check that the item is not a belt. (belts are currently checked earlier so this is redundant, but the order might change)
 		;If (!RegExMatch(LoopField, "Belt"))
-		If (!RegExMatch(LoopField, "i)Кушак|Цепочка|Ремень|Пояс"))
+		If (!RegExMatch(LoopField, "i)Кушак|Цепочка|Ремень|Пояс|пояс"))
 		{
 			;If (RegExMatch(LoopField, "Armour|Brigandine|Chainmail|Coat|Doublet|Garb|Hauberk|Jacket|Lamellar|Leather|Plate|Raiment|Regalia|Ringmail|Robe|Tunic|Vest|Vestment"))
 			If (RegExMatch(LoopField, "i)Панцирь|Нагрудник|Латы|Доспех|Кожанка|Полукафтан|Облачение|Безрукавка|Одеяние|Халат|Наряд|Одежда|Шелка|Бригандина|Дублет|Жилет|Байдана|Кольчуга|Хауберг|Калантарь|Камзол|Куртка|Жакет"))
@@ -6445,14 +6327,14 @@ ParseAffixes(ItemDataAffixes, Item)
 		;IfInString, A_LoopField, Gems in this item are Supported by Lvl 1 Blood Magic
 		IfInString, A_LoopField, Размещённые камни усилены Магией крови 1 уровня
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Vagan 7", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "", ""), A_Index)
 			Continue
 		}
-		; Vagan prefix
+
 		;IfInString, A_LoopField, Hits can't be Evaded
 		IfInString, A_LoopField, От ударов нельзя уклониться
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Buy:Vagan 4", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "", ""), A_Index)
 			Continue
 		}
 		
@@ -6462,37 +6344,37 @@ ParseAffixes(ItemDataAffixes, Item)
 		;IfInString, A_LoopField, Can have multiple Crafted Mods
 		IfInString, A_LoopField, Может иметь несколько ремесленных свойств
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Elreon 8", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Prefixes Cannot Be Changed
 		IfInString, A_LoopField, Префиксы нельзя изменить
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Haku 8", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Suffixes Cannot Be Changed
 		IfInString, A_LoopField, Суффиксы нельзя изменить
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Tora 8", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Attack Mods
 		IfInString, A_LoopField, Невозможно сгенерировать свойства атак
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Cata 8", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Caster Mods
 		IfInString, A_LoopField, Невозможно сгенерировать свойства чар
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Vagan 8", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Mods with Required Lvl above Lvl 28
 		IfInString, A_LoopField, Невозможно сгенерировать свойства, требующие уровень выше 28
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "Leo 8", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
 		}
 	}
@@ -8802,8 +8684,10 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	Item.IsGem	:= (InStr(ItemData.Rarity, "Камень"))
 	;Item.IsCurrency:= (InStr(ItemData.Rarity, "Currency"))
 	Item.IsCurrency:= (InStr(ItemData.Rarity, "Валюта"))
+	;Item.IsFossil	:= (RegExMatch(ItemData.NamePlate, "i)Fossil$")) ? true : false
+	Item.IsFossil	:= (RegExMatch(ItemData.NamePlate, "i)ископаемое")) ? true : false
 	;Item.IsScarab	:= (RegExMatch(ItemData.NamePlate, "i)Scarab$")) ? true : false
-	Item.IsScarab	:= (RegExMatch(ItemData.NamePlate, "i)cкарабей$")) ? true : false
+	Item.IsScarab	:= (RegExMatch(ItemData.NamePlate, "i)скарабей")) ? true : false
 	
 	;regex := ["^Sacrifice At", "^Fragment of", "^Mortal ", "^Offering to ", "'s Key$", "Ancient Reliquary Key", "Timeworn Reliquary Key", "Breachstone", "Divine Vessel"]
 	regex := ["^Жертва в", "^Жертва на", "^Фрагмент ", "Смертное уныние", "Смертное невежество", "Смертный гнев", "Смертная надежда", "Подношение Богине", "Ключ Эвера", "Ключ Иньи", "Ключ Ириэла", "Ключ Волкуур", "Ключ от Древнего Реликвария", "Ключ от Ветхого Реликвария"]
@@ -8924,6 +8808,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		; parse item variations like relics (variation of it's unique counterpart)
 		;If (RegExMatch(Trim(A_LoopField), "i)Relic Unique", match)) {
 		If (RegExMatch(Trim(A_LoopField), "i)Уникальная Реликвия", match)) {
+			Item.IsUnique := true
 			Item.IsRelic := true
 		}
 	}
@@ -9166,9 +9051,11 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	If (Item.IsDivinationCard)
 	{
-		If (divinationCardList[Item.Name] != "")
+		;If (divinationCardList[Item.Name] != "")
+		If (divinationCardList[Item.Name_En] != "")
 		{
-			CardDescription := divinationCardList[Item.Name]
+			;CardDescription := divinationCardList[Item.Name]
+			CardDescription := divinationCardList[Item.Name_En]
 		}
 		Else
 		{
@@ -9198,18 +9085,21 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		
 		If (Item.IsUnique)
 		{
-			MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.SubType]]
+			;MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.SubType]]
+			MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.BaseName_En]]
 		}
 		Else
 		{
-			If (RegExMatch(Item.SubType, "Shaped (.+ Map)", match))
+			;If (RegExMatch(Item.SubType, "Shaped (.+ Map)", match))
+			If (RegExMatch(Item.BaseName_En, "Shaped (.+ Map)", match))
 			{
 				;MapDescription .= "Infos from non-shaped version:`n" mapList[match1]
 				MapDescription .= "Информация о не изменённой версии:`n" mapList[match1]
 			}
 			Else
 			{
-				MapDescription .= mapList[Item.SubType]
+				;MapDescription .= mapList[Item.SubType]
+				MapDescription .= mapList[Item.BaseName_En]
 			}
 		}
 		If (MapDescription)
@@ -9239,9 +9129,11 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	If (Item.IsGem)
 	{		
-		If (gemQualityList[Item.Name] != "")
+		;If (gemQualityList[Item.Name] != "")
+		If (gemQualityList[Item.Name_En] != "")
 		{
-			GemQualityDescription := gemQualityList[Item.Name]
+			;GemQualityDescription := gemQualityList[Item.Name]
+			GemQualityDescription := gemQualityList[Item.Name_En]
 		}
 		Else
 		{
@@ -9643,10 +9535,14 @@ ModStringToObject(string, isImplicit) {
 		
 		; some values shouldn't be replaced because they are fixed, for example "#% chance to gain Onslaught for 4 seconds on Kill"
 		; regex, | delimited
-		exceptionsList := "recovered every 3 seconds|inflicted with this Weapon to deal 100% more Damage|with 30% reduced Movement Speed|chance to Recover 10% of Maximum Mana|"
-		exceptionsList .= "for 3 seconds|for 4 seconds|for 8 seconds|for 10 seconds|over 4 seconds|"
-		exceptionsList .= "per (10|12|15|16|50) (Strength|Dexterity|Intelligence)|"
-		exceptionsList .= "per 200 Accuracy Rating|if you have at least 500 Strength|per 1% Chance to Block Attack Damage|are at least 5 nearby Enemies|a total of 200 Mana"		
+		;exceptionsList := "recovered every 3 seconds|inflicted with this Weapon to deal 100% more Damage|with 30% reduced Movement Speed|chance to Recover 10% of Maximum Mana|"
+		;exceptionsList .= "for 3 seconds|for 4 seconds|for 8 seconds|for 10 seconds|over 4 seconds|"
+		;exceptionsList .= "per (10|12|15|16|50) (Strength|Dexterity|Intelligence)|"
+		;exceptionsList .= "per 200 Accuracy Rating|if you have at least 500 Strength|per 1% Chance to Block Attack Damage|are at least 5 nearby Enemies|a total of 200 Mana"
+		exceptionsList := "каждые 3 секунды|наложенный этим оружием, нанесет на 100% больше урона|снижающую скорость их передвижения на 30%,|шанс восстановить 10% от максимума маны|"
+		exceptionsList .= "на 3 секунды|на 4 секунды|на 8 секунд|на 10 секунд|в течение 4 секунд|"
+		exceptionsList .= "за каждые (10|12|15|16|50) (силы|ловкости|интеллекта)|"
+		exceptionsList .= "за каждые 200 меткости|если у вас минимум 500 силы|за 1% шанса блокировать урон от атак|если поблизости минимум 5 врагов|когда вы тратите всего 200 маны"
 		
 		RegExMatch(Matches[A_Index], "i)(" exceptionsList ")", exception) 
 		
@@ -10733,7 +10629,7 @@ CreateSettingsUI()
 	
 	; General
 	;GuiAddGroupBox("General", "x7 " topGroupBoxYPos " w310 h" generalHeight " Section")
-	GuiAddGroupBox("Общие", "x7 " topGroupBoxYPos " w310 h" generalHeight " Section")
+	GuiAddGroupBox("Основные", "x7 " topGroupBoxYPos " w310 h" generalHeight " Section")
 	;GuiAddCheckbox("Only show tooltip if PoE is frontmost", "xs10 yp+20 w250 h30", Opts.OnlyActiveIfPOEIsFront, "OnlyActiveIfPOEIsFront", "OnlyActiveIfPOEIsFrontH")
 	GuiAddCheckbox("Показывать подсказку только когда PoE является активным окном", "xs10 yp+20 w250 h30", Opts.OnlyActiveIfPOEIsFront, "OnlyActiveIfPOEIsFront", "OnlyActiveIfPOEIsFrontH")	
 	;AddToolTip(OnlyActiveIfPOEIsFrontH, "When checked the script only activates while you are ingame`n(technically while the game window is the frontmost)")
@@ -10902,11 +10798,10 @@ CreateSettingsUI()
 	; Buttons
 	ButtonsShiftX := "x659 "
 	;GuiAddText("Mouse over settings or see the GitHub Wiki page for comments on what these settings do exactly.", ButtonsShiftX " y63 w290 h30 0x0100")
-	GuiAddText("Наведите указатель мыши на строки или посетите страницу GitHub Wiki чтобы получить больше информации по настройкам.", ButtonsShiftX " y63 w290 h40 0x0100")
+	GuiAddText("Наводите курсор для просмотра подсказок или посетите страницу GitHub Wiki чтобы получить больше информации по настройкам.", ButtonsShiftX " y63 w290 h40 0x0100")
 	
 	;GuiAddButton("Defaults", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
 	GuiAddButton("Сбросить", ButtonsShiftX "y+8 w90 h23", "SettingsUI_BtnDefaults")
-	;GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	GuiAddButton("OK", "Default x+5 yp+0 w90 h23", "SettingsUI_BtnOK")
 	;GuiAddButton("Cancel", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
 	GuiAddButton("Отмена", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")	
@@ -11043,43 +10938,59 @@ CreateSettingsUI()
 	
 	GuiAddGroupBox("[Lutbot Logout]", "x7 " topGroupBoxYPos " w630 h625")
 
-	lb_desc := "Lutbot's macro is a collection of features like TCP disconnect logout, whisper replies, ladder tracker and more.`n"
-	lb_desc .= "The included logout macro is the most advanced logout feature currently out there."
+	;lb_desc := "Lutbot's macro is a collection of features like TCP disconnect logout, whisper replies, ladder tracker and more.`n"
+	lb_desc := "Макрос Lutbot представляет собой набор функций, таких как TCP разрыв соединения, быстрые ответы, отслеживание рейтинговых таблиц и другие.`n"
+	;lb_desc .= "The included logout macro is the most advanced logout feature currently out there."
+	lb_desc .= "Включенная в состав функция выхода из игры является самой продвинутой."
 	GuiAddText(lb_desc, "x17 yp+28 w600 h40 0x0100", "", "")
 	
-	lb_desc := "Since running the main version of this script alongside " Globals.Get("Projectname") " can cause some issues`n"
-	lb_desc .= "and hotkey conflicts, Lutbot also released a lite version that only contains the logout features."
+	;lb_desc := "Since running the main version of this script alongside " Globals.Get("Projectname") " can cause some issues`n"
+	lb_desc := "По скольку основная версия скрипта при работе с " Globals.Get("Projectname") " может вызывать проблемы,`n"
+	;lb_desc .= "and hotkey conflicts, Lutbot also released a lite version that only contains the logout features."
+	lb_desc .= "была выпущена облегченная версия Lutbot, которая содержит только функцию выхода."
 	GuiAddText(lb_desc, "x17 y+10 w600 h35 0x0100", "", "")
 	
-	Gui, Add, Link, x17 y+5 cBlue, <a href="http://lutbot.com/#/ahk">Website and download</a>
+	;Gui, Add, Link, x17 y+5 cBlue, <a href="http://lutbot.com/#/ahk">Website and download</a>
+	Gui, Add, Link, x17 y+5 cBlue, <a href="http://lutbot.com/#/ahk">Посетить веб-сайт и загрузить</a>
 	
-	lb_desc := Globals.Get("Projectname") " can manage running this lite version for you, keeping it an independant script."
+	;lb_desc := Globals.Get("Projectname") " can manage running this lite version for you, keeping it an independant script."
+	lb_desc := Globals.Get("Projectname") " может управлять этой облегченной версией, сохраняя ее независимость."
 	GuiAddText(lb_desc, "x17 y+20 w600 h20 0x0100", "", "")
 	
-	GuiAddCheckbox("Run lutbot on script start if the lutbot macro exists (requires you to have run it once before).", "x17 yp+20 w600 h30", Opts.Lutbot_CheckScript, "Lutbot_CheckScript", "Lutbot_CheckScriptH")
+	;GuiAddCheckbox("Run lutbot on script start if the lutbot macro exists (requires you to have run it once before).", "x17 yp+20 w600 h30", Opts.Lutbot_CheckScript, "Lutbot_CheckScript", "Lutbot_CheckScriptH")
+	GuiAddCheckbox("Запустить lutbot при старте, если он не запущен(требуется запустить хотя бы раз)", "x17 yp+20 w600 h30", Opts.Lutbot_CheckScript, "Lutbot_CheckScript", "Lutbot_CheckScriptH")
 	
-	GuiAddCheckbox("Warn in case of hotkey conflicts", "x17 yp+30 w290 h30", Opts.Lutbot_WarnConflicts, "Lutbot_WarnConflicts", "Lutbot_WarnConflictsH")
-	AddToolTip(Lutbot_CheckScriptH, "Check if the lutbot macro exists and run it.")
+	;GuiAddCheckbox("Warn in case of hotkey conflicts", "x17 yp+30 w290 h30", Opts.Lutbot_WarnConflicts, "Lutbot_WarnConflicts", "Lutbot_WarnConflictsH")
+	GuiAddCheckbox("Предупреждать в случае конфликтов горячих клавиш", "x17 yp+30 w600 h30", Opts.Lutbot_WarnConflicts, "Lutbot_WarnConflicts", "Lutbot_WarnConflictsH")
+	;AddToolTip(Lutbot_CheckScriptH, "Check if the lutbot macro exists and run it.")
+	AddToolTip(Lutbot_CheckScriptH, "Проверьте существование папки и запустите его хотя бы раз")
 	
-	GuiAddButton("Open Lutbot folder", "Default x17 y+10 w130 h23", "OpenLutbotDocumentsFolder")
+	;GuiAddButton("Open Lutbot folder", "Default x17 y+10 w130 h23", "OpenLutbotDocumentsFolder")
+	GuiAddButton("Папка Lutbot", "Default x17 y+10 w130 h23", "OpenLutbotDocumentsFolder")
 	
-	lb_desc := "If you have any issues related to"
+	;lb_desc := "If you have any issues related to"
+	lb_desc := "Если вы испытываете проблемы с"
 	GuiAddText(lb_desc, "x17 y+40 w600 h20 0x0100", "", "")
-	lb_desc := "- " Globals.Get("Projectname") " starting the lutbot script or checking for conflicts report here:"
+	;lb_desc := "- " Globals.Get("Projectname") " starting the lutbot script or checking for conflicts report here:"
+	lb_desc := "- " Globals.Get("Projectname") " при запуске скрипта lutbot или проверке конфликтов, то сообщите сюда:"
 	GuiAddText(lb_desc, "x17 y+0 w600 h20 0x0100", "", "")
+	Gui, Add, Link, x35 y+5 cBlue h20, - <a href="https://ru.pathofexile.com/forum/view-thread/27741">РУ-форум</a>
 	Gui, Add, Link, x35 y+5 cBlue h20, - <a href="https://github.com/PoE-TradeMacro/POE-TradeMacro/issues">Github</a>
 	Gui, Add, Link, x35 y+0 cBlue h20, - <a href="https://discord.gg/taKZqWw">Discord</a>
 	Gui, Add, Link, x35 y+0 cBlue h20, - <a href="https://www.pathofexile.com/forum/view-thread/1757730">Forum</a>
-
-	lb_desc := "- Lutbots script not working correctly in any way report here:"
+	
+	;lb_desc := "- Lutbots script not working correctly in any way report here:"
+	lb_desc := "- скриптом Lutbot, который работает не корректно, сообщайте сюда:"
 	GuiAddText(lb_desc, "x17 y+5 w600 h20 0x0100", "", "")
 	Gui, Add, Link, x35 y+5 cBlue h20, - <a href="https://discord.gg/nttekWT">Discord</a>
 	
 	; Lutbot Buttons
 	
-	GuiAddText("Mouse over settings to see what these settings do exactly.", ButtonsShiftX "y60 w290 h30 0x0100")
+	;GuiAddText("Mouse over settings to see what these settings do exactly.", ButtonsShiftX "y60 w290 h30 0x0100")
+	GuiAddText("Наводите курсор для просмотра подсказок", ButtonsShiftX "y60 w290 h30 0x0100")
 	GuiAddButton("OK", "Default xp-5 y+8 w90 h23", "SettingsUI_BtnOK")
-	GuiAddButton("Cancel", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")
+	;GuiAddButton("Cancel", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")
+	GuiAddButton("Отмена", "x+5 yp+0 w90 h23", "SettingsUI_BtnCancel")
 	
 	; close tabs
 	Gui, Tab
@@ -11986,8 +11897,10 @@ HighlightItems(broadTerms = false, leaveSearchField = true, focusHideoutFilter =
 			focusHideoutFilter := true
 			If (Item.IsHideoutObject and focusHideoutFilter) {				
 				CoordMode, Mouse, Relative
-				MouseGetPos, currentX, currentY				
-				MouseClick, Left, %hideoutFieldX%, %hideoutFieldY%, 1, 0
+				MouseGetPos, currentX, currentY
+				MouseMove, %hideoutFieldX%, %hideoutFieldY%, 0
+				Sleep, 10
+				MouseClick
 				Sleep, 50
 				MouseMove, %currentX%, %currentY%, 0
 				Sleep, 10
@@ -13022,10 +12935,8 @@ CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, isFallbackReque
 		reqHeaders.push("User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36")
 		currencyData := PoEScripts_Download(url, postData, reqHeaders, options, true, true, false, "", reqHeadersCurl)
 		
-		If (FileExist(A_ScriptDir "\temp\currencyHistory_" league ".txt")) {
-			FileDelete, % A_ScriptDir "\temp\currencyHistory_" league ".txt"	
-		}
-		FileAppend, %currencyData%, % A_ScriptDir "\temp\currencyHistory_" league ".txt"
+		deleteError := PoEScripts_SaveWriteTextFile(A_ScriptDir "\temp\currencyHistory_" league ".txt", currencyData, "utf-8", true, true)
+		
 		
 		Try {
 			parsedJSON := JSON.Load(currencyData)
@@ -13041,6 +12952,9 @@ CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, isFallbackReque
 			loggedCurrencyRequestAtStartup := true
 			If (not loggedTempLeagueCurrencyRequest and not isTempLeague) {
 				loggedTempLeagueCurrencyRequest := true
+			}
+			If (deleteError) {
+				WriteToLogFile("Failed to delete " A_ScriptDir "\temp\currencyHistory_" league ".txt before writing data to it. `n", "StartupLog.txt", project)	
 			}
 		}
 		; first currency data parsing (script start)
@@ -13290,7 +13204,8 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.ShaperItem := Item.IsShaperBase
 	search.ElderItem := Item.IsElderBase
 	search.ItemLevel := Item.Level
-	search.BaseType := [Item.BaseName]
+	;search.BaseType := [Item.BaseName]
+	search.BaseType := Item.BaseName_En
 	search.HasExplicitMod :=					; HasExplicitMod "of Crafting" "of Spellcraft" "of Weaponcraft"
 	search.Identified := Item.IsUnidentified ? 0 : 1
 	search.Corrupted := Item.IsCorrupted
@@ -13300,6 +13215,9 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.Height :=
 	;search.name := Item.Name
 	search.name := Item.Name_En
+	
+	txttest:=search.BaseType " | " Item.BaseName " | " Item.BaseName_En " | " Item.SubType
+	MsgBox, 0x1040, Тест, %txttest%
 
 	; rarity
 	If (Item.RarityLevel = 1) {
@@ -13337,7 +13255,8 @@ ShowItemFilterFormatting(Item, advanced = false) {
 		}
 	}
 	If (RegExMatch(class, "i)Flask")) {
-		If (RegExMatch(Item.BaseName, "i) (Life|Mana) ", match)) {
+		;If (RegExMatch(Item.BaseName, "i) (Life|Mana) ", match)) {
+		If (RegExMatch(Item.BaseName_En, "i) (Life|Mana) ", match)) {
 			search.Class.push(match1 " Flasks") 
 			search.Class.push(match1 " Flask") 
 			search.Class.push("Flask") 
@@ -13358,12 +13277,14 @@ ShowItemFilterFormatting(Item, advanced = false) {
 			search.Class.push(class "s")
 		}
 	}
-	If (RegExMatch(class, "i)Currency") and RegExMatch(Item.BaseName, "i)Resonator")) {
+	;If (RegExMatch(class, "i)Currency") and RegExMatch(Item.BaseName, "i)Resonator")) {
+	If (RegExMatch(class, "i)Currency") and RegExMatch(Item.BaseName_En, "i)Resonator")) {
 		search.Class.push("Delve Socketable Currency")		
 		search.Class.push("Currency")		
 	}	
 	; Quest Items
-	If (RegExMatch(Item.BaseName, "i)(Elder's Orb|Shaper's Orb)", match)) {
+	;If (RegExMatch(Item.BaseName, "i)(Elder's Orb|Shaper's Orb)", match)) {
+	If (RegExMatch(Item.BaseName_En, "i)(Elder's Orb|Shaper's Orb)", match)) {
 		search.Class.push("Quest")
 		Item.IsQuestItem := true
 	}
@@ -13375,7 +13296,8 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	
 	For key, val in ItemBaseList {
 		For k, v in val {
-			If (k = Item.BaseName) {
+			;If (k = Item.BaseName) {
+			If (k = Item.BaseName_En) {
 				search.DropLevel := v["Drop Level"]
 				search.Width := v["Width"]
 				search.Height := v["Height"]
@@ -13411,7 +13333,8 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.HasExplicitMod := []
 	; works only for magic items
 	If (Item.RarityLevel = 2) {
-		RegExMatch(Item.Name, "i)(.*)?" Item.BaseName "(.*)?", nameParts)
+		;RegExMatch(Item.Name, "i)(.*)?" Item.BaseName "(.*)?", nameParts)
+		RegExMatch(Item.Name_En, "i)(.*)?" Item.BaseName_En "(.*)?", nameParts)
 		If (StrLen(nameParts1)) {
 			search.HasExplicitMod.push(Trim(nameParts1))
 		}
