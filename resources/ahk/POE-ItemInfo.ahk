@@ -763,7 +763,7 @@ CheckRarityLevel(RarityString)
 					}
 				}
 			}			
-			;console.log("-----------------------------`nВхождение: "match "`nБазовый тип: " BaseType "`nПодтип: " SubType "`nОдноручное/Двуручное: " GripType "`n-----------------------------")
+			console.log("-----------------------------`nВхождение: "match "`nБазовый тип: " BaseType "`nПодтип: " SubType "`nОдноручное/Двуручное: " GripType "`n-----------------------------")
 			return
 		}
 	}
@@ -9085,21 +9085,18 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		
 		If (Item.IsUnique)
 		{
-			;MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.SubType]]
-			MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.BaseName_En]]
+			MapDescription .= uniqueMapList[uniqueMapNameFromBase[Item.SubType]]
 		}
 		Else
 		{
-			;If (RegExMatch(Item.SubType, "Shaped (.+ Map)", match))
-			If (RegExMatch(Item.BaseName_En, "Shaped (.+ Map)", match))
+			If (RegExMatch(Item.SubType, "Shaped (.+ Map)", match))
 			{
 				;MapDescription .= "Infos from non-shaped version:`n" mapList[match1]
 				MapDescription .= "Информация о не изменённой версии:`n" mapList[match1]
 			}
 			Else
 			{
-				;MapDescription .= mapList[Item.SubType]
-				MapDescription .= mapList[Item.BaseName_En]
+				MapDescription .= mapList[Item.SubType]
 			}
 		}
 		If (MapDescription)
@@ -13215,9 +13212,6 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.Height :=
 	;search.name := Item.Name
 	search.name := Item.Name_En
-	
-	txttest:=search.BaseType " | " Item.BaseName " | " Item.BaseName_En " | " Item.SubType
-	MsgBox, 0x1040, Тест, %txttest%
 
 	; rarity
 	If (Item.RarityLevel = 1) {
