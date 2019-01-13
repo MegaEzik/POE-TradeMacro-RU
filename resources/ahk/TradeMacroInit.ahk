@@ -134,12 +134,12 @@ global overwrittenUserFiles	:= argumentOverwrittenFiles
 ; 	CopyDefaultTradeConfig()
 ; }
 
-TradeFunc_CheckIfCloudFlareBypassNeeded()
-
 TradeGlobals.Set("Leagues", TradeFunc_GetLeagues())
 Sleep, 200
 ReadTradeConfig("", "config_trade.ini", _updateConfigWrite)
 TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[TradeOpts.SearchLeague])
+
+TradeFunc_CheckIfCloudFlareBypassNeeded()
 
 ; set this variable to skip the update check in "PoE-ItemInfo.ahk"
 SkipItemInfoUpdateCall := 1
@@ -558,8 +558,8 @@ CreateTradeSettingsUI()
 		General
 	*/
 
-	;GuiAddGroupBox("[TradeMacro] General", "x7 y+7 w310 h380")
-	GuiAddGroupBox("[TradeMacro] Основные", "x7 y+7 w310 h380")
+	;GuiAddGroupBox("[TradeMacro] General", "x7 y+7 w310 h410")
+	GuiAddGroupBox("[TradeMacro] Основные", "x7 y+7 w310 h410")
 
     ; Note: window handles (hwnd) are only needed if a UI tooltip should be attached.
 
@@ -629,7 +629,13 @@ CreateTradeSettingsUI()
 	GuiAddCheckbox("Использовать poedb.tw вместо Wiki", "x17 yp+27 w260 h30 0x0100", TradeOpts.WikiAlternative, "WikiAlternative", "WikiAlternativeH")
 	;AddToolTip(WikiAlternativeH, "Use poedb.tw to open a page with information`nabout your item/item base.")
 	AddToolTip(WikiAlternativeH, "Использовать poedb.tw для открытия страницы с информацией о вашем предмете/базе предмета.`n`nВ адаптированной версии использовать poedb.tw предпочтительнее.")
-
+	
+	;GuiAddText("Curl/HTTP request timeout (s):", "x17 yp+33 w230 h20 0x0100", "LblCurlTimeout", "LblCurlTimeoutH")
+	GuiAddText("Время запроса Curl/HTTP:", "x17 yp+33 w230 h20 0x0100", "LblCurlTimeout", "LblCurlTimeoutH")
+	;AddToolTip(LblCurlTimeoutH, "This is the default timeout (seconds) used for HTTP requests to trade sites and APIs.`n`nRequests taking longer than this will be aborted.")
+	AddToolTip(LblCurlTimeoutH, "Устанавливает время ожидания(в секундах) при запросах к торговым сайтам и API`n`nЗапросы занимающие больше времени будут прерваны.")
+	GuiAddEdit(TradeOpts.CurlTimeout, "x+10 yp-2 w50 h20 Number", "CurlTimeout", "CurlTimeoutH")
+	
 	/* 
 		Search
 	*/
@@ -1578,6 +1584,8 @@ TradeFunc_TestCloudflareBypass(Url, UserAgent="", cfduid="", cfClearance="", use
 	postData		:= ""
 	options		:= ""
 	options		.= "`n" PreventErrorMsg
+	options		.= "`n" "ReturnHeaders: append"
+	options		.= "`n" "TimeOut: " TradeOpts.CurlTimeout
 
 	reqHeaders	:= []
 	authHeaders	:= []
@@ -1603,14 +1611,27 @@ TradeFunc_TestCloudflareBypass(Url, UserAgent="", cfduid="", cfClearance="", use
 
 	; pathofexile.com link in page footer (forum thread)
 	RegExMatch(html, "i)pathofexile", match)
+	RegExMatch(Trim(html), "i)'(\d{1,3})'$", appendedCode)
 	If (match) {
 		FileDelete, %A_ScriptDir%\temp\poe_trade_search_form_options.txt
 		FileAppend, %html%, %A_ScriptDir%\temp\poe_trade_search_form_options.txt, utf-8
 		TradeFunc_ParseSearchFormOptions()
 		Return 1
 	}
+		Else If (appendedCode1 = "000") {
+		SplashTextOff
+		;msg := "Test request to poe.trade timed out (was aborted by the client). You can continue the script but you may experience issues when making any search requests."
+		;msg .= "`n`n" "This is most likely caused by poe.trade server issues."
+		;msg .= "`n`n" "You can change the timout for these requests (currently " TradeOpts.CurlTimeout "s) in the settings menu -> ""TradeMacro"" tab -> ""General"" section."
+		msg := "Время тестового запроса к poe.trade истекло (прервано клиентом). Вы можете продолжать использовать скрипт, но у вас могут возникнуть проблемы при выполнений поисковых запросов."
+		msg .= "`n`n" "Это скорее всего вызвано проблемами в работе сайта poe.trade."
+		msg .= "`n`n" "Вы можете изменить время запроса (текущее значение " TradeOpts.CurlTimeout "секунд) в меню настроек >> во вкладке ""TradeMacro"" >> В секции ""Основные"""
+		Msgbox, 0x1030, PoE-TradeMacro, % msg
+		Return 1
+	}
 	Else If (not RegExMatch(ioHdr, "i)HTTP\/1.1 200 OK") and not StrLen(PreventErrorMsg) and not InStr(handleAccessForbidden, "Forbidden")) {
 		TradeFunc_HandleConnectionFailure(authHeaders, ioHdr, url)
+		Return 0
 	}
 	Else {
 		FileDelete, %A_ScriptDir%\temp\poe_trade_gem_names.txt

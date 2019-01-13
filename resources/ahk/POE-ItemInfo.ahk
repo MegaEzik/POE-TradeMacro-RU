@@ -799,9 +799,9 @@ CheckRarityLevel(RarityString)
 			return
 		}
 		
-		typeRQFRuToEn := {"Кольцо":"Ring","флакон":"Flask","Колчан":"Quiver"}
+		typeRQFRuToEn := {"Кольцо":"Ring","кольцо":"Ring","флакон":"Flask","Колчан":"Quiver"}
 		;If (RegExMatch(LoopField, "\b(Ring|Quiver|Flask)\b", match))		
-		If (RegExMatch(LoopField, "i)Кольцо|Колчан|флакон", match))
+		If (RegExMatch(LoopField, "i)Кольцо|кольцо|Колчан|флакон", match))
 		{
 			BaseType := "Item"
 			;SubType := match1
@@ -10664,7 +10664,7 @@ CreateSettingsUI()
 	}	
 	
 	; GDI+
-	GDIShift := SkipItemInfoUpdateCall ? 190 : 280
+	GDIShift := SkipItemInfoUpdateCall ? 210 : 300
 	GuiAddGroupBox("GDI+", "x7 ym+" GDIShift " w310 h320 Section")
 	
 	;GuiAddCheckBox("Enable GDI+", "xs10 yp+20 w115", Opts.UseGDI, "UseGDI", "UseGDIH", "SettingsUI_ChkUseGDI")
@@ -10736,9 +10736,9 @@ CreateSettingsUI()
 		GuiAddText("Y", "xs115 yp+0 w15", "LblScreenOffsetY")
 	
 	
-	; Display	
-	;GuiAddGroupBox("Display", "x327 ym+" 180 " w310 h295 Section")
-	GuiAddGroupBox("Отображение", "x327 ym+" 180 " w310 h335 Section")
+	; Display
+	;GuiAddGroupBox("Display", "x327 ym+" 200 " w310 h295 Section")
+	GuiAddGroupBox("Отображение", "x327 ym+" 200 " w310 h335 Section")
 	
 	;GuiAddCheckbox("Show header for affix overview", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH")
 	GuiAddCheckbox("Показывать заголовок к значениям аффиксов", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH")
@@ -12913,7 +12913,7 @@ CheckForUpdates:
 	}
 	return
 
-CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, isFallbackRequest = false, league = "", project = "", tmpFileName = "", fallbackDir = "", ByRef usedFallback = false, ByRef loggedCurrencyRequestAtStartup = false, ByRef loggedTempLeagueCurrencyRequest = false) {
+CurrencyDataDownloadURLtoJSON(url, sampleValue, critical = false, isFallbackRequest = false, league = "", project = "", tmpFileName = "", fallbackDir = "", ByRef usedFallback = false, ByRef loggedCurrencyRequestAtStartup = false, ByRef loggedTempLeagueCurrencyRequest = false) {
 	errorMsg := "Parsing the currency data (json) from poe.ninja failed.`n"
 	errorMsg .= "This should only happen when the servers are down / unavailable."
 	errorMsg .= "`n`n"
@@ -12926,6 +12926,9 @@ CurrencyDataDowloadURLtoJSON(url, sampleValue, critical = false, isFallbackReque
 	errors := 0
 	parsingError := false	
 	Try {
+		options := ""
+		options	.= "`n" "TimeOut: " CurlTimeout
+		
 		reqHeaders.push("Connection: keep-alive")
 		reqHeaders.push("Cache-Control: max-age=0")
 		reqHeaders.push("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")	
@@ -13001,7 +13004,7 @@ FetchCurrencyData:
 
 		url		:= "https://poe.ninja/api/Data/GetCurrencyOverview?league=" . currencyLeague
 		critical	:= StrLen(Globals.Get("LastCurrencyUpdate")) ? false : true
-		parsedJSON := CurrencyDataDowloadURLtoJSON(url, sampleValue, critical, false, currencyLeague, "PoE-ItemInfo", file, A_ScriptDir "\data", usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest)		
+		parsedJSON := CurrencyDataDownloadURLtoJSON(url, sampleValue, critical, false, currencyLeague, "PoE-ItemInfo", file, A_ScriptDir "\data", usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest)		
 
 		Try {
 			If (parsedJSON) {		
