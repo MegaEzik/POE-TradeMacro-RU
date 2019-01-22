@@ -179,9 +179,9 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 	;Конвертирование имен Древних карт
 	If (Item.IsMap) {
 		If (RegExMatch(itemRu_, "i)Древняя")) {
-			itemRu_:=Trim(StrReplace(itemRu_, "Древняя", ""))
-			If (nameItemRuToEn[itemRu_]) {
-				itemEn := "Elder " nameItemRuToEn[itemRu_]
+			mapBaseRu:=Trim(StrReplace(itemRu_, "Древняя", ""))
+			If (nameItemRuToEn[mapBaseRu]) {
+				itemEn := "Elder " nameItemRuToEn[mapBaseRu]
 				return itemEn
 			}
 		}

@@ -94,13 +94,13 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 		
 		newRelease := CompareVersions(versions.latest, versions.current)
 		If (newRelease) {
-		
-			/*
+			
 			;Вывод сообщения и блокировка обновления
-			msgtextupdru:="Обнаружено обновление " versions.latest.label " для англоязычной версии.`n`nВозможно ваша версия так же является устаревшей, рекомендуется проверить наличие обновленной адаптированной русской версии на форуме."
-			MsgBox, 0x1040, Возможно ваша версия устарела, %msgtextupdru%
-			*/
-			return		
+			msgtextupdru:="Обнаружено обновление " versions.latest.label " для англоязычной версии, возможно ваша версия так же является устаревшей!`n`nОткрыть пост на форуме, где вы можете проверить наличие обновленной русскоязычной версии?"
+			MsgBox, 0x1044, Возможно ваша версия устарела, %msgtextupdru%
+			IfMsgBox Yes
+				run https://ru.pathofexile.com/forum/view-post/359261
+			return
 			
 			If (SplashScreenTitle) {
 				Try {

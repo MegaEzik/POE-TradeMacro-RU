@@ -10,10 +10,12 @@
 #Include, %A_ScriptDir%\..\..\lib\PoEScripts_CreateTempFolder.ahk
 #Include, %A_ScriptDir%\..\..\lib\PoEScripts_HandleUserSettings.ahk
 #Include, %A_ScriptDir%\..\..\lib\PoEScripts_CheckInvalidScriptFolder.ahk
+#Include, %A_ScriptDir%\..\..\lib\Class_SplashUI.ahk
+#Include, %A_ScriptDir%\..\..\resources\VersionTrade.txt
 
 arguments := ""
 arg1 	= %1%
-scriptDir := FileExist(arg1) ? arg1 : RegExReplace(A_ScriptDir, "(.*)\\[^\\]+\\.*", "$1")
+global scriptDir := FileExist(arg1) ? arg1 : RegExReplace(A_ScriptDir, "(.*)\\[^\\]+\\.*", "$1")
 Loop, %0%  ; For each parameter
 {
 	If (not FileExist(%A_Index%)) {	; we don't want the first argument which is the project scriptdir here
@@ -29,7 +31,7 @@ If (InStr(arguments, "-nosplash", 0)) {
 	skipSplash := 1
 } Else {
 	skipSplash := 0
-	StartSplashScreen()
+	StartSplashScreen(TradeReleaseVersion)
 }
 
 If (InStr(arguments, "-mergeonly", 0)) {
@@ -42,10 +44,10 @@ If (InStr(arguments, "-mergeonly", 0)) {
 ;projectName := "PoE-TradeMacro"
 ; новое имя проекта, соответственно и другая папка с настройками отличная от английйской версии
 projectName := "PoE-TradeMacro_ru"
+
 /*
 	Check some folder permissions
 */
-
 PoEScripts_CheckFolderWriteAccess(A_MyDocuments . "\" . projectName)
 PoEScripts_CheckFolderWriteAccess(scriptDir)
 
@@ -55,7 +57,6 @@ If (not PoEScripts_CheckCorrectClientLanguage()) {
 If (!PoEScripts_CreateTempFolder(scriptDir, projectName)) {
 	ExitApp
 }
-
 PoEScripts_CheckInvalidScriptFolder(scriptDir, "PoE-TradeMacro")
 
 /*
@@ -71,10 +72,13 @@ PoEScripts_CompareUserFolderWithScriptFolder(userDirectory, scriptDir, projectNa
 /*
 	merge all scripts into `_TradeMacroMain.ahk` and execute it.
 */
-info		:= ReadFileToMerge(scriptDir "\resources\ahk\POE-ItemInfo.ahk")
-tradeInit := ReadFileToMerge(scriptDir "\resources\ahk\TradeMacroInit.ahk")
-trade	:= ReadFileToMerge(scriptDir "\resources\ahk\TradeMacro.ahk")
-addMacros := ReadFileToMerge(scriptDir "\resources\ahk\AdditionalMacros.ahk")
+;SplashUI.SetSubMessage("Merging and starting Scripts...")
+SplashUI.SetSubMessage("Слияние и запуск Скриптов...")
+
+tradeInit := ReadFileToMerge(file01 := scriptDir "\resources\ahk\TradeMacroInit.ahk")
+info		:= ReadFileToMerge(file02 := scriptDir "\resources\ahk\POE-ItemInfo.ahk")
+addMacros := ReadFileToMerge(file03 := scriptDir "\resources\ahk\AdditionalMacros.ahk")
+trade	:= ReadFileToMerge(file04 := scriptDir "\resources\ahk\TradeMacro.ahk")
 
 ; дополнительные функции
 adaptationRu := ReadFileToMerge(scriptDir "\resources\ahk\AdaptationRu.ahk")
@@ -85,34 +89,75 @@ addMacros	.= AppendCustomMacros(userDirectory)
 
 CloseScript("_TradeMacroMain.ahk")
 CloseScript("_ItemInfoMain.ahk")
-FileDelete, %scriptDir%\_TradeMacroMain.ahk
+
+global outputFile := scriptDir "\_TradeMacroMain.ahk"
+FileDelete, %outputFile%
 FileDelete, %scriptDir%\_ItemInfoMain.ahk
-FileCopy,   %scriptDir%\resources\ahk\TradeMacroInit.ahk, %scriptDir%\_TradeMacroMain.ahk
+; trademacro init
+FileCopy,   %scriptDir%\resources\ahk\TradeMacroInit.ahk, %outputFile%
 
 ; дополнительные функции
 FileAppend, %adaptationRu%	, %scriptDir%\_TradeMacroMain.ahk 
 
-FileAppend, %info%		, %scriptDir%\_TradeMacroMain.ahk
-FileAppend, %addMacros%	, %scriptDir%\_TradeMacroMain.ahk
-FileAppend, %trade%		, %scriptDir%\_TradeMacroMain.ahk
+; iteminfo
+FileAppend, % "`r`n`r`n/* ###--- Merged File: " file02 " ---~~~  `r`n*/`r`n", %outputFile%
+FileAppend, %info%		, %outputFile%
+; additional macros
+FileAppend, % "`r`n`r`n/* ###--- Merged File: " file03 " ---~~~  `r`n*/`r`n", %outputFile%
+FileAppend, %addMacros%	, %outputFile%
+; trademacro
+FileAppend, % "`r`n`r`n/* ###--- Merged File: " file04 " ---~~~  `r`n*/`r`n", %outputFile%
+FileAppend, %trade%		, %outputFile%
 
 ; set script hidden
-FileSetAttrib, +H, %scriptDir%\_TradeMacroMain.ahk
-; pass some parameters to TradeMacroInit
+FileSetAttrib, +H, %outputFile%
+
+/*
+	Kill the merged script if it's running already. This prevents the error parser to read text from the wrong window which could be from the already running script.
+	Pass some parameters so the script.
+	Parse runtime errors and show a GUI to help players with handling and reporting issues.
+*/
 If (not onlyMergeFiles) {
-	SplashTextOff
-	RunWait, "%A_AhkPath%" "%scriptDir%\_TradeMacroMain.ahk" "%projectName%" "%userDirectory%" "%isDevelopmentVersion%" "%overwrittenFiles%" "isMergedScript" "%skipSplash%" "%A_ScriptFullPath%", , UseErrorLevel
-	If (ErrorLevel) {
-		Menu, Tray, Icon, %scriptDir%\resources\images\poe-trade-bl.ico
-		GoSub, ShowErrorUI
-	}
-	Else {
-	ExitApp
-	}
-	} Else {
+	DetectHiddenWindows, On
+	SetTitleMatchMode, 1
+	WinClose, %scriptDir%\_TradeMacroMain.ahk ahk_class AutoHotkey, , 0
+	WinKill, %scriptDir%\_TradeMacroMain.ahk ahk_class AutoHotkey, , 0
+
+	SplashUI.DestroyUI()
+	Run, "%A_AhkPath%" "%scriptDir%\_TradeMacroMain.ahk" "%projectName%" "%userDirectory%" "%isDevelopmentVersion%" "%overwrittenFiles%" "isMergedScript" "%skipSplash%" "%A_ScriptFullPath%", , UseErrorLevel, OutputVarPID
+
+	; Check whether the called script is still running to detect script crashes, in favour of using runwait + errorlevel
+	; The advantage here is that we can read the text from the crash error window.
+	; This requires the merge script being closed by the called script though.
+	scriptRunning := true
+	global errorWindowText := ""
+
+	Loop {
+		Sleep, 100
+		Process, Exist, %OutputVarPID%
+		If (ErrorLevel = 0) {
+			scriptRunning := false
+		}
+
+		DetectHiddenWindows, On
+		SetTitleMatchMode, 1
+		IfWinNotExist, %outputFile% ahk_class AutoHotkey
+		{
+			;scriptRunning := false
+		}
+	} Until (not scriptRunning)
+
+	SetTitleMatchMode, 1
+	DetectHiddenText, On
+	WinGetText, errorWindowText, % "_TradeMacroMain.ahk"
+
+	Menu, Tray, Icon, %scriptDir%\resources\images\poe-trade-bl.ico
+	GoSub, ShowErrorUI
+} Else {
 	ExitApp	
 }
 
+Return
 
 ; ####################################################################################################################
 ; # functions
@@ -151,9 +196,9 @@ RunAsAdmin(arguments)
     Return arguments
 }
 
-StartSplashScreen() {
-	;SplashTextOn, , 20, PoE-TradeMacro, Merging and starting Scripts...	
-	SplashTextOn, , 20, PoE-TradeMacro_ru, Слияние и запуск скриптов...	
+StartSplashScreen(version) {
+ 	;global SplashUI := new SplashUI("on", "PoE-TradeMacro", "Initializing PoE-TradeMacro...", "- Checking permission and access to some folders...", version, scriptDir "\resources\images\greydot.png")
+	 global SplashUI := new SplashUI("on", "PoE-TradeMacro_ru", "Инициализация PoE-TradeMacro...", "- Проверка прав доступа к папкам...", version, scriptDir "\resources\images\greydot.png")
 }
 
 AppendCustomMacros(userDirectory)
@@ -168,8 +213,8 @@ AppendCustomMacros(userDirectory)
 	{
 		If A_LoopFileExt in %extensions%
 		{
-			FileRead, tmp, %A_LoopFileFullPath%
-			appendedMacros .= "; appended custom macro file: " A_LoopFileName " ---------------------------------------------------"
+			FileRead, tmp, %A_LoopFileFullPath%			
+			appendedMacros .= "`r`n`r`n/* ###--- Merged File: " A_LoopFileFullPath " ---~~~  `r`n*/`r`n"
 			appendedMacros .= "`n" tmp "`n`n"
 		}
 	}
@@ -210,13 +255,13 @@ ShowErrorUI:
 	Gui, New
 	Gui, +LastFound
 	Gui, Color, ffffff, ffffff
-
+	
 	Gui, Margin, 10, 10
 
 	Gui, Font, bold s8 cRed, Verdana
 	Gui, Add, Text, BackgroundTrans, The script couldn't be run successfully.
 	Gui, Font, norm s8 c000000, Verdana
-
+	
 	Gui, Add, Text, x15 BackgroundTrans, % "Please first take a look at these resources to try and resolve the issue:"
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://github.com/POE-TradeMacro/POE-TradeMacro/wiki/FAQ">- FAQ</a>
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://github.com/POE-TradeMacro/POE-TradeMacro/issues">- Github Issues</a>
@@ -228,17 +273,111 @@ ShowErrorUI:
 	Gui, Add, Text, x35 y+5 BackgroundTrans, % "- Folders that are being synched by some software."
 	Gui, Add, Text, x25 y+5 BackgroundTrans, % "- When having ""duplicate label"" or ""This line does not contain any recognized action"" errors try deleting:"
 	Gui, Add, Text, x35 y+5 BackgroundTrans, % "- All files in the folder " A_MyDocuments "\" projectName "\CustomMacros""."
-
+	
 	Gui, Add, Text, x15 y+15 BackgroundTrans, % "If the script displayed any error message please copy it or make a screenshot and report the issue."
 	Gui, Add, Text, x15 y+5 BackgroundTrans, % "Places to report in preferred and recommended order:"
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://github.com/POE-TradeMacro/POE-TradeMacro/issues">- Github Issues</a>
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://discord.gg/taKZqWw">- Discord</a>
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://www.pathofexile.com/forum/view-thread/1757730">- Forum</a>
+	
+		If (StrLen(errorWindowText)) {
+		Gui, Font, bold s8 c000000, Verdana
+		Gui, Add, Text, x15 y+15 BackgroundTrans, % "Parsed runtime error:"
+		errorMsg := ParseRuntimeError(errorWindowText, outputFile, errorFile)
+		Gui, Font, bold norm
+		Gui, Add, Text, x15 y+7 BackgroundTrans, % errorMsg
+
+		solution := GetSolution(errorMsg, errorFile)
+		If (solution) {
+			Gui, Font, bold s8 c000000, Verdana
+			Gui, Add, Text, x15 y+15 BackgroundTrans, % "Possible solution:"
+			Gui, Font, bold norm
+			Gui, Add, Text, x15 y+7 BackgroundTrans, % solution
+		}		
+
+		Gui, Font, bold s8 c000000, Verdana
+		Gui, Add, Text, x15 y+15 BackgroundTrans, % "Original runtime error:"
+		Gui, Font, bold norm
+		originalMsg := Trim(RegExReplace(errorWindowText, "i)^Ok(\r\n)?"))
+		originalMsg := Trim(RegExReplace(originalMsg, "i)(\r\n)?The program will exit\.$"))		
+		Gui, Add, Edit, x16 y+7 w600 r6 ReadOnly BackgroundTrans, % originalMsg
+
+		Gui, Add, Button, x15 y+10 gCopyError, Copy error to clipboard
+	}
 
 	Gui, Add, Text, x0 y0 w0 h0, % "dummycontrol"
 	Gui, Show, AutoSize, PoE-TradeMacro run error
 	ControlFocus, dummycontrol, PoE-TradeMacro run error
 Return
+
+CopyError:
+	ClipBoard := errorWindowText
+	ToolTip, Copied
+	SetTimer, RemoveToolTip, 1500
+Return
+
+RemoveToolTip:
+	SetTimer, RemoveToolTip, Off
+	ToolTip
+Return
+
+ParseRuntimeError(e, mergedFile, ByRef errorFile) {
+	errorLine := 
+	If (RegExMatch(e, "i)Error at line (\d+)\.", lineNr)) {
+		errorLine := lineNr1	
+	}
+
+	FileRead, rF, %mergedFile%	
+	files:= []
+
+	lines := []
+	Loop, Parse, rF, `n, `r
+	{
+		lines.push(A_LoopField)
+	}
+
+	For key, val in lines {
+		If (RegExMatch(val, "i)###---\sMerged File:\s(.*)\s---\~\~\~", mf)) {
+			If (mf) {		
+				f := {}
+				;f.name := RegExReplace(mf1, "i)(.*)(CustomMacros\\.*)$|(.*)(resources\\ahk\\.*)$", "$2$4")
+				f.name := mf1
+				f.start := A_Index				
+				files.push(f)
+			}
+		}
+	}
+
+	errorFile := ""	
+	Loop, % files.MaxIndex() {
+		If (A_Index = 1 and errorLine < files[A_Index].start) {
+			errorFile := scriptDir "\resources\ahk\TradeMacroInit.ahk"
+			Break
+		}
+		If (errorLine > files[A_Index].start) {
+			If (A_Index = files.MaxIndex()) {
+				errorFile := files[A_Index].name
+			}
+			Else If (errorLine < files[A_Index + 1].start) {
+				errorFile := files[A_Index].name
+			}
+			Else {
+				errorFile := files[A_Index + 1].name
+			}			
+		}
+	}
+
+	errorMsg := "Error at line " errorLine ". This should be caused by the source file: `n" errorFile
+	Return errorMsg
+}
+
+GetSolution(msg, file) {
+	solution := ""
+	If (RegExMatch(file, "i)customMacros_example\.txt$")) {
+		solution := "Try deleting the source file:`n" file
+		Return solution
+	}
+}
 
 GuiClose:
 	ExitApp

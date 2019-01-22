@@ -164,7 +164,7 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 		} Else {
 			;TradeFunc_OpenUrlInBrowser("http://pathofexile.gamepedia.com/")	
 			TradeFunc_OpenUrlInBrowser("https://pathofexile-ru.gamepedia.com/")
-		}
+		}	
 	}
 	Else {
 		UrlAffix := ""
@@ -613,10 +613,6 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.iLvl.min := 35
 			Item.UsedInSearch.iLvl.max := 49
 		}
-		Else If (Item.MaxSockets = 5) {
-			RequestParams.ilevel_min := 35
-			Item.UsedInSearch.iLvl.min := 35
-		}
 		; is (no 1-hand or shield or unset ring or helmet or glove or boots) but is weapon or armor
 		Else If ((not Item.IsFourSocket and not Item.IsThreeSocket and not Item.IsSingleSocket) and (Item.IsWeapon or Item.IsArmour) and Item.Level < 35) {
 			RequestParams.ilevel_max := 34
@@ -766,6 +762,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Else If (Item.IsElderBase) {
 				RequestParams.Elder := 1
 			}
+		} Else {
+			RequestParams.Shaper := ""
+			RequestParams.Elder := ""
 		}
 
 		; abyssal sockets 
@@ -883,22 +882,27 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			}
 		}
 		
-		If (Item.IsShaperBase) {
-			RequestParams.Shaper := 1
-			Item.UsedInSearch.specialBase := "Shaper"
-			Item.UsedInSearch.specialBaseRu := "Создателя"
-		}
-		Else {		
-			RequestParams.Shaper := 0
-		}
+		If (isAdvancedPriceCheckRedirect and not TradeGlobals.Get("AdvancedPriceCheckItem").useSpecialBase) {
+			RequestParams.Shaper := ""
+			RequestParams.Elder := ""
+		} Else {
+			If (Item.IsShaperBase) {
+				RequestParams.Shaper := 1
+				Item.UsedInSearch.specialBase := "Shaper"
+				Item.UsedInSearch.specialBaseRu := "Создателя"
+			}
+			Else {		
+				RequestParams.Shaper := 0
+			}
 		
-		If (Item.IsElderBase) {
-			RequestParams.Elder := 1
-			Item.UsedInSearch.specialBase := "Elder"
-			Item.UsedInSearch.specialBaseRu := "Древнего"
-		}
-		Else {			
-			RequestParams.Elder := 0
+			If (Item.IsElderBase) {
+				RequestParams.Elder := 1
+				Item.UsedInSearch.specialBase := "Elder"
+				Item.UsedInSearch.specialBaseRu := "Древнего"
+			}
+			Else {			
+				RequestParams.Elder := 0
+			}
 		}
 	} 
 	Else {
@@ -1365,7 +1369,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	currencyUrl	:= ""	
 	;If (Item.IsCurrency and !Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name)) {
 	If (Item.IsCurrency and not Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name_En)) {
-		If (!TradeOpts.AlternativeCurrencySearch or Item.IsFossil) {
+		If (!TradeOpts.AlternativeCurrencySearch or Item.IsFossil) {			
 			;Html := TradeFunc_DoCurrencyRequest(Item.Name, openSearchInBrowser, 0, currencyUrl, error)
 			Html := TradeFunc_DoCurrencyRequest(Item.Name_En, openSearchInBrowser, 0, currencyUrl, error)
 			If (error) {
@@ -2079,7 +2083,7 @@ TradeFunc_DoPostRequest(payload, openSearchInBrowser = false) {
 	reqHeaders.push("Upgrade-Insecure-Requests: 1")
 	reqHeaders.push("Content-type: application/x-www-form-urlencoded; charset=UTF-8")
 	reqHeaders.push("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-	reqHeaders.push("Referer: http://poe.trade/")
+	reqHeaders.push("Referer: http://poe.trade/")	
 	
 	If (StrLen(UserAgent)) {
 		reqHeaders.push("User-Agent: " UserAgent)
@@ -2089,7 +2093,7 @@ TradeFunc_DoPostRequest(payload, openSearchInBrowser = false) {
 	}
 
 	html := PoEScripts_Download(url, postData, reqHeaders, options, false)
-
+	
 	If (TradeOpts.Debug) {
 		FileDelete, %A_ScriptDir%\temp\DebugSearchOutput.html
 		FileAppend, %html%, %A_ScriptDir%\temp\DebugSearchOutput.html
@@ -2125,7 +2129,7 @@ TradeFunc_DoPoePricesRequest(RawItemData, ByRef retCurl) {
 	postData 	:= "l=" UriEncode(TradeGlobals.Get("LeagueName")) "&i=" EncodedItemData
 	payLength	:= StrLen(postData)
 	url 		:= "https://www.poeprices.info/api"
-
+	
 	reqTimeout := 25
 	options	:= "RequestType: GET"
 	;options	.= "`n" "ReturnHeaders: skip"
@@ -2150,7 +2154,7 @@ TradeFunc_DoPoePricesRequest(RawItemData, ByRef retCurl) {
 
 	responseObj := {}
 	responseHeader := ""
-
+	
 	RegExMatch(response, "is)(.*?({.*}))?.*?'(.*?)'.*", responseMatch)
 	response := responseMatch1
 	responseHeader := responseMatch3
@@ -2223,10 +2227,10 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 	Else If (response.error = "0") {
 		min := response.HasKey("min") or response.HasKey("min_price") ? true : false
 		max := response.HasKey("max") or response.HasKey("max_price") ? true : false		
-
+		
 		min_value := StrLen(response.min) ? response.min : response.min_price
 		max_value := StrLen(response.max) ? response.max : response.max_price
-
+		
 		If (min and max) {
 			If (not StrLen(min_value) and not StrLen(max_value)) {
 				ShowToolTip("")
@@ -2239,7 +2243,7 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 			TradeFunc_LogPoePricesRequest(response, request)
 			Return 0
 		}
-
+		
 		Return 1
 	}
 	Return 0
@@ -2247,7 +2251,7 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 
 TradeFunc_AddLineBreaksToText(text, approximateCharsPerLine) {
 	arr := StrSplit(text, " ")
-
+	
 	string := ""
 	l := 0
 	For key, value in arr {
@@ -2259,7 +2263,7 @@ TradeFunc_AddLineBreaksToText(text, approximateCharsPerLine) {
 			string .= " " value
 		}
 	}
-
+	
 	Return string
 }
 
@@ -2268,7 +2272,7 @@ TradeFunc_LogPoePricesRequest(response, request, filename = "poeprices_log.txt")
 	text .= "`n### " "Please post this log file below to https://www.pathofexile.com/forum/view-thread/1216141/."	
 	text .= "`n### " "Try not to ""spam"" their thread if a few other reports with the same error description were posted in the last hours."	
 	text .= "`n#####"	
-
+	
 	text .= "`n`n"
 	text .= "Request and response:`n"
 	Try {
@@ -2276,10 +2280,10 @@ TradeFunc_LogPoePricesRequest(response, request, filename = "poeprices_log.txt")
 	} Catch e {
 		text .= response
 	}
-
+	
 	FileDelete, %A_ScriptDir%\temp\%filename%
 	FileAppend, %text%, %A_ScriptDir%\temp\%filename%
-
+	
 	Return
 }
 
@@ -2302,6 +2306,8 @@ TradeFunc_DoCurrencyRequest(currencyName = "", openSearchInBrowser = false, init
 
 	If (init) {
 		Url := "http://currency.poe.trade/"
+		;SplashUI.SetSubMessage("Looking up poe.trade currency IDs...")
+		SplashUI.SetSubMessage("Получение идентификаторов валют от poe.trade...")
 	}
 	Else {
 		LeagueName := TradeGlobals.Get("LeagueName")
@@ -2453,12 +2459,10 @@ TradeFunc_ParseCurrencyHtml(html, payload, ParsingError = "") {
 	If (httpError) {
 		Return httpError
 	}	
-
+	
 	If (StrLen(ParsingError)) {
 		Return, ParsingError
 	}
-	
-	
 
 	;Title := Item.Name
 	Title := Item.Name " (англ. " Item.Name_En ")"
@@ -2861,8 +2865,7 @@ TradeFunc_ParseHtmlToObj(html, payload, iLvl = "", ench = "", isItemAgeRequest =
 	; Target HTML Looks like the ff:
      ; <tbody id="item-container-97" class="item" data-seller="Jobo" data-sellerid="458008"
 	; data-buyout="15 chaos" data-ign="Lolipop_Slave" data-league="Essence" data-name="Tabula Rasa Simple Robe"
-	; data-tab="This is a buff" data-x="10" data-y="9"> <tr class="first-line">
-	
+	; data-tab="This is a buff" data-x="10" data-y="9"> <tr class="first-line">	
 
 	NoOfItemsToShow := TradeOpts.ShowItemResults
 	results := []
@@ -2966,7 +2969,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	If (httpError) {
 		Return httpError
 	}
-	
+
 	LeagueName := TradeGlobals.Get("LeagueName")
 
 	;seperatorBig := "`n---------------------------------------------------------------------`n"
@@ -3128,7 +3131,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 
 	NoOfItemsToShow := TradeOpts.ShowItemResults
 	; add table headers to tooltip
-	;Title .= TradeFunc_ShowAcc(StrPad("Account",10), "|")
+	;Title .= TradeFunc_ShowAcc(StrPad("Account",12), "|")
 	Title .= TradeFunc_ShowAcc(StrPad("Аккаунт",12), "|")
 	Title .= StrPad("IGN",20)
 	;Title .= StrPad(StrPad("| Price ", 19, "right") . "|",20,"left")
@@ -4289,7 +4292,7 @@ TradeFunc_GetEnchantment(_item, type) {
 	}
 
 	For key, val in _item.Implicit {
-		;RegExMatch(_item.implicit[key], "i)([.0-9]+)(%? to([.0-9]+))?", values)
+		;RegExMatch(_item.implicit[key], "i)([.0-9]+)(%? to ([.0-9]+))?", values)
 		RegExMatch(_item.implicit[key], "i)([.0-9]+)(%? до([.0-9]+))?", values)
 		imp      := RegExReplace(_item.implicit[key], "i)([.0-9]+)", "#")
 
@@ -4493,7 +4496,7 @@ TradeFunc_GetNonUniqueModValueGivenPoeTradeMod(itemModifiers, poeTradeMod, ByRef
 			;ModStr := StrReplace(itemModifiers.name_orig, CurrValue, "#")
 			ModStr := StrReplace(itemModifiers.name_orig_en, CurrValue, "#")
 		}
-		
+
 		; в случае если оригинальное имя не было сконвертировано
 		If (itemModifiers.name_orig_en = itemModifiers.name_orig) {
 			; мы не можем сравнивать оригинальную строку на русском языке с модами poeTradeMod, поэтому
@@ -4694,20 +4697,20 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 			Gui, PredictedPricing:Add, Text, x30 w350 y+4 BackgroundTrans, % _line	
 		}		
 	}
-		
+
 	; browser url
 	_url := data.added.browserUrl
 	Gui, PredictedPricing:Add, Link, x245 y+12 cBlue BackgroundTrans, <a href="%_url%">Open on poeprices.info</a>
 	
-	Gui, PredictedPricing:Font, norm s8 italic c000000, Verdana
-	
+	Gui, PredictedPricing:Font, norm s8 italic c000000, Verdana	
+
 	If (StrLen(data.warning_msg)) {
 		Gui, PredictedPricing:Add, Text, x15 y+25 w380 cc14326 BackgroundTrans, % "poeprices warning message:"
 		Gui, PredictedPricing:Add, Text, x15 y+8 w380 cc14326 BackgroundTrans, % data.warning_msg
 	} Else {
 		Gui, PredictedPricing:Add, Text, x15 y+25 w380 BackgroundTrans, % ""
 	}
-	
+
 	Gui, PredictedPricing:Font, bold s8 c000000, Verdana
 	Gui, PredictedPricing:Add, GroupBox, w400 h230 y+10 x10, Feedback
 	Gui, PredictedPricing:Font, norm c000000, Verdana
@@ -4734,7 +4737,7 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 	Gui, PredictedPricing:Add, Text, x+5 yp+0 cBlack BackgroundTrans, % "or"
 	Gui, PredictedPricing:Add, Link, x+5 yp+0 cBlue BackgroundTrans, <a href="https://www.patreon.com/bePatron?u=5966037">Patreon</a>
 	
- 	Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y+10 w390, % "You can disable this GUI in favour of a simple result tooltip. Settings menu -> under 'Search' group. Or even disable this predicted search entirely."
+	Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y+10 w390, % "You can disable this GUI in favour of a simple result tooltip. Settings menu -> under 'Search' group. Or even disable this predicted search entirely."
 	
 	; invisible fields
 	Gui, PredictedPricing:Add, Edit, x+0 yp+0 w0 h0 ReadOnly vPredictedPricingEncodedData, % data.added.encodedData
@@ -6000,7 +6003,7 @@ Return
 
 TradeSettingsUI_BtnOK:
 	Global TradeOpts
-	Gui, Submit
+	Gui, SettingsUI:Submit
 	SavedTradeSettings := true
 	Sleep, 50
 	WriteTradeConfig()
@@ -6008,11 +6011,11 @@ TradeSettingsUI_BtnOK:
 Return
 
 TradeSettingsUI_BtnCancel:
-	Gui, Cancel
+	Gui, SettingsUI:Cancel
 Return
 
 TradeSettingsUI_BtnDefaults:
-	Gui, Cancel
+	Gui, SettingsUI:Cancel
 	Sleep, 75
 	ReadTradeConfig(A_ScriptDir "\resources\default_UserFiles")
 	Sleep, 75
@@ -6048,7 +6051,7 @@ ReadPoeNinjaCurrencyData:
 	file			:= A_ScriptDir . "\temp\currencyData.json"
 	fallBackDir	:= A_ScriptDir . "\data_trade"
 	url			:= "https://poe.ninja/api/Data/GetCurrencyOverview?league=" . league
-	parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, false, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest)
+	parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, false, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)
 	
 	; fallback to Standard and Hardcore league if used league seems to not be available
 	If (!parsedJSON.currencyDetails.length()) {
@@ -6062,8 +6065,8 @@ ReadPoeNinjaCurrencyData:
 		}
 
 		url			:= "https://poe.ninja/api/Data/GetCurrencyOverview?league=" . league
-		parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest)
-	}	
+		parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)
+	}
 	global CurrencyHistoryData := parsedJSON.lines
 	TradeGlobals.Set("LastAltCurrencyUpdate", A_NowUTC)
 	
@@ -6296,7 +6299,7 @@ TradeFunc_ChangeLeague() {
 
 	NewSearchLeague := (next) ? next : first
 	; Call Submit for the settings UI, otherwise we can't set the new league if the UI was last closed via close button or "x"
-	Gui, Submit
+	Gui, SettingsUI:Submit
 	SearchLeague := TradeFunc_CheckIfLeagueIsActive(NewSearchLeague)
 	TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[SearchLeague])
 	WriteTradeConfig()
