@@ -5996,6 +5996,13 @@ OpenRuForumFromMenu:
 	TradeFunc_OpenUrlInBrowser("https://ru.pathofexile.com/forum/view-post/359261")
 Return
 
+CheckUpdatesFromMenu:
+	HasUpdate := PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
+	If (hasUpdate = "no update" and not firstUpdateCheck) {
+		MsgBox Нет доступных обновлений!
+	}
+Return
+
 OpenPayPal:
 	url := "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZVTWJNH6GSME"
 	TradeFunc_OpenUrlInBrowser(url)

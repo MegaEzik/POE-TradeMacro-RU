@@ -40,6 +40,7 @@ Menu, Tray, Add, Пожертвовать, OpenPayPal
 Menu, Tray, Add, Открыть Wiki/FAQ, OpenGithubWikiFromMenu
 ;Добавляем пункт меню для открытия темы TradeMacro на русском форуме
 Menu, Tray, Add, Открыть пост на РУ-форуме, OpenRuForumFromMenu
+Menu, Tray, Add, Проверить наличие обновлений, CheckUpdatesFromMenu
 
 argumentSkipSplash = %6%
 If (not argumentSkipSplash) {
@@ -541,8 +542,9 @@ TradeFunc_ScriptUpdate() {
 	} Else {
 		ShowUpdateNotification := 1
 	}
-	SplashScreenTitle := "PoE-TradeMacro"
-	PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
+	SplashScreenTitle := "PoE-TradeMacro_ru"
+	;PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
+	PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
 }
 
 ;----------------------- Trade Settings UI (added onto ItemInfos Settings UI) ---------------------------------------
@@ -589,19 +591,19 @@ CreateTradeSettingsUI()
 	GuiAddCheckbox("Обновление: Уведомления", "x17 yp+30 w260 h30", TradeOpts.ShowUpdateNotifications, "ShowUpdateNotifications", "ShowUpdateNotificationsH", "", "", "SettingsUI")
 	;AddToolTip(ShowUpdateNotificationsH, "Notifies you when there's a new release available.")
 	AddToolTip(ShowUpdateNotificationsH, "Будет уведомлять вас о выходе новой версии")
-	GuiControl, Disable, ShowUpdateNotifications ;Данная функция не работает в русской версии
+	;GuiControl, Disable, ShowUpdateNotifications ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Update: Skip folder selection", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH", "", "", "SettingsUI")
 	GuiAddCheckbox("Обновление: Пропустить выбор папки", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH", "", "", "SettingsUI")
 	;AddToolTip(UpdateSkipSelectionH, "Skips selecting an update location.`nThe current script directory will be used as default.")
 	AddToolTip(UpdateSkipSelectionH, "Пропускает выбор папки для обновления.`nПо умолчанию будет использован текущий каталог скрипта.")
-	GuiControl, Disable, UpdateSkipSelection ;Данная функция не работает в русской версии
+	;GuiControl, Disable, UpdateSkipSelection ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Update: Skip backup", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH", "", "", "SettingsUI")
 	GuiAddCheckbox("Обновление: Пропустить резервацию", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH", "", "", "SettingsUI")
 	;AddToolTip(UpdateSkipBackupH, "Skips making a backup of the install location/folder.")
 	AddToolTip(UpdateSkipBackupH, "Пропускает создание резервной копии .")
-	GuiControl, Disable, UpdateSkipBackup ;Данная функция не работает в русской версии
+	;GuiControl, Disable, UpdateSkipBackup ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Open browser Win10 fix", "x17 yp+30 w260 h30", TradeOpts.OpenWithDefaultWin10Fix, "OpenWithDefaultWin10Fix", "OpenWithDefaultWin10FixH", "", "", "SettingsUI")
 	GuiAddCheckbox("Исправление открытия браузера в Win10", "x17 yp+30 w260 h30", TradeOpts.OpenWithDefaultWin10Fix, "OpenWithDefaultWin10Fix", "OpenWithDefaultWin10FixH", "", "", "SettingsUI")

@@ -497,7 +497,7 @@ global firstUpdateCheck := true
 If (!SkipItemInfoUpdateCall) {
  	;global SplashUI := new SplashUI("on", "PoE-ItemInfo", "Initializing PoE-ItemInfo...", "", ReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
 	 global SplashUI := new SplashUI("on", "PoE-ItemInfo_ru", "Инициализация PoE-ItemInfo...", "", ReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
-	GoSub, CheckForUpdates
+	;GoSub, CheckForUpdates //Не будем проверять обвления для ItemInfo
 }
 firstUpdateCheck := false
 
@@ -546,9 +546,7 @@ Menu, Tray, Add, О скрипте..., MenuTray_About
 ;Menu, Tray, Add, Show all assigned Hotkeys, ShowAssignedHotkeys
 Menu, Tray, Add, Показать настроенные горячие клавиши, ShowAssignedHotkeys
 Menu, Tray, Add, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings"), ShowSettingsUI
-;Menu, Tray, Add, Check for updates, CheckForUpdates
-Menu, Tray, Add, Проверка обновлений, CheckForUpdates
-Menu, Tray, Disable, Проверка обновлений ;Данная функция не работает в русской версии
+;Menu, Tray, Add, Check for updates, CheckForUpdates //Скрываем ручную проверку обновлений для ItemInfo
 ;Menu, Tray, Add, Show Update Notes, ShowUpdateNotes
 Menu, Tray, Add, История изменений, ShowUpdateNotes
 Menu, Tray, Add ; Separator
