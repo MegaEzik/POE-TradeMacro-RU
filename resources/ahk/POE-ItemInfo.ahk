@@ -90,7 +90,7 @@ Globals.Set("ItemBaseList", ItemBaseList)
 Globals.Set("ItemFilterObj", [])
 Globals.Set("CurrentItemFilter", "")
 
-; массив соответствий базовых имен предметов на русском языке их английским варимантам
+; массив соответствий базовых имен предметов на русском языке их английским вариантам
 FileRead, nameItemRuToEnJSON, %A_ScriptDir%\data\ru\nameItemRuToEn.json
 Globals.Set("nameItemRuToEn", JSON.Load(nameItemRuToEnJSON))
 ; аналогично моды
@@ -497,7 +497,7 @@ global firstUpdateCheck := true
 If (!SkipItemInfoUpdateCall) {
  	;global SplashUI := new SplashUI("on", "PoE-ItemInfo", "Initializing PoE-ItemInfo...", "", ReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
 	 global SplashUI := new SplashUI("on", "PoE-ItemInfo_ru", "Инициализация PoE-ItemInfo...", "", ReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
-	;GoSub, CheckForUpdates //Не будем проверять обвления для ItemInfo
+	;GoSub, CheckForUpdates ;Не будем проверять обновления для ItemInfo
 }
 firstUpdateCheck := false
 
@@ -535,7 +535,7 @@ Menu, Tray, Tip, Path of Exile Item Info ru %RelVer%
 
 Menu, Tray, NoStandard
 ;Menu, Tray, Add, Reload Script (Use only this), ReloadScript
-Menu, Tray, Add, Перезапустить (Используйте только этот способ), ReloadScript
+Menu, Tray, Add, Перезапустить, ReloadScript
 Menu, Tray, Add ; Separator
 ;Menu, Tray, Add, About..., MenuTray_About
 Menu, Tray, Add, О скрипте..., MenuTray_About
@@ -544,9 +544,9 @@ Menu, Tray, Add, О скрипте..., MenuTray_About
 	Menu, Tray, Add, Translate Item, ShowTranslationUI
 */
 ;Menu, Tray, Add, Show all assigned Hotkeys, ShowAssignedHotkeys
-Menu, Tray, Add, Показать настроенные горячие клавиши, ShowAssignedHotkeys
+Menu, Tray, Add, Настроенные горячие клавиши, ShowAssignedHotkeys
 Menu, Tray, Add, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings"), ShowSettingsUI
-;Menu, Tray, Add, Check for updates, CheckForUpdates //Скрываем ручную проверку обновлений для ItemInfo
+;Menu, Tray, Add, Check for updates, CheckForUpdates ;Убираем ручную проверку обновлений для ItemInfo
 ;Menu, Tray, Add, Show Update Notes, ShowUpdateNotes
 Menu, Tray, Add, История изменений, ShowUpdateNotes
 Menu, Tray, Add ; Separator
@@ -864,7 +864,7 @@ CheckRarityLevel(RarityString)
 		}
 		
 		; Leaguestones and Scarabs
-		typeLSSRuToEn := {"Камень лиги":"Leaguestones","скарабей":"Scarab"}
+		typeLSSRuToEn := {"Камень лиги":"Leaguestone","скарабей":"Scarab"}
 		;If (RegExMatch(Loopfield, "i)\b(Leaguestone|Scarab)\b"))
 		If (RegExMatch(Loopfield, "i)Камень лиги|скарабей"))
 		{
@@ -1678,7 +1678,7 @@ ParseGemXP(ItemDataText, PartialString="Опыт:", ByRef Flat = "")
 			_Flat := StrTrimWhitespace(ItemLevelParts2)
 			XP := RegExReplace(_Flat, "\.")			
 			*/
-			; вот так корректно расчитывает процент опыта камня
+			; вот так корректно рассчитывать процент опыта камня
 			; т.к. в строке опыта камня между цифрами игра помещает символ с кодом 0xA0 - неразрывный пробел
 			_Flat := StrTrimWhitespace(A_LoopField)
 			XP := RegExReplace(_Flat, chr(0xA0), "")
@@ -6367,13 +6367,13 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Attack Mods
-		IfInString, A_LoopField, Невозможно сгенерировать свойства атак
+		IfInString, A_LoopField, Не может иметь свойства атак
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
 		}
 		;IfInString, A_LoopField, Cannot roll Caster Mods
-		IfInString, A_LoopField, Невозможно сгенерировать свойства чар
+		IfInString, A_LoopField, Не может иметь свойства чар
 		{
 			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
 			Continue
@@ -8246,7 +8246,7 @@ ConvertCurrency(ItemName, ItemStats, ByRef dataSource)
 	; используем расширенный массив соответствий базовых имен предметов на русском языке их английским вариантам
 	;ItemNameRu := Globals.Get("nameItemRuToEn")
 	;ItemNameEn := ItemNameRu[ItemName]
-	; используем функцию конвертации для котроля процесса конвертации имен
+	; используем функцию конвертации для контроля процесса конвертации имен
 	ItemNameEn := AdpRu_ConvertRuItemNameToEn(ItemName, true)
 	If (ItemNameEn)
 	{
@@ -9627,7 +9627,7 @@ CreatePseudoMods(mods, returnAllMods := False) {
 
 	; соответствие русских наименований английским
 	nameRuToEn := {"атакам":"Attacks", "чарам":"Spells", "стихий":"Elemental", "огня":"Fire", "холода":"Cold", "холоду":"Cold", "огню":"Fire", "молнии":"Lightning", "хаосу":"Chaos", "силы":"Strength", "интеллекта":"Intelligence", "силе":"Strength", "ловкости":"Dexterity", "интеллекту":"Intelligence", "маны":"Mana","здоровья":"Life" }
-	; и наооборот
+	; и наоборот
 	nameEnToRu := {"Strength":"силе", "Dexterity":"ловкости", "Intelligence":"интеллекту", "Cold":"холоду", "Fire":"огню", "Lightning":"молнии"}
 	; второй вариант написания
 	nameEnToRu2 := {"Cold":"холода", "Fire":"огня", "Lightning":"молнии", "Elemental":"стихий"}
@@ -10682,7 +10682,7 @@ CreateSettingsUI()
 	;GuiAddCheckBox("Rendering Fix", "xs10 yp+30 w115", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH", "", "", "SettingsUI")
 	GuiAddCheckBox("Исправление отрисовки", "xs10 yp+30 w100", Opts.GDIRenderingFix, "GDIRenderingFix", "GDIRenderingFixH", "", "", "SettingsUI")
 	;AddToolTip(GDIRenderingFixH, "In the case that rendered graphics (window, border and text) are`nunsharp/blurry this should fix the issue.")
-	AddToolTip(GDIRenderingFixH, "В случае, если визуализированная графика (окно, рамка и текст) является `nнерезким/размытым, это должно устранить проблему.")
+	AddToolTip(GDIRenderingFixH, "В случае, если визуализированная графика (окно, рамка и текст) является `nне резким/размытым, это должно устранить проблему.")
 	;GuiAddText("(Restart script after disabling GDI+. Enabling might cause general FPS drops.)", "xs120 ys+20 w185 cRed", "", "", "", "", "SettingsUI")
 	GuiAddText("Перезапустите скрипт после отключения GDI+. Включение может привести снижению частоты кадров!", "xs120 ys+20 w185 cRed", "")
 	
@@ -10726,13 +10726,13 @@ CreateSettingsUI()
 	;GuiAddText("Mouse move threshold (px):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH", "", "", "SettingsUI")
 	GuiAddText("Смещение указателя (пиксели):", "xs27 yp+3 w200 h20 0x0100", "LblMouseMoveThreshold", "LblMouseMoveThresholdH", "", "", "SettingsUI")
 	;AddToolTip(LblMouseMoveThresholdH, "Hide tooltip when the mouse cursor moved x pixel away from the initial position.`nEffectively permanent tooltip when using a value larger than the monitor diameter.")
-	AddToolTip(LblMouseMoveThresholdH, "Убрать всплывающую подсказку, когда курсор мыши смещается на указанное колличество пикселей от исходной позиции.`nВозможно постоянное отображение подсказки, если использовать значение, большее, чем текущее разрешение экрана.")
+	AddToolTip(LblMouseMoveThresholdH, "Убрать всплывающую подсказку, когда курсор мыши смещается на указанное количество пикселей от исходной позиции.`nВозможно постоянное отображение подсказки, если использовать значение, большее, чем текущее разрешение экрана.")
 	
 	GuiAddEdit(Opts.ToolTipTimeoutSeconds, "xs250 yp+27 w50 Number", "ToolTipTimeoutSeconds", "", "", "", "SettingsUI")
 	;GuiAddCheckBox("Use tooltip timeout (seconds)", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout", "", "SettingsUI")
 	GuiAddCheckBox("Время показа (секунды):", "xs10 yp+3 w200", Opts.UseTooltipTimeout, "UseTooltipTimeout", "UseTooltipTimeoutH", "SettingsUI_ChkUseTooltipTimeout", "", "SettingsUI")
 	;AddToolTip(UseTooltipTimeoutH, "Hide tooltip automatically after defined time.")
-	AddToolTip(UseTooltipTimeoutH, "Убрать всплывающую подсказку через указанное колличество секунд.")
+	AddToolTip(UseTooltipTimeoutH, "Убрать всплывающую подсказку через указанное количество секунд.")
 	
 	;GuiAddCheckbox("Display at fixed coordinates", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords", "", "SettingsUI")
 	GuiAddCheckbox("Фиксированное расположение", "xs10 yp+30 w280", Opts.DisplayToolTipAtFixedCoords, "DisplayToolTipAtFixedCoords", "DisplayToolTipAtFixedCoordsH", "SettingsUI_ChkDisplayToolTipAtFixedCoords", "", "SettingsUI")
@@ -10794,7 +10794,7 @@ CreateSettingsUI()
 	;GuiAddText("Multi tier range separator:", "xs10 yp+3 w170 h20 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH", "", "", "SettingsUI")
 	GuiAddText("Разделитель многоуровневого диапазона:", "xs10 yp+3 w200 h30 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH", "", "", "SettingsUI")
 	;AddToolTip(MultiTierRangeSeparatorH, "Select separator (default: … ) for a multi tier roll range with uncertainty:`n83% increased Light…   73-85…83-95   102-109 (84)  T1-4 P + T1-6 S`n	                     There--^")
-	AddToolTip(MultiTierRangeSeparatorH, "Выберите разделитель (по умолчанию: … ) для  многоуровневого диапазона с неопределенным роллом`n83% увеличение урона…   73-85…83-95   102-109 (84)  T1-4 Пр + T1-6 Су`n                                           Здесь--^")
+	AddToolTip(MultiTierRangeSeparatorH, "Выберите разделитель (по умолчанию: … ) для  многоуровневого диапазона с неопределенным значения`n83% увеличения урона…   73-85…83-95   102-109 (84)  T1-4 Пр + T1-6 Су`n                                           Здесь--^")
 	
 	GuiAddEdit(Opts.FontSize, "xs260 y+6 w40 h20 Number", "FontSize", "", "", "", "SettingsUI")
 	;GuiAddText("Font Size:", "xs10 yp+3 w180 h20 0x0100", "", "", "", "", "SettingsUI")
@@ -13737,7 +13737,7 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 		;tt .= "Inline comments:" "`n" line "`n" 
 		tt .= "В соответствии с правилом:" "`n" line "`n" 
 		tt .= comments "`n"
-		tt .= "Условия соответвия:" "`n" line "`n" 
+		tt .= "Условия соответствия:" "`n" line "`n" 
 		tt .= conditions "`n`n"
 		;tt .= "  Disclaimer: Matching explicit mods is only possible for magic items. In rare" "`n"
 		;tt .= "              cases this can cause a wrong match, depending on the used filter."

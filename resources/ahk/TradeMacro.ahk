@@ -1388,7 +1388,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	}
 	Else If (not openSearchInBrowser and TradeOpts.UsePredictedItemPricing and itemEligibleForPredictedPricing and not isAdvancedPriceCheckRedirect and not isItemAgeRequest) {
 		requestCurl := ""
-		Html := TradeFunc_DoPoePricesRequest(ItemData.FullText, requestCurl)
+		;Html := TradeFunc_DoPoePricesRequest(ItemData.FullText, requestCurl)
+		Html := TradeFunc_DoPoePricesRequest(AdpRu_ItemDataEnToRu(ItemData.FullText), requestCurl)
+		
 	}
 	Else If (not openSearchInBrowser) {
 		Html := TradeFunc_DoPostRequest(Payload, openSearchInBrowser)
@@ -2195,31 +2197,37 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 	If (RegExMatch(response.added.retHeader, "i)(403|404|504)", errMatch)) {
 		ShowToolTip("")
 		errorDesc := " (" httpErrors[errMatch1] ")"
-		ShowTooltip("ERROR: Request to poeprices.info returned HTTP ERROR " errMatch1 errorDesc "! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+		;ShowTooltip("ERROR: Request to poeprices.info returned HTTP ERROR " errMatch1 errorDesc "! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+		ShowTooltip("ОШИБКА: Запрос к poeprices.info вернул код состояния HTTP " errMatch1 errorDesc "! `n`nПодробнее ""temp\poeprices_log.txt"".")
 		TradeFunc_LogPoePricesRequest(response, request)
 		Return 0
 	}
 	Else If (RegExMatch(response.added.retHeader, "i)(000)", errMatch)) {
 		ShowToolTip("")
-		ShowTooltip("ERROR: Client disconnected before completing the request to poeprices.info.`nA possible cause is that the timeout was set too low (" response.added.timeoutParam "s) and may have to be increased! `n`nThis might be a temporary issue because of slow server responses.`nPlease report it anyway.")
+		;ShowTooltip("ERROR: Client disconnected before completing the request to poeprices.info.`nA possible cause is that the timeout was set too low (" response.added.timeoutParam "s) and may have to be increased! `n`nThis might be a temporary issue because of slow server responses.`nPlease report it anyway.")
+		ShowTooltip("ОШИБКА: Клиент отключился до завершения запроса к poeprices.info.`nВозможная причина в том, что время запроса было установлено`nслишком низким (" response.added.timeoutParam "c), возможно его требуется увеличить! `n`nЭто может быть временной проблемой из-за медленного ответа от сервера.")
 		TradeFunc_LogPoePricesRequest(response, request)
 		Return 0
 	}
 	Else If (not response or not response.HasKey("error")) {
 		ShowToolTip("")
-		ShowTooltip("ERROR: Request to poeprices.info timed out or`nreturned an invalid response! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+		;ShowTooltip("ERROR: Request to poeprices.info timed out or`nreturned an invalid response! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+		ShowTooltip("ОШИБКА: Превышено время ожидания запроса poeprices.info`nили получен неверный ответ!`n`nПодробнее ""temp\poeprices_log.txt"".")
 		TradeFunc_LogPoePricesRequest(response, request)
 		Return 0
 	}
 	Else If (response.error != "0") {
 		ShowToolTip("")
 		If (response.error_msg) {
-			msg := "ERROR: Predicted search has encountered an issue! `n`n"
-			msg .= "Returned message: `n"
+			;msg := "ERROR: Predicted search has encountered an issue! `n`n"
+			msg := "ОШИБКА: Во время прогнозирования произошла ошибка! `n`n"
+			;msg .= "Returned message: `n"
+			msg .= "Возвращенное сообщение: `n"
 			msg .= TradeFunc_AddLineBreaksToText(response.error_msg, 100)
 			ShowTooltip(msg)
 		} Else {
-			ShowTooltip("ERROR: Predicted search has encountered an unknown error! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+			;ShowTooltip("ERROR: Predicted search has encountered an unknown error! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+			ShowTooltip("ОШИБКА: Во время прогнозирования произошла неизвестная ошибка! `n`nПодробнее ""temp\poeprices_log.txt"".")
 		}
 		TradeFunc_LogPoePricesRequest(response, request)		
 		Return 0
@@ -2234,12 +2242,14 @@ TradeFunc_ParsePoePricesInfoErrorCode(response, request) {
 		If (min and max) {
 			If (not StrLen(min_value) and not StrLen(max_value)) {
 				ShowToolTip("")
-				ShowTooltip("No price prediction available. `n`nItem not found, insufficient sample data.")
+				;ShowTooltip("No price prediction available. `n`nItem not found, insufficient sample data.")
+				ShowTooltip("Прогнозирование недоступно. `n`nПредмет не найден или недостаточно данных.")
 				Return 0
 			}
 		} Else If (not StrLen(min_value) and not StrLen(max_value)) {
 			ShowToolTip("")
-			ShowTooltip("ERROR: Request to poeprices.info failed,`nno prices were returned! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+			;ShowTooltip("ERROR: Request to poeprices.info failed,`nno prices were returned! `n`nPlease take a look at the file ""temp\poeprices_log.txt"".")
+			ShowTooltip("ОШИБКА: Запрос к poeprices.info провалился,`nне удалось получить цены! `n`nПодробнее ""temp\poeprices_log.txt"".")
 			TradeFunc_LogPoePricesRequest(response, request)
 			Return 0
 		}
@@ -2470,10 +2480,11 @@ TradeFunc_ParseCurrencyHtml(html, payload, ParsingError = "") {
 	Title .= "`n------------------------------ `n"
 	NoOfItemsToShow := TradeOpts.ShowItemResults
 
-	Title .= StrPad("IGN" ,10)
+	;Title .= StrPad("IGN" ,10)
+	Title .= StrPad("Персонаж" ,10)
 	;Title .= StrPad("| Ratio",20)
 	Title .= StrPad("| Курс",20)
-/* ширину колонки будем расчитывать динамически
+/* ширину колонки будем рассчитывать динамически
 	;Title .= "| " . StrPad("Buy  ",20, "Left")
 	Title .= "| " . StrPad("Купить  ",21, "Left")
 */	
@@ -3133,7 +3144,8 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	; add table headers to tooltip
 	;Title .= TradeFunc_ShowAcc(StrPad("Account",12), "|")
 	Title .= TradeFunc_ShowAcc(StrPad("Аккаунт",12), "|")
-	Title .= StrPad("IGN",20)
+	;Title .= StrPad("IGN",20)
+	Title .= StrPad("Персонаж",20)
 	;Title .= StrPad(StrPad("| Price ", 19, "right") . "|",20,"left")
 	Title .= StrPad(StrPad("| Цена ", 28, "right") . "|",20,"left")
 
@@ -3310,23 +3322,28 @@ TradeFunc_ParsePoePricesInfoData(response) {
 	headLine .= ", (" LeagueName ")"
 
 	lines := []
-	lines.push(["~~ Predicted item pricing (via machine-learning) ~~", "center", true])
+	;lines.push(["~~ Predicted item pricing (via machine-learning) ~~", "center", true])
+	lines.push(["~~ Прогнозирование цены (алгоритмами машинного обучения) ~~", "center", true])
 	lines.push([headLine, "left",  true])
 	lines.push(["", "left"])
-	lines.push(["   Price range: " Round(Trim(response.min), 2) " ~ " Round(Trim(response.max), 2) " " Trim(response.currency), "left"])
+	;lines.push(["   Price range: " Round(Trim(response.min), 2) " ~ " Round(Trim(response.max), 2) " " Trim(response.currency), "left"])
+	lines.push(["   Разброс цены: " Round(Trim(response.min), 2) " ~ " Round(Trim(response.max), 2) " " Trim(response.currency), "left"])
 	lines.push(["", "left", true])
 	lines.push(["", "left"])
 	
 	_details := TradeFunc_PreparePredictedPricingContributionDetails(response.pred_explanation, 40)
-	lines.push(["Contribution to predicted price:", "left"])
+	;lines.push(["Contribution to predicted price:", "left"])
+	lines.push(["Прогноз включает:", "left"])
 	For _k, _v in _details {
 		_line := _v.percentage " -> " _v.name 
 		lines.push(["  " _line, "left"])
 	}
 	lines.push(["", "left"])
 	
-	lines.push(["Please consider supporting POEPRICES.INFO.", "left"])
-	lines.push(["Financially or via feedback on this feature on their website.", "left"])
+	;lines.push(["Please consider supporting POEPRICES.INFO.", "left"])
+	lines.push(["Пожалуйста поддержите POEPRICES.INFO.", "left"])
+	;lines.push(["Financially or via feedback on this feature on their website.", "left"])
+	lines.push(["Пожертвованием или оставив комментарий на их сайте.", "left"])
 	
 	maxWidth := 0
 	For i, line in lines {
@@ -3826,7 +3843,7 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 				If (t_ru.IsNameRuConst) {
 					; добавляем русское название мода
 					v.name_ru := t_ru.nameModConst					
-					; удалим из имени мода константу и сохраним измененнный мод в массиве
+					; удалим из имени мода константу и сохраним измененный мод в массиве
 					Item_.mods_const_ru[mod_name_full] := AdpRu_ConverNameModToValue(mod_name_full, t_ru.nameModConst)				
 				} Else {
 					; добавляем русское название мода
@@ -3959,7 +3976,7 @@ TradeFunc_PrepareNonUniqueItemMods(Affixes, Implicit, Rarity, Enchantment = fals
 			found := false
 
 			For key, mod in mods {
-				;If (tempmod.name = mod.name) { ; оригинальная строка закоментирована - имплицит нельзя объединять с простым модом, т.к. предмет с завышенным значением имплицита может не существовать
+				;If (tempmod.name = mod.name) { ; оригинальная строка закомментирована - имплицит нельзя объединять с простым модом, т.к. предмет с завышенным значением имплицита может не существовать
 				If (tempmod.name = mod.name and not mod.IsImplicit) {
 					Index := 1
 					Loop % mod.values.MaxIndex() {
@@ -4672,22 +4689,25 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 
 	Gui, PredictedPricing:Font, bold s8 c000000, Verdana
 	;Gui, PredictedPricing:Add, Text, BackgroundTrans, Priced using machine learning algorithms.
-	Gui, PredictedPricing:Add, Text, BackgroundTrans, Оценивается с использованием алгоритмов машинного обучения..
-	Gui, PredictedPricing:Add, Text, BackgroundTrans x+5 yp+0 cRed, (Close with ESC)
+	Gui, PredictedPricing:Add, Text, BackgroundTrans, Оценка алгоритмами машинного обучения.
+	;Gui, PredictedPricing:Add, Text, BackgroundTrans x+5 yp+0 cRed, (Close with ESC)
+	Gui, PredictedPricing:Add, Text, BackgroundTrans x+5 yp+0 cRed, (ESC - закрыть)
 	
 	_details := TradeFunc_PreparePredictedPricingContributionDetails(data.pred_explanation, 40)
 	_contributionOffset := _details.Length() * 24
 	_groupBoxHeight := _contributionOffset + 83
 	
-	Gui, PredictedPricing:Add, GroupBox, w400 h%_groupBoxHeight% y+10 x10, Results
+	;Gui, PredictedPricing:Add, GroupBox, w400 h%_groupBoxHeight% y+10 x10, Results
+	Gui, PredictedPricing:Add, GroupBox, w400 h%_groupBoxHeight% y+10 x10, Результат
 	Gui, PredictedPricing:Font, norm s10 c000000, Consolas
 	Gui, PredictedPricing:Add, Text, yp+25 x20 w380 BackgroundTrans, % _headLine
 	Gui, PredictedPricing:Font, norm bold c000000, Consolas
 	;Gui, PredictedPricing:Add, Text, x20 w90 y+10 BackgroundTrans, % "Price range: "
-	Gui, PredictedPricing:Add, Text, x20 w90 y+10 BackgroundTrans, % "Ценовой диапазон: "
+	Gui, PredictedPricing:Add, Text, x20 w100 y+10 BackgroundTrans, % "Разброс цены: "
 	Gui, PredictedPricing:Font, norm c000000, Consolas
 	Gui, PredictedPricing:Add, Text, x+5 yp+0 BackgroundTrans, % Round(Trim(data.min), 2) " ~ " Round(Trim(data.max), 2) " " Trim(data.currency)
-	Gui, PredictedPricing:Add, Text, x20 w300 y+10 BackgroundTrans, % "Contribution to predicted price: "	
+	;Gui, PredictedPricing:Add, Text, x20 w300 y+10 BackgroundTrans, % "Contribution to predicted price: "
+	Gui, PredictedPricing:Add, Text, x20 w300 y+10 BackgroundTrans, % "Прогноз включает: "
 	
 	; mod importance graph
 	Gui, PredictedPricing:Font, s8 c000000
@@ -4700,44 +4720,59 @@ TradeFunc_ShowPredictedPricingFeedbackUI(data) {
 
 	; browser url
 	_url := data.added.browserUrl
-	Gui, PredictedPricing:Add, Link, x245 y+12 cBlue BackgroundTrans, <a href="%_url%">Open on poeprices.info</a>
+	;Gui, PredictedPricing:Add, Link, x245 y+12 cBlue BackgroundTrans, <a href="%_url%">Open on poeprices.info</a>
+	Gui, PredictedPricing:Add, Link, x245 y+12 cBlue BackgroundTrans, <a href="%_url%">Открыть на poeprices.info</a>
 	
 	Gui, PredictedPricing:Font, norm s8 italic c000000, Verdana	
 
 	If (StrLen(data.warning_msg)) {
-		Gui, PredictedPricing:Add, Text, x15 y+25 w380 cc14326 BackgroundTrans, % "poeprices warning message:"
+		;Gui, PredictedPricing:Add, Text, x15 y+25 w380 cc14326 BackgroundTrans, % "poeprices warning message:"
+		Gui, PredictedPricing:Add, Text, x15 y+25 w380 cc14326 BackgroundTrans, % "Предупреждение от poeprices.info:"
 		Gui, PredictedPricing:Add, Text, x15 y+8 w380 cc14326 BackgroundTrans, % data.warning_msg
 	} Else {
 		Gui, PredictedPricing:Add, Text, x15 y+25 w380 BackgroundTrans, % ""
 	}
 
 	Gui, PredictedPricing:Font, bold s8 c000000, Verdana
-	Gui, PredictedPricing:Add, GroupBox, w400 h230 y+10 x10, Feedback
+	;Gui, PredictedPricing:Add, GroupBox, w400 h230 y+10 x10, Feedback
+	Gui, PredictedPricing:Add, GroupBox, w400 h230 y+10 x10, Обратная связь
 	Gui, PredictedPricing:Font, norm c000000, Verdana
 	
-	Gui, PredictedPricing:Add, Text, x20 yp+25 BackgroundTrans, You think the predicted price range is?
+	;Gui, PredictedPricing:Add, Text, x20 yp+25 BackgroundTrans, You think the predicted price range is?
+	Gui, PredictedPricing:Add, Text, x20 yp+25 BackgroundTrans, Как вы оцениваете прогноз?
 	Gui, PredictedPricing:Add, Progress, x16 yp+18 w2 h56 BackgroundRed hwndPredictedPricingHiddenControl1
 	GuiControl, Hide, % PredictedPricingHiddenControl1
-	Gui, PredictedPricing:Add, Radio, x20 yp+2 vPredictionPricingRadio1 Group BackgroundTrans, Low
-	Gui, PredictedPricing:Add, Radio, x20 yp+20 vPredictionPricingRadio2 BackgroundRed, Fair
-	Gui, PredictedPricing:Add, Radio, x20 yp+20 vPredictionPricingRadio3 BackgroundTrans, High
+	;Gui, PredictedPricing:Add, Radio, x20 yp+2 vPredictionPricingRadio1 Group BackgroundTrans, Low
+	Gui, PredictedPricing:Add, Radio, x20 yp+2 vPredictionPricingRadio1 Group BackgroundTrans, Низкий
+	;Gui, PredictedPricing:Add, Radio, x20 yp+20 vPredictionPricingRadio2 BackgroundRed, Fair
+	Gui, PredictedPricing:Add, Radio, x20 yp+20 vPredictionPricingRadio2 BackgroundRed, Справедливый
+	;Gui, PredictedPricing:Add, Radio, x20 yp+20 vPredictionPricingRadio3 BackgroundTrans, High
+	Gui, PredictedPricing:Add, Radio, x20 yp+20 vPredictionPricingRadio3 BackgroundTrans, Высокий
 	
-	Gui, PredictedPricing:Add, Text, x20 yp+30 BackgroundTrans, % "Add comment (max. 1000 characters):"
+	;Gui, PredictedPricing:Add, Text, x20 yp+30 BackgroundTrans, % "Add comment (max. 1000 characters):"
+	Gui, PredictedPricing:Add, Text, x20 yp+30 BackgroundTrans, % "Комментарий (до 1000 символов на английском языке):"
 	Gui, PredictedPricing:Add, Edit, x20 yp+20 w380 r4 limit1000 vPredictedPricingComment, 
 	
-	Gui, PredictedPricing:Add, Text, x100 y+10 cRed hwndPredictedPricingHiddenControl2, Please select a rating first!
+	;Gui, PredictedPricing:Add, Text, x100 y+10 cRed hwndPredictedPricingHiddenControl2, Please select a rating first!
+	Gui, PredictedPricing:Add, Text, x20 y+10 cRed hwndPredictedPricingHiddenControl2, Пожалуйста выберите рейтинг!
 	GuiControl, Hide, % PredictedPricingHiddenControl2
-	Gui, PredictedPricing:Add, Button, x260 w90 yp-5 gPredictedPricingSendFeedback, Send && Close
-	Gui, PredictedPricing:Add, Button, x+11 w40 gPredictedPricingClose, Close
+	;Gui, PredictedPricing:Add, Button, x260 w90 yp-5 gPredictedPricingSendFeedback, Send && Close
+	Gui, PredictedPricing:Add, Button, x240 w90 yp-5 gPredictedPricingSendFeedback, Отправить
+	;Gui, PredictedPricing:Add, Button, x+11 w40 gPredictedPricingClose, Close
+	Gui, PredictedPricing:Add, Button, x+6 w60 gPredictedPricingClose, Закрыть
 	
 	Gui, PredictedPricing:Font, bold s8 c000000, Verdana
-	Gui, PredictedPricing:Add, Text, x15 y+20 cGreen BackgroundTrans, % "This feature is powered by poeprices.info!"
+	;Gui, PredictedPricing:Add, Text, x15 y+20 cGreen BackgroundTrans, % "This feature is powered by poeprices.info!"
+	Gui, PredictedPricing:Add, Text, x15 y+20 cGreen BackgroundTrans, % "Функция предоставлена poeprices.info!"
 	Gui, PredictedPricing:Font, norm c000000, Verdana
-	Gui, PredictedPricing:Add, Link, x15 y+5 cBlue BackgroundTrans, <a href="https://www.paypal.me/poeprices/5">Support them via PayPal</a>
-	Gui, PredictedPricing:Add, Text, x+5 yp+0 cBlack BackgroundTrans, % "or"
+	;Gui, PredictedPricing:Add, Link, x15 y+5 cBlue BackgroundTrans, <a href="https://www.paypal.me/poeprices/5">Support them via PayPal</a>
+	Gui, PredictedPricing:Add, Link, x15 y+5 cBlue BackgroundTrans, <a href="https://www.paypal.me/poeprices/5">Поддержать на PayPal</a>
+	;Gui, PredictedPricing:Add, Text, x+5 yp+0 cBlack BackgroundTrans, % "or"
+	Gui, PredictedPricing:Add, Text, x+5 yp+0 cBlack BackgroundTrans, % "или"
 	Gui, PredictedPricing:Add, Link, x+5 yp+0 cBlue BackgroundTrans, <a href="https://www.patreon.com/bePatron?u=5966037">Patreon</a>
 	
-	Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y+10 w390, % "You can disable this GUI in favour of a simple result tooltip. Settings menu -> under 'Search' group. Or even disable this predicted search entirely."
+	;Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y+10 w390, % "You can disable this GUI in favour of a simple result tooltip. Settings menu -> under 'Search' group. Or even disable this predicted search entirely."
+	Gui, PredictedPricing:Add, Text, BackgroundTrans x15 y+10 w390, % "Вы можете отказаться от этого интерфейса в пользу всплывающей подсказки(В меню настроек -> внизу группы 'Поиск'). Или даже полностью отключить прогнозирование."
 	
 	; invisible fields
 	Gui, PredictedPricing:Add, Edit, x+0 yp+0 w0 h0 ReadOnly vPredictedPricingEncodedData, % data.added.encodedData
@@ -5055,7 +5090,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 			If (advItem.IsUnique) {
 				;statValueMin := Round(stat.value - ((stat.max - stat.min) * valueRangeMin))
 				; вариант на случай, когда в настройках устанавливается разница между минимальным и текущим значением в ноль, а максимальное не используется - тогда округление
-				; производиться не должно, в противном случае округляется в большую сторону и предметы с максимальным роллом урона не находятся
+				; производиться не должно, в противном случае округляется в большую сторону и предметы с максимальным значением урона не находятся
 				statValueMin := valueRangeMin ? Round(stat.value - ((stat.max - stat.min) * valueRangeMin)) : stat.value - ((stat.max - stat.min) * valueRangeMin)
 				statValueMax := Round(stat.value + ((stat.max - stat.min) * valueRangeMax))
 			}
@@ -5948,6 +5983,7 @@ ChangeScriptListsTimer:
 		Global.Set("ScriptList", o)
 
 		l.push([A_ScriptDir "\resources\Updates_Trade.txt","TradeMacro"])
+		l.push([A_ScriptDir "\resources\UpdatesRu.txt","AdaptationRu"])
 		Global.Set("UpdateNoteFileList", l)
 
 		SetTimer, ChangeScriptListsTimer, Off
@@ -5958,9 +5994,10 @@ OverwriteSettingsNameTimer:
 	o := Globals.Get("SettingsUITitle")
 
 	If (o) {
+		RuVer:=(TradeGlobals.Get("ReleaseVersionRu")!=TradeGlobals.Get("ReleaseVersion"))?" (ru" TradeGlobals.Get("ReleaseVersionRu")")":""
 		RelVer := TradeGlobals.Get("ReleaseVersion")
 		;Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%
-		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer%
+		Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%%RuVer%
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel
@@ -5991,15 +6028,10 @@ OpenGithubWikiFromMenu:
 	TradeFunc_OpenUrlInBrowser("https://github.com/" user "/" repo "/wiki")
 Return
 
-;Функция для открытия темы TradeMacro на русском форуме
-OpenRuForumFromMenu:
-	TradeFunc_OpenUrlInBrowser("https://ru.pathofexile.com/forum/view-post/359261")
-Return
-
 CheckUpdatesFromMenu:
-	HasUpdate := PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
+	HasUpdate := PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersionRu, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
 	If (hasUpdate = "no update" and not firstUpdateCheck) {
-		MsgBox Нет доступных обновлений!
+		MsgBox, 0x1040, PoE-TradeMacro_ru, Не найдено обновлений для вашей версии.
 	}
 Return
 

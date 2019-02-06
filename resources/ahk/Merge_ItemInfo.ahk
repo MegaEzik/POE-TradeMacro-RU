@@ -18,7 +18,7 @@ scriptDir := FileExist(arg1) ? arg1 : RegExReplace(A_ScriptDir, "(.*)\\[^\\]+\\.
 	Set ProjectName to create user settings folder in A_MyDocuments
 */
 ;projectName := "PoE-ItemInfo"
-; новое имя проекта, соответственно и другая папка с настройками отличная от английйской версии
+; новое имя проекта, соответственно и другая папка с настройками отличная от английской версии
 projectName := "PoE-ItemInfo_ru"
 /*
 	Check some folder permissions

@@ -38,9 +38,7 @@ Menu, Tray, Icon, %A_ScriptDir%\resources\images\poe-trade-bl.ico
 Menu, Tray, Add, Пожертвовать, OpenPayPal
 ;Menu, Tray, Add, Open Wiki/FAQ, OpenGithubWikiFromMenu
 Menu, Tray, Add, Открыть Wiki/FAQ, OpenGithubWikiFromMenu
-;Добавляем пункт меню для открытия темы TradeMacro на русском форуме
-Menu, Tray, Add, Открыть пост на РУ-форуме, OpenRuForumFromMenu
-Menu, Tray, Add, Проверить наличие обновлений, CheckUpdatesFromMenu
+Menu, Tray, Add, Проверка обновлений, CheckUpdatesFromMenu
 
 argumentSkipSplash = %6%
 If (not argumentSkipSplash) {
@@ -97,6 +95,12 @@ globalUpdateInfo.releaseVersion 	:= TradeGlobals.Get("ReleaseVersion")
 globalUpdateInfo.skipSelection 	:= 0
 globalUpdateInfo.skipBackup 		:= 0
 globalUpdateInfo.skipUpdateCheck 	:= 0
+
+;Загрузка информации о версии русскоязычной сборки
+FileReadLine, VersionRu, resources\VersionRu.txt, 1
+VersionRu:=(VersionRu="")?TradeGlobals.Get("ReleaseVersion"):VersionRu
+TradeGlobals.Set("ReleaseVersionRu", VersionRu)
+globalUpdateInfo.releaseVersionRu:=TradeGlobals.Get("ReleaseVersionRu")
 
 TradeGlobals.Set("SettingsScriptList", ["TradeMacro", "ItemInfo", "Additional Macros", "Lutbot"])
 ;TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Settings")
@@ -198,7 +202,7 @@ AdpRu_InintAdaptationRu()
 {
 	; функция инициализации массива соответствий для названий валюты с poe.trade
 	AdpRu_InitBuyoutCurrencyEnToRu()
-	; функция инициализации массива соответствий перфиксов и суффиксов в названиях волшебных флаконов русских вариантов английским
+	; функция инициализации массива соответствий префиксов и суффиксов в названиях волшебных флаконов русских вариантов английским
 	AdpRu_InitRuPrefSufFlask()
 	; функция инициализации массива уникальных предметов:
 	; - с переменным составом модов
@@ -536,15 +540,16 @@ TradeFunc_GetTempLeagueDates(ltype = "") {
 ;----------------------- Handle available script updates ---------------------------------------
 TradeFunc_ScriptUpdate() {
 	;SplashUI.SetSubMessage("Checking for script updates...")
-	SplashUI.SetSubMessage("Проверка обновлений для скрипта...")
+	SplashUI.SetSubMessage("Проверка наличия обновлений для скрипта...")
 	If (firstUpdateCheck) {
 		ShowUpdateNotification := TradeOpts.ShowUpdateNotifications
 	} Else {
 		ShowUpdateNotification := 1
 	}
+	;SplashScreenTitle := "PoE-TradeMacro"
 	SplashScreenTitle := "PoE-TradeMacro_ru"
 	;PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
-	PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
+	PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersionRu, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug)
 }
 
 ;----------------------- Trade Settings UI (added onto ItemInfos Settings UI) ---------------------------------------
@@ -591,24 +596,21 @@ CreateTradeSettingsUI()
 	GuiAddCheckbox("Обновление: Уведомления", "x17 yp+30 w260 h30", TradeOpts.ShowUpdateNotifications, "ShowUpdateNotifications", "ShowUpdateNotificationsH", "", "", "SettingsUI")
 	;AddToolTip(ShowUpdateNotificationsH, "Notifies you when there's a new release available.")
 	AddToolTip(ShowUpdateNotificationsH, "Будет уведомлять вас о выходе новой версии")
-	;GuiControl, Disable, ShowUpdateNotifications ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Update: Skip folder selection", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH", "", "", "SettingsUI")
 	GuiAddCheckbox("Обновление: Пропустить выбор папки", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipSelection, "UpdateSkipSelection", "UpdateSkipSelectionH", "", "", "SettingsUI")
 	;AddToolTip(UpdateSkipSelectionH, "Skips selecting an update location.`nThe current script directory will be used as default.")
 	AddToolTip(UpdateSkipSelectionH, "Пропускает выбор папки для обновления.`nПо умолчанию будет использован текущий каталог скрипта.")
-	;GuiControl, Disable, UpdateSkipSelection ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Update: Skip backup", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH", "", "", "SettingsUI")
 	GuiAddCheckbox("Обновление: Пропустить резервацию", "x17 yp+30 w260 h30", TradeOpts.UpdateSkipBackup, "UpdateSkipBackup", "UpdateSkipBackupH", "", "", "SettingsUI")
 	;AddToolTip(UpdateSkipBackupH, "Skips making a backup of the install location/folder.")
 	AddToolTip(UpdateSkipBackupH, "Пропускает создание резервной копии .")
-	;GuiControl, Disable, UpdateSkipBackup ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Open browser Win10 fix", "x17 yp+30 w260 h30", TradeOpts.OpenWithDefaultWin10Fix, "OpenWithDefaultWin10Fix", "OpenWithDefaultWin10FixH", "", "", "SettingsUI")
 	GuiAddCheckbox("Исправление открытия браузера в Win10", "x17 yp+30 w260 h30", TradeOpts.OpenWithDefaultWin10Fix, "OpenWithDefaultWin10Fix", "OpenWithDefaultWin10FixH", "", "", "SettingsUI")
 	;AddToolTip(OpenWithDefaultWin10FixH, " If your PC always asks you what program to use to open`n the wiki-link, enable this to let ahk find your default`nprogram from the registry.")
-	AddToolTip(OpenWithDefaultWin10FixH, "Включите, если при попытке открыть ссылку на вики`nваш компьютер всегда спрашивает какую программу использовать,`nэто поможет AHK найти ваш браузер спомощью реестра")
+	AddToolTip(OpenWithDefaultWin10FixH, "Включите, если при попытке открыть ссылку на вики`nваш компьютер всегда спрашивает какую программу использовать,`nэто поможет AHK найти ваш браузер с помощью реестра")
 
 	;GuiAddText("Browser Path:", "x17 yp+35 w100 h20 0x0100", "LblBrowserPath", "LblBrowserPathH", "", "", "SettingsUI")
 	GuiAddText("Путь браузера:", "x17 yp+35 w100 h20 0x0100", "LblBrowserPath", "LblBrowserPathH", "", "", "SettingsUI")
@@ -692,7 +694,7 @@ CreateTradeSettingsUI()
 	;GuiAddText("Q. Range:", "x+5 yp+2 w62 h20 0x0100", "LblGemQualityRange", "LblGemQualityRangeH", "", "","SettingsUI")
 	GuiAddText("К.разброс:", "x+5 yp+2 w64 h20 0x0100", "LblGemQualityRange", "LblGemQualityRangeH", "", "","SettingsUI")
 	;AddToolTip(LblGemQualityRangeH, "Use this to set a range to quality Gem searches. For example a range of 1`n searches 14% - 16% when you have a 15% Quality Gem.`nSetting it to 0 (default) uses your Gems quality as min_quality`nwithout max_quality in your search.")
-	AddToolTip(LblGemQualityRangeH, "Используется для установки разброса качества камней умений.`nНапример: при значеии 1 результат поиска будет 14% - 16% при качестве камня 15%.`nУстановка значения 0 (по умолчанию) использует качество вашего камня как минимальное значение,`nа максимальное не указывается при поиске.")
+	AddToolTip(LblGemQualityRangeH, "Используется для установки разброса качества камней умений.`nНапример: при значении 1 результат поиска будет 14% - 16% при качестве камня 15%.`nУстановка значения 0 (по умолчанию) использует качество вашего камня как минимальное значение,`nа максимальное не указывается при поиске.")
 	GuiAddEdit(TradeOpts.GemQualityRange, "x+1 yp-2 w33 h20", "GemQualityRange", "GemQualityRangeH", "", "", "SettingsUI")
 	; gem section end
 	
@@ -771,7 +773,7 @@ CreateTradeSettingsUI()
 	;GuiAddCheckbox("Remove multiple Listings from same Account.", "x337 yp+25 w280 h20", TradeOpts.RemoveMultipleListingsFromSameAccount, "RemoveMultipleListingsFromSameAccount", "RemoveMultipleListingsFromSameAccountH", "", "", "SettingsUI")
 	GuiAddCheckbox("Удалять дубликаты с одного аккаунта", "x337 yp+25 w280 h20", TradeOpts.RemoveMultipleListingsFromSameAccount, "RemoveMultipleListingsFromSameAccount", "RemoveMultipleListingsFromSameAccountH", "", "", "SettingsUI")
 	;AddToolTip(RemoveMultipleListingsFromSameAccountH, "Removes multiple listings from the same account from`nyour search results (to combat market manipulators).`n`nThe removed items are also removed from the average and`nmedian price calculations.")
-	AddToolTip(RemoveMultipleListingsFromSameAccountH, "Удаляет повторящиеся результаты с одного аккаунта`nиз вашего поискового результата (борьба с прайсфиксерами).`n`nУдаленные записи так же не включаются в расчет средней и медианной цен.")
+	AddToolTip(RemoveMultipleListingsFromSameAccountH, "Удаляет повторяющиеся результаты с одного аккаунта`nиз вашего поискового результата (борьба с прайсфиксерами).`n`nУдаленные записи так же не включаются в расчет средней и медианной цен.")
 	
 	; option group start
 	;GuiAddCheckbox("Alternative currency search.", "x337 yp+25 w280 h20", TradeOpts.AlternativeCurrencySearch, "AlternativeCurrencySearch", "AlternativeCurrencySearchH", "", "", "SettingsUI")
@@ -790,14 +792,12 @@ CreateTradeSettingsUI()
 	GuiAddCheckbox("Прогнозирование", "x337 yp+25 w145 h20", TradeOpts.UsePredictedItemPricing, "UsePredictedItemPricing", "UsePredictedItemPricingH", "", "", "SettingsUI")
 	;AddToolTip(UsePredictedItemPricingH, "Use predicted item pricing via machine-learning algorithms.`nReplaces the default search, works with magic/rare/unique items.`n`nProvided by poeprices.info.")
 	AddToolTip(UsePredictedItemPricingH, "Использует прогнозируемую цену предмета с помощью алгоритмов машинного обучения.`nЗаменяет поиск по умолчанию, работает с магическими/редкими/уникальными предметам.`n`nПредоставлено poeprices.info.")
-	GuiControl, Disable, UsePredictedItemPricing ;Данная функция не работает в русской версии
 
 	; option group start
 	;GuiAddCheckbox("Use feedback Gui.", "x482 yp+0 w120 h20", TradeOpts.UsePredictedItemPricingGui, "UsePredictedItemPricingGui", "UsePredictedItemPricingGuiH", "", "", "SettingsUI")
 	GuiAddCheckbox("Обратная связь", "x482 yp+0 w120 h20", TradeOpts.UsePredictedItemPricingGui, "UsePredictedItemPricingGui", "UsePredictedItemPricingGuiH", "", "", "SettingsUI")
 	;AddToolTip(UsePredictedItemPricingGuiH, "Use a Gui instead of the default tooltip to display results.`nYou can send some feedback to improve this feature.")
-	AddToolTip(UsePredictedItemPricingGuiH, "Использовать графический интерфей вместо всплывающей подсказки для отображения результатов.`nВы можете отправить отзыв, чтобы улучшить эту функцию.")
-	GuiControl, Disable, UsePredictedItemPricingGui ;Данная функция не работает в русской версии
+	AddToolTip(UsePredictedItemPricingGuiH, "Использовать графический интерфейс вместо всплывающей подсказки для отображения результатов.`nВы можете отправить отзыв, чтобы улучшить эту функцию.")
 
 	; option group start
 	;GuiAddCheckbox("Include search parameter via edit field focus.", "x337 yp+25 w280 h20", TradeOpts.IncludeSearchParamByFocus, "IncludeSearchParamByFocus", "IncludeSearchParamByFocusH", "", "", "SettingsUI")
@@ -808,7 +808,7 @@ CreateTradeSettingsUI()
 
 	; header
 	;GuiAddText("Pre-Select Options (Advanced Search)", "x337 yp+35 w280 h20 0x0100 cDA4F49", "", "", "", "", "SettingsUI")
-	GuiAddText("Предвыбранные (Расширенный поиск)", "x337 yp+35 w280 h20 0x0100 cDA4F49", "", "", "", "", "SettingsUI")
+	GuiAddText("Пред. выбранные (Расширенный поиск)", "x337 yp+35 w280 h20 0x0100 cDA4F49", "", "", "", "", "SettingsUI")
 	GuiAddText("-------------------------------------------------------------", "x337 yp+6 w280 h20 0x0100 cDA4F49", "", "", "", "", "SettingsUI")
 
 	; option group start
@@ -991,7 +991,7 @@ CreateTradeSettingsUI()
 	*/
 	
 	;GuiAddText("Mouse over settings to see a detailed description.", "x657 yp+40 w300 h30", "", "", "", "", "SettingsUI")
-	GuiAddText("Наводите курсор для просмотра подсказок", "x657 yp+40 w300 h30", "", "", "", "", "")
+	GuiAddText("Наводите курсор для просмотра подсказок", "x657 yp+40 w300 h30 cGreen", "", "", "", "", "")
 
 	;GuiAddCheckbox("Debug Output", "x657 yp+13 w100 h25", TradeOpts.Debug, "Debug", "DebugH", "", "", "SettingsUI")
 	GuiAddCheckbox("Режим отладки", "x657 yp+13 w120 h25", TradeOpts.Debug, "Debug", "DebugH", "", "", "SettingsUI")
@@ -1741,12 +1741,8 @@ TradeFunc_StartSplashScreen(TradeReleaseVersion) {
 	initArray := ["Инициализируем скрипт...", "Устраиваем вечеринку приветствия Эйнара...", "Удаляем Battle.net...", "Исследуем так называемое ""Бессмертие""...", "Запускаем мобильное приложение...", "Охотимся на старых друзей...", "Допрашиваем Мастера Криллсона о секретах рыбалки...", "Открываем сундук Воричи...", "Помогаем Альве в поисках Джунглевого Убежища...", "Продаем торговцам Стат стики...", "Изучаем 'новые' имена..."] 
 	
 	Random, randomNum, 1, initArray.MaxIndex()
-	;Вычисление места под строку
-	;runmeslen:=StrLen(initArray[randomNum])*9
-	;SplashTextOn, 370, 20, PoE-TradeMacro, % initArray[randomNum]	
-	;SplashTextOn, runmeslen, 20, PoE-TradeMacro_ru, % initArray[randomNum]
 	
-	 global SplashUI := new SplashUI("on", "PoE-TradeMacro_ru", initArray[randomNum], "", TradeReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
+	global SplashUI := new SplashUI("on", "PoE-TradeMacro_ru", initArray[randomNum], "", TradeReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
 }
 
 TradeFunc_FinishTMInit(argumentMergeScriptPath) {	
