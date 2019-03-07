@@ -31,7 +31,12 @@
  "Шанс критического удара: #%": "Critical Strike Chance: #%",
  "Атак в секунду: #": "Attacks per Second: #",
  "Отражено": "Mirrored",
-
+ "Поместите самоцвет в гнездо Бездны на предмете или в доступное гнездо на дереве пассивных умений. Чтобы вынуть самоцвет, щёлкните по нему правой кнопкой мыши.": "Place into an Abyssal Socket on an Item or into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+ "Поместите самоцвет в доступное гнездо на дереве пассивных умений. Чтобы вынуть самоцвет, щёлкните по нему правой кнопкой мыши.": "Place into an allocated Jewel Socket on the Passive Skill Tree. Right click to remove from the Socket.",
+ "Расколотый предмет": "Fractured Item",
+ "Синтезированный предмет": "Synthesised Item",
+ 
+ "#% увеличение скорости передвижения": "#% increased Movement Speed",
  " (Пойманное животное)": " (Captured Beast)",
  "# брони за каждый действующий тотем": "# Armour per active Totem",
  "# брони при нахождении на одном месте": "# Armour while stationary",

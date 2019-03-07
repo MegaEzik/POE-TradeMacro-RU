@@ -1389,7 +1389,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	Else If (not openSearchInBrowser and TradeOpts.UsePredictedItemPricing and itemEligibleForPredictedPricing and not isAdvancedPriceCheckRedirect and not isItemAgeRequest) {
 		requestCurl := ""
 		;Html := TradeFunc_DoPoePricesRequest(ItemData.FullText, requestCurl)
-		Html := TradeFunc_DoPoePricesRequest(AdpRu_ItemDataEnToRu(ItemData.FullText), requestCurl)
+		Html := TradeFunc_DoPoePricesRequest(AdpRu_RareItemDataEnToRu(ItemData.FullText), requestCurl)
 		
 	}
 	Else If (not openSearchInBrowser) {
@@ -6033,6 +6033,11 @@ CheckUpdatesFromMenu:
 	If (hasUpdate = "no update" and not firstUpdateCheck) {
 		MsgBox, 0x1040, PoE-TradeMacro_ru, Не найдено обновлений для вашей версии.
 	}
+Return
+
+OpenMegaEzik:
+	url := "https://money.yandex.ru/to/410018859988844"
+	TradeFunc_OpenUrlInBrowser(url)
 Return
 
 OpenPayPal:

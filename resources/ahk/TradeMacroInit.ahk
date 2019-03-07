@@ -35,7 +35,9 @@ If (not FileExist(A_AhkPath)) {
 
 Menu, Tray, Icon, %A_ScriptDir%\resources\images\poe-trade-bl.ico
 ;Menu, Tray, Add, Donate, OpenPayPal
-Menu, Tray, Add, Пожертвовать, OpenPayPal
+Menu, SubmenuDonate, add, Русскоязычная адаптация (MegaEzik), OpenMegaEzik
+Menu, SubmenuDonate, add, Англоязычный скрипт, OpenPayPal
+Menu, Tray, Add, Поддержать, :SubmenuDonate
 ;Menu, Tray, Add, Open Wiki/FAQ, OpenGithubWikiFromMenu
 Menu, Tray, Add, Открыть Wiki/FAQ, OpenGithubWikiFromMenu
 Menu, Tray, Add, Проверка обновлений, CheckUpdatesFromMenu
@@ -179,6 +181,7 @@ TradeGlobals.Set("FirstSearchTriggered", false)
 TradeFunc_DoCurrencyRequest("", false, true)
 If (TradeOpts.DownloadDataFiles and not TradeOpts.Debug) {
 	TradeFunc_DownloadDataFiles()
+	AdpRu_DownloadAssociationLists()
 }
 
 CreateTradeSettingsUI()
