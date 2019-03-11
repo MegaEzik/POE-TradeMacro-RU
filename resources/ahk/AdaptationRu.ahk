@@ -543,7 +543,7 @@ AdpRu_RareItemDataEnToRu(idft) {
 	
 	For k, val in lidft {
 		;Извлекаем часть строки не требующую перевода и препятствующую ему, при сборе вернем ее на место
-		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)", slidft)
+		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)", slidft)
 		lidft[k]:=StrReplace(lidft[k], slidft, "")
 		
 		;Попытка конвертировать стат
