@@ -15,6 +15,7 @@ AdpRu_ConvertRuModToEn(_item)
 ;console_log(_item, "_item")	
 	For k, imod in _item.mods {
 		
+		_item.mods[k].name:=RegExReplace(Trim(_item.mods[k].name), " \(fractured\)| \(crafted\)")
 		_item.mods[k].name_ru := _item.mods[k].name
 		result1 := AdpRu_Ru_En_Stats_Value(_item.mods[k].name)
 		_item.mods[k].name := result1.name
@@ -585,6 +586,25 @@ AdpRu_RareItemDataEnToRu(idft) {
 	console.log(idtfen)
 	
 	return idtfen
+}
+
+;Имена предметов содержащих "{" и "}" иногда вызывают проблемы, да и выглядят не эстетично. Заменим такие имена шаблонами!
+AdpRu_FixNames(item){
+	sitem:=StrSplit(item, "`r`n")
+	if RegExMatch(sitem[1], "Редкость: Редкий") {
+		if (RegExMatch(sitem[2], "{") or RegExMatch(sitem[2], "}")) {
+			sitem[2]:="Undefined Name"
+		}
+		if RegExMatch(sitem[3], "{Синтезированн") {
+			ssitem:=StrSplit(sitem[3], "} ")
+			sitem[3]:=RegExReplace(ssitem[2], chr(0xA0), "")
+		}
+		if (RegExMatch(sitem[3], "{") or RegExMatch(sitem[3], "}")) {
+			sitem[3]:="Undefined Base"
+		}
+		return sitem[1] "`r`n" sitem[2] "`r`n" sitem[3]
+	}
+	return item
 }
 
 AdpRu_DownloadAssociationLists() {

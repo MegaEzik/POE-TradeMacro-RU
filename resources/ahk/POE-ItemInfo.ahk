@@ -355,6 +355,7 @@ class Item_ {
 		This.SubType		:= ""		
 		This.DifficultyRestriction := ""
 		This.Implicit		:= []
+		This.Enchantment	:= []
 		This.Charges		:= []
 		This.AreaMonsterLevelReq := []
 		This.BeastData 	:= {}
@@ -363,6 +364,7 @@ class Item_ {
 		This.veiledSuffixCount	:= ""
 		
 		This.HasImplicit	:= False
+		This.HasEnchantment	:= False
 		This.HasEffect		:= False
 		This.IsWeapon		:= False
 		This.IsArmour 		:= False
@@ -396,6 +398,8 @@ class Item_ {
 		This.IsRelic		:= False
 		This.IsElderBase	:= False
 		This.IsShaperBase	:= False
+		This.IsSynthesisedBase:= False
+		This.IsFracturedBase:= False
 		This.IsAbyssJewel	:= False
 		This.IsBeast		:= False
 		This.IsHideoutObject:= False
@@ -4238,20 +4242,21 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		; --- PRE-PASS ---
 		Loop, Parse, ItemDataChunk, `n, `r
-		{
-			If StrLen(A_LoopField) = 0
+		{			
+			LoopField := RegExReplace(Trim(A_LoopField), "i) \(fractured|crafted\)$")
+			If StrLen(LoopField) = 0
 			{
 				Continue ; Not interested in blank lines
 			}
 			
-			Itemdata.AffixTextLines.Push( {"Text":A_LoopField, "Value":GetActualValue(A_LoopField)} )
+			Itemdata.AffixTextLines.Push( {"Text":LoopField, "Value":GetActualValue(LoopField)} )
 			; AffixTextLines[1].Text stores the full text of the first line (yes, with index 1 and not 0)
 			; AffixTextLines[1].Value stores just the extracted value
 			
 			++HasLastLineNumber		; Counts the affix text lines so that the last line can be checked for being a craft
 			
-			;IfInString, A_LoopField, to Armour
-			IfInString, A_LoopField, к броне
+			;IfInString, LoopField, to Armour
+			IfInString, LoopField, к броне
 			{
 				If (HasToArmour){
 					HasToArmourCraft := A_Index
@@ -4260,8 +4265,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, to Evasion Rating
-			IfInString, A_LoopField, к уклонению
+			;IfInString, LoopField, to Evasion Rating
+			IfInString, LoopField, к уклонению
 			{
 				If (HasToEvasion){
 					HasToEvasionCraft := A_Index
@@ -4270,8 +4275,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, to maximum Energy Shield
-			IfInString, A_LoopField, к максимуму энергетического щита
+			;IfInString, LoopField, to maximum Energy Shield
+			IfInString, LoopField, к максимуму энергетического щита
 			{
 				If (HasToMaxES){
 					HasToMaxESCraft := A_Index
@@ -4280,8 +4285,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, to maximum Life
-			IfInString, A_LoopField, к максимуму здоровья
+			;IfInString, LoopField, to maximum Life
+			IfInString, LoopField, к максимуму здоровья
 			{
 				If (HasToMaxLife){
 					HasToMaxLifeCraft := A_Index
@@ -4290,8 +4295,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Armour and Evasion	; it's indeed "Evasion" and not "Evasion Rating" here
-			IfInString, A_LoopField, повышение брони и уклонения
+			;IfInString, LoopField, increased Armour and Evasion	; it's indeed "Evasion" and not "Evasion Rating" here
+			IfInString, LoopField, повышение брони и уклонения
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
@@ -4302,8 +4307,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Armour and Energy Shield
-			IfInString, A_LoopField, повышение брони и энергетического щита
+			;IfInString, LoopField, increased Armour and Energy Shield
+			IfInString, LoopField, повышение брони и энергетического щита
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
@@ -4314,8 +4319,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Evasion and Energy Shield	; again "Evasion" and not "Evasion Rating"
-			IfInString, A_LoopField, увеличение уклонения и энергетического щита
+			;IfInString, LoopField, increased Evasion and Energy Shield	; again "Evasion" and not "Evasion Rating"
+			IfInString, LoopField, увеличение уклонения и энергетического щита
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Defences_HybridBase"
@@ -4326,8 +4331,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Armour
-			IfInString, A_LoopField, повышение брони
+			;IfInString, LoopField, increased Armour
+			IfInString, LoopField, повышение брони
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Armour"
@@ -4338,8 +4343,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Evasion Rating
-			IfInString, A_LoopField, увеличение уклонения
+			;IfInString, LoopField, increased Evasion Rating
+			IfInString, LoopField, увеличение уклонения
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "Evasion"
@@ -4350,8 +4355,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Energy Shield
-			IfInString, A_LoopField, увеличение энергетического щита
+			;IfInString, LoopField, increased Energy Shield
+			IfInString, LoopField, увеличение энергетического щита
 			{
 				If (HasIncrDefences){
 					HasIncrDefencesCraftType := "EnergyShield"
@@ -4362,15 +4367,15 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Stun and Block Recovery
-			IfInString, A_LoopField, ускорение восстановления после оглушения
+			;IfInString, LoopField, increased Stun and Block Recovery
+			IfInString, LoopField, ускорение восстановления после оглушения
 			{
 				HasStunBlockRecovery := A_Index
 				Continue
 			}
-			;IfInString, A_LoopField, Chance to Block
-			;IfInString, A_LoopField, шанс блока
-			If RegExMatch(A_LoopField, ".* шанс блока$")
+			;IfInString, LoopField, Chance to Block
+			;IfInString, LoopField, шанс блока
+			If RegExMatch(LoopField, ".* шанс блока$")
 			{
 				;IfInString, ItemNamePlate, Tower Shield
 				If RegExMatch(ItemNamePlate, "i)ростовой щит")
@@ -4379,8 +4384,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, to Accuracy Rating
-			IfInString, A_LoopField, к меткости
+			;IfInString, LoopField, to Accuracy Rating
+			IfInString, LoopField, к меткости
 			{
 				If (HasToAccuracyRating){
 					HasToAccuracyRatingCraft := A_Index
@@ -4389,8 +4394,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Physical Damage
-			IfInString, A_LoopField, увеличение физического урона
+			;IfInString, LoopField, increased Physical Damage
+			IfInString, LoopField, увеличение физического урона
 			{
 				If (HasIncrPhysDmg){
 					HasIncrPhysDmgCraft := A_Index
@@ -4399,8 +4404,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Rarity of Items found
-			IfInString, A_LoopField, повышение редкости найденных предметов
+			;IfInString, LoopField, increased Rarity of Items found
+			IfInString, LoopField, повышение редкости найденных предметов
 			{
 				If (HasIncrRarity){
 					HasIncrRarityCraft := A_Index
@@ -4409,8 +4414,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, to maximum Mana
-			IfInString, A_LoopField, к максимуму маны
+			;IfInString, LoopField, to maximum Mana
+			IfInString, LoopField, к максимуму маны
 			{
 				If (HasMaxMana){
 					HasMaxManaCraft := A_Index
@@ -4419,14 +4424,14 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Light Radius
-			IfInString, A_LoopField, увеличение радиуса обзора
+			;IfInString, LoopField, increased Light Radius
+			IfInString, LoopField, увеличение радиуса обзора
 			{
 				HasIncrLightRadius := A_Index
 				Continue
 			}
-			;IfInString, A_LoopField, increased Spell Damage
-			IfInString, A_LoopField, увеличение урона от чар
+			;IfInString, LoopField, increased Spell Damage
+			IfInString, LoopField, увеличение урона от чар
 			{
 				If (HasIncrSpellDamage){
 					HasIncrSpellDamageCraft := A_Index
@@ -4437,9 +4442,9 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				
 				If ((ItemGripType = "1H") or (ItemSubType = "Shield")){
-					Found := LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\SpellDamage_MaxMana_1H.txt"), ItemLevel).Tier
+					Found := LookupTierByValue(GetActualValue(LoopField), ArrayFromDatafile("data\SpellDamage_MaxMana_1H.txt"), ItemLevel).Tier
 				}Else{
-					Found := LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\SpellDamage_MaxMana_Staff.txt"), ItemLevel).Tier
+					Found := LookupTierByValue(GetActualValue(LoopField), ArrayFromDatafile("data\SpellDamage_MaxMana_Staff.txt"), ItemLevel).Tier
 				}
 				If ( ! Found){
 					HasIncrSpellDamagePrefix := A_Index
@@ -4447,8 +4452,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Fire Damage
-			IfInString, A_LoopField, увеличение урона от огня
+			;IfInString, LoopField, increased Fire Damage
+			IfInString, LoopField, увеличение урона от огня
 			{
 				If (HasIncrFireDamage){
 					HasIncrFireDamageCraft := A_Index
@@ -4458,15 +4463,15 @@ ParseAffixes(ItemDataAffixes, Item)
 					HasIncrFireDamage := A_Index
 				}
 				
-				If ( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrFireDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
+				If ( ! LookupTierByValue(GetActualValue(LoopField), ArrayFromDatafile("data\IncrFireDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
 				{
 					HasIncrFireDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Cold Damage
-			IfInString, A_LoopField, увеличение урона от холода
+			;IfInString, LoopField, increased Cold Damage
+			IfInString, LoopField, увеличение урона от холода
 			{
 				If (HasIncrColdDamage){
 					HasIncrColdDamageCraft := A_Index
@@ -4476,15 +4481,15 @@ ParseAffixes(ItemDataAffixes, Item)
 					HasIncrColdDamage := A_Index
 				}
 				
-				If ( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrColdDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
+				If ( ! LookupTierByValue(GetActualValue(LoopField), ArrayFromDatafile("data\IncrColdDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
 				{
 					HasIncrColdDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
 				}
 				Continue
 			}
-			;IfInString, A_LoopField, increased Lightning Damage
-			IfInString, A_LoopField, увеличение урона от молнии
+			;IfInString, LoopField, increased Lightning Damage
+			IfInString, LoopField, увеличение урона от молнии
 			{
 				If (HasIncrLightningDamage){
 					HasIncrLightningDamageCraft := A_Index
@@ -4494,15 +4499,15 @@ ParseAffixes(ItemDataAffixes, Item)
 					HasIncrLightningDamage := A_Index
 				}
 				
-				If ( ! LookupTierByValue(GetActualValue(A_LoopField), ArrayFromDatafile("data\IncrLightningDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
+				If ( ! LookupTierByValue(GetActualValue(LoopField), ArrayFromDatafile("data\IncrLightningDamage_Suffix_Weapon.txt"), ItemLevel).Tier )
 				{
 					HasIncrLightningDamagePrefix := A_Index
 					HasIncrSpellOrElePrefix := A_Index
 				}
 				Continue
 			}
-			;IfInString, A_Loopfield, Can have multiple Crafted Mods
-			IfInString, A_LoopField, Может иметь несколько ремесленных свойств
+			;IfInString, LoopField, Can have multiple Crafted Mods
+			IfInString, LoopField, Может иметь несколько ремесленных свойств
 			{
 				HasMultipleCrafted := A_Index
 				Itemdata.HasMultipleCrafted := A_Index
@@ -4517,15 +4522,16 @@ ParseAffixes(ItemDataAffixes, Item)
 		; --- PRE-PASS ---
 		Loop, Parse, ItemDataChunk, `n, `r
 		{
-			If StrLen(A_LoopField) = 0
+			LoopField := RegExReplace(Trim(A_LoopField), "i) \(fractured|crafted\)$")
+			If StrLen(LoopField) = 0
 			{
 				Continue ; Not interested in blank lines
 			}
-			Itemdata.AffixTextLines.Push( {"Text":A_LoopField, "Value":GetActualValue(A_LoopField)} )
+			Itemdata.AffixTextLines.Push( {"Text":LoopField, "Value":GetActualValue(LoopField)} )
 			++HasLastLineNumber
 			
-			;IfInString, A_LoopField, increased Accuracy Rating
-			IfInString, A_LoopField, повышение меткости
+			;IfInString, LoopField, increased Accuracy Rating
+			IfInString, LoopField, повышение меткости
 			{
 				If (Item.SubType = "Viridian Jewel" or Item.SubType = "Prismatic Jewel")
 				{
@@ -4534,8 +4540,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 			}
 			
-			;IfInString, A_LoopField, increased Global Critical Strike Chance
-			IfInString, A_LoopField, повышение глобального шанса критического удара
+			;IfInString, LoopField, increased Global Critical Strike Chance
+			IfInString, LoopField, повышение глобального шанса критического удара
 			{
 				If (Item.SubType = "Viridian Jewel" or Item.SubType = "Prismatic Jewel" )
 				{
@@ -4560,8 +4566,9 @@ ParseAffixes(ItemDataAffixes, Item)
 	; --- SIMPLE AFFIXES ---
 	
 	Loop, Parse, ItemDataChunk, `n, `r
-	{
-		If StrLen(A_LoopField) = 0
+	{		
+		LoopField := RegExReplace(Trim(A_LoopField), "i) \(fractured|crafted\)$")
+		If StrLen(LoopField) = 0
 		{
 			Continue ; Not interested in blank lines
 		}
@@ -4571,7 +4578,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			Break ; Not interested in unidentified items
 		}
 		
-		CurrValue := GetActualValue(A_LoopField)
+		CurrValue := GetActualValue(LoopField)
 		CurrTier := 0
 		
 		
@@ -4581,32 +4588,32 @@ ParseAffixes(ItemDataAffixes, Item)
 		{
 			If (Item.IsAbyssJewel)
 			{
-				;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage")
-				If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического урона)|(урона от (огня|холода|молнии))|(урона хаосом)")
+				;If RegExMatch(LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage")
+				If RegExMatch(LoopField, "Добавляет от \d+? до \d+? (физического урона)|(урона от (огня|холода|молнии))|(урона хаосом)")
 				{
-					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to \w+ Attacks", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к атакам [а-яА-ЯЁё]+", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к атакам [а-яА-ЯЁё]+", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к атакам [а-яА-ЯЁё]+", match))
+					;If RegExMatch(LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to \w+ Attacks", match)
+					If (RegExMatch(LoopField, "Добавляет от \d+? до \d+? (физического) урона к атакам [а-яА-ЯЁё]+", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к атакам [а-яА-ЯЁё]+", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к атакам [а-яА-ЯЁё]+", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToWeaponTypeAttacks.txt", "Prefix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToWeaponTypeAttacks.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Attacks", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к атакам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к атакам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к атакам", match))
+					;If RegExMatch(LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Attacks", match)
+					If (RegExMatch(LoopField, "Добавляет от \d+? до \d+? (физического) урона к атакам", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к атакам", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к атакам", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToAttacks.txt", "Suffix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToAttacks.txt", "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Spells while", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к чарам (с|со)", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к чарам (с|со)", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к чарам (с|со)", match))
+					;If RegExMatch(LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Spells while", match)
+					If (RegExMatch(LoopField, "Добавляет от \d+? до \d+? (физического) урона к чарам (с|со)", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к чарам (с|со)", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к чарам (с|со)", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToSpellsWhile.txt", "Prefix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToSpellsWhile.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Spells", match)
-					If (RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? (физического) урона к чарам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к чарам", match) or RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к чарам", match))
+					;If RegExMatch(LoopField, "Adds \d+? to \d+? (Physical|Fire|Cold|Lightning|Chaos) Damage to Spells", match)
+					If (RegExMatch(LoopField, "Добавляет от \d+? до \d+? (физического) урона к чарам", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от (огня|холода|молнии) к чарам", match) or RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона (хаосом) к чарам", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" match1 "DamageToSpells.txt", "Suffix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\Adds" nameRuToEn[match1] "DamageToSpells.txt", "Suffix", ItemLevel, CurrValue)
@@ -4614,398 +4621,398 @@ ParseAffixes(ItemDataAffixes, Item)
 					}
 				}
 				
-				;IfInString, A_LoopField, to maximum Life
-				IfInString, A_LoopField, к максимуму здоровья
+				;IfInString, LoopField, to maximum Life
+				IfInString, LoopField, к максимуму здоровья
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\MaxLife.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, to maximum Mana
-				IfInString, A_LoopField, к максимуму маны
+				;IfInString, LoopField, to maximum Mana
+				IfInString, LoopField, к максимуму маны
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\MaxMana.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, to Armour
-				IfInString, A_LoopField, к броне
+				;IfInString, LoopField, to Armour
+				IfInString, LoopField, к броне
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ToArmour.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, to Evasion Rating
-				IfInString, A_LoopField, к уклонению
+				;IfInString, LoopField, to Evasion Rating
+				IfInString, LoopField, к уклонению
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ToEvasionRating.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, to maximum Energy Shield
-				IfInString, A_LoopField, к максимуму энергетического щита
+				;IfInString, LoopField, to maximum Energy Shield
+				IfInString, LoopField, к максимуму энергетического щита
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ToMaximumEnergyShield.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, Energy Shield Regenerated per second
-				If RegExMatch(A_LoopField, "Регенерация .* энергетического щита в секунду")
+				;IfInString, LoopField, Energy Shield Regenerated per second
+				If RegExMatch(LoopField, "Регенерация .* энергетического щита в секунду")
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\EnergyShieldRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "^[\d\.]+ Life Regenerated per second$")
-				If RegExMatch(A_LoopField, "Регенерация [\d\.]+ здоровья в секунду$")
+				;If RegExMatch(LoopField, "^[\d\.]+ Life Regenerated per second$")
+				If RegExMatch(LoopField, "Регенерация [\d\.]+ здоровья в секунду$")
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\LifeRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, Mana Regenerated per second
-				IfInString, A_LoopField, регенерации маны в секунду
+				;IfInString, LoopField, Mana Regenerated per second
+				IfInString, LoopField, регенерации маны в секунду
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\ManaRegenerated.txt", "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Damage over Time while
-				IfInString, A_LoopField, увеличение постепенного урона
+				;IfInString, LoopField, increased Damage over Time while
+				IfInString, LoopField, увеличение постепенного урона
 				{
 					LookupAffixAndSetInfoLine(["1|10-14"], "Prefix", ItemLevel, CurrValue)
 					Continue
 				}
 				
-				;IfInString, A_LoopField, Minion
-				If RegExMatch(A_LoopField, "i)Приспешник")
+				;IfInString, LoopField, Minion
+				If RegExMatch(LoopField, "i)Приспешник")
 				{
-					;If RegExMatch(A_LoopField, "Minions deal \d+? to \d+? additional (Physical|Fire|Cold|Lightning|Chaos) Damage", match)
-					If (RegExMatch(A_LoopField, "Приспешники наносят от \d+? до \d+? дополнительного (физического) урона", match) or RegExMatch(A_LoopField, "Приспешники наносят от \d+? до \d+? дополнительного урона от (огня|холода|молнии)", match) or RegExMatch(A_LoopField, "Приспешники наносят от \d+? до \d+? дополнительного урона (хаосом)", match))
+					;If RegExMatch(LoopField, "Minions deal \d+? to \d+? additional (Physical|Fire|Cold|Lightning|Chaos) Damage", match)
+					If (RegExMatch(LoopField, "Приспешники наносят от \d+? до \d+? дополнительного (физического) урона", match) or RegExMatch(LoopField, "Приспешники наносят от \d+? до \d+? дополнительного урона от (огня|холода|молнии)", match) or RegExMatch(LoopField, "Приспешники наносят от \d+? до \d+? дополнительного урона (хаосом)", match))
 					{
 						;LookupAffixAndSetInfoLine("data\abyss_jewel\MinionsDealAdditional" match1 "Damage.txt", "Prefix", ItemLevel, CurrValue)
 						LookupAffixAndSetInfoLine("data\abyss_jewel\MinionsDealAdditional" nameRuToEn[match1] "Damage.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions Regenerate \d+? Life per second")
-					If RegExMatch(A_LoopField, "Приспешники регенерируют \d+? здоровья в секунду")
+					;If RegExMatch(LoopField, "Minions Regenerate \d+? Life per second")
+					If RegExMatch(LoopField, "Приспешники регенерируют \d+? здоровья в секунду")
 					{
 						LookupAffixAndSetInfoLine("data\abyss_jewel\MinionsRegenerateLife.txt", "Prefix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% chance to Blind on Hit with Attacks")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% шанс ослепить при нанесении удара атаками")
+					;If RegExMatch(LoopField, "Minions have \d+% chance to Blind on Hit with Attacks")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% шанс ослепить при нанесении удара атаками")
 					{
 						LookupAffixAndSetInfoLine(["32|3-4","65|5-6"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% chance to Taunt on Hit with Attacks")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% шанс спровоцировать при нанесении удара атаками")
+					;If RegExMatch(LoopField, "Minions have \d+% chance to Taunt on Hit with Attacks")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% шанс спровоцировать при нанесении удара атаками")
 					{
 						LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% chance to Hinder Enemies on Hit with Spells, with 30% reduced Movement Speed")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% шанс наложить Скованность на врагов, снижающую скорость их передвижения на 30%, при нанесении удара чарами")
+					;If RegExMatch(LoopField, "Minions have \d+% chance to Hinder Enemies on Hit with Spells, with 30% reduced Movement Speed")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% шанс наложить Скованность на врагов, снижающую скорость их передвижения на 30%, при нанесении удара чарами")
 					{
 						LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions deal \d+% increased Damage against Abyssal Monsters")
-					If RegExMatch(A_LoopField, "Приспешники наносят увеличенный на \d+% урон по монстрам Бездны")
+					;If RegExMatch(LoopField, "Minions deal \d+% increased Damage against Abyssal Monsters")
+					If RegExMatch(LoopField, "Приспешники наносят увеличенный на \d+% урон по монстрам Бездны")
 					{
 						LookupAffixAndSetInfoLine(["1|30-40"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% increased (Attack|Cast) Speed")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% повышение скорости (атаки|сотворения чар)")
+					;If RegExMatch(LoopField, "Minions have \d+% increased (Attack|Cast) Speed")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% повышение скорости (атаки|сотворения чар)")
 					{
 						LookupAffixAndSetInfoLine(["1|4-6"], "Hybrid Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions Regenerate \d+% Life per second")
-					If RegExMatch(A_LoopField, "Приспешники регенерируют \d+% здоровья в секунду")
+					;If RegExMatch(LoopField, "Minions Regenerate \d+% Life per second")
+					If RegExMatch(LoopField, "Приспешники регенерируют \d+% здоровья в секунду")
 					{
 						LookupAffixAndSetInfoLine(["1|0.4-0.8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions Leech [\d\.]+% of Damage as Life")
-					If RegExMatch(A_LoopField, "Приспешники похищают [\d\.]+% от урона в виде здоровья")
+					;If RegExMatch(LoopField, "Minions Leech [\d\.]+% of Damage as Life")
+					If RegExMatch(LoopField, "Приспешники похищают [\d\.]+% от урона в виде здоровья")
 					{
 						LookupAffixAndSetInfoLine(["1|0.3-0.5"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% increased Movement Speed")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% повышение скорости передвижения")
+					;If RegExMatch(LoopField, "Minions have \d+% increased Movement Speed")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% повышение скорости передвижения")
 					{
 						LookupAffixAndSetInfoLine(["1|6-10"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% increased maximum Life")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% увеличение максимума здоровья")
+					;If RegExMatch(LoopField, "Minions have \d+% increased maximum Life")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% увеличение максимума здоровья")
 					{
 						LookupAffixAndSetInfoLine(["1|8-12"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have +\d+% to all Elemental Resistances")
-					If RegExMatch(A_LoopField, "Приспешники имеют +\d+% к сопротивлению всем стихиям")
+					;If RegExMatch(LoopField, "Minions have +\d+% to all Elemental Resistances")
+					If RegExMatch(LoopField, "Приспешники имеют +\d+% к сопротивлению всем стихиям")
 					{
 						LookupAffixAndSetInfoLine(["1|6-10"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have +\d+% to Chaos Resistance")
-					If RegExMatch(A_LoopField, "Приспешники имеют +\d+% к сопротивлению хаосу")
+					;If RegExMatch(LoopField, "Minions have +\d+% to Chaos Resistance")
+					If RegExMatch(LoopField, "Приспешники имеют +\d+% к сопротивлению хаосу")
 					{
 						LookupAffixAndSetInfoLine(["1|7-12"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "Minions have \d+% increased Attack and Cast Speed if you or your Minions have Killed Recently")
-					If RegExMatch(A_LoopField, "Приспешники имеют \d+% повышение скорости атаки и сотворения чар, если вы или ваши приспешники недавно совершали убийство")
+					;If RegExMatch(LoopField, "Minions have \d+% increased Attack and Cast Speed if you or your Minions have Killed Recently")
+					If RegExMatch(LoopField, "Приспешники имеют \d+% повышение скорости атаки и сотворения чар, если вы или ваши приспешники недавно совершали убийство")
 					{
 						LookupAffixAndSetInfoLine(["1|6-8"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}
-					;If RegExMatch(A_LoopField, "increased Minion Damage if you've used a Minion Skill Recently")
-					If RegExMatch(A_LoopField, "увеличение урона приспешников, если вы недавно использовали умение приспешников")
+					;If RegExMatch(LoopField, "increased Minion Damage if you've used a Minion Skill Recently")
+					If RegExMatch(LoopField, "увеличение урона приспешников, если вы недавно использовали умение приспешников")
 					{
 						LookupAffixAndSetInfoLine(["1|15-20"], "Suffix", ItemLevel, CurrValue)
 						Continue
 					}					
 				}
 				
-				;IfInString, A_LoopField, to Accuracy Rating
-				IfInString, A_LoopField, к меткости
+				;IfInString, LoopField, to Accuracy Rating
+				IfInString, LoopField, к меткости
 				{
 					LookupAffixAndSetInfoLine("data\abyss_jewel\AccuracyRating.txt", "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to Blind Enemies on Hit with Attacks
-				IfInString, A_LoopField, шанс ослепить врагов при нанесении удара атаками
+				;IfInString, LoopField, chance to Blind Enemies on Hit with Attacks
+				IfInString, LoopField, шанс ослепить врагов при нанесении удара атаками
 				{
 					LookupAffixAndSetInfoLine(["32|3-4","65|5-6"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to Taunt Enemies on Hit with Attacks
-				IfInString, A_LoopField, шанс спровоцировать врагов при нанесении удара атаками
+				;IfInString, LoopField, chance to Taunt Enemies on Hit with Attacks
+				IfInString, LoopField, шанс спровоцировать врагов при нанесении удара атаками
 				{
 					LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "chance to Hinder Enemies on Hit with Spells, with 30% reduced Movement Speed")
-				If RegExMatch(A_LoopField, "шанс наложить Скованность на врагов, снижающую скорость их передвижения на 30%, при нанесении удара чарами")
+				;If RegExMatch(LoopField, "chance to Hinder Enemies on Hit with Spells, with 30% reduced Movement Speed")
+				If RegExMatch(LoopField, "шанс наложить Скованность на врагов, снижающую скорость их передвижения на 30%, при нанесении удара чарами")
 				{
 					LookupAffixAndSetInfoLine(["32|3-5","65|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "chance to Avoid being (Ignited|Shocked)")
-				If RegExMatch(A_LoopField, "шанс избежать (поджога|шока)")
+				;If RegExMatch(LoopField, "chance to Avoid being (Ignited|Shocked)")
+				If RegExMatch(LoopField, "шанс избежать (поджога|шока)")
 				{
 					LookupAffixAndSetInfoLine(["1|6-8","30|9-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "chance to Avoid being (Chilled|Frozen)")
-				If RegExMatch(A_LoopField, "шанс избежать (охлаждения|заморозки)")
+				;If RegExMatch(LoopField, "chance to Avoid being (Chilled|Frozen)")
+				If RegExMatch(LoopField, "шанс избежать (охлаждения|заморозки)")
 				{
 					LookupAffixAndSetInfoLine(["1|6-8","30|9-10"], "Hybrid Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "chance to [Aa]void (being Poisoned|Bleeding)")
-				If RegExMatch(A_LoopField, "шанс избежать (отравления|кровотечения)")
+				;If RegExMatch(LoopField, "chance to [Aa]void (being Poisoned|Bleeding)")
+				If RegExMatch(LoopField, "шанс избежать (отравления|кровотечения)")
 				{
 					LookupAffixAndSetInfoLine(["20|6-8","50|9-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to Avoid being Stunned
-				IfInString, A_LoopField, шанс избежать оглушения
+				;IfInString, LoopField, chance to Avoid being Stunned
+				IfInString, LoopField, шанс избежать оглушения
 				{
 					LookupAffixAndSetInfoLine(["1|6-8","20|9-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Damage against Abyssal Monsters
-				IfInString, A_LoopField, увеличение урона по монстрам Бездны
+				;IfInString, LoopField, increased Damage against Abyssal Monsters
+				IfInString, LoopField, увеличение урона по монстрам Бездны
 				{
 					LookupAffixAndSetInfoLine(["1|30-40"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, additional Physical Damage Reduction against Abyssal Monsters
-				IfInString, A_LoopField, дополнительного уменьшения получаемого физического урона от монстров Бездны
+				;IfInString, LoopField, additional Physical Damage Reduction against Abyssal Monsters
+				IfInString, LoopField, дополнительного уменьшения получаемого физического урона от монстров Бездны
 				{
 					LookupAffixAndSetInfoLine(["1|4-6"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "increased Effect of (Chill|Shock)")
-				If RegExMatch(A_LoopField, "усиление эффекта (охлаждения|шока)")
+				;If RegExMatch(LoopField, "increased Effect of (Chill|Shock)")
+				If RegExMatch(LoopField, "усиление эффекта (охлаждения|шока)")
 				{
 					LookupAffixAndSetInfoLine(["30|6-10"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to Block Spells if you were Damaged by a Hit Recently
-				IfInString, A_LoopField, шанс блока чар, если недавно вы получали урон от удара
+				;IfInString, LoopField, chance to Block Spells if you were Damaged by a Hit Recently
+				IfInString, LoopField, шанс блока чар, если недавно вы получали урон от удара
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, additional Physical Damage Reduction if you weren't Damaged by a Hit Recently
-				IfInString, A_LoopField, дополнительного уменьшения получаемого физического урона, если недавно вы не получали урон от ударов
+				;IfInString, LoopField, additional Physical Damage Reduction if you weren't Damaged by a Hit Recently
+				IfInString, LoopField, дополнительного уменьшения получаемого физического урона, если недавно вы не получали урон от ударов
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Movement Speed if you haven't taken Damage Recently
-				IfInString, A_LoopField, повышение скорости передвижения, если вы недавно не получали урон
+				;IfInString, LoopField, increased Movement Speed if you haven't taken Damage Recently
+				IfInString, LoopField, повышение скорости передвижения, если вы недавно не получали урон
 				{
 					LookupAffixAndSetInfoLine(["1|3-4"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Damage if you've Killed Recently
-				IfInString, A_LoopField, увеличение урона, если вы недавно совершали убийство
+				;IfInString, LoopField, increased Damage if you've Killed Recently
+				IfInString, LoopField, увеличение урона, если вы недавно совершали убийство
 				{
 					LookupAffixAndSetInfoLine(["1|10-20"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, to Critical Strike Multiplier if you've Killed Recently
-				IfInString, A_LoopField, к множителю критического удара, если вы недавно совершали убийство
+				;IfInString, LoopField, to Critical Strike Multiplier if you've Killed Recently
+				IfInString, LoopField, к множителю критического удара, если вы недавно совершали убийство
 				{
 					LookupAffixAndSetInfoLine(["25|8-14"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Armour if you haven't Killed Recently
-				IfInString, A_LoopField, увеличение брони, если вы недавно не совершали убийство
+				;IfInString, LoopField, increased Armour if you haven't Killed Recently
+				IfInString, LoopField, увеличение брони, если вы недавно не совершали убийство
 				{
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Accuracy Rating if you haven't Killed Recently
-				IfInString, A_LoopField, повышение меткости, если недавно вы не совершали убийство
+				;IfInString, LoopField, increased Accuracy Rating if you haven't Killed Recently
+				IfInString, LoopField, повышение меткости, если недавно вы не совершали убийство
 				{
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "Damage Penetrates \d+% Elemental Resistance if you haven't Killed Recently")
-				If RegExMatch(A_LoopField, "Урон пробивает \d+% сопротивления стихиям, если вы недавно не совершали убийство")
+				;If RegExMatch(LoopField, "Damage Penetrates \d+% Elemental Resistance if you haven't Killed Recently")
+				If RegExMatch(LoopField, "Урон пробивает \d+% сопротивления стихиям, если вы недавно не совершали убийство")
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Evasion Rating while moving
-				IfInString, A_LoopField, увеличение уклонения при передвижении
+				;IfInString, LoopField, increased Evasion Rating while moving
+				IfInString, LoopField, увеличение уклонения при передвижении
 				{
 					LookupAffixAndSetInfoLine(["1|25-35"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Mana Regeneration Rate while moving
-				IfInString, A_LoopField, повышение скорости регенерации маны при передвижении
+				;IfInString, LoopField, increased Mana Regeneration Rate while moving
+				IfInString, LoopField, повышение скорости регенерации маны при передвижении
 				{
 					LookupAffixAndSetInfoLine(["1|20-25"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, of Life Regenerated per second while moving
-				If RegExMatch(A_LoopField, "Регенерирует \d+% здоровья в секунду при передвижении")
+				;IfInString, LoopField, of Life Regenerated per second while moving
+				If RegExMatch(LoopField, "Регенерирует \d+% здоровья в секунду при передвижении")
 				{
 					LookupAffixAndSetInfoLine(["1|0.5-1"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;If RegExMatch(A_LoopField, "Gain \d+% of Physical Damage as Extra Fire Damage if you've dealt a Critical Strike Recently")
-				If RegExMatch(A_LoopField, "Наносит \d+% от физического урона в виде дополнительного урона от огня, если вы недавно не наносили критический удар")
+				;If RegExMatch(LoopField, "Gain \d+% of Physical Damage as Extra Fire Damage if you've dealt a Critical Strike Recently")
+				If RegExMatch(LoopField, "Наносит \d+% от физического урона в виде дополнительного урона от огня, если вы недавно не наносили критический удар")
 				{
 					LookupAffixAndSetInfoLine(["40|2-4"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Attack Speed if you've dealt a Critical Strike Recently
-				IfInString, A_LoopField, повышение скорости атаки, если вы недавно наносили критический удар
+				;IfInString, LoopField, increased Attack Speed if you've dealt a Critical Strike Recently
+				IfInString, LoopField, повышение скорости атаки, если вы недавно наносили критический удар
 				{
 					LookupAffixAndSetInfoLine(["25|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Cast Speed if you've dealt a Critical Strike Recently
-				IfInString, A_LoopField, повышение скорости сотворения чар, если вы недавно наносили критический удар
+				;IfInString, LoopField, increased Cast Speed if you've dealt a Critical Strike Recently
+				IfInString, LoopField, повышение скорости сотворения чар, если вы недавно наносили критический удар
 				{
 					LookupAffixAndSetInfoLine(["25|5-7"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Critical Strike Chance if you haven't dealt a Critical Strike Recently
-				IfInString, A_LoopField, повышение шанса критического удара, если вы недавно не наносили критический удар
+				;IfInString, LoopField, increased Critical Strike Chance if you haven't dealt a Critical Strike Recently
+				IfInString, LoopField, повышение шанса критического удара, если вы недавно не наносили критический удар
 				{
 					LookupAffixAndSetInfoLine(["1|20-30"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to Dodge Attacks and Spells if you've been Hit Recently
-				IfInString, A_LoopField, шанс увернуться от атак и чар, если вы недавно получали удар
+				;IfInString, LoopField, chance to Dodge Attacks and Spells if you've been Hit Recently
+				IfInString, LoopField, шанс увернуться от атак и чар, если вы недавно получали удар
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, increased Movement Speed if you've Killed Recently
-				IfInString, A_LoopField, повышение скорости передвижения, если недавно вы совершали убийство
+				;IfInString, LoopField, increased Movement Speed if you've Killed Recently
+				IfInString, LoopField, повышение скорости передвижения, если недавно вы совершали убийство
 				{
 					LookupAffixAndSetInfoLine(["1|2-4"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, additional Block Chance if you were Damaged by a Hit Recently
-				IfInString, A_LoopField, дополнительный шанс блока, если недавно вы получали урон от ударов
+				;IfInString, LoopField, additional Block Chance if you were Damaged by a Hit Recently
+				IfInString, LoopField, дополнительный шанс блока, если недавно вы получали урон от ударов
 				{
 					LookupAffixAndSetInfoLine(["1|2"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to gain Onslaught for 4 seconds on Kill
-				IfInString, A_LoopField, шанс получить эффект Боевой раж на 4 секунды при убийстве
+				;IfInString, LoopField, chance to gain Onslaught for 4 seconds on Kill
+				IfInString, LoopField, шанс получить эффект Боевой раж на 4 секунды при убийстве
 				{
 					LookupAffixAndSetInfoLine(["10|3-5","50|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to gain Phasing for 4 seconds on Kill
-				IfInString, A_LoopField, шанс войти в Форму призрака на 4 секунда при убийстве
+				;IfInString, LoopField, chance to gain Phasing for 4 seconds on Kill
+				IfInString, LoopField, шанс войти в Форму призрака на 4 секунда при убийстве
 				{
 					LookupAffixAndSetInfoLine(["10|3-5","50|6-8"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
-				;IfInString, A_LoopField, chance to gain Unholy Might for 4 seconds on Melee Kill
-				IfInString, A_LoopField, шанс получить Нечестивое могущество на 4 секунды при убийстве в ближнем бою
+				;IfInString, LoopField, chance to gain Unholy Might for 4 seconds on Melee Kill
+				IfInString, LoopField, шанс получить Нечестивое могущество на 4 секунды при убийстве в ближнем бою
 				{
 					LookupAffixAndSetInfoLine(["40|2-3","80|4-5"], "Suffix", ItemLevel, CurrValue)
 					Continue
 				}
 			}
 			
-			;IfInString, A_LoopField, increased Area Damage
-			IfInString, A_LoopField, увеличение урона по области
+			;IfInString, LoopField, increased Area Damage
+			IfInString, LoopField, увеличение урона по области
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AreaDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Attack and Cast Speed
-			IfInString, A_LoopField, повышение скорости атаки и сотворения чар
+			;IfInString, LoopField, increased Attack and Cast Speed
+			IfInString, LoopField, повышение скорости атаки и сотворения чар
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackAndCastSpeed.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Attack Speed with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*повышение скорости атаки (одноручным|двуручным) оружием ближнего боя")
+			;If RegExMatch(LoopField, ".*increased Attack Speed with (One|Two) Handed Melee Weapons")
+			If RegExMatch(LoopField, ".*повышение скорости атаки (одноручным|двуручным) оружием ближнего боя")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Attack Speed while holding a Shield
-			IfInString, A_LoopField, повышение скорости атаки со щитом в руках
+			;IfInString, LoopField, increased Attack Speed while holding a Shield
+			IfInString, LoopField, повышение скорости атаки со щитом в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWhileHoldingShield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Attack Speed while Dual Wielding
-			IfInString, A_LoopField, повышение скорости атаки парным оружием
+			;IfInString, LoopField, increased Attack Speed while Dual Wielding
+			IfInString, LoopField, повышение скорости атаки парным оружием
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWhileDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Attack Speed with (Axes|Bows|Claws|Daggers|Maces|Staves|Swords|Wands)")
-			If RegExMatch(A_LoopField, ".*повышение скорости атаки (топорами|луками|когтями|кинжалами|булавами|посохами|мечами|жезлами)")
+			;If RegExMatch(LoopField, ".*increased Attack Speed with (Axes|Bows|Claws|Daggers|Maces|Staves|Swords|Wands)")
+			If RegExMatch(LoopField, ".*повышение скорости атаки (топорами|луками|когтями|кинжалами|булавами|посохами|мечами|жезлами)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeedWithWeapontype.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			
 			; Pure Attack Speed must be checked last if RegEx line end isn't used
-			;If RegExMatch(A_LoopField, ".*increased Attack Speed$")
-			If RegExMatch(A_LoopField, ".*повышение скорости атаки$")
+			;If RegExMatch(LoopField, ".*increased Attack Speed$")
+			If RegExMatch(LoopField, ".*повышение скорости атаки$")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\AttackSpeed_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			
-			;IfInString, A_LoopField, increased Accuracy Rating
-			IfInString, A_LoopField, повышение меткости
+			;IfInString, LoopField, increased Accuracy Rating
+			IfInString, LoopField, повышение меткости
 			{
 				If (Item.SubType = "Cobalt Jewel" or Item.SubType = "Crimson Jewel")
 				{
@@ -5020,77 +5027,77 @@ ParseAffixes(ItemDataAffixes, Item)
 				}
 			}
 			
-			;IfInString, A_LoopField, to all Attributes
-			IfInString, A_LoopField, ко всем атрибутам
+			;IfInString, LoopField, to all Attributes
+			IfInString, LoopField, ко всем атрибутам
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ToAllAttributes_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 			
-			;If RegExMatch(A_LoopField, ".*to (Strength|Dexterity|Intelligence) and (Strength|Dexterity|Intelligence)")
-			If RegExMatch(A_LoopField, ".*к (силе|ловкости|интеллекту) и (силе|ловкости|интеллекту)")
+			;If RegExMatch(LoopField, ".*to (Strength|Dexterity|Intelligence) and (Strength|Dexterity|Intelligence)")
+			If RegExMatch(LoopField, ".*к (силе|ловкости|интеллекту) и (силе|ловкости|интеллекту)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To2Attributes_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*to (Strength|Dexterity|Intelligence)")
-			If RegExMatch(A_LoopField, ".*к (силе|ловкости|интеллекту)")
+			;If RegExMatch(LoopField, ".*to (Strength|Dexterity|Intelligence)")
+			If RegExMatch(LoopField, ".*к (силе|ловкости|интеллекту)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To1Attribute_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Cast Speed (with|while) .*")
-			If RegExMatch(A_LoopField, ".*(увеличение|повышение) скорости сотворения чар (с|для) .*")
+			;If RegExMatch(LoopField, ".*increased Cast Speed (with|while) .*")
+			If RegExMatch(LoopField, ".*(увеличение|повышение) скорости сотворения чар (с|для) .*")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CastSpeedWithWhile.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			
 			; pure Cast Speed must be checked last if RegEx line end isn't used
-			;If RegExMatch(A_LoopField, ".*increased Cast Speed$")
-			If RegExMatch(A_LoopField, ".*повышение скорости сотворения чар$")
+			;If RegExMatch(LoopField, ".*increased Cast Speed$")
+			If RegExMatch(LoopField, ".*повышение скорости сотворения чар$")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CastSpeed_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Critical Strike Chance for Spells
-			IfInString, A_LoopField, повышение шанса критического удара для чар
+			;IfInString, LoopField, increased Critical Strike Chance for Spells
+			IfInString, LoopField, повышение шанса критического удара для чар
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceSpells_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Melee Critical Strike Chance
-			IfInString, A_LoopField, повышение шанса критического удара в ближнем бою
+			;IfInString, LoopField, increased Melee Critical Strike Chance
+			IfInString, LoopField, повышение шанса критического удара в ближнем бою
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MeleeCritChance.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Critical Strike Chance with Elemental Skills
-			IfInString, A_LoopField,  повышение шанса критического удара умениями стихий
+			;IfInString, LoopField, increased Critical Strike Chance with Elemental Skills
+			IfInString, LoopField,  повышение шанса критического удара умениями стихий
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceElementalSkills.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Critical Strike Chance with (Fire|Cold|Lightning) Skills")
-			If RegExMatch(A_LoopField, ".*повышение шанса критического удара умениями (огня|холода|молнии)")
+			;If RegExMatch(LoopField, ".*increased Critical Strike Chance with (Fire|Cold|Lightning) Skills")
+			If RegExMatch(LoopField, ".*повышение шанса критического удара умениями (огня|холода|молнии)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceFireColdLightningSkills.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Critical Strike Chance with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*повышение шанса критического удара (одноручным|двуручным) оружием ближнего боя")
+			;If RegExMatch(LoopField, ".*increased Critical Strike Chance with (One|Two) Handed Melee Weapons")
+			If RegExMatch(LoopField, ".*повышение шанса критического удара (одноручным|двуручным) оружием ближнего боя")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritChanceWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Weapon Critical Strike Chance while Dual Wielding
-			IfInString, A_LoopField, повышение шанса критического удара оружием с парным оружием в руках
+			;IfInString, LoopField, increased Weapon Critical Strike Chance while Dual Wielding
+			IfInString, LoopField, повышение шанса критического удара оружием с парным оружием в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\WeaponCritChanceDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Global Critical Strike Chance
-			IfInString, A_LoopField, повышение глобального шанса критического удара
+			;IfInString, LoopField, increased Global Critical Strike Chance
+			IfInString, LoopField, повышение глобального шанса критического удара
 			{
 				If not (Item.SubType = "Viridian Jewel" or Item.SubType = "Prismatic Jewel")
 				{
@@ -5104,227 +5111,227 @@ ParseAffixes(ItemDataAffixes, Item)
 					Continue
 				}
 			}
-			;IfInString, A_LoopField, to Melee Critical Strike Multiplier
-			IfInString, A_LoopField, к множителю критического удара в ближнем бою
+			;IfInString, LoopField, to Melee Critical Strike Multiplier
+			IfInString, LoopField, к множителю критического удара в ближнем бою
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMeleeMultiplier.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, to Critical Strike Multiplier for Spells
-			IfInString, A_LoopField, к множителю критического удара чарами
+			;IfInString, LoopField, to Critical Strike Multiplier for Spells
+			IfInString, LoopField, к множителю критического удара чарами
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierSpells.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, to Critical Strike Multiplier with Elemental Skills
-			IfInString, A_LoopField, к множителю критического удара умениями стихий
+			;IfInString, LoopField, to Critical Strike Multiplier with Elemental Skills
+			IfInString, LoopField, к множителю критического удара умениями стихий
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierElementalSkills.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*to Critical Strike Multiplier with (Fire|Cold|Lightning) Skills")
-			If RegExMatch(A_LoopField, ".*к множителю критического удара умениями (огня|холода|молнии)")
+			;If RegExMatch(LoopField, ".*to Critical Strike Multiplier with (Fire|Cold|Lightning) Skills")
+			If RegExMatch(LoopField, ".*к множителю критического удара умениями (огня|холода|молнии)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierFireColdLightningSkills.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*to Critical Strike Multiplier with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*к множителю критического удара (одноручным|двуручным) оружием ближнего боя")
+			;If RegExMatch(LoopField, ".*to Critical Strike Multiplier with (One|Two) Handed Melee Weapons")
+			If RegExMatch(LoopField, ".*к множителю критического удара (одноручным|двуручным) оружием ближнего боя")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, to Critical Strike Multiplier while Dual Wielding
-			IfInString, A_LoopField, к множителю критического удара с парным оружием в руках
+			;IfInString, LoopField, to Critical Strike Multiplier while Dual Wielding
+			IfInString, LoopField, к множителю критического удара с парным оружием в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierWhileDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Critical Strike Multiplier
-			IfInString, A_LoopField, увеличение глобального множителя критического удара
+			;IfInString, LoopField, Critical Strike Multiplier
+			IfInString, LoopField, увеличение глобального множителя критического удара
 			{
 				LookupAffixAndSetInfoLine("data\jewel\CritMultiplierGlobal_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to Ignite
-			IfInString, A_LoopField, шанс поджечь
+			;IfInString, LoopField, chance to Ignite
+			IfInString, LoopField, шанс поджечь
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToIgnite.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Ignite Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности поджога на врагах
+			;IfInString, LoopField, increased Ignite Duration on Enemies
+			IfInString, LoopField, увеличение длительности поджога на врагах
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IgniteDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to Freeze
-			IfInString, A_LoopField, шанс заморозить
+			;IfInString, LoopField, chance to Freeze
+			IfInString, LoopField, шанс заморозить
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToFreeze.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Freeze Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности заморозки на врагах
+			;IfInString, LoopField, increased Freeze Duration on Enemies
+			IfInString, LoopField, увеличение длительности заморозки на врагах
 			{
 				LookupAffixAndSetInfoLine("data\jewel\FreezeDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to Shock
-			IfInString, A_LoopField, шанс наложить шок
+			;IfInString, LoopField, chance to Shock
+			IfInString, LoopField, шанс наложить шок
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToShock.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Shock Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности шока на врагах
+			;IfInString, LoopField, increased Shock Duration on Enemies
+			IfInString, LoopField, увеличение длительности шока на врагах
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ShockDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to Poison
-			IfInString, A_LoopField,  шанс отравить при нанесении удара
+			;IfInString, LoopField, chance to Poison
+			IfInString, LoopField,  шанс отравить при нанесении удара
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToPoison.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Poison Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности яда
+			;IfInString, LoopField, increased Poison Duration on Enemies
+			IfInString, LoopField, увеличение длительности яда
 			{
 				LookupAffixAndSetInfoLine("data\jewel\PoisonDuration.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to cause Bleeding
-			IfInString, A_LoopField, шанс наложить кровотечение
+			;IfInString, LoopField, chance to cause Bleeding
+			IfInString, LoopField, шанс наложить кровотечение
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ChanceToBleed.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Bleed duration
-			IfInString, A_LoopField, увеличение длительности кровотечения
+			;IfInString, LoopField, increased Bleed duration
+			IfInString, LoopField, увеличение длительности кровотечения
 			{
 				LookupAffixAndSetInfoLine("data\jewel\BleedingDurationOnEnemies.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Burning Damage
-			IfInString, A_LoopField, увеличение урона от горения
+			;IfInString, LoopField, increased Burning Damage
+			IfInString, LoopField, увеличение урона от горения
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrBurningDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Damage with Bleeding
-			IfInString, A_LoopField, увеличение урона от кровотечения
+			;IfInString, LoopField, increased Damage with Bleeding
+			IfInString, LoopField, увеличение урона от кровотечения
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrBleedingDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Damage with Poison
-			IfInString, A_LoopField, увеличение урона от яда
+			;IfInString, LoopField, increased Damage with Poison
+			IfInString, LoopField, увеличение урона от яда
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPoisonDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased (Fire|Cold|Lightning) Damage")
-			If RegExMatch(A_LoopField, ".*увеличение урона от (огня|холода|молнии)")
+			;If RegExMatch(LoopField, ".*increased (Fire|Cold|Lightning) Damage")
+			If RegExMatch(LoopField, ".*увеличение урона от (огня|холода|молнии)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrFireColdLightningDamage_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, "Minions have .* Chance to Block")
-			If RegExMatch(A_LoopField, "Ваши приспешники имеют .* шанс на блок")
+			;If RegExMatch(LoopField, "Minions have .* Chance to Block")
+			If RegExMatch(LoopField, "Ваши приспешники имеют .* шанс на блок")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MinionBlockChance.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*(Chance to Block|Block Chance).*")
-			If RegExMatch(A_LoopField, ".*(шанс на блок|шанс блока).*")
+			;If RegExMatch(LoopField, ".*(Chance to Block|Block Chance).*")
+			If RegExMatch(LoopField, ".*(шанс на блок|шанс блока).*")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\BlockChance_ChanceToBlock_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Damage over Time
-			IfInString, A_LoopField, увеличение постепенного урона
+			;IfInString, LoopField, increased Damage over Time
+			IfInString, LoopField, увеличение постепенного урона
 			{
 				LookupAffixAndSetInfoLine("data\jewel\DamageOverTime.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, "Minions deal .* increased Damage")
-			If RegExMatch(A_LoopField, "Приспешники имеют .* увеличение урона")
+			;If RegExMatch(LoopField, "Minions deal .* increased Damage")
+			If RegExMatch(LoopField, "Приспешники имеют .* увеличение урона")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MinionsDealIncrDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Damage$")
-			If RegExMatch(A_LoopField, ".* увеличение урона$")			
+			;If RegExMatch(LoopField, ".*increased Damage$")
+			If RegExMatch(LoopField, ".* увеличение урона$")			
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to Knock Enemies Back on hit
-			IfInString, A_LoopField, шанс отбросить врагов при ударе
+			;IfInString, LoopField, chance to Knock Enemies Back on hit
+			IfInString, LoopField, шанс отбросить врагов при ударе
 			{
 				LookupAffixAndSetInfoLine("data\jewel\KnockBackOnHit.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Life gained for each Enemy hit by your Attacks
-			If RegExMatch(A_LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")			
+			;IfInString, LoopField, Life gained for each Enemy hit by your Attacks
+			If RegExMatch(LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")			
 			{
 				LookupAffixAndSetInfoLine("data\jewel\LifeOnHit_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Energy Shield gained for each Enemy hit by your Attacks
-			IfInString, A_LoopField, энергетического щита за каждого задетого атакой врага
+			;IfInString, LoopField, Energy Shield gained for each Enemy hit by your Attacks
+			IfInString, LoopField, энергетического щита за каждого задетого атакой врага
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ESOnHit.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Mana gained for each Enemy hit by your Attacks
-			IfInString, A_LoopField, маны за каждого задетого атакой врага
+			;IfInString, LoopField, Mana gained for each Enemy hit by your Attacks
+			IfInString, LoopField, маны за каждого задетого атакой врага
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ManaOnHit.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, reduced Mana Cost of Skills
-			IfInString, A_LoopField, снижение затрат маны умений
+			;IfInString, LoopField, reduced Mana Cost of Skills
+			IfInString, LoopField, снижение затрат маны умений
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ReducedManaCost.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
 
-			;IfInString, A_LoopField, increased Mana Regeneration Rate
-			IfInString, A_LoopField, повышение скорости регенерации маны
+			;IfInString, LoopField, increased Mana Regeneration Rate
+			IfInString, LoopField, повышение скорости регенерации маны
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ManaRegen_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Melee Damage
-			IfInString, A_LoopField, увеличение урона в ближнем бою
+			;IfInString, LoopField, increased Melee Damage
+			IfInString, LoopField, увеличение урона в ближнем бою
 			{
 				LookupAffixAndSetInfoLine("data\jewel\MeleeDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Projectile Damage
-			IfInString, A_LoopField, увеличение урона снарядов
+			;IfInString, LoopField, increased Projectile Damage
+			IfInString, LoopField, увеличение урона снарядов
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ProjectileDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Projectile Speed
-			IfInString, A_LoopField, повышение скорости снарядов
+			;IfInString, LoopField, increased Projectile Speed
+			IfInString, LoopField, повышение скорости снарядов
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ProjectileSpeed_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, to all Elemental Resistances
-			IfInString, A_LoopField, к сопротивлению всем стихиям
+			;IfInString, LoopField, to all Elemental Resistances
+			IfInString, LoopField, к сопротивлению всем стихиям
 			{
 				; "to all Elemental Resistances" matches multiple affixes
-				;If InStr(A_LoopField, "Minions have"){
-				If InStr(A_LoopField, "Приспешники имеют"){
+				;If InStr(LoopField, "Minions have"){
+				If InStr(LoopField, "Приспешники имеют"){
 					File := "data\jewel\ToAllResist_Jewels_Minions.txt"
 				}
-				;Else If InStr(A_LoopField, "Totems gain"){
-				Else If InStr(A_LoopField, "Тотемы получают"){
+				;Else If InStr(LoopField, "Totems gain"){
+				Else If InStr(LoopField, "Тотемы получают"){
 					File := "data\jewel\ToAllResist_Jewels_Totems.txt"
 				}
 				Else{
@@ -5333,108 +5340,108 @@ ParseAffixes(ItemDataAffixes, Item)
 				LookupAffixAndSetInfoLine(File, "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*to (Fire|Cold|Lightning) and (Fire|Cold|Lightning) Resistances")
-			If RegExMatch(A_LoopField, ".*к сопротивлению (огню|холоду|молнии) и (огню|холоду|молнии)")
+			;If RegExMatch(LoopField, ".*to (Fire|Cold|Lightning) and (Fire|Cold|Lightning) Resistances")
+			If RegExMatch(LoopField, ".*к сопротивлению (огню|холоду|молнии) и (огню|холоду|молнии)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To2Resist_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*to (Fire|Cold|Lightning) Resistance")
-			If RegExMatch(A_LoopField, ".*к сопротивлению (огню|холоду|молнии)")
+			;If RegExMatch(LoopField, ".*to (Fire|Cold|Lightning) Resistance")
+			If RegExMatch(LoopField, ".*к сопротивлению (огню|холоду|молнии)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\To1Resist_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, to Chaos Resistance
-			IfInString, A_LoopField, к сопротивлению хаосу
+			;IfInString, LoopField, to Chaos Resistance
+			IfInString, LoopField, к сопротивлению хаосу
 			{
 				LookupAffixAndSetInfoLine("data\jewel\ToChaosResist_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Stun Duration on Enemies
-			IfInString, A_LoopField, увеличение длительности оглушения на врагах
+			;IfInString, LoopField, increased Stun Duration on Enemies
+			IfInString, LoopField, увеличение длительности оглушения на врагах
 			{
 				LookupAffixAndSetInfoLine("data\jewel\StunDuration_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Physical Damage with (Axes|Bows|Claws|Daggers|Maces|Staves|Swords|Wands)")
-			If RegExMatch(A_LoopField, ".*увеличение физического урона (топорами|луками|когтями|кинжалами|булавами|посохами|мечами|жезлами)")
+			;If RegExMatch(LoopField, ".*increased Physical Damage with (Axes|Bows|Claws|Daggers|Maces|Staves|Swords|Wands)")
+			If RegExMatch(LoopField, ".*увеличение физического урона (топорами|луками|когтями|кинжалами|булавами|посохами|мечами|жезлами)")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysDamageWithWeapontype.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Melee Physical Damage while holding a Shield
-			IfInString, A_LoopField, увеличение физического урона в ближнем бою со щитом в руках
+			;IfInString, LoopField, increased Melee Physical Damage while holding a Shield
+			IfInString, LoopField, увеличение физического урона в ближнем бою со щитом в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMeleePhysDamageWhileHoldingShield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Physical Weapon Damage while Dual Wielding
-			;IfInString, A_LoopField, увеличение физического урона парным оружием
-			IfInString, A_LoopField, увеличение физического урона с парным оружием в руках
+			;IfInString, LoopField, increased Physical Weapon Damage while Dual Wielding
+			;IfInString, LoopField, увеличение физического урона парным оружием
+			IfInString, LoopField, увеличение физического урона с парным оружием в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysWeaponDamageDualWielding.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;If RegExMatch(A_LoopField, ".*increased Physical Damage with (One|Two) Handed Melee Weapons")
-			If RegExMatch(A_LoopField, ".*увеличение физического урона (одноручным|двуручным) оружием ближнего боя")
+			;If RegExMatch(LoopField, ".*increased Physical Damage with (One|Two) Handed Melee Weapons")
+			If RegExMatch(LoopField, ".*увеличение физического урона (одноручным|двуручным) оружием ближнего боя")
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysDamageWith1H2HMelee.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Global Physical Damage
-			IfInString, A_LoopField, увеличение глобального физического урона
+			;IfInString, LoopField, increased Global Physical Damage
+			IfInString, LoopField, увеличение глобального физического урона
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrPhysDamage_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Totem Damage
-			IfInString, A_LoopField, увеличение урона от тотемов
+			;IfInString, LoopField, increased Totem Damage
+			IfInString, LoopField, увеличение урона от тотемов
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTotemDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Totem Life
-			IfInString, A_LoopField, увеличение здоровья тотема
+			;IfInString, LoopField, increased Totem Life
+			IfInString, LoopField, увеличение здоровья тотема
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTotemLife.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Trap Throwing Speed
-			IfInString, A_LoopField, повышение скорости броска ловушки
+			;IfInString, LoopField, increased Trap Throwing Speed
+			IfInString, LoopField, повышение скорости броска ловушки
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTrapThrowingSpeed.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Trap Damage
-			IfInString, A_LoopField, увеличение урона от ловушек
+			;IfInString, LoopField, increased Trap Damage
+			IfInString, LoopField, увеличение урона от ловушек
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrTrapDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Mine Laying Speed
-			IfInString, A_LoopField, повышение скорости установки мины
+			;IfInString, LoopField, increased Mine Laying Speed
+			IfInString, LoopField, повышение скорости установки мины
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMineLayingSpeed.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Mine Damage
-			IfInString, A_LoopField, увеличение урона от мин
+			;IfInString, LoopField, increased Mine Damage
+			IfInString, LoopField, увеличение урона от мин
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMineDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Chaos Damage
-			IfInString, A_LoopField, увеличение урона хаосом
+			;IfInString, LoopField, increased Chaos Damage
+			IfInString, LoopField, увеличение урона хаосом
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrChaosDamage.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			/* ; в следствие того что в ru версии слово "increased" имеет два варианта перевода  "повышение"/"увеличение", код проверки нужно переписать разделив на два условия
-			;If ( InStr(A_LoopField,"increased maximum Life"))
-			If ( InStr(A_LoopField,"повышение максимума здоровья"))
+			;If ( InStr(LoopField,"increased maximum Life"))
+			If ( InStr(LoopField,"повышение максимума здоровья"))
 			{
-				If InStr(A_LoopField,"Minions have")
+				If InStr(LoopField,"Minions have")
 				{
 					FilePath := "data\jewel\MinionIncrMaximumLife.txt"
 				}
@@ -5446,16 +5453,16 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 			*/
-			;If ( InStr(A_LoopField,"increased maximum Life"))
+			;If ( InStr(LoopField,"increased maximum Life"))
 			; "увеличение"
-			If RegExMatch(A_LoopField, "Приспешники имеют .* увеличение максимума здоровья")
+			If RegExMatch(LoopField, "Приспешники имеют .* увеличение максимума здоровья")
 			{
 				FilePath := "data\jewel\MinionIncrMaximumLife.txt"				
 				LookupAffixAndSetInfoLine(FilePath, "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
 			; "повышение"
-			If ( InStr(A_LoopField,"повышение максимума здоровья"))
+			If ( InStr(LoopField,"повышение максимума здоровья"))
 			{		
 				FilePath := "data\jewel\IncrMaximumLife.txt"
 				LookupAffixAndSetInfoLine(FilePath, "Prefix", ItemLevel, CurrValue)
@@ -5463,80 +5470,80 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 			
 			
-			;IfInString, A_LoopField, increased Armour
-			IfInString, A_LoopField, повышение брони
+			;IfInString, LoopField, increased Armour
+			IfInString, LoopField, повышение брони
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrArmour_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Evasion Rating
-			IfInString, A_LoopField, увеличение уклонения
+			;IfInString, LoopField, increased Evasion Rating
+			IfInString, LoopField, увеличение уклонения
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrEvasion_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Energy Shield Recharge Rate
-			IfInString, A_LoopField, повышение скорости перезарядки энергетического щита
+			;IfInString, LoopField, increased Energy Shield Recharge Rate
+			IfInString, LoopField, повышение скорости перезарядки энергетического щита
 			{
 				LookupAffixAndSetInfoLine("data\jewel\EnergyShieldRechargeRate.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, faster start of Energy Shield Recharge
-			IfInString, A_LoopField, ускорение начала перезарядки энергетического щита
+			;IfInString, LoopField, faster start of Energy Shield Recharge
+			IfInString, LoopField, ускорение начала перезарядки энергетического щита
 			{
 				LookupAffixAndSetInfoLine("data\jewel\FasterStartOfEnergyShieldRecharge.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased maximum Energy Shield
-			IfInString, A_LoopField, повышение максимума энергетического щита
+			;IfInString, LoopField, increased maximum Energy Shield
+			IfInString, LoopField, повышение максимума энергетического щита
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMaxEnergyShield_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Physical Attack Damage Leeched as
-			IfInString, A_LoopField, от физического урона атак похищается в виде
+			;IfInString, LoopField, Physical Attack Damage Leeched as
+			IfInString, LoopField, от физического урона атак похищается в виде
 			{
 				LookupAffixAndSetInfoLine("data\jewel\PhysicalAttackDamageLeeched_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Spell Damage while Dual Wielding
-			IfInString, A_LoopField, увеличение урона чар с парным оружием в руках
+			;IfInString, LoopField, increased Spell Damage while Dual Wielding
+			IfInString, LoopField, увеличение урона чар с парным оружием в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamageDualWielding_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Spell Damage while holding a Shield
-			IfInString, A_LoopField, увеличение урона чар со щитом в руках
+			;IfInString, LoopField, increased Spell Damage while holding a Shield
+			IfInString, LoopField, увеличение урона чар со щитом в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamageHoldingShield_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Spell Damage while wielding a Staff
-			IfInString, A_LoopField, увеличение урона чар с посохом в руках
+			;IfInString, LoopField, increased Spell Damage while wielding a Staff
+			IfInString, LoopField, увеличение урона чар с посохом в руках
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamageWieldingStaff_Jewels.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Spell Damage
-			IfInString, A_LoopField, увеличение урона от чар
+			;IfInString, LoopField, increased Spell Damage
+			IfInString, LoopField, увеличение урона от чар
 			{
 				LookupAffixAndSetInfoLine("data\jewel\SpellDamage_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased maximum Mana
-			IfInString, A_LoopField, повышение максимума маны
+			;IfInString, LoopField, increased maximum Mana
+			IfInString, LoopField, повышение максимума маны
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IncrMaximumMana_Jewel.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Stun and Block Recovery
-			IfInString, A_LoopField, ускорение восстановления после оглушения
+			;IfInString, LoopField, increased Stun and Block Recovery
+			IfInString, LoopField, ускорение восстановления после оглушения
 			{
 				LookupAffixAndSetInfoLine("data\jewel\StunRecovery_Suffix_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Rarity
-			IfInString, A_LoopField, повышение редкости найденных предметов
+			;IfInString, LoopField, increased Rarity
+			IfInString, LoopField, повышение редкости найденных предметов
 			{
 				LookupAffixAndSetInfoLine("data\jewel\IIR_Suffix_Jewels.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
@@ -5548,8 +5555,8 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		; Suffixes
 		
-		;IfInString, A_LoopField, increased Attack Speed
-		IfInString, A_LoopField, повышение скорости атаки
+		;IfInString, LoopField, increased Attack Speed
+		IfInString, LoopField, повышение скорости атаки
 		{
 			If (ItemSubType = "Wand" or ItemSubType = "Bow"){
 				File := "data\AttackSpeed_BowsAndWands.txt"
@@ -5566,8 +5573,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			LookupAffixAndSetInfoLine(File, "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, to all Attributes
-		IfInString, A_LoopField, ко всем характеристикам
+		;IfInString, LoopField, to all Attributes
+		IfInString, LoopField, ко всем характеристикам
 		{
 			If (ItemSubType = "Amulet"){
 				LookupAffixAndSetInfoLine("data\ToAllAttributes_Amulet.txt", "Suffix", ItemLevel, CurrValue)
@@ -5578,8 +5585,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue	
 			}
 		}
-		;If RegExMatch(A_LoopField, ".*to (Strength|Dexterity|Intelligence)", match)
-		If RegExMatch(A_LoopField, ".*к (силе|ловкости|интеллекту)", match)
+		;If RegExMatch(LoopField, ".*to (Strength|Dexterity|Intelligence)", match)
+		If RegExMatch(LoopField, ".*к (силе|ловкости|интеллекту)", match)
 		{
 			;If ((match1 = "Strength" and ItemSubType = "Belt") or (match1 = "Dexterity" and (ItemSubType = "Gloves" or ItemSubType = "Quiver")) or (match1 = "Intelligence" and ItemSubType = "Helmet"))
 			If ((match1 = "силе" and ItemSubType = "Belt") or (match1 = "ловкости" and (ItemSubType = "Gloves" or ItemSubType = "Quiver")) or (match1 = "интеллекту" and ItemSubType = "Helmet"))
@@ -5593,8 +5600,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 		}
-		;IfInString, A_LoopField, increased Cast Speed
-		IfInString, A_LoopField, повышение скорости сотворения чар
+		;IfInString, LoopField, increased Cast Speed
+		IfInString, LoopField, повышение скорости сотворения чар
 		{
 			If (ItemGripType = "1H"){
 				; wands and scepters
@@ -5623,16 +5630,16 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;IfInString, A_LoopField, increased Critical Strike Chance for Spells
-		IfInString, A_LoopField, повышение шанса критического удара для чар
+		;IfInString, LoopField, increased Critical Strike Chance for Spells
+		IfInString, LoopField, повышение шанса критического удара для чар
 		{
 			LookupAffixAndSetInfoLine("data\CritChanceSpells.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		
 		; Pure Critical Strike Chance must be checked last
-		;IfInString, A_LoopField, Critical Strike Chance
-		If RegExMatch(A_LoopField, ".* шанса критического удара$")
+		;IfInString, LoopField, Critical Strike Chance
+		If RegExMatch(LoopField, ".* шанса критического удара$")
 		{
 			If (ItemBaseType = "Weapon"){
 				File := "data\CritChance_Weapon.txt"
@@ -5647,8 +5654,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;IfInString, A_LoopField, Critical Strike Multiplier
-		If RegExMatch(A_LoopField, ".* множителю критического удара$")
+		;IfInString, LoopField, Critical Strike Multiplier
+		If RegExMatch(LoopField, ".* множителю критического удара$")
 		{
 			If (ItemBaseType = "Weapon"){
 				File := "data\CritMultiplierLocal.txt"
@@ -5660,8 +5667,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 
-		;IfInString, A_LoopField, increased Light Radius
-		IfInString, A_LoopField, увеличение радиуса обзора
+		;IfInString, LoopField, increased Light Radius
+		IfInString, LoopField, увеличение радиуса обзора
 		{
 			; T1 comes with "#% increased Accuracy Rating", T2-3 with "+# to Accuracy Rating"
 			; This part can always be assigned now. The Accuracy will be solved later in case it's T2-3 and it forms a complex affix.
@@ -5671,11 +5678,11 @@ ParseAffixes(ItemDataAffixes, Item)
 			; We don't want to overcount the affixes by 0.5 when overwriting though,
 			;   so we don't count them here (see also "increased Accuracy" right below).
 			ValueRanges := LookupAffixData("data\LightRadius_AccuracyRating.txt", ItemLevel, CurrValue, CurrTier)
-			AppendAffixInfo(MakeAffixDetailLine(A_LoopField, "Hybrid Suffix", ValueRanges, CurrTier, False), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Hybrid Suffix", ValueRanges, CurrTier, False), A_Index)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Accuracy Rating
-		IfInString, A_LoopField, повышение меткости
+		;IfInString, LoopField, increased Accuracy Rating
+		IfInString, LoopField, повышение меткости
 		{
 			; This variant comes always with Light Radius, see part right above.
 			HasIncrLightRadius := False	; Second part is accounted for, no need to involve "+# to Accuracy Rating" or complex affixes.
@@ -5685,8 +5692,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			AffixTotals.NumSuffixes += 0.5
 			Continue
 		}
-		;IfInString, A_LoopField, Chance to Block
-		If RegExMatch(A_LoopField, ".* шанс блока$")
+		;IfInString, LoopField, Chance to Block
+		If RegExMatch(LoopField, ".* шанс блока$")
 		{
 			If (not HasChanceToBlockStrShield){
 				LookupAffixAndSetInfoLine("data\BlockChance.txt", "Suffix", ItemLevel, CurrValue)
@@ -5694,27 +5701,27 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		; Flask affixes (on belts)
-		;IfInString, A_LoopField, reduced Flask Charges used
-		IfInString, A_LoopField, уменьшение используемого количества зарядов флакона
+		;IfInString, LoopField, reduced Flask Charges used
+		IfInString, LoopField, уменьшение используемого количества зарядов флакона
 		{
 			LookupAffixAndSetInfoLine("data\FlaskChargesUsed.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Flask Charges gained
-		IfInString, A_LoopField, увеличение получаемого количества зарядов флакона
+		;IfInString, LoopField, increased Flask Charges gained
+		IfInString, LoopField, увеличение получаемого количества зарядов флакона
 		{
 			LookupAffixAndSetInfoLine("data\FlaskChargesGained.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Flask effect duration
-		IfInString, A_LoopField, увеличение длительности эффекта флакона
+		;IfInString, LoopField, increased Flask effect duration
+		IfInString, LoopField, увеличение длительности эффекта флакона
 		{
 			LookupAffixAndSetInfoLine("data\FlaskDuration.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		
-		;IfInString, A_LoopField, increased Quantity of Items found
-		IfInString, A_LoopField, увеличение количества найденных предметов
+		;IfInString, LoopField, increased Quantity of Items found
+		IfInString, LoopField, увеличение количества найденных предметов
 		{
 			If (Item.IsShaperBase)
 			{
@@ -5727,14 +5734,14 @@ ParseAffixes(ItemDataAffixes, Item)
 			LookupAffixAndSetInfoLine(File, "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Life gained on Kill
-		IfInString, A_LoopField, здоровья за убийство
+		;IfInString, LoopField, Life gained on Kill
+		IfInString, LoopField, здоровья за убийство
 		{
 			LookupAffixAndSetInfoLine("data\LifeOnKill.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Life gained for each Enemy hit ; Cuts off the rest to accommodate both "by Attacks" and "by your Attacks"
-		If RegExMatch(A_LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")
+		;IfInString, LoopField, Life gained for each Enemy hit ; Cuts off the rest to accommodate both "by Attacks" and "by your Attacks"
+		If RegExMatch(LoopField, "здоровья за каждого задетого атакой врага|здоровья за каждый удар атаками по врагу")
 		{
 			If (ItemBaseType = "Weapon") {
 				File := "data\LifeOnHit_Weapon.txt"
@@ -5748,14 +5755,14 @@ ParseAffixes(ItemDataAffixes, Item)
 			LookupAffixAndSetInfoLine(File, "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, of Life Regenerated per second
-		If RegExMatch(A_LoopField, "Регенерация .*% здоровья в секунду")
+		;IfInString, LoopField, of Life Regenerated per second
+		If RegExMatch(LoopField, "Регенерация .*% здоровья в секунду")
 		{
 			LookupAffixAndSetInfoLine("data\LifeRegenPercent.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Life Regenerated per second
-		If RegExMatch(A_LoopField, "Регенерация .* здоровья в секунду")
+		;IfInString, LoopField, Life Regenerated per second
+		If RegExMatch(LoopField, "Регенерация .* здоровья в секунду")
 		{
 			If (ItemSubType = "BodyArmour"){
 				LookupAffixAndSetInfoLine("data\LifeRegen_BodyArmour.txt", "Suffix", ItemLevel, CurrValue)
@@ -5766,32 +5773,32 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 		}
-		;IfInString, A_LoopField, Mana Gained on Kill
-		IfInString, A_LoopField, маны за убийство
+		;IfInString, LoopField, Mana Gained on Kill
+		IfInString, LoopField, маны за убийство
 		{
 			LookupAffixAndSetInfoLine("data\ManaOnKill.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Mana Regeneration Rate
-		IfInString, A_LoopField, повышение скорости регенерации маны
+		;IfInString, LoopField, increased Mana Regeneration Rate
+		IfInString, LoopField, повышение скорости регенерации маны
 		{
 			LookupAffixAndSetInfoLine("data\ManaRegen.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Projectile Speed
-		IfInString, A_LoopField, повышение скорости снарядов
+		;IfInString, LoopField, increased Projectile Speed
+		IfInString, LoopField, повышение скорости снарядов
 		{
 			LookupAffixAndSetInfoLine("data\ProjectileSpeed.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, reduced Attribute Requirements
-		IfInString, A_LoopField, снижение требований к характеристикам
+		;IfInString, LoopField, reduced Attribute Requirements
+		IfInString, LoopField, снижение требований к характеристикам
 		{
 			LookupAffixAndSetInfoLine("data\ReducedAttrReqs.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, to all Elemental Resistances
-		IfInString, A_LoopField, к сопротивлению всем стихиям
+		;IfInString, LoopField, to all Elemental Resistances
+		IfInString, LoopField, к сопротивлению всем стихиям
 		{
 			If (ItemSubType = "Amulet"){
 				LookupAffixAndSetInfoLine("data\ToAllResist_Amulet.txt", "Suffix", ItemLevel, CurrValue)
@@ -5802,50 +5809,50 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 		}
-		;IfInString, A_LoopField, to Fire Resistance
-		IfInString, A_LoopField, к сопротивлению огню
+		;IfInString, LoopField, to Fire Resistance
+		IfInString, LoopField, к сопротивлению огню
 		{
 			LookupAffixAndSetInfoLine("data\ToFireResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, to Cold Resistance
-		IfInString, A_LoopField, к сопротивлению холоду
+		;IfInString, LoopField, to Cold Resistance
+		IfInString, LoopField, к сопротивлению холоду
 		{
 			LookupAffixAndSetInfoLine("data\ToColdResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, to Lightning Resistance
-		IfInString, A_LoopField, к сопротивлению молнии
+		;IfInString, LoopField, to Lightning Resistance
+		IfInString, LoopField, к сопротивлению молнии
 		{
 			LookupAffixAndSetInfoLine("data\ToLightningResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, to Chaos Resistance
-		IfInString, A_LoopField, к сопротивлению хаосу
+		;IfInString, LoopField, to Chaos Resistance
+		IfInString, LoopField, к сопротивлению хаосу
 		{
 			LookupAffixAndSetInfoLine("data\ToChaosResist.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Stun Duration on Enemies
-		IfInString, A_LoopField, увеличение длительности оглушения на врагах
+		;IfInString, LoopField, increased Stun Duration on Enemies
+		IfInString, LoopField, увеличение длительности оглушения на врагах
 		{
 			LookupAffixAndSetInfoLine("data\StunDuration.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, reduced Enemy Stun Threshold
-		IfInString, A_LoopField, снижение порога оглушения врагов
+		;IfInString, LoopField, reduced Enemy Stun Threshold
+		IfInString, LoopField, снижение порога оглушения врагов
 		{
 			LookupAffixAndSetInfoLine("data\StunThreshold.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, additional Physical Damage Reduction
-		IfInString, A_LoopField, дополнительного снижения получаемого физического урона
+		;IfInString, LoopField, additional Physical Damage Reduction
+		IfInString, LoopField, дополнительного снижения получаемого физического урона
 		{
 			LookupAffixAndSetInfoLine("data\AdditionalPhysicalDamageReduction.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, chance to Dodge Attacks
-		IfInString, A_LoopField, шанс увернуться от атак
+		;IfInString, LoopField, chance to Dodge Attacks
+		IfInString, LoopField, шанс увернуться от атак
 		{
 			If (ItemSubType = "BodyArmour")
 			{
@@ -5858,125 +5865,125 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 		}
-		;IfInString, A_LoopField, of Energy Shield Regenerated per second
-		If RegExMatch(A_LoopField, "Регенерирует .*% энергетического щита в секунду|Регенерация .*% энергетического щита в секунду")
+		;IfInString, LoopField, of Energy Shield Regenerated per second
+		If RegExMatch(LoopField, "Регенерирует .*% энергетического щита в секунду|Регенерация .*% энергетического щита в секунду")
 		{
 			LookupAffixAndSetInfoLine("data\EnergyShieldRegeneratedPerSecond.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, additional Block Chance against Projectiles
-		IfInString, A_LoopField, дополнительный шанс блока против снарядов
+		;IfInString, LoopField, additional Block Chance against Projectiles
+		IfInString, LoopField, дополнительный шанс блока против снарядов
 		{
 			LookupAffixAndSetInfoLine("data\AdditionalBlockChanceAgainstProjectiles.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, chance to Avoid being Stunned
-		IfInString, A_LoopField, шанс избежать оглушения
+		;IfInString, LoopField, chance to Avoid being Stunned
+		IfInString, LoopField, шанс избежать оглушения
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToAvoidBeingStunned.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, chance to Avoid Elemental Ailments
-		IfInString, A_LoopField, шанс избежать стихийного состояния
+		;IfInString, LoopField, chance to Avoid Elemental Ailments
+		IfInString, LoopField, шанс избежать стихийного состояния
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToAvoidElementalAilments.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, chance to Dodge Spell Damage
-		IfInString, A_LoopField, шанс увернуться от урона от чар
+		;IfInString, LoopField, chance to Dodge Spell Damage
+		IfInString, LoopField, шанс увернуться от урона от чар
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToDodgeSpellDamage.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Chance to Block Spells
-		IfInString, A_LoopField, шанс блока чар
+		;IfInString, LoopField, Chance to Block Spells
+		IfInString, LoopField, шанс блока чар
 		{
 			LookupAffixAndSetInfoLine("data\ChanceToBlockSpells.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Life gained when you Block
-		IfInString, A_LoopField, здоровья при блоке
+		;IfInString, LoopField, Life gained when you Block
+		IfInString, LoopField, здоровья при блоке
 		{
 			LookupAffixAndSetInfoLine("data\LifeOnBlock.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Mana gained when you Block
-		IfInString, A_LoopField, маны при блоке
+		;IfInString, LoopField, Mana gained when you Block
+		IfInString, LoopField, маны при блоке
 		{
 			LookupAffixAndSetInfoLine("data\ManaOnBlock.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Attack and Cast Speed
-		If RegExMatch(A_LoopField, ".*повышение скорости атаки и сотворения чар$")
+		;IfInString, LoopField, increased Attack and Cast Speed
+		If RegExMatch(LoopField, ".*повышение скорости атаки и сотворения чар$")
 		{
 			LookupAffixAndSetInfoLine("data\AttackAndCastSpeed_Shield.txt", "Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		If (ItemBaseType = "Weapon")
 		{
-			;IfInString, A_LoopField, Chance to Ignite
-			IfInString, A_LoopField, шанс поджечь
+			;IfInString, LoopField, Chance to Ignite
+			IfInString, LoopField, шанс поджечь
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToIgnite.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Chance to Freeze
-			IfInString, A_LoopField, шанс заморозить
+			;IfInString, LoopField, Chance to Freeze
+			IfInString, LoopField, шанс заморозить
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToFreeze.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, Chance to Shock
-			IfInString, A_LoopField, шанс наложить шок
+			;IfInString, LoopField, Chance to Shock
+			IfInString, LoopField, шанс наложить шок
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToShock.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to cause Bleeding on Hit
-			IfInString, A_LoopField, шанс наложить кровотечение при нанесении удара
+			;IfInString, LoopField, chance to cause Bleeding on Hit
+			IfInString, LoopField, шанс наложить кровотечение при нанесении удара
 			{
 				If (CurrValue = 25)
 				{
 					; Vagan/Tora prefix
-					AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "Vagan 7 or Buy:Tora 4", ""), A_Index)
+					AppendAffixInfo(MakeAffixDetailLine(LoopField, "Prefix", "Vagan 7 or Buy:Tora 4", ""), A_Index)
 					Continue
 				}
 				
 				LookupAffixAndSetInfoLine("data\ChanceToBleed.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, chance to Poison on Hit
-			IfInString, A_LoopField, шанс отравить при нанесении удара
+			;IfInString, LoopField, chance to Poison on Hit
+			IfInString, LoopField, шанс отравить при нанесении удара
 			{
 				LookupAffixAndSetInfoLine("data\ChanceToPoison.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Burning Damage
-			IfInString, A_LoopField, увеличение урона от горения
+			;IfInString, LoopField, increased Burning Damage
+			IfInString, LoopField, увеличение урона от горения
 			{
 				LookupAffixAndSetInfoLine("data\IncrBurningDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Damage with Poison
-			IfInString, A_LoopField, увеличение урона от яда
+			;IfInString, LoopField, increased Damage with Poison
+			IfInString, LoopField, увеличение урона от яда
 			{
 				LookupAffixAndSetInfoLine("data\IncrPoisonDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Damage with Bleeding
-			IfInString, A_LoopField, увеличение урона от кровотечения
+			;IfInString, LoopField, increased Damage with Bleeding
+			IfInString, LoopField, увеличение урона от кровотечения
 			{
 				LookupAffixAndSetInfoLine("data\IncrBleedingDamage.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Poison Duration
-			If RegExMatch(A_LoopField, "увеличение длительности (яда|отравления)")
+			;IfInString, LoopField, increased Poison Duration
+			If RegExMatch(LoopField, "увеличение длительности (яда|отравления)")
 			{
 				LookupAffixAndSetInfoLine("data\PoisonDuration.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Bleed duration
-			IfInString, A_LoopField, увеличение длительности кровотечения
+			;IfInString, LoopField, increased Bleed duration
+			IfInString, LoopField, увеличение длительности кровотечения
 			{
 				LookupAffixAndSetInfoLine("data\BleedDuration.txt", "Suffix", ItemLevel, CurrValue)
 				Continue
@@ -5986,8 +5993,8 @@ ParseAffixes(ItemDataAffixes, Item)
 		
 		; Prefixes
 		
-		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Physical Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? физического урона")
+		;If RegExMatch(LoopField, "Adds \d+? to \d+? Physical Damage")
+		If RegExMatch(LoopField, "Добавляет от \d+? до \d+? физического урона")
 		{
 			If (ItemBaseType = "Weapon")
 			{
@@ -6018,11 +6025,11 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Cold Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от холода")
+		;If RegExMatch(LoopField, "Adds \d+? to \d+? Cold Damage")
+		If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от холода")
 		{
-			;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Cold Damage to Spells")
-			If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от холода к чарам")
+			;If RegExMatch(LoopField, "Adds \d+? to \d+? Cold Damage to Spells")
+			If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от холода к чарам")
 			{
 				If (ItemGripType = "1H"){
 					File := "data\SpellAddsCold_1H.txt"
@@ -6051,11 +6058,11 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Fire Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от огня")
+		;If RegExMatch(LoopField, "Adds \d+? to \d+? Fire Damage")
+		If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от огня")
 		{
-			;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Fire Damage to Spells")
-			If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от огня к чарам")
+			;If RegExMatch(LoopField, "Adds \d+? to \d+? Fire Damage to Spells")
+			If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от огня к чарам")
 			{
 				If (ItemGripType = "1H"){
 					File := "data\SpellAddsFire_1H.txt"
@@ -6084,11 +6091,11 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Lightning Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от молнии")
+		;If RegExMatch(LoopField, "Adds \d+? to \d+? Lightning Damage")
+		If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от молнии")
 		{
-			;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Lightning Damage to Spells")
-			If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона от молнии к чарам")
+			;If RegExMatch(LoopField, "Adds \d+? to \d+? Lightning Damage to Spells")
+			If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона от молнии к чарам")
 			{
 				If (ItemGripType = "1H"){
 					File := "data\SpellAddsLightning_1H.txt"
@@ -6118,8 +6125,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;If RegExMatch(A_LoopField, "Adds \d+? to \d+? Chaos Damage")
-		If RegExMatch(A_LoopField, "Добавляет от \d+? до \d+? урона хаосом")
+		;If RegExMatch(LoopField, "Adds \d+? to \d+? Chaos Damage")
+		If RegExMatch(LoopField, "Добавляет от \d+? до \d+? урона хаосом")
 		{
 			If ((ItemGripType = "1H") or (ItemSubType = "Bow")){
 				; Added damage for bows follows 1H tiers
@@ -6136,8 +6143,8 @@ ParseAffixes(ItemDataAffixes, Item)
 			Continue
 		}
 		
-		;IfInString, A_LoopField, increased maximum Energy Shield
-		IfInString, A_LoopField, повышение максимума энергетического щита
+		;IfInString, LoopField, increased maximum Energy Shield
+		IfInString, LoopField, повышение максимума энергетического щита
 		{
 			; Contrary to %Armour and %Evasion this one has a unique wording due to "maximum" and is clearly from Amulets (or Legacy Rings)
 			LookupAffixAndSetInfoLine("data\IncrMaxEnergyShield_Amulet.txt", "Prefix", ItemLevel, CurrValue)
@@ -6145,43 +6152,43 @@ ParseAffixes(ItemDataAffixes, Item)
 		}
 		
 
-		;IfInString, A_LoopField, Physical Damage to Melee Attackers
-		IfInString, A_LoopField, физического урона атакующим в ближнем бою		
+		;IfInString, LoopField, Physical Damage to Melee Attackers
+		IfInString, LoopField, физического урона атакующим в ближнем бою		
 		{
 			LookupAffixAndSetInfoLine("data\PhysDamagereturn.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		
-		;IfInString, A_LoopField, to Level of Socketed
-		If (RegExMatch(A_LoopField, ".* к уровню размещённых .*"))
+		;IfInString, LoopField, to Level of Socketed
+		If (RegExMatch(LoopField, ".* к уровню размещённых .*"))
 		{
-			;If RegExMatch(A_LoopField, "(Fire|Cold|Lightning)"){
-			If RegExMatch(A_LoopField, "(огня|холода|молнии)"){
+			;If RegExMatch(LoopField, "(Fire|Cold|Lightning)"){
+			If RegExMatch(LoopField, "(огня|холода|молнии)"){
 				File := "data\GemLevel_Elemental.txt"
 			}
-			;Else If (InStr(A_LoopField, "Chaos")){
-			Else If (InStr(A_LoopField, "хаоса")){
+			;Else If (InStr(LoopField, "Chaos")){
+			Else If (InStr(LoopField, "хаоса")){
 				File := "data\GemLevel_Chaos.txt"
 			}
-			;Else If (InStr(A_LoopField, "Bow")){
-			Else If (InStr(A_LoopField, "лука")){
+			;Else If (InStr(LoopField, "Bow")){
+			Else If (InStr(LoopField, "лука")){
 				File := "data\GemLevel_Bow.txt"
 			}
-			;Else If (InStr(A_LoopField, "Melee")){
-			Else If (InStr(A_LoopField, "ближнего боя")){
+			;Else If (InStr(LoopField, "Melee")){
+			Else If (InStr(LoopField, "ближнего боя")){
 				File := "data\GemLevel_Melee.txt"
 			}
-			;Else If (InStr(A_LoopField, "Minion")){
-			Else If (InStr(A_LoopField, "приспешников")){
+			;Else If (InStr(LoopField, "Minion")){
+			Else If (InStr(LoopField, "приспешников")){
 				File := "data\GemLevel_Minion.txt"
 			}
 			; Catarina prefix
-			;Else If (InStr(A_LoopField, "Support")){
-			Else If (InStr(A_LoopField, "поддержки")){
+			;Else If (InStr(LoopField, "Support")){
+			Else If (InStr(LoopField, "поддержки")){
 				File := "data\GemLevel_Support.txt"
 			}
-			;Else If (InStr(A_LoopField, "Socketed Gems"))
-			Else If (InStr(A_LoopField, ".* размещённых камней$"))
+			;Else If (InStr(LoopField, "Socketed Gems"))
+			Else If (InStr(LoopField, ".* размещённых камней$"))
 			{
 				If (ItemSubType = "Ring"){
 					File := "data\GemLevel_UnsetRing.txt"
@@ -6193,14 +6200,14 @@ ParseAffixes(ItemDataAffixes, Item)
 			LookupAffixAndSetInfoLine(File, "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Physical Attack Damage Leeched as
-		IfInString, A_LoopField, физического урона от атак похищается в виде
+		;IfInString, LoopField, Physical Attack Damage Leeched as
+		IfInString, LoopField, физического урона от атак похищается в виде
 		{
 			LookupAffixAndSetInfoLine("data\PhysicalAttackDamageLeeched.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, Movement Speed
-		If (RegExMatch(A_LoopField, ".*% повышение скорости передвижения$"))
+		;IfInString, LoopField, Movement Speed
+		If (RegExMatch(LoopField, ".*% повышение скорости передвижения$"))
 		{
 			If (ItemSubType = "Boots")
 			{
@@ -6213,8 +6220,8 @@ ParseAffixes(ItemDataAffixes, Item)
 				Continue
 			}
 		}
-		;IfInString, A_LoopField, increased Elemental Damage with Attack Skills
-		IfInString, A_LoopField, увеличение урона от стихий от умений атак
+		;IfInString, LoopField, increased Elemental Damage with Attack Skills
+		IfInString, LoopField, увеличение урона от стихий от умений атак
 		{
 			If (ItemBaseType = "Weapon"){
 				; Because GGG apparently thought having the exact same iLvls and tiers except for one single percentage point is necessary. T1-2: 31-37|38-42 vs. 31-36|37-42
@@ -6232,34 +6239,34 @@ ParseAffixes(ItemDataAffixes, Item)
 			}
 		}
 		; Flask effects (on belts)
-		;IfInString, A_LoopField, increased Flask Mana Recovery rate
-		IfInString, A_LoopField, повышение скорости восстановления маны от флакона
+		;IfInString, LoopField, increased Flask Mana Recovery rate
+		IfInString, LoopField, повышение скорости восстановления маны от флакона
 		{
 			LookupAffixAndSetInfoLine("data\FlaskManaRecoveryRate.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Flask Life Recovery rate
-		IfInString, A_LoopField, повышение скорости восстановления здоровья от флакона
+		;IfInString, LoopField, increased Flask Life Recovery rate
+		IfInString, LoopField, повышение скорости восстановления здоровья от флакона
 		{
 			LookupAffixAndSetInfoLine("data\FlaskLifeRecoveryRate.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		If (ItemSubType == "Shield"){
-			;IfInString, A_LoopField, increased Global Physical Damage
-			IfInString, A_LoopField, увеличение глобального физического урона
+			;IfInString, LoopField, increased Global Physical Damage
+			IfInString, LoopField, увеличение глобального физического урона
 			{
 				HasIncrPhysDmg := False	; No worries about hybrid here.
 				LookupAffixAndSetInfoLine("data\IncrPhysDamage_Shield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Elemental Damage
-			IfInString, A_LoopField, увеличение урона от стихий
+			;IfInString, LoopField, increased Elemental Damage
+			IfInString, LoopField, увеличение урона от стихий
 			{
 				LookupAffixAndSetInfoLine("data\IncrEleDamage_Shield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
 			}
-			;IfInString, A_LoopField, increased Attack Damage
-			IfInString, A_LoopField, увеличение урона от атак
+			;IfInString, LoopField, increased Attack Damage
+			IfInString, LoopField, увеличение урона от атак
 			{
 				LookupAffixAndSetInfoLine("data\IncrAttackDamage_Shield.txt", "Prefix", ItemLevel, CurrValue)
 				Continue
@@ -6269,119 +6276,119 @@ ParseAffixes(ItemDataAffixes, Item)
 		; --- MASTER CRAFT/BUY ONLY AFFIXES ---
 		
 		; Can be either Leo prefix or jewel suffix. Jewels are checked already, so it's Leo.
-		;If RegExMatch(A_LoopField, ".*increased Damage$")
-		If RegExMatch(A_LoopField, ".*увеличение урона$")
+		;If RegExMatch(LoopField, ".*increased Damage$")
+		If RegExMatch(LoopField, ".*увеличение урона$")
 		{
 			LookupAffixAndSetInfoLine("data\IncrDamageLeo.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Haku prefix
-		;IfInString, A_LoopField, to Quality of Socketed Support Gems
-		IfInString, A_LoopField, к качеству размещённых камней поддержки
+		;IfInString, LoopField, to Quality of Socketed Support Gems
+		IfInString, LoopField, к качеству размещённых камней поддержки
 		{
 			LookupAffixAndSetInfoLine("data\GemQuality_Support.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Elreon prefix
-		;IfInString, A_LoopField, to Mana Cost of Skills
-		IfInString, A_LoopField, к затратам маны умений
+		;IfInString, LoopField, to Mana Cost of Skills
+		IfInString, LoopField, к затратам маны умений
 		{
 			CurrValue := Abs(CurrValue)	; Turn potentially negative number into positive.
 			LookupAffixAndSetInfoLine("data\ManaCostOfSkills.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Vorici prefix
-		;IfInString, A_LoopField, increased Life Leeched per Second
-		IfInString, A_LoopField, повышение скорости похищения здоровья в секунду
+		;IfInString, LoopField, increased Life Leeched per Second
+		IfInString, LoopField, повышение скорости похищения здоровья в секунду
 		{
 			LookupAffixAndSetInfoLine("data\LifeLeechedPerSecond.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Tora dual suffixes
-		;IfInString, A_LoopField, increased Trap Throwing Speed
-		IfInString, A_LoopField, повышение скорости броска ловушки
+		;IfInString, LoopField, increased Trap Throwing Speed
+		IfInString, LoopField, повышение скорости броска ловушки
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapThrowingMineLayingSpeed.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Mine Laying Speed
-		IfInString, A_LoopField, повышение скорости установки мины
+		;IfInString, LoopField, increased Mine Laying Speed
+		IfInString, LoopField, повышение скорости установки мины
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapThrowingMineLayingSpeed.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Trap Damage
-		IfInString, A_LoopField, увеличение урона от ловушек
+		;IfInString, LoopField, increased Trap Damage
+		IfInString, LoopField, увеличение урона от ловушек
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapMineDamage.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
-		;IfInString, A_LoopField, increased Mine Damage
-		IfInString, A_LoopField, увеличение урона от мин
+		;IfInString, LoopField, increased Mine Damage
+		IfInString, LoopField, увеличение урона от мин
 		{
 			LookupAffixAndSetInfoLine("data\IncrTrapMineDamage.txt", "Hybrid Suffix", ItemLevel, CurrValue)
 			Continue
 		}
 		; Vagan suffix
-		;IfInString, A_LoopField, to Weapon range
-		IfInString, A_LoopField, к дальности оружия
+		;IfInString, LoopField, to Weapon range
+		IfInString, LoopField, к дальности оружия
 		{
 			LookupAffixAndSetInfoLine("data\ToWeaponRange.txt", "Suffix", ItemLevel, CurrValue)
 		}
 		
 		
 		; Vagan prefix
-		;IfInString, A_LoopField, Gems in this item are Supported by Lvl 1 Blood Magic
-		IfInString, A_LoopField, Размещённые камни усилены Магией крови 1 уровня
+		;IfInString, LoopField, Gems in this item are Supported by Lvl 1 Blood Magic
+		IfInString, LoopField, Размещённые камни усилены Магией крови 1 уровня
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Prefix", "", ""), A_Index)
 			Continue
 		}
 
-		;IfInString, A_LoopField, Hits can't be Evaded
-		IfInString, A_LoopField, От ударов нельзя уклониться
+		;IfInString, LoopField, Hits can't be Evaded
+		IfInString, LoopField, От ударов нельзя уклониться
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Prefix", "", ""), A_Index)
 			Continue
 		}
 		
 		
 		; Meta Craft Mods
 		
-		;IfInString, A_LoopField, Can have multiple Crafted Mods
-		IfInString, A_LoopField, Может иметь несколько ремесленных свойств
+		;IfInString, LoopField, Can have multiple Crafted Mods
+		IfInString, LoopField, Может иметь несколько ремесленных свойств
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Suffix", "", ""), A_Index)
 			Continue
 		}
-		;IfInString, A_LoopField, Prefixes Cannot Be Changed
-		IfInString, A_LoopField, Префиксы нельзя изменить
+		;IfInString, LoopField, Prefixes Cannot Be Changed
+		IfInString, LoopField, Префиксы нельзя изменить
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Suffix", "", ""), A_Index)
 			Continue
 		}
-		;IfInString, A_LoopField, Suffixes Cannot Be Changed
-		IfInString, A_LoopField, Суффиксы нельзя изменить
+		;IfInString, LoopField, Suffixes Cannot Be Changed
+		IfInString, LoopField, Суффиксы нельзя изменить
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Prefix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Prefix", "", ""), A_Index)
 			Continue
 		}
-		;IfInString, A_LoopField, Cannot roll Attack Mods
-		IfInString, A_LoopField, Не может иметь свойства атак
+		;IfInString, LoopField, Cannot roll Attack Mods
+		IfInString, LoopField, Не может иметь свойства атак
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Suffix", "", ""), A_Index)
 			Continue
 		}
-		;IfInString, A_LoopField, Cannot roll Caster Mods
-		IfInString, A_LoopField, Не может иметь свойства чар
+		;IfInString, LoopField, Cannot roll Caster Mods
+		IfInString, LoopField, Не может иметь свойства чар
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Suffix", "", ""), A_Index)
 			Continue
 		}
-		;IfInString, A_LoopField, Cannot roll Mods with Required Lvl above Lvl 28
-		IfInString, A_LoopField, Невозможно сгенерировать свойства, требующие уровень выше 28
+		;IfInString, LoopField, Cannot roll Mods with Required Lvl above Lvl 28
+		IfInString, LoopField, Невозможно сгенерировать свойства, требующие уровень выше 28
 		{
-			AppendAffixInfo(MakeAffixDetailLine(A_Loopfield, "Suffix", "", ""), A_Index)
+			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Suffix", "", ""), A_Index)
 			Continue
 		}
 	}
@@ -8562,7 +8569,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	ItemData.FullText := ItemDataText
 	
-	itemEldShRuEn := {"Древний предмет":"Elder","Предмет Создателя":"Shaper"}
+	itemEldShRuEn := {"Древний предмет":"Elder","Предмет Создателя":"Shaper","Синтезированный предмет":"Synthesised","Расколотый предмет":"Fractured"}
 	
 	Loop, Parse, ItemDataText, `n, `r
 	{
@@ -8571,8 +8578,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		If (corrMatch) {
 			Item.IsCorrupted := True
 		}
-		;RegExMatch(Trim(A_LoopField), "i)^(Elder|Shaper) Item$", match)
-		RegExMatch(Trim(A_LoopField), "i)^(Предмет Создателя|Древний предмет)$", match)
+		;RegExMatch(Trim(A_LoopField), "i)^(Elder|Shaper|Synthesised|Fractured) Item$", match)
+		RegExMatch(Trim(A_LoopField), "i)^(Предмет Создателя|Древний предмет|Синтезированный предмет|Расколотый предмет)$", match)
 		If (match) {
 			;Item["Is" match1 "Base"] := True			
 			Item["Is" itemEldShRuEn[match1] "Base"] := True
@@ -8600,13 +8607,16 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	; ItemData.Requirements := GetItemDataChunk(ItemDataText, "Requirements:")
 	; ParseRequirements(ItemData.Requirements, RequiredLevel, RequiredAttributes, RequiredAttributeValues)
-
+	
+	;Проверим имя предмета и базы на корректность, если не корректное, назначим неопределенное!
+	ItemData.NamePlate:=AdpRu_FixNames(ItemData.NamePlate)
+	
 	ParseItemName(ItemData.NamePlate, ItemName, ItemBaseName, "", ItemData)
 	If (Not ItemName)
 	{
 		return
 	}
-
+	
 	Item.Name		:= ItemName
 	Item.BaseName	:= ItemBaseName
 	
@@ -8861,7 +8871,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 		
 		; Check that there is no ":" in the retrieved text = can only be an implicit mod
-		If (!InStr(ItemDataParts%ItemDataIndexImplicit%, ":")) {
+		_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, ":")
+		If (_implicitFound) {
 			tempImplicit	:= ItemDataParts%ItemDataIndexImplicit%
 			Loop, Parse, tempImplicit, `n, `r
 			{
@@ -8871,6 +8882,18 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 				}
 			}
 			Item.hasImplicit := True
+		}
+		
+		; Check if there is a second "possible implicit" which means the first one is actually an enchantmet
+		_ItemDataIndexImplicit := ItemDataIndexImplicit - 1
+		If (_implicitFound and !InStr(ItemDataParts%_ItemDataIndexImplicit%, ":")) {			
+			tempImplicit	:= ItemDataParts%_ItemDataIndexImplicit%
+			Loop, Parse, tempImplicit, `n, `r
+			{
+				Item.Enchantment.push(A_LoopField)
+			}
+			Item.hasImplicit := True
+			Item.hasEnchantment := True
 		}
 	}
 	
@@ -9368,7 +9391,7 @@ GetNegativeAffixOffset(Item)
 	{
 		NegativeAffixOffset += 1
 	}
-	If (Item.IsElderBase or Item.IsShaperBase)
+	If (Item.IsElderBase or Item.IsShaperBase or Item.IsSynthesisedBase or Item.IsFracturedBase)
 	{
 		NegativeAffixOffset += 1
 	}
@@ -9427,6 +9450,11 @@ ModStringToObject(string, isImplicit) {
 	StringReplace, val, string, `r,, All
 	StringReplace, val, val, `n,, All
 	values := []
+	
+	RegExMatch(val, "i) \((fractured)\)$", sType)
+	spawnType := sType1
+
+	val := RegExReplace(val, "i) \((fractured|crafted)\)$")
 
 	; Collect all numeric values in the mod-string
 	Pos        := 0
@@ -9464,6 +9492,32 @@ ModStringToObject(string, isImplicit) {
 		If (RegExMatch(val, "i)молнии")) {
 			;Matches.push("Lightning")
 			Matches.push("молнии")
+		}
+	}
+	
+	; Matching "x% fire/cold/lgitning and chaos resistance"
+	;If (RegExMatch(val, "i)to (cold|fire|lightning) and (chaos) resistance") and not RegExMatch(val, "i)Minion|Totem")) {
+	If (RegExMatch(val, "i)к сопротивлению (холоду|огню|молнии) и (хаосу)") and not RegExMatch(val, "i)Приспешник|Тотем")) {
+		type := "Resistance"
+		;If (RegExMatch(val, "i)fire")) {
+		If (RegExMatch(val, "i)огню")) {
+			;Matches.push("Fire")
+			Matches.push("огню")
+		}
+		;If (RegExMatch(val, "i)cold")) {
+		If (RegExMatch(val, "i)холоду")) {
+			;Matches.push("Cold")
+			Matches.push("холоду")
+		}
+		;If (RegExMatch(val, "i)lightning")) {
+		If (RegExMatch(val, "i)молнии")) {
+			;Matches.push("Lightning")
+			Matches.push("молнии")
+		}
+		;If (RegExMatch(val, "i)chaos")) {
+		If (RegExMatch(val, "i)хаосу")) {
+			;Matches.push("Chaos")
+			Matches.push("хаосу")
 		}
 	}
 
@@ -9565,6 +9619,9 @@ ModStringToObject(string, isImplicit) {
 		temp.name := nameModNum.nameModConst
 
 		temp.isVariable:= false
+		If (StrLen(spawnType)) {
+			temp.spawnType := spawnType	
+		}
 		temp.type		:= (isImplicit and Matches.Length() <= 1) ? "implicit" : "explicit"
 		arr.push(temp)
 	}
@@ -9642,6 +9699,13 @@ CreatePseudoMods(mods, returnAllMods := False) {
 	; Note that at this point combined mods/attributes have already been separated into two mods
 	; like '+ x % to fire and lightning resist' would be '+ x % to fire resist' AND '+ x % to lightning resist' as 2 different mods
 	For key, mod in mods {
+		RegExMatch(mod.name, "i) \((fractured)\)$", spawnType)
+		If (StrLen(spawnType1)) {
+			mod.spawnType := spawnType1	
+		}		
+
+		mod.name := RegExReplace(mod.name, "i) \((fractured|crafted)\)$")
+		
 		; ### Base stats
 		; life and mana
 		;If (RegExMatch(mod.name, "i)to maximum (Life|Mana)$", stat)) {
@@ -9723,6 +9787,14 @@ CreatePseudoMods(mods, returnAllMods := False) {
 			resistType1 := nameRuToEn[resistType1]
 			%resistType1%Resist := %resistType1%Resist + mod.values[1]
 			mod.simplifiedName := "xTo" resistType1 "Resistance"
+		}
+		;Else If (RegExMatch(mod.name, "i)to (Cold|Fire|Lightning) and (Chaos) Resistances$") and not RegExMatch(mod.name, "i)Minion|Totem")) {
+		Else If (RegExMatch(mod.name, "i)к сопротивлению (холоду|огню|молнии) и хаосу$") and not RegExMatch(mod.name, "i)Приспешник|Тотем")) {
+			%resistType1%Resist := %resistType1%Resist + mod.values[1]
+			mod.simplifiedName := "xTo" resistType1 "Resistance"
+
+			chaosResist := chaosResist + mod.values[1]
+			mod.simplifiedName := "xToChaosResistance"
 		}
 
 		; ### Percent damages
@@ -13215,6 +13287,8 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.LinkedSockets := Item.Links
 	search.ShaperItem := Item.IsShaperBase
 	search.ElderItem := Item.IsElderBase
+	search.FracturedItem := Item.IsFracturedBase
+	search.SynthesisedItem := Item.IsSynthesisedBase
 	search.ItemLevel := Item.Level
 	;search.BaseType := [Item.BaseName]
 	search.BaseType := Item.BaseName_En
@@ -13562,7 +13636,7 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 					rules[rules.MaxIndex()].conditions.push(condition)
 				}
 				
-				Else If (RegExMatch(line, "i)^.*?(Identified|Corrupted|ElderItem|ShaperItem|ShapedMap|ElderMap)\s")) {
+				Else If (RegExMatch(line, "i)^.*?(Identified|Corrupted|ElderItem|SynthesisedItem|FracturedItem|ShaperItem|ShapedMap|ElderMap)\s")) {
 					RegExMatch(line, "i)(.*?)\s(.*)", match)		
 					
 					condition := {}
@@ -13613,7 +13687,7 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 					}	
 				}				
 			}
-			Else If (RegExMatch(condition.name, "i)(Identified|Corrupted|ElderItem|ShaperItem|ShapedMap)", match1)) {
+			Else If (RegExMatch(condition.name, "i)(Identified|Corrupted|ElderItem|SynthesisedItem|FracturedItem|ShaperItem|ShapedMap)", match1)) {
 				If (item[match1] == condition.value) {
 					matchingConditions++
 					matching_rules.push(condition.name)
@@ -13796,8 +13870,7 @@ Return
 
 OpenLutbotDocumentsFolder:
 	;OpenUserSettingsFolder("Lutbot", A_MyDocuments "\AutoHotKey\LutTools")
-	LutBotSettings.launcherPath
-	OpenUserSettingsFolder("Lutbot", LutBotSettings.launcherPath)
+	OpenUserSettingsFolder("Lutbot", LutBotSettings.variables.launcherPath)
 Return
 
 CheckForLutBotHotkeyConflicts(hotkeys, config) {

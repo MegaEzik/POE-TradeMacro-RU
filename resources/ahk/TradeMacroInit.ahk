@@ -195,6 +195,8 @@ If (_updateConfigWrite) {
 */
 OnMessage( 0x111, "HandleGuiControlSetFocus" )
 
+global ItsApriFoolsTime := TradeFunc_CheckAprilFools()
+
 TradeFunc_FinishTMInit(argumentMergeScriptPath)
 
 ; ----------------------------------------------------------- Functions ----------------------------------------------------------------
@@ -1741,7 +1743,8 @@ TradeFunc_StartSplashScreen(TradeReleaseVersion) {
 	;initArray := ["Initializing script...", "Preparing Einhars welcoming party...", "Uninstalling Battle.net...", "Investigating the so-called ""Immortals""...", "Starting mobile app..."
 	;	, "Hunting some old friends...", "Interrogating Master Krillson about fishing secrets...", "Trying to open Voricis chest...", "Setting up lab carries for the other 99%..."
 	;	, "Helping Alva discover the Jungle Hideout...", "Conning EngineeringEternity with the Atlas City Shuffle..."]
-	initArray := ["Инициализируем скрипт...", "Устраиваем вечеринку приветствия Эйнара...", "Удаляем Battle.net...", "Исследуем так называемое ""Бессмертие""...", "Запускаем мобильное приложение...", "Охотимся на старых друзей...", "Допрашиваем Мастера Криллсона о секретах рыбалки...", "Открываем сундук Воричи...", "Помогаем Альве в поисках Джунглевого Убежища...", "Продаем торговцам Стат стики...", "Изучаем 'новые' имена..."] 
+	;initArray := ["Инициализируем скрипт...", "Устраиваем вечеринку приветствия Эйнара...", "Удаляем Battle.net...", "Исследуем так называемое ""Бессмертие""...", "Запускаем мобильное приложение...", "Охотимся на старых друзей...", "Допрашиваем Мастера Криллсона о секретах рыбалки...", "Открываем сундук Воричи...", "Помогаем Альве в поисках Джунглевого Убежища...", "Продаем торговцам Стат стики...", "Изучаем 'новые' имена..."] 
+	initArray := ["Инициализируем скрипт...", "Ищем предметы для синтеза...", "Восстанавливаем пустоты памяти...", "Очищаем пустоты памяти...", "Самостоятельно сотворяем поисковые запросы...", "Применяем лутфильтр для милишников...", "Стабилизируем память...", "Вручную отрисовываем пользовательский интерфейс..."]
 	
 	Random, randomNum, 1, initArray.MaxIndex()
 	
