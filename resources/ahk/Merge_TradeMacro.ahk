@@ -122,7 +122,7 @@ If (not onlyMergeFiles) {
 	SetTitleMatchMode, 1
 	WinClose, %scriptDir%\_TradeMacroMain.ahk ahk_class AutoHotkey, , 0
 	WinKill, %scriptDir%\_TradeMacroMain.ahk ahk_class AutoHotkey, , 0
-
+	
 	SplashUI.DestroyUI()
 	Run, "%A_AhkPath%" "%scriptDir%\_TradeMacroMain.ahk" "%projectName%" "%userDirectory%" "%isDevelopmentVersion%" "%overwrittenFiles%" "isMergedScript" "%skipSplash%" "%A_ScriptFullPath%", , UseErrorLevel, OutputVarPID
 
@@ -146,7 +146,7 @@ If (not onlyMergeFiles) {
 			;scriptRunning := false
 		}
 	} Until (not scriptRunning)
-
+	
 	SetTitleMatchMode, 1
 	DetectHiddenText, On
 	WinGetText, errorWindowText, % "_TradeMacroMain.ahk"
@@ -295,13 +295,13 @@ ShowErrorUI:
 	Gui, Add, Text, x15 y+5 BackgroundTrans, % "Ресурс для отчетов по русскоязычной версии:"
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://ru.pathofexile.com/forum/view-thread/27741">- РУ-форум</a>
 	
-		If (StrLen(errorWindowText)) {
+	If (StrLen(errorWindowText)) {
 		Gui, Font, bold s8 c000000, Verdana
 		Gui, Add, Text, x15 y+15 BackgroundTrans, % "Parsed runtime error:"
 		errorMsg := ParseRuntimeError(errorWindowText, outputFile, errorFile)
 		Gui, Font, bold norm
 		Gui, Add, Text, x15 y+7 BackgroundTrans, % errorMsg
-
+		
 		solution := GetSolution(errorMsg, errorFile)
 		If (solution) {
 			Gui, Font, bold s8 c000000, Verdana
@@ -309,14 +309,14 @@ ShowErrorUI:
 			Gui, Font, bold norm
 			Gui, Add, Text, x15 y+7 BackgroundTrans, % solution
 		}		
-
+		
 		Gui, Font, bold s8 c000000, Verdana
 		Gui, Add, Text, x15 y+15 BackgroundTrans, % "Original runtime error:"
 		Gui, Font, bold norm
 		originalMsg := Trim(RegExReplace(errorWindowText, "i)^Ok(\r\n)?"))
 		originalMsg := Trim(RegExReplace(originalMsg, "i)(\r\n)?The program will exit\.$"))		
 		Gui, Add, Edit, x16 y+7 w600 r6 ReadOnly BackgroundTrans, % originalMsg
-
+		
 		Gui, Add, Button, x15 y+10 gCopyError, Copy error to clipboard
 	}
 
@@ -341,16 +341,16 @@ ParseRuntimeError(e, mergedFile, ByRef errorFile) {
 	If (RegExMatch(e, "i)Error at line (\d+)\.", lineNr)) {
 		errorLine := lineNr1	
 	}
-
+	
 	FileRead, rF, %mergedFile%	
 	files:= []
-
+	
 	lines := []
 	Loop, Parse, rF, `n, `r
 	{
 		lines.push(A_LoopField)
 	}
-
+	
 	For key, val in lines {
 		If (RegExMatch(val, "i)###---\sMerged File:\s(.*)\s---\~\~\~", mf)) {
 			If (mf) {		

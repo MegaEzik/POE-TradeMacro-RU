@@ -772,7 +772,6 @@ CheckRarityLevel(RarityString)
 					}
 				}
 			}			
-			console.log("-----------------------------`nВхождение: "match "`nБазовый тип: " BaseType "`nПодтип: " SubType "`nОдноручное/Двуручное: " GripType "`n-----------------------------")
 			return
 		}
 	}
@@ -4527,6 +4526,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			{
 				Continue ; Not interested in blank lines
 			}
+			
 			Itemdata.AffixTextLines.Push( {"Text":LoopField, "Value":GetActualValue(LoopField)} )
 			++HasLastLineNumber
 			
@@ -6251,7 +6251,7 @@ ParseAffixes(ItemDataAffixes, Item)
 			LookupAffixAndSetInfoLine("data\FlaskLifeRecoveryRate.txt", "Prefix", ItemLevel, CurrValue)
 			Continue
 		}
-		If (ItemSubType == "Shield"){
+		If (ItemSubType = "Shield"){
 			;IfInString, LoopField, increased Global Physical Damage
 			IfInString, LoopField, увеличение глобального физического урона
 			{
@@ -6344,7 +6344,6 @@ ParseAffixes(ItemDataAffixes, Item)
 			AppendAffixInfo(MakeAffixDetailLine(LoopField, "Prefix", "", ""), A_Index)
 			Continue
 		}
-
 		;IfInString, LoopField, Hits can't be Evaded
 		IfInString, LoopField, От ударов нельзя уклониться
 		{
@@ -8607,7 +8606,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	; ItemData.Requirements := GetItemDataChunk(ItemDataText, "Requirements:")
 	; ParseRequirements(ItemData.Requirements, RequiredLevel, RequiredAttributes, RequiredAttributeValues)
-	
+
 	;Проверим имя предмета и базы на корректность, если не корректное, назначим неопределенное!
 	ItemData.NamePlate:=AdpRu_FixNames(ItemData.NamePlate)
 	
@@ -8616,7 +8615,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	{
 		return
 	}
-	
+
 	Item.Name		:= ItemName
 	Item.BaseName	:= ItemBaseName
 	
@@ -8818,7 +8817,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	TempStr := ItemData.PartsLast
 	Loop, Parse, TempStr, `n, `r
 	{
-		RegExMatch(Trim(A_LoopField), "i)^Has ", match)
+		;RegExMatch(Trim(A_LoopField), "i)^Has ", match)
+		RegExMatch(Trim(A_LoopField), "i)Внешний вид:", match)
 		If (match) {
 			Item.HasEffect := True
 		}
@@ -8883,7 +8883,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			}
 			Item.hasImplicit := True
 		}
-		
+
 		; Check if there is a second "possible implicit" which means the first one is actually an enchantmet
 		_ItemDataIndexImplicit := ItemDataIndexImplicit - 1
 		If (_implicitFound and !InStr(ItemDataParts%_ItemDataIndexImplicit%, ":")) {			
@@ -9450,10 +9450,10 @@ ModStringToObject(string, isImplicit) {
 	StringReplace, val, string, `r,, All
 	StringReplace, val, val, `n,, All
 	values := []
-	
+
 	RegExMatch(val, "i) \((fractured)\)$", sType)
 	spawnType := sType1
-
+	
 	val := RegExReplace(val, "i) \((fractured|crafted)\)$")
 
 	; Collect all numeric values in the mod-string
@@ -9494,7 +9494,6 @@ ModStringToObject(string, isImplicit) {
 			Matches.push("молнии")
 		}
 	}
-	
 	; Matching "x% fire/cold/lgitning and chaos resistance"
 	;If (RegExMatch(val, "i)to (cold|fire|lightning) and (chaos) resistance") and not RegExMatch(val, "i)Minion|Totem")) {
 	If (RegExMatch(val, "i)к сопротивлению (холоду|огню|молнии) и (хаосу)") and not RegExMatch(val, "i)Приспешник|Тотем")) {
@@ -9703,7 +9702,7 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		If (StrLen(spawnType1)) {
 			mod.spawnType := spawnType1	
 		}		
-
+		
 		mod.name := RegExReplace(mod.name, "i) \((fractured|crafted)\)$")
 		
 		; ### Base stats
@@ -9792,7 +9791,7 @@ CreatePseudoMods(mods, returnAllMods := False) {
 		Else If (RegExMatch(mod.name, "i)к сопротивлению (холоду|огню|молнии) и хаосу$") and not RegExMatch(mod.name, "i)Приспешник|Тотем")) {
 			%resistType1%Resist := %resistType1%Resist + mod.values[1]
 			mod.simplifiedName := "xTo" resistType1 "Resistance"
-
+			
 			chaosResist := chaosResist + mod.values[1]
 			mod.simplifiedName := "xToChaosResistance"
 		}
@@ -10592,7 +10591,7 @@ GuiUpdateDropdownList(Contents="", Selected="", AssocVar="", Options="", GuiName
 	}
 }
 
-AddToolTip(con, text, Modify=0){
+AddToolTip(con, text, Modify=0) {
 	Static TThwnd, GuiHwnd
 	TInfo =
 	UInt := "UInt"
@@ -10782,9 +10781,9 @@ CreateSettingsUI()
 	;GuiAddText("Opacity (0-100):", "xs100 ys235 w200", "LblGDITextOpacity", "", "", "", "SettingsUI")
 	GuiAddText("Затенён. (0-100):", "xs110 ys235 w200", "LblGDITextOpacity", "", "", "", "SettingsUI")
 	GuiAddEdit(Opts.GDITextOpacity, "xs240 ys232 w60", "GDITextOpacity", "GDITextOpacityH", "", "", "SettingsUI")
-	
 	;GuiAddCheckBox("Style border depending on checked item.", "xs10 ys260 w260", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH", "", "", "SettingsUI")
 	GuiAddCheckBox("Стиль рамки в зависимости от предмета", "xs10 ys260 w260", Opts.GDIConditionalColors, "GDIConditionalColors", "GDIConditionalColorsH", "", "", "SettingsUI")
+	
 	;GuiAddButton("GDI Defaults", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH", "", "SettingsUI")
 	GuiAddButton("Сбросить", "xs9 ys290 w100 h23", "SettingsUI_BtnGDIDefaults", "BtnGDIDefaults", "BtnGDIDefaultsH", "", "SettingsUI")
 	;GuiAddButton("Preview", "xs210 ys290 w80 h23", "SettingsUI_BtnGDIPreviewTooltip", "BtnGDIPreviewTooltip", "BtnGDIPreviewTooltipH", "", "SettingsUI")
@@ -12932,9 +12931,8 @@ EditCurrencyRates:
 	return
 
 ReloadScript:
-	;scriptName := RegExReplace(Globals.Get("ProjectName"), "i)poe-", "Run_") . ".ahk"
-	scriptName := RegExReplace(Globals.Get("ProjectName"), "i)_ru$", "")
-	scriptName := RegExReplace(scriptName, "i)poe-", "Run_") . ".ahk"
+	scriptName := RegExReplace(Globals.Get("ProjectName"), "i)poe-", "Run_") . ".ahk"
+	scriptName := RegExReplace(scriptName, "_ru", "")
 	Run, "%A_AhkPath%" "%A_ScriptDir%\%scriptName%"
 	return
 
@@ -12948,7 +12946,7 @@ ShowAssignedHotkeys:
 
 SettingsUIGuiEscape: 
 	; settings 
-	Gui, Cancel
+	Gui, SettingsUI:Cancel
 Return
 
 AboutGuiEscape:
@@ -13268,7 +13266,8 @@ ShowAdvancedItemFilterFormatting() {
 }
 
 ShowItemFilterFormatting(Item, advanced = false) {
-	If (not Item.Name) {
+	;If (not Item.Name) {
+	If (not Item.Name_En) {
 		Return
 	}
 	
@@ -13291,7 +13290,7 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.SynthesisedItem := Item.IsSynthesisedBase
 	search.ItemLevel := Item.Level
 	;search.BaseType := [Item.BaseName]
-	search.BaseType := Item.BaseName_En
+	search.BaseType := [Item.BaseName_En]
 	search.HasExplicitMod :=					; HasExplicitMod "of Crafting" "of Spellcraft" "of Weaponcraft"
 	search.Identified := Item.IsUnidentified ? 0 : 1
 	search.Corrupted := Item.IsCorrupted
@@ -13431,14 +13430,18 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.SetTextColor			:= GetItemDefaultColor(Item, "Text")
 	
 	search.LabelLines := []
-	_line := (Item.Quality > 0) ? "Superior " RegExReplace(Item.Name, "i)Superior (.*)", "$1") : Item.Name
-	_line := (not Item.IsGem and not Item.IsUnidentified and not Item.RarityLevel = 1) ? RegExReplace(Item.Name, "i)Superior (.*)", "$1") : _line
+	;_line := (Item.Quality > 0) ? "Superior " RegExReplace(Item.Name, "i)Superior (.*)", "$1") : Item.Name
+	_line := (Item.Quality > 0) ? "Superior " RegExReplace(Item.Name_En, "i)Superior (.*)", "$1") : Item.Name_En
+	;_line := (not Item.IsGem and not Item.IsUnidentified and not Item.RarityLevel = 1) ? RegExReplace(Item.Name, "i)Superior (.*)", "$1") : _line
+	_line := (not Item.IsGem and not Item.IsUnidentified and not Item.RarityLevel = 1) ? RegExReplace(Item.Name_En, "i)Superior (.*)", "$1") : _line
 	_line .= (Item.IsGem and Item.Level > 1) ? " (Level " Item.Level ")" : "" 
 	search.LabelLines.push(_line)
 	
 	; Unidentified rare/unique items have the same baseName as their name
-	If (Item.RarityLevel >= 3 and (RegExReplace(Item.Name, "i)Superior (.*)", "$1") != Item.BaseName)) {
-		_line := Item.BaseName
+	;If (Item.RarityLevel >= 3 and (RegExReplace(Item.Name, "i)Superior (.*)", "$1") != Item.BaseName)) {
+	If (Item.RarityLevel >= 3 and (RegExReplace(Item.Name_En, "i)Superior (.*)", "$1") != Item.BaseName_En)) {
+		;_line := Item.BaseName
+		_line := Item.BaseName_En
 		search.LabelLines.push(_line)
 	}	
 
@@ -13551,8 +13554,9 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 	}
 	; Parse the item filter if it wasn't used the last time or fall back to parsing it if using the already parsed data fails
 	If (parsingNeeded or rules.MaxIndex() > 1) {
-
-		;Parse filter rules to object
+		/*
+			Parse filter rules to object
+		*/
 		Loop, Read, %filter%
 		{
 			If (RegExMatch(A_LoopReadLine, "i)^#") or not StrLen(A_LoopReadLine)) {
@@ -13809,13 +13813,14 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 		;tt := "Loaded Item Filter: """ filterName """`n`n"
 		tt := "Загруженный фильтр: """ filterName """`n`n"
 		;tt .= "Inline comments:" "`n" line "`n" 
-		tt .= "В соответствии с правилом:" "`n" line "`n" 
+		tt .= "В соответствии с вхождением:" "`n" line "`n"
 		tt .= comments "`n"
+		;tt .= "Matching conditions:" "`n" line "`n" 
 		tt .= "Условия соответствия:" "`n" line "`n" 
 		tt .= conditions "`n`n"
 		;tt .= "  Disclaimer: Matching explicit mods is only possible for magic items. In rare" "`n"
 		;tt .= "              cases this can cause a wrong match, depending on the used filter."
-		tt .= "  Предупреждение: В русской версии TradeMacro данная функция работает некорректно."
+		tt .= "   Предупреждение: В зависимости от используемого фильтра предметов`n   возможна некорректная обработка редких предметов!"
 		
 		ShowToolTip(tt)	
 	}
@@ -13869,8 +13874,8 @@ StartLutbot:
 Return
 
 OpenLutbotDocumentsFolder:
-	;OpenUserSettingsFolder("Lutbot", A_MyDocuments "\AutoHotKey\LutTools")
-	OpenUserSettingsFolder("Lutbot", LutBotSettings.variables.launcherPath)
+	OpenUserSettingsFolder("Lutbot", A_MyDocuments "\AutoHotKey\LutTools")
+	;OpenUserSettingsFolder("Lutbot", LutBotSettings.variables.launcherPath)
 Return
 
 CheckForLutBotHotkeyConflicts(hotkeys, config) {

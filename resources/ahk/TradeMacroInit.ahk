@@ -81,6 +81,8 @@ SplashUI.SetSubMessage("Чтение конфигурации PoE-TradeMacro..."
 TradeOpts_New := class_EasyIni(A_ScriptDir "\resources\default_UserFiles\config_trade.ini")
 MakeOldTradeOptsAndVars(TradeOpts_New)
 
+;Проверим есть ли значение русскоязычной версии
+TradeReleaseVersionRu:=(TradeReleaseVersionRu="")?TradeReleaseVersion:TradeReleaseVersionRu
 
 ; Check if Temp-Leagues are active and set defaultLeague accordingly
 TradeGlobals.Set("TempLeagueIsRunning", TradeFunc_CheckIfTempLeagueIsRunning())
@@ -89,20 +91,16 @@ TradeGlobals.Set("DefaultLeague", (TradeFunc_CheckIfTempLeagueIsRunning() > 0) ?
 TradeGlobals.Set("GithubUser", "POE-TradeMacro")
 TradeGlobals.Set("GithubRepo", "POE-TradeMacro")
 TradeGlobals.Set("ReleaseVersion", TradeReleaseVersion)
+TradeGlobals.Set("ReleaseVersionRu", TradeReleaseVersionRu)
 Globals.Set("AssignedHotkeys", {})
 global globalUpdateInfo := {}
 globalUpdateInfo.repo := TradeGlobals.Get("GithubRepo")
 globalUpdateInfo.user := TradeGlobals.Get("GithubUser")
 globalUpdateInfo.releaseVersion 	:= TradeGlobals.Get("ReleaseVersion")
+globalUpdateInfo.releaseVersionRu 	:= TradeGlobals.Get("ReleaseVersionRu")
 globalUpdateInfo.skipSelection 	:= 0
 globalUpdateInfo.skipBackup 		:= 0
 globalUpdateInfo.skipUpdateCheck 	:= 0
-
-;Загрузка информации о версии русскоязычной сборки
-FileReadLine, VersionRu, resources\VersionRu.txt, 1
-VersionRu:=(VersionRu="")?TradeGlobals.Get("ReleaseVersion"):VersionRu
-TradeGlobals.Set("ReleaseVersionRu", VersionRu)
-globalUpdateInfo.releaseVersionRu:=TradeGlobals.Get("ReleaseVersionRu")
 
 TradeGlobals.Set("SettingsScriptList", ["TradeMacro", "ItemInfo", "Additional Macros", "Lutbot"])
 ;TradeGlobals.Set("SettingsUITitle", "PoE (Trade) Item Info Settings")
@@ -924,7 +922,7 @@ CreateTradeSettingsUI()
 	GuiAddHotkey(TradeOpts.OpenSearchOnPoEAppHotKey, "x+1 yp-2 w124 h20", "OpenSearchOnPoEAppHotKey", "OpenSearchOnPoEAppHotKeyH", "", "", "SettingsUI")
 	;AddToolTip(OpenSearchOnPoEAppHotKeyH, "Press key/key combination.`nDefault: ctrl + shift + q")
 	AddToolTip(OpenSearchOnPoEAppHotKeyH, "Нажмите клавишу/комбинацию клавиш.`nПо умолчанию: Ctrl + Shift + Q")
-	GuiControl, Disable, OpenSearchOnPoEAppEnabled ;Данная функция не работает в русской версии
+	;GuiControl, Disable, OpenSearchOnPoEAppEnabled ;Данная функция не работает в русской версии
 
 	;GuiAddCheckbox("Open Item (Wiki):", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenWikiEnabled, "OpenWikiEnabled", "OpenWikiEnabledH", "", "", "SettingsUI")
 	GuiAddCheckbox("Открыть на Wiki:", "x657 yp+32 w165 h20 0x0100", TradeOpts.OpenWikiEnabled, "OpenWikiEnabled", "OpenWikiEnabledH", "", "", "SettingsUI")
@@ -1034,7 +1032,7 @@ TradeFunc_GetDelimitedCurrencyListString() {
 	CurrencyList := ""
 	CurrencyTemp := TradeGlobals.Get("CurrencyIDs")
 	CurrencyTemp := TradeCurrencyNames.eng
-
+	
 	For currName, currID in CurrencyTemp {
 		name := RegExReplace(currName,  "i)_", " ")
 		; only use real currency items here
@@ -1740,12 +1738,16 @@ TradeFunc_GetOSInfo() {
 
 ;----------------------- SplashScreens ---------------------------------------
 TradeFunc_StartSplashScreen(TradeReleaseVersion) {
-	;initArray := ["Initializing script...", "Preparing Einhars welcoming party...", "Uninstalling Battle.net...", "Investigating the so-called ""Immortals""...", "Starting mobile app..."
-	;	, "Hunting some old friends...", "Interrogating Master Krillson about fishing secrets...", "Trying to open Voricis chest...", "Setting up lab carries for the other 99%..."
-	;	, "Helping Alva discover the Jungle Hideout...", "Conning EngineeringEternity with the Atlas City Shuffle..."]
-	;initArray := ["Инициализируем скрипт...", "Устраиваем вечеринку приветствия Эйнара...", "Удаляем Battle.net...", "Исследуем так называемое ""Бессмертие""...", "Запускаем мобильное приложение...", "Охотимся на старых друзей...", "Допрашиваем Мастера Криллсона о секретах рыбалки...", "Открываем сундук Воричи...", "Помогаем Альве в поисках Джунглевого Убежища...", "Продаем торговцам Стат стики...", "Изучаем 'новые' имена..."] 
-	initArray := ["Инициализируем скрипт...", "Ищем предметы для синтеза...", "Восстанавливаем пустоты памяти...", "Очищаем пустоты памяти...", "Самостоятельно сотворяем поисковые запросы...", "Применяем лутфильтр для милишников...", "Стабилизируем память...", "Вручную отрисовываем пользовательский интерфейс..."]
-	
+	/*
+	initArray := ["Initializing script...", "Preparing Einhars welcoming party...", "Uninstalling Battle.net...", "Investigating the so-called ""Immortals""...", "Starting mobile app..."
+		, "Hunting some old friends...", "Interrogating Master Krillson about fishing secrets...", "Trying to open Voricis chest...", "Setting up lab carries for the other 99%..."
+		, "Helping Alva discover the Jungle Hideout...", "Conning EngineeringEternity with the Atlas City Shuffle...", "Vendoring stat-sticks..."]
+	*/
+
+	;initArray := ["Hand initializing script...", "Searching for synthesis targets...", "Restoring memory dumps...", "Clearing memory dumps...", "Hand casting search queries..."
+	;	, "Applying melee focused loot filter...", "Stabilizing memories...", "Hand drawing the user interface..."]
+	initArray := ["Самостоятельно инициализируем скрипт...", "Ищем предметы для синтеза...", "Восстанавливаем пустоты памяти...", "Очищаем пустоты памяти...", "Самостоятельно сотворяем поисковые запросы...", "Применяем фильтр предметов для милишников...", "Стабилизируем память...", "Самостоятельно отрисовываем пользовательский интерфейс..."]
+
 	Random, randomNum, 1, initArray.MaxIndex()
 	
 	global SplashUI := new SplashUI("on", "PoE-TradeMacro_ru", initArray[randomNum], "", TradeReleaseVersion, A_ScriptDir "\resources\images\greydot.png")
@@ -1757,6 +1759,7 @@ TradeFunc_FinishTMInit(argumentMergeScriptPath) {
 		*/
 	WinClose, %argumentMergeScriptPath% ahk_class AutoHotkey
 	WinKill, %argumentMergeScriptPath% ahk_class AutoHotkey
+	
 	; SplashScreen gets disabled by ItemInfo
 	If (TradeOpts.Debug) {
 		Menu, Tray, Add ; Separator
@@ -1777,7 +1780,7 @@ TradeFunc_FinishTMInit(argumentMergeScriptPath) {
 			console.log("Fetching gem names failed.")
 		}
 	}
-
+	
      ; Let timer run until ItemInfos global settings are set to overwrite them.
 	SetTimer, OverwriteSettingsWidthTimer, 250
 	SetTimer, OverwriteSettingsHeightTimer, 250

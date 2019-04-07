@@ -524,13 +524,14 @@ AdpRu_ElapsedTime()
 	console_log(elapsed_time, " Прошло тактов: ")
 }
 
-;Конвертирование данных с предмета, нужно для функции Прогнозирования
-AdpRu_RareItemDataEnToRu(idft) {
+;Конвертирование данных с редкого или уникального предмета, нужно для функции Прогнозирования и работы с сайтами poeprice.info и poeapp.com
+AdpRu_ConvertItemDataEnToRu(idft) {
 	bidtf:=idft
 	idtfen:=""
 	idtferl:=""
 	
-	;Конвертируем, что не поддается обычным правилам конвертирования модов
+	;Конвертируем, что не поддается обычным правилам конвертирования модов и уберем лишнее
+	idft:=StrReplace(idft, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n", "")
 	idft:=StrReplace(idft, "Гнезда:", "Sockets:")
 	idft:=StrReplace(idft, "Физический урон:", "Physical Damage:")
 	idft:=StrReplace(idft, "Урон от стихий:", "Elemental Damage:")
@@ -539,7 +540,7 @@ AdpRu_RareItemDataEnToRu(idft) {
 	lidft:=StrSplit(idft, "`r`n")
 	
 	;Назначим неопределенное имя предмета, а так же имя базы
-	lidft[2]:="Undefined Name"
+	lidft[2]:=RegExMatch(Item.Name_En, "[А-Яа-яЁё]+")?"Undefined Name":Item.Name_En
 	lidft[3]:=Item.BaseName_En
 	
 	For k, val in lidft {
@@ -565,8 +566,8 @@ AdpRu_RareItemDataEnToRu(idft) {
 		}
 		
 		;Если что-то не конвертировалось, то заменим на пустую строку.
-		If(RegExMatch(lidft[k], "^[А-ЯЁа-яё]+")) {
-				idtferl.=StrReplace(lidft[k], " to ", " до ") "`n`n"
+		If(RegExMatch(lidft[k], "[А-Яа-яЁё]+")) {
+				idtferl.="     " StrReplace(lidft[k], " to ", " до ") "`n"
 				lidft[k]:=""
 		}
 		
@@ -576,32 +577,37 @@ AdpRu_RareItemDataEnToRu(idft) {
 	
 	;Уведомление о не конвертированных строках
 	if(idtferl!="") {
-		idtferl:="Не удалось конвертировать следующие строки, они были заменены пустыми и не будут учтены при прогнозе:`n`n" idtferl
+		idtferl:="Не удалось конвертировать следующие строки, они были заменены пустыми и не будут учтены:`n" idtferl
 		MsgBox, 0x1030, Внимание!, %idtferl%
 	}
 	
 	;Вывод информации для отладки
 	FormatTime, stime
-	FileAppend, `n==============================%stime%==============================`n%bidtf%`n=============================`n%idtfen%, temp\PredictedPricingData.txt
+	FileAppend, `n==============================%stime%==============================`n%bidtf%`n=============================`n%idtfen%, temp\AdpRu_ConvertItemData.txt
 	console.log(idtfen)
 	
 	return idtfen
 }
 
 ;Имена предметов содержащих "{" и "}" иногда вызывают проблемы, да и выглядят не эстетично. Заменим такие имена шаблонами!
+;Так же из базы уберем слова Синтезированный(ая/ое/ые)
 AdpRu_FixNames(item){
+	item:=StrReplace(item, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n", "")
 	sitem:=StrSplit(item, "`r`n")
 	if RegExMatch(sitem[1], "Редкость: Редкий") {
 		if (RegExMatch(sitem[2], "{") or RegExMatch(sitem[2], "}")) {
 			sitem[2]:="Undefined Name"
 		}
-		if RegExMatch(sitem[3], "{Синтезированн") {
+	}
+	if RegExMatch(sitem[1], "Редкость: (Редкий|Уникальный)") {
+		if RegExMatch(sitem[3], "} ") {
 			ssitem:=StrSplit(sitem[3], "} ")
 			sitem[3]:=RegExReplace(ssitem[2], chr(0xA0), "")
 		}
 		if (RegExMatch(sitem[3], "{") or RegExMatch(sitem[3], "}")) {
 			sitem[3]:="Undefined Base"
 		}
+		sitem[3]:=RegExReplace(sitem[3], "Синтезированн(ый|ая|ое|ые) ")
 		return sitem[1] "`r`n" sitem[2] "`r`n" sitem[3]
 	}
 	return item
@@ -611,7 +617,7 @@ AdpRu_DownloadAssociationLists() {
 	;Если не хотите загружать файлы соответствий, то раскомментируйте строчку ниже
 	;return
 	
-	SplashUI.SetSubMessage("Загрузка последних файлов соответствий с github...")
+	SplashUI.SetSubMessage("Получение свежих списков соответствий с github...")
 	
 	;Загрузка nameItemRuToEn.json
 	url:="https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json"
