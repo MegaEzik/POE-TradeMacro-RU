@@ -2231,7 +2231,7 @@ GetActualValue(ActualValueLine)
 	; Leaves "-" in for negative values, example: "Ventor's Gamble"
 	;Result := RegExReplace(ActualValueLine, ".*?\+?(-?\d+(?: to -?\d+|\.\d+)?).*", "$1")
 	; поддержка "to" для адаптированного варианта файла \data\Implicits.json
-	Result := RegExReplace(ActualValueLine, ".*?\+?(-?\d+(?: (до|to) -?\d+|\.\d+)?).*", "$1")
+	Result := RegExReplace(ActualValueLine, ".*?\+?(-?\d+(?: (до|из|to) -?\d+|\.\d+)?).*", "$1")
 	; Formats "1 to 2" as "1-2"
 	StringReplace, Result, Result, %A_SPACE%to%A_SPACE%, -
 	StringReplace, Result, Result, %A_SPACE%до%A_SPACE%, -
@@ -12997,12 +12997,21 @@ CheckForUpdates:
 	return
 
 CurrencyDataDownloadURLtoJSON(url, sampleValue, critical = false, isFallbackRequest = false, league = "", project = "", tmpFileName = "", fallbackDir = "", ByRef usedFallback = false, ByRef loggedCurrencyRequestAtStartup = false, ByRef loggedTempLeagueCurrencyRequest = false, CurlTimeout = 35) {
-	errorMsg := "Parsing the currency data (json) from poe.ninja failed.`n"
-	errorMsg .= "This should only happen when the servers are down / unavailable."
+	;errorMsg := "Parsing the currency data (json) from poe.ninja failed.`n"
+	;errorMsg .= "This should only happen when the servers are down / unavailable."
+	;errorMsg .= "`n`n"
+	;errorMsg .= "This can fix itself when the servers are up again and the data gets updated automatically or if you restart the script at such a time."
+	;errorMsg .= "`n`n"
+	;errorMsg .= "You can find a log file with some debug information:"
+	;errorMsg .= "`n" """" A_ScriptDir "\temp\StartupLog.txt"""
+	;errorMsg .= "`n`n"
+	
+	errorMsg := "Разбор данных (json) о валюте с сайта poe.ninja не удался.`n"
+	errorMsg .= "Такое возможно, когда серверы отключены/недоступны."
 	errorMsg .= "`n`n"
-	errorMsg .= "This can fix itself when the servers are up again and the data gets updated automatically or if you restart the script at such a time."
+	errorMsg .= "Проблема может быть исправлена, когда серверы снова заработают/станут доступны, данные будут обновлены автоматически, или если вы перезапустите скрипт через некоторое время."
 	errorMsg .= "`n`n"
-	errorMsg .= "You can find a log file with some debug information:"
+	errorMsg .= "Вы можете получить больше информации в файле отладки:"
 	errorMsg .= "`n" """" A_ScriptDir "\temp\StartupLog.txt"""
 	errorMsg .= "`n`n"
 

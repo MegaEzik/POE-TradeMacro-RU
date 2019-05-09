@@ -531,10 +531,13 @@ AdpRu_ConvertItemDataEnToRu(idft) {
 	idtferl:=""
 	
 	;Конвертируем, что не поддается обычным правилам конвертирования модов и уберем лишнее
-	idft:=StrReplace(idft, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n", "")
+	idft:=StrReplace(idft, "(макс.)", "(Max)")
+	idft:=StrReplace(idft, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n--------`r`n", "")
 	idft:=StrReplace(idft, "Гнезда:", "Sockets:")
-	idft:=StrReplace(idft, "Физический урон:", "Physical Damage:")
+	idft:=StrReplace(idft, "Опыт:", "Experience:")
+	idft:=StrReplace(idft, "Размер стопки:", "Stack Size:")
 	idft:=StrReplace(idft, "Урон от стихий:", "Elemental Damage:")
+	idft:=StrReplace(idft, "Физический урон:", "Physical Damage:")
 	
 	;Разбиваем строку
 	lidft:=StrSplit(idft, "`r`n")
@@ -545,19 +548,25 @@ AdpRu_ConvertItemDataEnToRu(idft) {
 	
 	For k, val in lidft {
 		;Извлекаем часть строки не требующую перевода и препятствующую ему, при сборе вернем ее на место
-		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)", slidft)
+		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)", slidft)
 		lidft[k]:=StrReplace(lidft[k], slidft, "")
 		
 		;Попытка конвертировать стат
 		lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])
 		
-		;Если в строке найдены от и до(Разброс значений), то конвертируем так, иначе пытаемся конвертировать с одним значением
+		;Если в строке найдены "от" и "до"(Разброс значений), то конвертируем так, иначе ищем нет ли "из" и пытаемся конвертировать, если снова нет, то конвертируем с одним значением
 		If (RegExMatch(lidft[k], " от ") and RegExMatch(lidft[k], " до ")) {
 			v:=StrReplace(GetActualValue(lidft[k]), "-", " до ")
 			lidft[k]:= StrReplace(lidft[k], v, "# до #")
 			lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])			
 			v:=StrReplace(v, " до ", " to ")
 			lidft[k]:=StrReplace(lidft[k], "# to #", v)
+		} else if (RegExMatch(GetActualValue(lidft[k]), " из ")) {
+			v:=GetActualValue(lidft[k])
+			lidft[k]:= StrReplace(lidft[k], v, "# из #")
+			lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])
+			v:=StrReplace(v, " из ", " of ")
+			lidft[k]:=StrReplace(lidft[k], "# of #", v)
 		} else {
 			v:=GetActualValue(lidft[k])
 			lidft[k]:= StrReplace(lidft[k], v, "#")
@@ -592,7 +601,7 @@ AdpRu_ConvertItemDataEnToRu(idft) {
 ;Имена предметов содержащих "{" и "}" иногда вызывают проблемы, да и выглядят не эстетично. Заменим такие имена шаблонами!
 ;Так же из базы уберем слова Синтезированный(ая/ое/ые)
 AdpRu_FixNames(item){
-	item:=StrReplace(item, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n", "")
+	item:=StrReplace(item, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n--------`r`n", "")
 	sitem:=StrSplit(item, "`r`n")
 	if RegExMatch(sitem[1], "Редкость: Редкий") {
 		if (RegExMatch(sitem[2], "{") or RegExMatch(sitem[2], "}")) {
@@ -613,30 +622,19 @@ AdpRu_FixNames(item){
 	return item
 }
 
+;Загрузка списков соответствий
 AdpRu_DownloadAssociationLists() {
 	;Если не хотите загружать файлы соответствий, то раскомментируйте строчку ниже
 	;return
 	
 	SplashUI.SetSubMessage("Получение свежих списков соответствий с github...")
 	
-	;Загрузка nameItemRuToEn.json
-	url:="https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json"
-	file:="data\ru\nameItemRuToEn.json"
-	FileCopy, %file%, %file%.bak
-	FileDelete, %file%
-	UrlDownloadToFile, %url%, %file%
-	sleep 50
-	FileReadLine, line, %file%, 1	
-	if (line!="{") {
-		FileDelete, %file%
-		sleep 50
-		FileCopy, %file%.bak, %file%
-	}
-	FileDelete, %file%.bak
-	
-	;Загрузка ru_en_stats.json
-	url:="https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json"
-	file:="data_trade\ru\ru_en_stats.json"
+	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json", "data\ru\nameItemRuToEn.json")
+	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json", "data_trade\ru\ru_en_stats.json")
+}
+
+;Загрузка указанных JSON файлов
+AdpRu_DownloadJSONList(url, file) {
 	FileCopy, %file%, %file%.bak
 	FileDelete, %file%
 	UrlDownloadToFile, %url%, %file%
@@ -649,4 +647,3 @@ AdpRu_DownloadAssociationLists() {
 	}
 	FileDelete, %file%.bak
 }
-
