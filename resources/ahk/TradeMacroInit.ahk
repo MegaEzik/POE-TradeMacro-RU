@@ -154,6 +154,11 @@ TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[TradeOpts.SearchLeagu
 
 TradeFunc_CheckIfCloudFlareBypassNeeded()
 
+TradeGlobals.Set("Leagues", TradeFunc_GetLeagues())
+Sleep, 200
+ReadTradeConfig("", "config_trade.ini", _updateConfigWrite)
+TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[TradeOpts.SearchLeague])
+
 ; set this variable to skip the update check in "PoE-ItemInfo.ahk"
 SkipItemInfoUpdateCall := 1
 firstUpdateCheck := true
