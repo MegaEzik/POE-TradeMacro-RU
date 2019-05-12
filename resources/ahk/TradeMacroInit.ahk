@@ -147,11 +147,6 @@ global overwrittenUserFiles	:= argumentOverwrittenFiles
 ; 	CopyDefaultTradeConfig()
 ; }
 
-TradeGlobals.Set("Leagues", TradeFunc_GetLeagues())
-Sleep, 200
-ReadTradeConfig("", "config_trade.ini", _updateConfigWrite)
-TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[TradeOpts.SearchLeague])
-
 TradeFunc_CheckIfCloudFlareBypassNeeded()
 
 TradeGlobals.Set("Leagues", TradeFunc_GetLeagues())
@@ -458,6 +453,10 @@ TradeFunc_GetLeagues() {
 				If (value = l) {
 					found := true
 				}
+			}
+			;У PS4 и Xbox так же нет API
+			If RegExMatch(trimmedValue, "ps4|xbox") {
+				found := true
 			}
 			If (not found) {
 				leagues[trimmedValue] := value
