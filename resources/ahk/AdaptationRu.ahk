@@ -627,7 +627,7 @@ AdpRu_DownloadAssociationLists() {
 	;Если не хотите загружать файлы соответствий, то раскомментируйте строчку ниже
 	;return
 	
-	SplashUI.SetSubMessage("Получение свежих списков соответствий с github...")
+	SplashUI.SetSubMessage("Получение актуальных списков соответствий с github...")
 	
 	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json", "data\ru\nameItemRuToEn.json")
 	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json", "data_trade\ru\ru_en_stats.json")

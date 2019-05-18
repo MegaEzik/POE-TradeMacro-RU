@@ -732,7 +732,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			If (s.mods[A_Index].selected > 0) {
 				modParam := new _ParamMod()
 				
-				If (s.mods[A_Index].spawntype = "fractured" and s.inlcudeFractured) {
+				If (s.mods[A_Index].spawntype = "fractured" and s.includeFractured) {
 					modParam.mod_name := TradeFunc_FindInModGroup(TradeGlobals.Get("ModsData")["fractured"], s.mods[A_Index])
 				}
 				
@@ -744,6 +744,19 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				modParam.mod_max := s.mods[A_Index].max	
 				RequestParams.modGroups[1].AddMod(modParam)
 			}
+		}
+		If (s.includeFracturedCount and s.fracturedCount > 0) {
+			modParam := new _ParamMod()
+			modParam.mod_name := "(pseudo) # Fractured Modifiers" ; TradeFunc_FindInModGroup(TradeGlobals.Get("ModsData")["pseudo"], "# Fractured Modifiers")
+			/*
+			_tmpitem := {}
+			_tmpitem.mods := []
+			_tmpitem.mods.push({name : "# Fractured Modifiers"})
+			modParam.mod_name := TradeFunc_GetItemsPoeTradeMods(_tmpitem)
+			*/			
+			modParam.mod_min := s.fracturedCount
+			modParam.mod_max := s.fracturedCount
+			RequestParams.modGroups[1].AddMod(modParam)
 		}
 		Loop % s.stats.Length() {
 			If (s.stats[A_Index].selected > 0) {
@@ -1366,6 +1379,21 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			;RequestParams. := 1
 			;Item.UsedInSearch.abyssJewel := 1 
 		}
+	}
+	
+	;prophecies
+	;If (Item.IsProphecy and RegExMatch(Item.Name, "i)A Master seeks Help")) {
+		If (Item.IsProphecy and RegExMatch(Item.Name_En, "i)A Master seeks Help")) {
+		_tempItem	:= {}
+		_tempItem.name_orig	:= "(prophecy) " ItemData.Affixes
+		_tempItem.name		:= "(prophecy) " ItemData.Affixes
+		_tempItem.param	:= "(prophecy) " ItemData.Affixes
+
+		modParam := new _ParamMod()
+		modParam.mod_name := _tempItem.param
+		modParam.mod_min := 
+		modParam.mod_max := 
+		RequestParams.modGroups[1].AddMod(modParam)
 	}
 
 	; predicted pricing (poeprices.info - machine learning)
@@ -5779,7 +5807,17 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		GuiAddPicture(A_ScriptDir "\resources\images\fractured-symbol.png", "xp+28 yp-" fracturedImageShift " w27 h-1 0x0100", "", "", "", "", "SelectModsGui")
 
 		GuiAddPicture(A_ScriptDir "\resources\images\info-blue.png", "x+-" 193 " yp+" fracturedImageShift - 1 " w15 h-1 0x0100", "FracturedInfo", "FracturedInfoH", "", "", "SelectModsGui")
-		AddToolTip(LblFracturedInfoH, "Includes selected fractured mods with their ""fractured"" porperty`n instead of as normal mods.")
+		;AddToolTip(LblFracturedInfoH, "Includes selected fractured mods with their ""fractured"" porperty`n instead of as normal mods.")
+		AddToolTip(LblFracturedInfoH, "Выбирает расколотые моды.")
+		
+		
+		;GuiAddText("Fractured mods count", "x" RightPosText " y+10 right w130 0x0100", "LblFracturedCount", "LblFracturedCountH", "", "", "SelectModsGui")
+		GuiAddText("Расколотых модов", "x" RightPosText " y+10 right w130 0x0100", "LblFracturedCount", "LblFracturedCountH", "", "", "SelectModsGui")
+		Gui, SelectModsGui:Add, CheckBox, x%RightPos% yp+0 vTradeAdvancedSelectedFracturedCount Checked, % " "
+		Gui, SelectModsGui:Add, Edit    , x+1 yp-4 w30 vTradeAdvancedFracturedCount , 
+		GuiAddPicture(A_ScriptDir "\resources\images\info-blue.png", "x+-" 193 " yp+" 3 " w15 h-1 0x0100", "FracturedCount", "FracturedCountH", "", "", "SelectModsGui")
+		;AddToolTip(LblFracturedCountH, "The correct number of fractured mods can't be determined from the item data reliably.`n`nMake sure to check it by pressing ""Alt"" when hovering over your item, `nwhich requires ""Advanced Mod Descriptions"" to be enabled.")
+		AddToolTip(LblFracturedCountH, "Не возможно правильно подсчитать количество расколотых модов на основе данных о предмете.`n`nНе забудьте посмотреть нажав ""Alt"" наведя на предмет, `nкоторый требуется указать для включения в ""Расширенный поиск"".")
 	}
 
 	If (ModNotFound) {
@@ -5952,6 +5990,8 @@ TradeFunc_ResetGUI() {
 	TradeAdvancedSelectedVeiledSuffix	:=
 	TradeAdvancedVeiledSuffixCount	:=	
 	TradeAdvancedSelectedIncludeFractured	:=	
+	TradeAdvancedSelectedFracturedCount	:=	
+	TradeAdvancedFracturedCount	:=	
 
 	TradeGlobals.Set("AdvancedPriceCheckItem", {})
 }
@@ -6028,7 +6068,9 @@ TradeFunc_HandleGuiSubmit() {
 	newItem.veiledPrefixCount	:= TradeAdvancedVeiledPrefixCount
 	newItem.useVeiledSuffix		:= TradeAdvancedSelectedVeiledSuffix
 	newItem.veiledSuffixCount	:= TradeAdvancedVeiledSuffixCount
-	newItem.inlcudeFractured		:= TradeAdvancedSelectedIncludeFractured
+	newItem.includeFractured		:= TradeAdvancedSelectedIncludeFractured
+	newItem.includeFracturedCount	:= TradeAdvancedSelectedFracturedCount
+	newItem.fracturedCount		:= TradeAdvancedFracturedCount
 
 	TradeGlobals.Set("AdvancedPriceCheckItem", newItem)
 	Gui, SelectModsGui:Destroy
