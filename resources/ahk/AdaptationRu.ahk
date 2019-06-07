@@ -524,6 +524,7 @@ AdpRu_ElapsedTime()
 	console_log(elapsed_time, " Прошло тактов: ")
 }
 
+/*
 ;Конвертирование данных с редкого или уникального предмета, нужно для функции Прогнозирования и работы с сайтами poeprice.info и poeapp.com
 AdpRu_ConvertItemDataEnToRu(idft) {
 	bidtf:=idft
@@ -597,6 +598,7 @@ AdpRu_ConvertItemDataEnToRu(idft) {
 	
 	return idtfen
 }
+*/
 
 ;Имена предметов содержащих "{" и "}" иногда вызывают проблемы, да и выглядят не эстетично. Заменим такие имена шаблонами!
 ;Так же из базы уберем слова Синтезированный(ая/ое/ые)
@@ -646,4 +648,10 @@ AdpRu_DownloadJSONList(url, file) {
 		FileCopy, %file%.bak, %file%
 	}
 	FileDelete, %file%.bak
+}
+
+;Инициализация библиотеки IDCL
+AdpRu_IDCLInit() {
+	Globals.Set("item_stats", Globals.Get("ru_en_stats"))	
+	Globals.Set("item_names", Globals.Get("nameItemRuToEn"))
 }

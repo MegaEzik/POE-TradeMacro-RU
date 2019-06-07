@@ -105,10 +105,9 @@ TradeFunc_OpenSearchOnPoeAppHotkey(priceCheckTest = false, itemData = "") {
 	Sleep 250
 	
 	TradeFunc_DoParseClipboard()
-	;If (Item.Name or Item.BaseName) {
-	If ((Item.Name or Item.BaseName) and (Item.IsRare or Item.IsUnique)) {
+	If (Item.Name or Item.BaseName) {
 		;itemContents := TradeUtils.UriEncode(Clipboard)
-		itemContents := TradeUtils.UriEncode(AdpRu_ConvertItemDataEnToRu(Clipboard))
+		itemContents := TradeUtils.UriEncode(IDCL_ConvertMain(Clipboard))
 		url := "https://poeapp.com/#/item-import/" + itemContents
 		Clipboard := clipPrev
 		TradeFunc_OpenUrlInBrowser(url)	
@@ -482,15 +481,6 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		hasAdvancedSearch := true
 	}
 	
-	;Карта Плацдарм и фрагменты предметов предвестников на poe.trade теперь считаются уникальными! !!!Проверять на исправление!!!
-	/*
-	; Harbinger fragments/maps are unique but not flagged as such on poe.trade
-	;If (RegExMatch(Item.Name, "i)(First|Second|Third|Fourth) Piece of.*|The Beachhead.*")) {
-	If (RegExMatch(Item.Name_En, "i)(First|Second|Third|Fourth) Piece of.*|The Beachhead.*")) {
-		Item.IsUnique 	:= false
-	}
-	*/
-
 	;further item parsing and preparation
 	If (!Item.IsUnique or Item.IsBeast) {
 		; TODO: improve this
@@ -902,12 +892,23 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	; prepend the item.subtype to match the options used on poe.trade
 	If (RegExMatch(Item.SubType, "i)Mace|Axe|Sword|Sceptre")) {
 		If (Item.IsThreeSocket) {
-			;If (RegExMatch(Item.BaseName, "i)Sceptre")) {
-			If (RegExMatch(Item.SubType, "i)Sceptre")) {
-				Item.xtype := "Sceptre"
+			If (TradeItemBasesWeapons[Item.BaseName]["Item Class"]) {
+				Item.ItemClass := TradeItemBasesWeapons[Item.BaseName]["Item Class"]
+			}
+			
+			If (Item.ItemClass) {
+				If (RegExMatch(Item.ItemClass, "i)Sceptres")) {
+					Item.xtype := "Sceptre"
+				}
 			} Else {
-				Item.xtype := "One Hand " . Item.SubType	
-			}			
+				If (RegExMatch(Item.BaseName, "i)Sceptre")) {
+					Item.xtype := "Sceptre"
+				}
+			}
+			
+			If (not Item.xtype) {
+				Item.xtype := "One Hand " . Item.SubType				
+			}
 		}
 		Else {
 			Item.xtype := "Two Hand " . Item.SubType
@@ -927,8 +928,12 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.Rarity := "Relic"
 		} Else If (Item.IsUnique) {
 			RequestParams.rarity := "unique"
-			;RequestParams.xbase  := Item.BaseName
-			RequestParams.xbase  := Item.BaseName_En
+			; Harbinger fragments are unique but don't have a selectable base type on poe.trade
+			;If (!RegExMatch(Item.Name, "i)(First|Second|Third|Fourth) Piece of.*")) {
+			If (!RegExMatch(Item.Name_En, "i)(First|Second|Third|Fourth) Piece of.*")) {
+				;RequestParams.xbase  := Item.BaseName
+				RequestParams.xbase  := Item.BaseName_En
+			}
 		}
 		Item.UsedInSearch.FullName := true
 	}
@@ -1383,7 +1388,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	
 	;prophecies
 	;If (Item.IsProphecy and RegExMatch(Item.Name, "i)A Master seeks Help")) {
-		If (Item.IsProphecy and RegExMatch(Item.Name_En, "i)A Master seeks Help")) {
+	If (Item.IsProphecy and RegExMatch(Item.Name_En, "i)A Master seeks Help")) {
 		_tempItem	:= {}
 		_tempItem.name_orig	:= "(prophecy) " ItemData.Affixes
 		_tempItem.name		:= "(prophecy) " ItemData.Affixes
@@ -1532,7 +1537,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	Else If (not openSearchInBrowser and TradeOpts.UsePredictedItemPricing and itemEligibleForPredictedPricing and not isAdvancedPriceCheckRedirect and not isItemAgeRequest) {
 		requestCurl := ""
 		;Html := TradeFunc_DoPoePricesRequest(ItemData.FullText, requestCurl)
-		Html := TradeFunc_DoPoePricesRequest(AdpRu_ConvertItemDataEnToRu(ItemData.FullText), requestCurl)
+		Html := TradeFunc_DoPoePricesRequest(IDCL_ConvertMain(ItemData.FullText), requestCurl)
 		
 	}
 	Else If (not openSearchInBrowser) {
@@ -6276,7 +6281,7 @@ ChangeScriptListsTimer:
 		Global.Set("ScriptList", o)
 
 		l.push([A_ScriptDir "\resources\Updates_Trade.txt","TradeMacro"])
-		l.push([A_ScriptDir "\resources\UpdatesRu.txt","AdaptationRu"])
+		l.push([A_ScriptDir "\resources\UpdatesRu.txt","AdpRu+IDCL"])
 		Global.Set("UpdateNoteFileList", l)
 
 		SetTimer, ChangeScriptListsTimer, Off
@@ -6289,8 +6294,12 @@ OverwriteSettingsNameTimer:
 	If (o) {
 		RuVer:=(TradeGlobals.Get("ReleaseVersionRu")!=TradeGlobals.Get("ReleaseVersion"))?" (ru" StrReplace(TradeGlobals.Get("ReleaseVersionRu"), "v")")":""
 		RelVer := TradeGlobals.Get("ReleaseVersion")
-		;Menu, Tray, Tip, Path of Exile TradeMacro %RelVer%
-		Menu, Tray, Tip, Path of Exile TradeMacro ru %RelVer%%RuVer%
+		;TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer)
+		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro ru - " RelVer RuVer)
+		If (TradeOpts.SearchLeague) {			
+			;TradeFunc_SetMenuTrayTip("`nSelected league: """ TradeOpts.SearchLeague """", true)
+			TradeFunc_SetMenuTrayTip("`nВыбрана лига: """ TradeOpts.SearchLeague """", true)
+		}
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel
@@ -6304,9 +6313,29 @@ OverwriteSettingsNameTimer:
 	}
 Return
 
+TradeFunc_SetMenuTrayTip(msg, append := false) {
+	_TrayTip := ""
+	If (not append) {
+		TradeGlobals.Set("TrayTip", msg)
+		_TrayTip := TradeGlobals.Get("TrayTip")
+	} Else {
+		_TrayTip := TradeGlobals.Get("TrayTip") . msg
+		TradeGlobals.Set("TrayTip", _TrayTip)
+	}	
+	Menu, Tray, Tip, %_TrayTip%
+}
+
 OverwriteUpdateOptionsTimer:
 	If (InititalizedItemInfoUserOptions) {
 		TradeFunc_SyncUpdateSettings()
+	}
+Return
+
+CheckForUpdatesTimer:
+	;PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug, true)
+	HasUpdate := PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersionRu, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug, true)
+	If (hasUpdate != "no update") {
+		Menu, Tray, Icon, %A_ScriptDir%\resources\images\poe-trade-bl-update.ico
 	}
 Return
 
@@ -6345,6 +6374,8 @@ TradeSettingsUI_BtnOK:
 	Sleep, 50
 	WriteTradeConfig()
 	UpdateTradeSettingsUI()
+	;Проверять на исправление
+	SetTimer, OverwriteSettingsNameTimer, 250
 Return
 
 TradeSettingsUI_BtnCancel:

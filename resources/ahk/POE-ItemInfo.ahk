@@ -15,6 +15,8 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExileSteam.exe
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64.exe
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64Steam.exe
+GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_KG.exe
+GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64_KG.exe
 
 #Include, %A_ScriptDir%\resources\Version.txt
 #Include, %A_ScriptDir%\lib\JSON.ahk
@@ -27,6 +29,9 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 #Include, %A_ScriptDir%\lib\AdvancedHotkey.ahk
 IfNotExist, %A_ScriptDir%\temp
 FileCreateDir, %A_ScriptDir%\temp
+
+;Подключение библиотеки IDCL
+#Include, %A_ScriptDir%\resources\ahk\ItemDataConverterLib.ahk
 
 ; Instead of polluting the default namespace with Globals, create our own Globals "namespace".
 class Globals {
@@ -103,6 +108,8 @@ Globals.Set("nameModNum", JSON.Load(nameModNum_file))
 ; предметы с одинаковыми названиями
 FileRead, sameNameItem_file, %A_ScriptDir%\data\ru\sameNameItem.json
 Globals.Set("sameNameItem", JSON.Load(sameNameItem_file))
+; Инициализация переменных для библиотеки IDCL
+AdpRu_IDCLInit()
 
 class UserOptions {	
 	ScanUI()
@@ -2687,8 +2694,8 @@ ParseMapAffixes(ItemDataAffixes)
 			SetMapInfoLine("Prefix", MapAffixCount)
 			Continue
 		}
-		;If (RegExMatch(A_LoopField, "Slaying Enemies close together can attract monsters from Beyond"))
-		If (RegExMatch(A_LoopField, "Убитые близко друг к другу враги могут привлечь монстров из другого мира"))
+		;If (RegExMatch(A_LoopField, "Slaying Enemies close together has a \d+% chance to attract monsters from Beyond"))
+		If (RegExMatch(A_LoopField, "Убитые близко друг к другу враги имеют \d+% шанс привлечь монстров из другого мира"))
 		{
 			;MapModWarnings .= MapModWarn.Beyond ? "`nBeyond" : ""
 			MapModWarnings .= MapModWarn.Beyond ? "`n Иномирцы" : ""
@@ -13012,6 +13019,7 @@ CurrencyDataDownloadURLtoJSON(url, sampleValue, critical = false, isFallbackRequ
 	;errorMsg .= "`n`n"
 	;errorMsg .= "You can find a log file with some debug information:"
 	;errorMsg .= "`n" """" A_ScriptDir "\temp\StartupLog.txt"""
+	;errorMsg .= "`n`nTry opening the settings menu and selecting a league/making sure that one is selected."
 	;errorMsg .= "`n`n"
 	
 	errorMsg := "Разбор данных (json) о валюте с сайта poe.ninja не удался.`n"
@@ -13021,6 +13029,7 @@ CurrencyDataDownloadURLtoJSON(url, sampleValue, critical = false, isFallbackRequ
 	errorMsg .= "`n`n"
 	errorMsg .= "Вы можете получить больше информации в файле отладки:"
 	errorMsg .= "`n" """" A_ScriptDir "\temp\StartupLog.txt"""
+	errorMsg .= "`n`nПопробуйте открыть меню настроек и выбрать лигу или убедиться, что она выбрана."
 	errorMsg .= "`n`n"
 
 	errors := 0
