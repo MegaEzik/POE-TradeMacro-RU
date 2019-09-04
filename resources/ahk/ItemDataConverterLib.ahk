@@ -1,4 +1,10 @@
 ﻿
+/*
+	Набор функций для конвертации предметов и их свойств
+	Автор: MegaEzik
+	Последнее изменение: 22.08.2019
+*/
+
 ;Загрузка указанных JSON файлов
 IDCL_DownloadJSONList(url, file) {
 	FileCopy, %file%, %file%.bak
@@ -109,17 +115,23 @@ IDCL_ConvertName(name, rlvl){
 	names:=Globals.Get("item_names")
 	new_name:=StrReplace(name, " высокого качества", "")	
 	;Обработаем случаи с дублирующимися названиями
-	if (rlvl=12 && new_name="Удар молнии") {
-	return "Struck by Lightning"
-	}
-	if (rlvl=11 && new_name="Удар молнии") {
-	return "Lightning Strike"
+	if ((rlvl=4 || rlvl=5) && new_name="Договор") {
+		return "The Covenant"
 	}
 	if (rlvl=12 && new_name="Договор") {
-	return "The Pact"
+		return "The Pact"
 	}
-	if ((rlvl=4 || rlvl=5) && new_name="Договор") {
-	return "The Covenant"
+	if ((rlvl=4 || rlvl=5) && new_name="Отшельник") {
+		return "The Ascetic"
+	}
+	if (rlvl=12 && new_name="Отшельник") {
+		return "The Hermit"
+	}
+	if (rlvl=11 && new_name="Удар молнии") {
+		return "Lightning Strike"
+	}
+	if (rlvl=12 && new_name="Удар молнии") {
+		return "Struck by Lightning"
 	}
 	;Измененные и древние карты
 	if RegExMatch(new_name, "(Древняя|Изменённая)", mapre) and inStr(new_name, "Карта") {
