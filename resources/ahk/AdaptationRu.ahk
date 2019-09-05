@@ -173,6 +173,12 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 			return itemEn
 		}
 	}
+	Else If (Item.IsProphecy) {
+		itemEn := sameNameItem.Prophecy[itemRu_]
+		If (itemEn) {
+			return itemEn
+		}
+	}
 
 	; массив соответствий базовых имен предметов на русском языке их английским вариантам
 	nameItemRuToEn := Globals.Get("nameItemRuToEn")		
@@ -183,6 +189,17 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 			mapBaseRu:=Trim(StrReplace(itemRu_, "Древняя", ""))
 			If (nameItemRuToEn[mapBaseRu]) {
 				itemEn := "Elder " nameItemRuToEn[mapBaseRu]
+				return itemEn
+			}
+		}
+	}
+	
+	;Конвертирование имен Зараженных карт
+	If (Item.IsMap) {
+		If (RegExMatch(itemRu_, "i)Заражённая")) {
+			mapBaseRu:=Trim(StrReplace(itemRu_, "Заражённая", ""))
+			If (nameItemRuToEn[mapBaseRu]) {
+				itemEn := "Blighted " nameItemRuToEn[mapBaseRu]
 				return itemEn
 			}
 		}

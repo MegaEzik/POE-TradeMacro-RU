@@ -2,7 +2,7 @@
 /*
 	Набор функций для конвертации предметов и их свойств
 	Автор: MegaEzik
-	Последнее изменение: 22.08.2019
+	Последнее изменение: 04.09.2019
 */
 
 ;Загрузка указанных JSON файлов
@@ -50,6 +50,7 @@ IDCL_lvlRarity(itemdata) {
 	rlvl:=inStr(itemdata, "Редкость: Камень")?11:rlvl
 	rlvl:=(inStr(itemdata, "Редкость: Камень")&&inStr(itemdata, " ваал`r`n"))?11.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Гадальная карта")?12:rlvl
+	rlvl:=(inStr(itemdata, "Редкость: Обычный")&&inStr(itemdata, "Нажмите ПКМ, чтобы добавить это пророчество вашему персонажу."))?13:rlvl
 	return %rlvl%
 }
 
@@ -101,7 +102,7 @@ IDCL_ConvertMain(itemdata){
 	;Определяем уровень редкости
 	rlvl:=IDCL_lvlRarity(itemdata)	
 	;Если предмет соответствует критериям, то выполняем попытку конвертировать его, иначе выдаем уведомление
-	if (rlvl=1 || rlvl=3 || rlvl=4 || rlvl=5 || rlvl=10 || rlvl=11 || rlvl=12) {
+	if (rlvl=1 || rlvl=3 || rlvl=4 || rlvl=5 || rlvl=10 || rlvl=11 || rlvl=12 || rlvl=13) {
 		itemdata:=IDCL_ConvertItem(itemdata, rlvl)
 		IDCL_writeLogFile(itemdata)
 	} else {
@@ -121,6 +122,12 @@ IDCL_ConvertName(name, rlvl){
 	if (rlvl=12 && new_name="Договор") {
 		return "The Pact"
 	}
+	if (rlvl=11 && new_name="Наставник") {
+		return "Enlighten Support"
+	}
+	if (rlvl=13 && new_name="Наставник") {
+		return "The Mentor"
+	}
 	if ((rlvl=4 || rlvl=5) && new_name="Отшельник") {
 		return "The Ascetic"
 	}
@@ -133,9 +140,9 @@ IDCL_ConvertName(name, rlvl){
 	if (rlvl=12 && new_name="Удар молнии") {
 		return "Struck by Lightning"
 	}
-	;Измененные и древние карты
-	if RegExMatch(new_name, "(Древняя|Изменённая)", mapre) and inStr(new_name, "Карта") {
-		mapres:={"Древняя":"Elder", "Изменённая":"Shaped"}
+	;Измененные, древние и зараженные карты
+	if RegExMatch(new_name, "(Древняя|Изменённая|Заражённая)", mapre) and inStr(new_name, "Карта") {
+		mapres:={"Древняя":"Elder", "Изменённая":"Shaped", "Заражённая":"Blighted"}
 		new_name:=mapres[mapre] " " IDCL_ConvertName(Trim(StrReplace(new_name, mapre)), rlvl)
 		return new_name		
 	}
