@@ -1325,6 +1325,15 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.type := Item.BaseName_En
 			Item.UsedInSearch.typeRu := Item.BaseName
 		}
+		Item.priceHistory := TradeFunc_FindMapHistoryData(Item.SubType, Item.MapTier)
+	}
+
+	/*
+		fossils
+		*/
+	If (Item.IsFossil) {
+		;Item.priceHistory := TradeFunc_FindFossilHistoryData(Item.Name)
+		Item.priceHistory := TradeFunc_FindFossilHistoryData(Item.Name_En)
 	}
 
 	; gems
@@ -1517,6 +1526,8 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	currencyUrl	:= ""	
 	;If (Item.IsCurrency and !Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name)) {
 	If (Item.IsCurrency and not Item.IsEssence and TradeFunc_CurrencyFoundOnCurrencySearch(Item.Name_En)) {
+		;Item.priceHistory := TradeFunc_FindCurrencyHistoryData(Item.Name)
+		Item.priceHistory := TradeFunc_FindCurrencyHistoryData(Item.Name_En)
 		If (!TradeOpts.AlternativeCurrencySearch or Item.IsFossil) {			
 			;Html := TradeFunc_DoCurrencyRequest(Item.Name, openSearchInBrowser, 0, currencyUrl, error)
 			Html := TradeFunc_DoCurrencyRequest(Item.Name_En, openSearchInBrowser, 0, currencyUrl, error)
@@ -1637,6 +1648,36 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	}
 
 	TradeGlobals.Set("AdvancedPriceCheckItem", {})
+}
+
+TradeFunc_FindMapHistoryData(baseType, tier) {
+	For key, value in MapHistoryData {
+		If (baseType = value.baseType and tier = value.mapTier) {
+			Return {"totalChange" : value.sparkline.totalChange, "chaosValue" : value.chaosValue, "exaltedValue" : value.exaltedValue}
+		}
+	}
+}
+TradeFunc_FindFossilHistoryData(name) {
+	For key, value in FossilHistoryData {
+		If (name = value.name) {
+			Return {"totalChange" : value.sparkline.totalChange, "chaosValue" : value.chaosValue, "exaltedValue" : value.exaltedValue}
+		}
+	}
+}
+TradeFunc_FindCurrencyHistoryData(name) {
+	For key, value in CurrencyHistoryData {
+		If (name = value.currencyTypeName) {			
+			obj := {}
+			If (value.receiveSparkLine.data.length) {
+				obj.totalChange := value.receiveSparkLine.totalChange
+			} Else {
+				obj.totalChange := value.lowConfidenceReceiveSparkLine.totalChange
+			}			
+			obj.chaosValue := value.chaosEquivalent
+
+			Return obj
+		}
+	}
 }
 
 TradeFunc_GetPoENinjaItemUrl(league, item) {	
@@ -2635,6 +2676,19 @@ TradeFunc_ParseCurrencyHtml(html, payload, ParsingError = "") {
 	Title .= " (" LeagueName ")"
 	Title .= "`n------------------------------ `n"
 	NoOfItemsToShow := TradeOpts.ShowItemResults
+	
+	totalChangeSign := (Item.priceHistory.totalChange > 0) ? "+" : ""
+	If (Item.IsFossil or Item.IsCurrency) {
+		If (Item.priceHistory.exaltedValue >= 1) {
+			;Title .= "poe.ninja price history: " Round(Item.priceHistory.exaltedValue, 2) " exalted."
+			Title .= "poe.ninja история цен: " Round(Item.priceHistory.exaltedValue, 2) " возвышения."
+		} Else {
+			;Title .= "poe.ninja price history: " Round(Item.priceHistory.chaosValue, 2) " chaos."	
+			Title .= "poe.ninja история цен: " Round(Item.priceHistory.chaosValue, 2) " хаос."
+		}
+		;Title .= " Change: " totalChangeSign "" Round(Item.priceHistory.totalChange, 0) "% (last 7 days).`n`n"
+		Title .= " Изменилось на " totalChangeSign "" Round(Item.priceHistory.totalChange, 0) "% (за последние 7 дней).`n`n"
+	}
 
 	;Title .= StrPad("IGN" ,10)
 	Title .= StrPad("Персонаж" ,10)
@@ -3294,6 +3348,26 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 		}
 	} Else {
 		Title .= "`n"
+	}
+	
+	; add poe.ninja chaos equivalents
+	totalChangeSign := (Item.priceHistory.totalChange > 0) ? "+" : ""	
+	If (Item.IsMap) {
+		;Title .= "poe.ninja price history: " Round(Item.priceHistory.chaosValue, 2) " chaos."		
+		Title .= "poe.ninja история цен: " Round(Item.priceHistory.chaosValue, 2) " хаос."	
+		;Title .= " Change: " totalChangeSign "" Round(Item.priceHistory.totalChange, 0) "% (last 7 days).`n`n"
+		Title .= " Изменилось на " totalChangeSign "" Round(Item.priceHistory.totalChange, 0) "% (за последние 7 дней).`n`n"
+	} 
+	Else If (Item.IsFossil) {
+		If (Item.priceHistory.exaltedValue >= 1) {
+			;Title .= "poe.ninja price history: " Round(Item.priceHistory.exaltedValue, 2) " exalted."
+			Title .= "poe.ninja история цен: " Round(Item.priceHistory.exaltedValue, 2) " возвышения."
+		} Else {
+			;Title .= "poe.ninja price history: " Round(Item.priceHistory.chaosValue, 2) " chaos."	
+			Title .= "poe.ninja история цен: " Round(Item.priceHistory.chaosValue, 2) " хаос."	
+		}		
+		;Title .= " Change: " totalChangeSign "" Round(Item.priceHistory.totalChange, 0) "% (last 7 days).`n`n"
+		Title .= " Изменилось на " totalChangeSign "" Round(Item.priceHistory.totalChange, 0) "% (за последние 7 дней).`n`n"
 	}
 
 	NoOfItemsToShow := TradeOpts.ShowItemResults
@@ -6292,14 +6366,17 @@ OverwriteSettingsNameTimer:
 	o := Globals.Get("SettingsUITitle")
 
 	If (o) {
-		RuVer:=(TradeGlobals.Get("ReleaseVersionRu")!=TradeGlobals.Get("ReleaseVersion"))?" (ru" StrReplace(TradeGlobals.Get("ReleaseVersionRu"), "v")")":""
 		RelVer := TradeGlobals.Get("ReleaseVersion")
 		;TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer)
-		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro ru - " RelVer RuVer)
+		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro ru - " RelVer)
 		If (TradeOpts.SearchLeague) {			
-			;TradeFunc_SetMenuTrayTip("`nSelected league: """ TradeOpts.SearchLeague """", true)
-			TradeFunc_SetMenuTrayTip("`nВыбрана лига: """ TradeOpts.SearchLeague """", true)
-		}
+			_l := ""
+			If (TradeGlobals.Get("Leagues")[SearchLeague]) {
+				_l := " (" TradeGlobals.Get("Leagues")[SearchLeague] ")"
+			}
+			;TradeFunc_SetMenuTrayTip("`nSelected league: """ TradeOpts.SearchLeague """" _l, true)
+			TradeFunc_SetMenuTrayTip("`nВыбрана лига: """ TradeOpts.SearchLeague """" _l, true)
+		}		
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel
@@ -6402,6 +6479,9 @@ TradeSettingsUI_ChkCorruptedOverride:
 Return
 
 ReadPoeNinjaCurrencyData:
+	/*
+		https://poe.ninja/swagger/
+	*/
 	; Disable hotkey until currency data was parsed
 	key := TradeOpts.ChangeLeagueHotKey
 	loggedCurrencyRequestAtStartup := loggedCurrencyRequestAtStartup ? loggedCurrencyRequestAtStartup : false
@@ -6418,11 +6498,28 @@ ReadPoeNinjaCurrencyData:
 	isFallback	:= false
 	file			:= A_ScriptDir . "\temp\currencyData.json"
 	fallBackDir	:= A_ScriptDir . "\data_trade"
-	url			:= "https://poe.ninja/api/Data/GetCurrencyOverview?league=" . league
+	url			:= "https://poe.ninja/api/data/CurrencyOverview?league=" . league . "&type=Currency"
 	parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, false, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)
 	
+	mapUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Map"
+	parsedMapJSON	:= PoENinjaPriceDataDownloadURLtoJSON(mapUrl, "map", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+
+	fossilUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Fossil"
+	parsedFossilJSON	:= PoENinjaPriceDataDownloadURLtoJSON(fossilUrl, "fossil", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+
+	/*
+	scarabUrl		:= "https://poe.ninja/api/data/itemoverview?=" . league . "&type=Scarab"
+	parsedScarabJSON	:= PoENinjaPriceDataDownloadURLtoJSON(scarabUrl, "scarab", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+
+	essenceUrl		:= "https://poe.ninja/api/data/itemoverview?=" . league . "&type=Essence"
+	parsedEssenceJSON	:= PoENinjaPriceDataDownloadURLtoJSON(essenceUrl, "essence", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+
+	fragmentUrl		:= "https://poe.ninja/api/data/itemoverview?=" . league . "&type=Fragment"
+	parsedFragmentJSON	:= PoENinjaPriceDataDownloadURLtoJSON(fragmentUrl, "fragment", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+	*/
+	
 	; fallback to Standard and Hardcore league if used league seems to not be available
-	If (!parsedJSON.currencyDetails.length()) {
+	If (not parsedJSON.currencyDetails.length() or not parsedMapJSON.lines.length()) {
 		isFallback	:= true
 		If (InStr(league, "Hardcore", 0) or RegExMatch(league, "HC")) {
 			league	:= "Hardcore"
@@ -6432,10 +6529,23 @@ ReadPoeNinjaCurrencyData:
 			fallback	:= "Standard"
 		}
 
-		url			:= "https://poe.ninja/api/Data/GetCurrencyOverview?league=" . league
-		parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)
+ 		If (not parsedJSON.currencyDetails.length()) {
+		url			:= "https://poe.ninja/api/data/CurrencyOverview?league=" . league . "&type=Currency"
+		
+		parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)	
+		}
+		If (not parsedMapJSON.lines.length()) {
+			mapUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Map"
+			parsedMapJSON	:= PoENinjaPriceDataDownloadURLtoJSON(mapUrl, "map", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+		}
+		If (not parsedFossilJSON.lines.length()) {
+			fossilUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Fossil"
+			parsedFossilJSON	:= PoENinjaPriceDataDownloadURLtoJSON(fossilUrl, "fossil", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
+		}
 	}
 	global CurrencyHistoryData := parsedJSON.lines
+	global MapHistoryData := parsedMapJSON.lines
+	global FossilHistoryData := parsedFossilJSON.lines
 	TradeGlobals.Set("LastAltCurrencyUpdate", A_NowUTC)
 	
 	global ChaosEquivalents	:= {}
@@ -6672,6 +6782,17 @@ TradeFunc_ChangeLeague() {
 	TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[SearchLeague])
 	WriteTradeConfig()
 	UpdateTradeSettingsUI()
+	
+	If (TradeOpts.SearchLeague) {
+		RelVer := TradeGlobals.Get("ReleaseVersion")
+		;_l := "Selected league: """ TradeOpts.SearchLeague """"
+		_l := "Выбрана лига: """ TradeOpts.SearchLeague """"
+		If (TradeGlobals.Get("Leagues")[SearchLeague]) {			
+			_l .= " (" TradeGlobals.Get("Leagues")[SearchLeague] ")"
+		}		
+		;TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer "`n" _l)
+		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro ru - " RelVer "`n" _l)
+	}
 
 	TempChangingLeagueInProgress := True
 	GoSub, ReadPoeNinjaCurrencyData
