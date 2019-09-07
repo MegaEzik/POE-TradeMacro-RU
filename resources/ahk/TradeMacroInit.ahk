@@ -219,8 +219,7 @@ AdpRu_InintAdaptationRu()
 }
 
 ; TODO: rewrite/remove after refactoring UI
-ReadTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini", ByRef updateWriteConfig = false)
-{
+ReadTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini", ByRef updateWriteConfig = false) {
 	Global
 
 	If (StrLen(TradeConfigDir) < 1) {
@@ -254,8 +253,7 @@ ReadTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini", ByRef
 	Return
 }
 
-TradeFunc_AssignAllHotkeys()
-{
+TradeFunc_AssignAllHotkeys() {
 	Global
 	For keyName, keyVal in TradeOpts_New.Hotkeys {
 		state := TradeOpts_New.HotkeyStates[keyName] ? "on" : "off"
@@ -306,22 +304,11 @@ WriteTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini") {
 }
 
 ; NB: this is temporary hack
-MakeOldTradeOptsAndVars(ConfigObject)
+UpdateOldTradeOptsFromVars()
 {
 	Global
-	TradeOpts := {}
-	for sectionName, sectionKeys in ConfigObject {
-		for keyName, keyVal in sectionKeys {
-			if (sectionName == "Hotkeys") {
-				keyName := keyName "HotKey"
-				keyVal := KeyNameToKeyCode(keyVal, ConfigObject.General.KeyToSCState)
-			}
-			if (sectionName == "HotkeyStates") {
-				keyName := keyName "Enabled"
-			}
-			%keyName% := keyVal
-			TradeOpts.Insert(keyName, keyVal)
-		}
+	for key, val in TradeOpts {
+		TradeOpts[key] := %key%
 	}
 	return
 }
@@ -347,15 +334,27 @@ UpdateNewTradeOptsFromOld(ConfigObject)
 			ConfigObject[sectionName, keyName] := keyValTemp
 		}
 	}
+	
 	return ConfigObject
 }
 
 ; NB: this is temporary hack
-UpdateOldTradeOptsFromVars()
+MakeOldTradeOptsAndVars(ConfigObject)
 {
 	Global
-	for key, val in TradeOpts {
-		TradeOpts[key] := %key%
+	TradeOpts := {}
+	for sectionName, sectionKeys in ConfigObject {
+		for keyName, keyVal in sectionKeys {
+			if (sectionName == "Hotkeys") {
+				keyName := keyName "HotKey"
+				keyVal := KeyNameToKeyCode(keyVal, ConfigObject.General.KeyToSCState)
+			}
+			if (sectionName == "HotkeyStates") {
+				keyName := keyName "Enabled"
+			}
+			%keyName% := keyVal
+			TradeOpts.Insert(keyName, keyVal)
+		}
 	}
 	return
 }
@@ -964,8 +963,8 @@ CreateTradeSettingsUI()
 	;AddToolTip(ChangeLeagueHotkeyH, "Press key/key combination.`nDefault: ctrl + l")
 	AddToolTip(ChangeLeagueHotkeyH, "Нажмите клавишу/комбинацию клавиш.`nПо умолчанию: Ctrl + L")
 	
-	;GuiAddCheckbox("Get currency ratio note:", "x657 yp+32 w165 h20 0x0100", TradeOpts.SetCurrencyRatio, "SetCurrencyRatio", "SetCurrencyRatioH", "", "", "SettingsUI")
-	GuiAddCheckbox("Соотношение валют:", "x657 yp+32 w165 h20 0x0100", TradeOpts.SetCurrencyRatio, "SetCurrencyRatio", "SetCurrencyRatioH", "", "", "SettingsUI")
+	;GuiAddCheckbox("Get currency ratio note:", "x657 yp+32 w165 h20 0x0100", TradeOpts.SetCurrencyRatioEnabled, "SetCurrencyRatioEnabled", "SetCurrencyRatioEnabledH", "", "", "SettingsUI")
+	GuiAddCheckbox("Соотношение валют:", "x657 yp+32 w165 h20 0x0100", TradeOpts.SetCurrencyRatioEnabled, "SetCurrencyRatioEnabled", "SetCurrencyRatioEnabledH", "", "", "SettingsUI")
 	;AddToolTip(SetCurrencyRatioH, "Copies an item note for premium tabs to your clipboard`nthat creates a valid currency ratio on all trade sites.")
 	AddToolTip(SetCurrencyRatioH, "Копирует заметку товара с премиум вкладок в буфер обмена,`nименно они создают действительное соотношение валют на всех торговых сайтах")
 	GuiAddHotkey(TradeOpts.SetCurrencyRatioHotkey, "x+1 yp-2 w124 h20", "SetCurrencyRatioHotkey", "SetCurrencyRatioHotkeyH", "", "", "SettingsUI")
@@ -1081,7 +1080,7 @@ UpdateTradeSettingsUI()
 	return
 }
 
-TradeFunc_SyncUpdateSettings(){
+TradeFunc_SyncUpdateSettings() {
 	globalUpdateInfo.skipSelection 	:= TradeOpts.UpdateSkipSelection
 	globalUpdateInfo.skipBackup 		:= TradeOpts.UpdateSkipBackup
 	globalUpdateInfo.skipUpdateCheck 	:= TradeOpts.ShowUpdateNotification
@@ -1783,24 +1782,14 @@ TradeFunc_StartSplashScreen(TradeReleaseVersion) {
 		,"Blocking access to the auction house..."]
 		*/
 		
-		initArray := ["Извлекаем стихию из Мага стихий..."
-		,"Получаем Артефакт Силы для сражения с легионом..."
-		,"Перемещаем выпадение всех карт в Нексус памяти..."
-		,"Оскверняем пассивки..."
-		,"Удаляем Мага стихий для улучшения производительности..."
-		,"Создание негативных тем на reddit..."
-		,"Снижаем цену для энергощитовых героев..."
-		,"Воссоздаем битвы пяти армий..."
-		,"Открываем пятый слот..."
-		,"Приветствуем новых Корейских гонщиков..."
+		initArray := ["Создание негативных тем на reddit..."
 		,"Обновляем алгоритмы прайс-фиксинга..."
-		,"Загружаем вторую жизнь..."
-		,"Взаимодействуем с лучшим дополнением - Легион..."
-		,"Подготавливаем похороны Оккультиста..."
 		,"Убираем Зеркало Каландры из текущего фильтра предметов..."
 		,"Поиск плачущей женщины на Перекрестке..."
-		,"Принудительно перемещаем Стальной дух..."
-		,"Блокировка доступа к локации с аукционом..."]
+		,"Блокировка доступа к локации с аукционом..."
+		,"Превращаем неправедное в пепел..."
+		,"Выкачиваем область из Вихря..."
+		,"Иссушаем ветвь Вихря стрел..."]
 
 	Random, randomNum, 1, initArray.MaxIndex()
 	
