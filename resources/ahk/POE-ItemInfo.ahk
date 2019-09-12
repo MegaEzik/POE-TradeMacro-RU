@@ -13977,9 +13977,9 @@ CheckForLutBotHotkeyConflicts(hotkeys, config) {
 	If (conflicts.MaxIndex()) {
 		project := Globals.Get("ProjectName")		
 		;msg := project " detected a hotkey conflict with the Lutbot lite macro, "
-		msg := project " обнаружен конфликт горячишь клавиш с макросом Lutbot lite, "
+		msg := project " обнаружен конфликт горячих клавиш с макросом Lutbot lite, "
 		;msg .= "`n" "which should be resolved before playing the game."
-		msg .= "которые рекомендуется изменить до начала игры."
+		msg .= "рекомендуется изменить их до начала игры."
 		;msg .= "`n`n" "Conflicting hotkey(s) from Lutbot:"
 		msg .= "`n`n" "Конфликтные сочетания с Lutbot:"
 		For key, val in conflicts {
@@ -14086,7 +14086,7 @@ CheckForGameHotkeyConflicts() {
 	If (conflicts.MaxIndex() > 10) {
 		project := Globals.Get("ProjectName")		
 		;msg := project " detected a hotkey conflict with the Path of Exile keybindings, "
-		msg := project " обнаружил конфликт сочетания клавиш с Path of Exile , "
+		msg := project " обнаружил сочетания клавиш конфликтующие с Path of Exile , "
 		;msg .= "which should be resolved before playing the game."
 		msg .= "которые рекомендуется изменить до начала игры."
 		;msg .= "`n`n" "Conflicting hotkey(s):"
@@ -14104,7 +14104,7 @@ CheckForGameHotkeyConflicts() {
 
 		Gui, ShowGameHotkeyConflicts:Color, ffffff, ffffff
 		;msg := project " detected a hotkey conflict with the Path of Exile keybindings, "
-		msg := project " обнаружил конфликтные сочетания клавиш с Path of Exile, "
+		msg := project " обнаружил сочетания клавиш конфликтующие с Path of Exile, "
 		;msg .= "which should be resolved before playing the game."
 		msg .= "которые рекомендуется изменить до начала игры. "
 		;msg .= "Otherwise " project " may block some of the games functions."
