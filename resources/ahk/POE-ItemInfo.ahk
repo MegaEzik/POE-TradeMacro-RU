@@ -10825,7 +10825,7 @@ CreateSettingsUI()
 	
 	; краткие, либо полные аффиксы
 	GuiAddCheckbox("Краткие аффиксы", "xs10 yp+30 w260 h30", Opts.ShortAffix, "ShortAffix", "ShortAffixH", "", "", "SettingsUI")
-	AddToolTip(ShortAffixH, "Включает отображение укороченных описаний аффиксов, например:`n50% увеличение урона…")
+	AddToolTip(ShortAffixH, "Включает отображение укороченных описаний аффиксов, например:`n50% увеличение урона…`n`nДанная настройка есть только в адаптированной версии`nи не сохраняется при перезапуске макроса!")
 	
 	GuiAddEdit(Opts.AffixTextEllipsis, "xs260 y+5 w40 h20", "AffixTextEllipsis", "", "", "", "SettingsUI")
 	;GuiAddText("Affix text ellipsis:", "xs10 yp+3 w120 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH", "", "", "SettingsUI")
@@ -11375,7 +11375,7 @@ WriteConfig(ConfigDir = "", ConfigFile = "config.ini")
 	; Display
 	IniWrite(Opts.ShowHeaderForAffixOverview, "Display", "ShowHeaderForAffixOverview", ItemInfoConfigObj)
 	IniWrite(Opts.ShowExplanationForUsedNotation, "Display", "ShowExplanationForUsedNotation", ItemInfoConfigObj)
-	IniWrite(Opts.ShortAffix, "Display", "ShortAffix", ItemInfoConfigObj)
+	;IniWrite(Opts.ShortAffix, "Display", "ShortAffix", ItemInfoConfigObj)
 	IniWrite("" . Opts.AffixTextEllipsis . "", "Display", "AffixTextEllipsis", ItemInfoConfigObj)
 	IniWrite("" . Opts.AffixColumnSeparator . "", "Display", "AffixColumnSeparator", ItemInfoConfigObj)
 	IniWrite("" . Opts.DoubleRangeSeparator . "", "Display", "DoubleRangeSeparator", ItemInfoConfigObj)
