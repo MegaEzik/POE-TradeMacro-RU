@@ -1272,14 +1272,15 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	}
 
 	; maps
-	If (Item.IsMap) {		
+	If (Item.IsMap) {	
 		; add Item.subtype to make sure to only find maps
 		;RegExMatch(Item.Name, "i)The Beachhead.*", isHarbingerMap)
 		RegExMatch(Item.Name_En, "i)The Beachhead.*", isHarbingerMap)
 		RegExMatch(Item.SubType, "i)Unknown Map", isUnknownMap)
 		;isElderMap := RegExMatch(Item.Name, ".*?Elder .*") and Item.MapTier = 16
 		isElderMap := RegExMatch(Item.Name_En, ".*?Elder .*") and Item.MapTier = 16
-		
+		isBlightedMap := RegExMatch(Item.SubType, "\bBlighted .*")
+
 		mapTypes := TradeGlobals.Get("ItemTypeList")["Map"]
 		typeFound := TradeUtils.IsInArray(Item.SubType, mapTypes)
 		
@@ -1288,6 +1289,8 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			RequestParams.xtype := ""		
 			If (isElderMap) {
 				RequestParams.name := "Elder"
+			} Else If (isBlightedMap) {
+				RequestParams.name := "Blighted"
 			}
 		} Else {
 			RequestParams.xbase := ""
@@ -1295,18 +1298,16 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		}		
 
 		If (not Item.IsUnique) {
-			If (StrLen(isHarbingerMap)) {
-				; Beachhead Map workaround (unique but not flagged as such on poe.trade)
-				;RequestParams.name := Item.Name			
-				RequestParams.name := Item.Name_En
-			} Else If (not typeFound) {
-				;RequestParams.name := Item.Name
-				RequestParams.name := Item.Name_En
+			If (not typeFound) {
 				RequestParams.level_min := Item.MapTier
 				RequestParams.level_max := Item.MapTier
 			} Else If (not isElderMap) {
 				RequestParams.name := ""
 			}
+		} Else If (Item.IsUnique and isHarbingerMap) {
+			RequestParams.corrupted := "1"
+			RequestParams.level_min := Item.MapTier
+			RequestParams.level_max := Item.MapTier
 		}
 		
 		;Карта Плацдарм на poe.trade теперь считается уникальной, а так же имеет различные уровни 5/10/15, что влияет на ее стоимость! !!!Проверять на исправление!!!
@@ -4002,7 +4003,7 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 		modFound := false 
 		negativeValue := false
 		For key, val in Affixes {
-			RegExMatch(Trim(val), "i)\((fractured)\)", sType)
+			RegExMatch(Trim(val), "i)\((fractured|crafted)\)", sType)
 			val := RegExReplace(Trim(val), "i)\((fractured|crafted)\)")
 			
 			; воспользуемся подготовленными аффиксами
@@ -4172,7 +4173,7 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 	return Item_
 }
 
-; Return items mods and ranges
+; Return an items mods and ranges
 TradeFunc_PrepareNonUniqueItemMods(Affixes, Implicit, Rarity, Enchantment = false, Corruption = false, isMap = false, isBeast = false, isSynthesisedBase = false) {
 	Affixes	:= StrSplit(Affixes, "`n")
 	mods		:= []
@@ -4344,17 +4345,25 @@ TradeFunc_GetItemsPoeTradeMods(_item, isMap = false) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["elder"], _item.mods[k])
 			}
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
-				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["synthesised"], _item.mods[k])
-			}
-			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["abyss jewels"], _item.mods[k])
+			}			
+
+
+			; check crafted before unique explicit and synthesised if spawntype is crafted, otherwise check afte	
+			If (StrLen(_item.mods[k]["param"]) < 1 and _item.mods[k].spawnType = "crafted") {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["crafted"], _item.mods[k])
 			}
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["unique explicit"], _item.mods[k])
 			}
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["synthesised"], _item.mods[k])
+			}
+			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["crafted"], _item.mods[k])
-			}		
+			}
+			
+			
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["implicit"], _item.mods[k])
 			}
@@ -6465,6 +6474,15 @@ TradeSettingsUI_BtnDefaults:
 	ReadTradeConfig(A_ScriptDir "\resources\default_UserFiles")
 	Sleep, 75
 	UpdateTradeSettingsUI()
+	ShowSettingsUI()
+Return
+
+TradeSettingsUI_BtnRestoreAlternativeHotkeys:
+	Gui, SettingsUI:Cancel
+	Sleep, 75
+	ReadTradeConfig(A_ScriptDir "\resources\default_UserFiles")
+	Sleep, 75
+	RestoreAlternativeHotkeys()
 	ShowSettingsUI()
 Return
 
