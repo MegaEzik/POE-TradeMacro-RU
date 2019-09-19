@@ -148,7 +148,7 @@ class ItemInfoOptions extends UserOptions {
 	ShowExplanationForUsedNotation := 1
 	
 	; отображение аффиксов в укороченном виде
-	ShortAffix := 0
+	;ShortAffix := 0
 	
 	; If the mirrored affix text is longer than the field length the affix line will be cut off and
 	;   this text will be appended at the end to indicate that the line was truncated.
@@ -1950,11 +1950,14 @@ AssembleAffixDetails()
 	Result := ""
 	NumAffixLines := AffixLines.MaxIndex()		; ( Itemdata.AffixTextLines.MaxIndex() > AffixLines.MaxIndex() ) ? Itemdata.AffixTextLines.MaxIndex() : AffixLines.MaxIndex()
 	
-	TextLineWidth := 23
+	;TextLineWidth := 23
+	TextLineWidth := 40
+	/*
 	; ширина строки аффикса - будем определять в зависимости от настроек, либо полную, либо краткую
 	If (!Opts.ShortAffix){
 		TextLineWidth := ParseModLength(ItemData.Affixes, false)
 	}
+	*/
 	TextLineWidthUnique := TextLineWidth + 10
 	TextLineWidthJewel  := TextLineWidth + 10
 	
@@ -9229,10 +9232,12 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		
 		maxIndex 	:= Item.Implicit.MaxIndex()
 		TextLineWidth := ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]) ? 20 : 50
+		/*
 		; ширина поля для собственного свойства предмета - будем определять в зависимости от настроек, либо полную, либо краткую
 		If (!Opts.ShortAffix){
 			TextLineWidth := ParseModLength(Item.Implicit, true, ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]))
 		}
+		*/
 		Ellipsis := Opts.AffixTextEllipsis
 		
 		Loop, % maxIndex {
@@ -10811,7 +10816,7 @@ CreateSettingsUI()
 	
 	; Display
 	;GuiAddGroupBox("Display", "x327 ym+" 200 " w310 h295 Section", "", "", "", "", "SettingsUI")
-	GuiAddGroupBox("Отображение", "x327 ym+" 200 " w310 h335 Section", "", "", "", "", "SettingsUI")
+	GuiAddGroupBox("Отображение", "x327 ym+" 200 " w310 h295 Section", "", "", "", "", "SettingsUI")
 	
 	;GuiAddCheckbox("Show header for affix overview", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH", "", "", "SettingsUI")
 	GuiAddCheckbox("Показывать заголовок к значениям аффиксов", "xs10 yp+20 w260 h30", Opts.ShowHeaderForAffixOverview, "ShowHeaderForAffixOverview", "ShowHeaderForAffixOverviewH", "", "", "SettingsUI")
@@ -10823,9 +10828,11 @@ CreateSettingsUI()
 	;AddToolTip(ShowExplanationForUsedNotationH, "Explain abbreviations and special notation symbols at`nthe end of the tooltip when they are used")
 	AddToolTip(ShowExplanationForUsedNotationH, "Расшифровка аббревиатуры и специальных обозначений`nв конце подсказки, когда они используются")
 	
+	/*
 	; краткие, либо полные аффиксы
 	GuiAddCheckbox("Краткие аффиксы", "xs10 yp+30 w260 h30", Opts.ShortAffix, "ShortAffix", "ShortAffixH", "", "", "SettingsUI")
 	AddToolTip(ShortAffixH, "Включает отображение укороченных описаний аффиксов, например:`n50% увеличение урона…`n`nДанная настройка есть только в адаптированной версии`nи не сохраняется при перезапуске макроса!")
+	*/
 	
 	GuiAddEdit(Opts.AffixTextEllipsis, "xs260 y+5 w40 h20", "AffixTextEllipsis", "", "", "", "SettingsUI")
 	;GuiAddText("Affix text ellipsis:", "xs10 yp+3 w120 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH", "", "", "SettingsUI")
@@ -10857,7 +10864,7 @@ CreateSettingsUI()
 	
 	GuiAddEdit(Opts.MultiTierRangeSeparator, "xs260 y+6 w40 h20", "MultiTierRangeSeparator", "", "", "", "SettingsUI")
 	;GuiAddText("Multi tier range separator:", "xs10 yp+3 w170 h20 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH", "", "", "SettingsUI")
-	GuiAddText("Разделитель многоуровневого диапазона:", "xs10 yp+3 w200 h30 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH", "", "", "SettingsUI")
+	GuiAddText("Разделитель диапазона:", "xs10 yp+3 w170 h20 0x0100", "LblMultiTierRangeSeparator", "MultiTierRangeSeparatorH", "", "", "SettingsUI")
 	;AddToolTip(MultiTierRangeSeparatorH, "Select separator (default: … ) for a multi tier roll range with uncertainty:`n83% increased Light…   73-85…83-95   102-109 (84)  T1-4 P + T1-6 S`n	                     There--^")
 	AddToolTip(MultiTierRangeSeparatorH, "Выберите разделитель (по умолчанию: … ) для  многоуровневого диапазона с неопределенным значения`n83% увеличения урона…   73-85…83-95   102-109 (84)  T1-4 Пр + T1-6 Су`n                                           Здесь--^")
 	
@@ -11117,7 +11124,7 @@ UpdateSettingsUI()
 	; Display
 	GuiControl,, ShowHeaderForAffixOverview, % Opts.ShowHeaderForAffixOverview
 	GuiControl,, ShowExplanationForUsedNotation, % Opts.ShowExplanationForUsedNotation
-	GuiControl,, ShortAffix, % Opts.ShortAffix
+	;GuiControl,, ShortAffix, % Opts.ShortAffix
 	GuiControl,, AffixTextEllipsis, % Opts.AffixTextEllipsis
 	GuiControl,, AffixColumnSeparator, % Opts.AffixColumnSeparator
 	GuiControl,, DoubleRangeSeparator, % Opts.DoubleRangeSeparator
@@ -11316,7 +11323,7 @@ ReadConfig(ConfigDir = "", ConfigFile = "config.ini")
 		; Display
 		Opts.ShowHeaderForAffixOverview		:= IniRead("Display", "ShowHeaderForAffixOverview", Opts.ShowHeaderForAffixOverview, ItemInfoConfigObj)
 		Opts.ShowExplanationForUsedNotation	:= IniRead("Display", "ShowExplanationForUsedNotation", Opts.ShowExplanationForUsedNotation, ItemInfoConfigObj)
-		Opts.ShortAffix		:= IniRead("Display", "ShortAffix", Opts.ShortAffix, ItemInfoConfigObj)
+		;Opts.ShortAffix		:= IniRead("Display", "ShortAffix", Opts.ShortAffix, ItemInfoConfigObj)
 		Opts.AffixTextEllipsis				:= IniRead("Display", "AffixTextEllipsis", Opts.AffixTextEllipsis, ItemInfoConfigObj)
 		Opts.AffixColumnSeparator			:= IniRead("Display", "AffixColumnSeparator", Opts.AffixColumnSeparator, ItemInfoConfigObj)
 		Opts.DoubleRangeSeparator			:= IniRead("Display", "DoubleRangeSeparator", Opts.DoubleRangeSeparator, ItemInfoConfigObj)
