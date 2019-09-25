@@ -157,7 +157,6 @@ TradeFunc_CheckIfCloudFlareBypassNeeded()
 TradeGlobals.Set("Leagues", TradeFunc_GetLeagues())
 TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[TradeOpts.SearchLeague])
 
-
 ; set this variable to skip the update check in "PoE-ItemInfo.ahk"
 SkipItemInfoUpdateCall := 1
 firstUpdateCheck := true
@@ -240,7 +239,6 @@ ReadTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini", ByRef
 	Else {
 		TradeOpts_New.Search.SearchLeague := TradeFunc_CheckIfLeagueIsActive(Format("{:L}", TradeOpts_New.Search.SearchLeague))
 	}
-
 	TradeOpts_New.Search.Corrupted := Format("{:T}", TradeOpts_New.Search.Corrupted)
 
 	MakeOldTradeOptsAndVars(TradeOpts_New)
@@ -249,15 +247,16 @@ ReadTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini", ByRef
 	If (_temp_SearchLeague != TradeOpts_New.Search.SearchLeague) {
 		updateWriteConfig := true
 	}
-	
+
 	Return
 }
 
 TradeFunc_AssignAllHotkeys() {
 	Global
-	For keyName, keyVal in TradeOpts_New.Hotkeys {
+
+	For keyName, keyVal in TradeOpts_New.Hotkeys {	
 		state := TradeOpts_New.HotkeyStates[keyName] ? "on" : "off"
-		
+	
 		If (not RegExMatch(keyName, "i).*_alt$")) {
 			TradeFunc_AssignHotkey(keyVal, keyName, state)
 		}
@@ -276,7 +275,7 @@ TradeFunc_AssignHotkey(Key, Label, state) {
 ; TODO: rewrite/remove after refactoring UI
 WriteTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini") {
 	Global
-	
+
 	If (StrLen(TradeConfigDir) < 1) {
 		TradeConfigDir := userDirectory
 	}
@@ -306,7 +305,7 @@ WriteTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini") {
 	If ((TradeOpts.SearchLeague != oldLeague and AlternativeCurrencySearch) or (AlternativeCurrencySearch and oldAltCurrencySearch != AlternativeCurrencySearch)) {
 		GoSub, ReadPoeNinjaCurrencyData
 	}
-	
+
 	TradeOpts_New := UpdateNewTradeOptsFromOld(TradeOpts_New)
 	TradeFunc_SyncUpdateSettings()
 	TradeFunc_AssignAllHotkeys()
@@ -316,18 +315,19 @@ WriteTradeConfig(TradeConfigDir = "", TradeConfigFile = "config_trade.ini") {
 }
 
 ; NB: this is temporary hack
-UpdateOldTradeOptsFromVars() {
+UpdateOldTradeOptsFromVars()
+{
 	Global
 	for key, val in TradeOpts {
-		TradeOpts[key] := %key%
+		TradeOpts[key] := %key%	
 	}
 	return
 }
 
 ; NB: this is temporary hack
-UpdateNewTradeOptsFromOld(ConfigObject)
-{
+UpdateNewTradeOptsFromOld(ConfigObject) {
 	Global
+
 	for sectionName, sectionKeys in ConfigObject {
 		for keyName, keyVal in sectionKeys {
 			keyNameTemp := keyName
@@ -349,7 +349,7 @@ UpdateNewTradeOptsFromOld(ConfigObject)
 			ConfigObject[sectionName, keyName] := keyValTemp
 		}
 	}
-	
+
 	return ConfigObject
 }
 
@@ -482,7 +482,7 @@ TradeFunc_GetLeagues() {
 			}
 		}
 	}
-	
+
 	Return leagues
 }
 
@@ -669,7 +669,7 @@ CreateTradeSettingsUI() {
 	GuiAddCheckbox("Использовать poedb.tw вместо Wiki", "x17 yp+27 w260 h30 0x0100", TradeOpts.WikiAlternative, "WikiAlternative", "WikiAlternativeH", "", "", "SettingsUI")
 	;AddToolTip(WikiAlternativeH, "Use poedb.tw to open a page with information`nabout your item/item base.")
 	AddToolTip(WikiAlternativeH, "Использовать poedb.tw для открытия страницы с информацией о вашем предмете/базе предмета.`n`nВ адаптированной версии использовать poedb.tw предпочтительнее.")
-	
+
 	;GuiAddText("Curl/HTTP request timeout (s):", "x17 yp+33 w230 h20 0x0100", "LblCurlTimeout", "LblCurlTimeoutH", "", "", "SettingsUI")
 	GuiAddText("Время запроса Curl/HTTP:", "x17 yp+33 w230 h20 0x0100", "LblCurlTimeout", "LblCurlTimeoutH", "", "", "SettingsUI")
 	;AddToolTip(LblCurlTimeoutH, "This is the default timeout (seconds) used for HTTP requests to trade sites and APIs.`n`nRequests taking longer than this will be aborted.")
@@ -976,7 +976,7 @@ CreateTradeSettingsUI() {
 	GuiAddHotkey(TradeOpts.SetCurrencyRatioHotkey, "x+1 yp-2 w124 h20", "SetCurrencyRatioHotkey", "SetCurrencyRatioHotkeyH", "", "", "SettingsUI")
 	;AddToolTip(SetCurrencyRatioHotkeyH, "Press key/key combination.`nDefault: alt + r")
 	AddToolTip(SetCurrencyRatioHotkeyH, "Нажмите клавишу/комбинацию клавиш.`nПо умолчанию: Alt + R")
-
+	
 	;Gui, SettingsUI:Add, Link, x657 yp+35 w210 h20 cBlue BackgroundTrans, <a href="http://www.autohotkey.com/docs/Hotkeys.htm">Hotkey Options</a>
 	Gui, SettingsUI:Add, Link, x657 yp+35 w210 h20 cBlue BackgroundTrans, <a href="http://www.autohotkey.com/docs/Hotkeys.htm">Опции клавиш</a>
 	If (TradeOpts.Debug) {
@@ -1261,6 +1261,7 @@ TradeFunc_ParseSearchFormOptions() {
 TradeFunc_DownloadDataFiles() {	
 	;SplashUI.SetSubMessage("Downloading latest data files from github...")
 	SplashUI.SetSubMessage("Загрузка последних файлов данных с github...")
+	
 	; disabled while using debug mode
 	owner	:= TradeGlobals.Get("GithubUser", "POE-TradeMacro")
 	repo 	:= TradeGlobals.Get("GithubRepo", "POE-TradeMacro")
@@ -1781,7 +1782,7 @@ TradeFunc_StartSplashScreen(TradeReleaseVersion) {
 		, "Hunting some old friends...", "Interrogating Master Krillson about fishing secrets...", "Trying to open Voricis chest...", "Setting up lab carries for the other 99%..."
 		, "Helping Alva discover the Jungle Hideout...", "Conning EngineeringEternity with the Atlas City Shuffle...", "Vendoring stat-sticks..."]
 	*/
-
+	
 		/*
 		initArray := ["Loading Carnage league data..."
 		,"Taking the element out of elementalist..."

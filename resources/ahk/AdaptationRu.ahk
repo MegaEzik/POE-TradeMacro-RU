@@ -541,6 +541,82 @@ AdpRu_ElapsedTime()
 	console_log(elapsed_time, " Прошло тактов: ")
 }
 
+/*
+;Конвертирование данных с редкого или уникального предмета, нужно для функции Прогнозирования и работы с сайтами poeprice.info и poeapp.com
+AdpRu_ConvertItemDataEnToRu(idft) {
+	bidtf:=idft
+	idtfen:=""
+	idtferl:=""
+	
+	;Конвертируем, что не поддается обычным правилам конвертирования модов и уберем лишнее
+	idft:=StrReplace(idft, "(макс.)", "(Max)")
+	idft:=StrReplace(idft, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n--------`r`n", "")
+	idft:=StrReplace(idft, "Гнезда:", "Sockets:")
+	idft:=StrReplace(idft, "Опыт:", "Experience:")
+	idft:=StrReplace(idft, "Размер стопки:", "Stack Size:")
+	idft:=StrReplace(idft, "Урон от стихий:", "Elemental Damage:")
+	idft:=StrReplace(idft, "Физический урон:", "Physical Damage:")
+	
+	;Разбиваем строку
+	lidft:=StrSplit(idft, "`r`n")
+	
+	;Назначим неопределенное имя предмета, а так же имя базы
+	lidft[2]:=RegExMatch(Item.Name_En, "[А-Яа-яЁё]+")?"Undefined Name":Item.Name_En
+	lidft[3]:=Item.BaseName_En
+	
+	For k, val in lidft {
+		;Извлекаем часть строки не требующую перевода и препятствующую ему, при сборе вернем ее на место
+		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)", slidft)
+		lidft[k]:=StrReplace(lidft[k], slidft, "")
+		
+		;Попытка конвертировать стат
+		lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])
+		
+		;Если в строке найдены "от" и "до"(Разброс значений), то конвертируем так, иначе ищем нет ли "из" и пытаемся конвертировать, если снова нет, то конвертируем с одним значением
+		If (RegExMatch(lidft[k], " от ") and RegExMatch(lidft[k], " до ")) {
+			v:=StrReplace(GetActualValue(lidft[k]), "-", " до ")
+			lidft[k]:= StrReplace(lidft[k], v, "# до #")
+			lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])			
+			v:=StrReplace(v, " до ", " to ")
+			lidft[k]:=StrReplace(lidft[k], "# to #", v)
+		} else if (RegExMatch(GetActualValue(lidft[k]), " из ")) {
+			v:=GetActualValue(lidft[k])
+			lidft[k]:= StrReplace(lidft[k], v, "# из #")
+			lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])
+			v:=StrReplace(v, " из ", " of ")
+			lidft[k]:=StrReplace(lidft[k], "# of #", v)
+		} else {
+			v:=GetActualValue(lidft[k])
+			lidft[k]:= StrReplace(lidft[k], v, "#")
+			lidft[k]:= AdpRu_ConvertRuOneModToEn(lidft[k])
+			lidft[k]:= StrReplace(lidft[k], "#", v)
+		}
+		
+		;Если что-то не конвертировалось, то заменим на пустую строку.
+		If(RegExMatch(lidft[k], "[А-Яа-яЁё]+")) {
+				idtferl.="     " StrReplace(lidft[k], " to ", " до ") "`n"
+				lidft[k]:=""
+		}
+		
+		;Собираем результат
+		idtfen.=lidft[k] slidft "`r`n"
+	}
+	
+	;Уведомление о не конвертированных строках
+	if(idtferl!="") {
+		idtferl:="Не удалось конвертировать следующие строки, они были заменены пустыми и не будут учтены:`n" idtferl
+		MsgBox, 0x1030, Внимание!, %idtferl%
+	}
+	
+	;Вывод информации для отладки
+	FormatTime, stime
+	FileAppend, `n==============================%stime%==============================`n%bidtf%`n=============================`n%idtfen%, temp\AdpRu_ConvertItemData.txt
+	console.log(idtfen)
+	
+	return idtfen
+}
+*/
+
 ;Имена предметов содержащих "{" и "}" иногда вызывают проблемы, да и выглядят не эстетично. Заменим такие имена шаблонами!
 ;Так же из базы уберем слова Синтезированный(ая/ое/ые)
 AdpRu_FixNames(item){

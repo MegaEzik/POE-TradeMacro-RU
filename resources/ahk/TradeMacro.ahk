@@ -212,7 +212,7 @@ TradeFunc_OpenWikiHotkey(priceCheckTest = false, itemData = "") {
 			} Else {
 				UrlAffix := Item.BaseName
 			}
-		}
+		}		
 
 		If (StrLen(UrlAffix) > 0) {
 			If (TradeOpts.WikiAlternative) {
@@ -437,7 +437,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 
 	RequestParams			:= new RequestParams_()
 	RequestParams.league	:= LeagueName
-	RequestParams.has_buyout := "1"
+	RequestParams.has_buyout	:= "1"
 
 	;ignore item name in certain cases
 		
@@ -480,7 +480,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	{
 		hasAdvancedSearch := true
 	}
-	
+
 	;further item parsing and preparation
 	If (!Item.IsUnique or Item.IsBeast) {
 		; TODO: improve this
@@ -540,7 +540,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 
 		If (isAdvancedPriceCheck and hasAdvancedSearch) {
 			/*
-			If (Enchantment.Length()) {
+			If (Enchantment.Length()) {				
 				TradeFunc_AdvancedPriceCheckGui(preparedItem, Stats, ItemData.Sockets, ItemData.Links, "", Enchantment)
 			}
 			Else If (Corruption.Length()) {
@@ -725,7 +725,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				If (s.mods[A_Index].spawntype = "fractured" and s.includeFractured) {
 					modParam.mod_name := TradeFunc_FindInModGroup(TradeGlobals.Get("ModsData")["fractured"], s.mods[A_Index])
 				}
-				
+
 				If (not StrLen(modParam.mod_name)) {
 					modParam.mod_name := s.mods[A_Index].param	
 				}
@@ -1309,15 +1309,6 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			RequestParams.level_min := Item.MapTier
 			RequestParams.level_max := Item.MapTier
 		}
-		
-		;Карта Плацдарм на poe.trade теперь считается уникальной, а так же имеет различные уровни 5/10/15, что влияет на ее стоимость! !!!Проверять на исправление!!!
-		If (Item.IsUnique) {
-			If (StrLen(isHarbingerMap)) {
-				RequestParams.name := Item.Name_En
-				RequestParams.level_min := Item.MapTier
-				RequestParams.level_max := Item.MapTier
-			}
-		}
 	
 		If (StrLen(isUnknownMap)) {
 			;RequestParams.xbase := Item.BaseName
@@ -1326,9 +1317,10 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.type := Item.BaseName_En
 			Item.UsedInSearch.typeRu := Item.BaseName
 		}
+		
 		Item.priceHistory := TradeFunc_FindMapHistoryData(Item.SubType, Item.MapTier)
 	}
-
+	
 	/*
 		fossils
 		*/
@@ -1475,7 +1467,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			RequestParams.has_buyout := ""
 		}
 	}
-	
+
 	; для самоцветов, если имя не сконвертировалось и если не задано игнорирование имени, то отправляем базовое английское имя
 	If (Item.IsJewel and not Item.IsUnique and not IgnoreName) {
 		RequestParams.name := (RegExMatch(Item.Name_En, "[а-яА-ЯёЁ]+")) ? Item.BaseName_En : Item.Name_En
@@ -1495,7 +1487,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 	; create payload
 	
 	Payload := RequestParams.ToPayload()
-
+	
 	/*
 		Create second payload for exact currency search (backup search if no results were found with primary currency)
 		*/		
@@ -1675,7 +1667,7 @@ TradeFunc_FindCurrencyHistoryData(name) {
 				obj.totalChange := value.lowConfidenceReceiveSparkLine.totalChange
 			}			
 			obj.chaosValue := value.chaosEquivalent
-
+			
 			Return obj
 		}
 	}
@@ -3092,7 +3084,6 @@ TradeFunc_ParseHtmlToObj(html, payload, iLvl = "", ench = "", isItemAgeRequest =
 	NoOfItemsToShow := TradeOpts.ShowItemResults
 	results := []
 	accounts := {}
-	
 	While A_Index < NoOfItemsToShow {
 		result := {}
 		
@@ -3194,8 +3185,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 
 	LeagueName := TradeGlobals.Get("LeagueName")
 
-	;seperatorBig := "`n---------------------------------------------------------------------`n"
-	seperatorBig := "`n----------------------------------------------------------------------------------`n"
+	seperatorBig := "`n-----------------------------------------------------------------------`n"
 
 	; Target HTML Looks like the ff:
      ; <tbody id="item-container-97" class="item" data-seller="Jobo" data-sellerid="458008"
@@ -3350,7 +3340,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	} Else {
 		Title .= "`n"
 	}
-	
+
 	; add poe.ninja chaos equivalents
 	totalChangeSign := (Item.priceHistory.totalChange > 0) ? "+" : ""	
 	If (Item.IsMap) {
@@ -3967,7 +3957,7 @@ TradeFunc_FindUniqueItemIfItHasVariableRolls(name, isRelic = false) {
 			}						
 			;------------------------------------------
 			
-			Loop % uitem.mods.Length() {
+			Loop % uitem.mods.Length() {				
 				If (uitem.mods[A_Index].isVariable) {
 					uitem.IsUnique := true
 					Return uitem
@@ -4063,7 +4053,7 @@ TradeFunc_RemoveAlternativeVersionsMods(Item_, Affixes) {
 			}			
 
 			If (match) {
-				;negativeValue := RegExMatch(t, "i)#%? reduced")
+				;negativeValue := RegExMatch(t, "i)#%? reduced")				
 				negativeValue := RegExMatch(t, "i)#%? уменьшение")
 				spawnType := sType1
 				modFound := true
@@ -4211,7 +4201,7 @@ TradeFunc_PrepareNonUniqueItemMods(Affixes, Implicit, Rarity, Enchantment = fals
 		For tempkey, tempmod in temp {
 			found := false
 
-			For key, mod in mods {
+			For key, mod in mods {			
 				;If (tempmod.name = mod.name) { ; оригинальная строка закомментирована - имплицит нельзя объединять с простым модом, т.к. предмет с завышенным значением имплицита может не существовать
 				;If (tempmod.name = mod.name and not mod.IsImplicit) {
 				If (tempmod.name = mod.name) {
@@ -4277,7 +4267,7 @@ TradeFunc_PrepareNonUniqueItemMods(Affixes, Implicit, Rarity, Enchantment = fals
 	temp			:= TradeFunc_GetItemsPoeTradeMods(tempItem, isMap)
 	tempItem.mods	:= temp.mods
 	tempItem.IsUnique := false
-	
+
 	Return tempItem
 }
 
@@ -4347,8 +4337,8 @@ TradeFunc_GetItemsPoeTradeMods(_item, isMap = false) {
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["abyss jewels"], _item.mods[k])
 			}			
-
-
+			
+			
 			; check crafted before unique explicit and synthesised if spawntype is crafted, otherwise check afte	
 			If (StrLen(_item.mods[k]["param"]) < 1 and _item.mods[k].spawnType = "crafted") {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["crafted"], _item.mods[k])
@@ -4387,7 +4377,7 @@ TradeFunc_GetItemsPoeTradeMods(_item, isMap = false) {
 			}
 			
 			; Handle special mods like "Has # Abyssal Sockets" which technically has no rolls but different mod variants.
-			; It's also not available on poe.trade as a mod but as a seperate form option.		
+			; It's also not available on poe.trade as a mod but as a seperate form option.
 			If (RegExMatch(_item.mods[k].name, "i)Has # Abyssal (Socket|Sockets)")) {
 				_item.mods[k].showModAsSeperateOption := true
 			}
@@ -4457,7 +4447,7 @@ TradeFunc_GetItemsPoeTradeUniqueMods(_item) {
 TradeFunc_FindInModGroup(modgroup, needle, simpleRange = true, recurse = true) {
 	matches := []
 	editedNeedle := ""
-	
+
 	For j, mod in modgroup {
 		s  := Trim(RegExReplace(mod, "i)\(pseudo\)|\(total\)|\(crafted\)|\(implicit\)|\(explicit\)|\(enchant\)|\(prophecy\)|\(leaguestone\)|\(beastiary\)|\(fractured\)|\(synthesised\)", ""))
 		If (simpleRange) {
@@ -5358,7 +5348,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	}
 
 	; add dmg stats
-
+		
 	k := 1
 	For i, stat in Stats.Offense {
 		If (stat.value) {
@@ -6376,16 +6366,16 @@ OverwriteSettingsNameTimer:
 
 	If (o) {
 		RelVer := TradeGlobals.Get("ReleaseVersion")
-		;TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer)
-		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro ru - " RelVer)
-		If (TradeOpts.SearchLeague) {			
+		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer)
+		If (TradeOpts.SearchLeague) {
 			_l := ""
 			If (TradeGlobals.Get("Leagues")[SearchLeague]) {
 				_l := " (" TradeGlobals.Get("Leagues")[SearchLeague] ")"
 			}
 			;TradeFunc_SetMenuTrayTip("`nSelected league: """ TradeOpts.SearchLeague """" _l, true)
 			TradeFunc_SetMenuTrayTip("`nВыбрана лига: """ TradeOpts.SearchLeague """" _l, true)
-		}		
+		}
+
 		OldMenuTrayName := Globals.Get("SettingsUITitle")
 		NewMenuTrayName := TradeGlobals.Get("SettingsUITitle")
 		Menu, Tray, UseErrorLevel
@@ -6500,6 +6490,7 @@ ReadPoeNinjaCurrencyData:
 	/*
 		https://poe.ninja/swagger/
 	*/
+
 	; Disable hotkey until currency data was parsed
 	key := TradeOpts.ChangeLeagueHotKey
 	loggedCurrencyRequestAtStartup := loggedCurrencyRequestAtStartup ? loggedCurrencyRequestAtStartup : false
@@ -6517,25 +6508,26 @@ ReadPoeNinjaCurrencyData:
 	file			:= A_ScriptDir . "\temp\currencyData.json"
 	fallBackDir	:= A_ScriptDir . "\data_trade"
 	url			:= "https://poe.ninja/api/data/CurrencyOverview?league=" . league . "&type=Currency"
+
 	parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, false, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)
-	
+
 	mapUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Map"
 	parsedMapJSON	:= PoENinjaPriceDataDownloadURLtoJSON(mapUrl, "map", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
-
+	
 	fossilUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Fossil"
 	parsedFossilJSON	:= PoENinjaPriceDataDownloadURLtoJSON(fossilUrl, "fossil", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
-
+	
 	/*
 	scarabUrl		:= "https://poe.ninja/api/data/itemoverview?=" . league . "&type=Scarab"
 	parsedScarabJSON	:= PoENinjaPriceDataDownloadURLtoJSON(scarabUrl, "scarab", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
-
+	
 	essenceUrl		:= "https://poe.ninja/api/data/itemoverview?=" . league . "&type=Essence"
 	parsedEssenceJSON	:= PoENinjaPriceDataDownloadURLtoJSON(essenceUrl, "essence", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
-
+	
 	fragmentUrl		:= "https://poe.ninja/api/data/itemoverview?=" . league . "&type=Fragment"
 	parsedFragmentJSON	:= PoENinjaPriceDataDownloadURLtoJSON(fragmentUrl, "fragment", true, false, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, TradeOpts.CurlTimeout)
 	*/
-	
+
 	; fallback to Standard and Hardcore league if used league seems to not be available
 	If (not parsedJSON.currencyDetails.length() or not parsedMapJSON.lines.length()) {
 		isFallback	:= true
@@ -6546,11 +6538,10 @@ ReadPoeNinjaCurrencyData:
 			league	:= "Standard"
 			fallback	:= "Standard"
 		}
-
- 		If (not parsedJSON.currencyDetails.length()) {
-		url			:= "https://poe.ninja/api/data/CurrencyOverview?league=" . league . "&type=Currency"
 		
-		parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)	
+		If (not parsedJSON.currencyDetails.length()) {
+			url			:= "https://poe.ninja/api/data/CurrencyOverview?league=" . league . "&type=Currency"
+			parsedJSON	:= CurrencyDataDownloadURLtoJSON(url, sampleValue, true, isFallback, league, "PoE-TradeMacro", file, fallBackDir, usedFallback, loggedCurrencyRequestAtStartup, loggedTempLeagueCurrencyRequest, TradeOpts.CurlTimeout)	
 		}
 		If (not parsedMapJSON.lines.length()) {
 			mapUrl		:= "https://poe.ninja/api/data/ItemOverview?league=" . league . "&type=Map"
@@ -6572,7 +6563,7 @@ ReadPoeNinjaCurrencyData:
 		ChaosEquivalents[currencyBaseName] := val.chaosEquivalent
 	}
 	ChaosEquivalents["Chaos Orb"] := 1
-	
+
 	If (TempChangingLeagueInProgress) {
 		;msg := "Changing league to " . TradeOpts.SearchLeague " (" . TradeGlobals.Get("LeagueName") . ") finished."
 		msg := "Изменение лиги на " . TradeOpts.SearchLeague " (" . TradeGlobals.Get("LeagueName") . ") завершено."
@@ -6800,7 +6791,7 @@ TradeFunc_ChangeLeague() {
 	TradeGlobals.Set("LeagueName", TradeGlobals.Get("Leagues")[SearchLeague])
 	WriteTradeConfig()
 	UpdateTradeSettingsUI()
-	
+
 	If (TradeOpts.SearchLeague) {
 		RelVer := TradeGlobals.Get("ReleaseVersion")
 		;_l := "Selected league: """ TradeOpts.SearchLeague """"
@@ -6808,8 +6799,7 @@ TradeFunc_ChangeLeague() {
 		If (TradeGlobals.Get("Leagues")[SearchLeague]) {			
 			_l .= " (" TradeGlobals.Get("Leagues")[SearchLeague] ")"
 		}		
-		;TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer "`n" _l)
-		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro ru - " RelVer "`n" _l)
+		TradeFunc_SetMenuTrayTip("Path of Exile TradeMacro - " RelVer "`n" _l)
 	}
 
 	TempChangingLeagueInProgress := True

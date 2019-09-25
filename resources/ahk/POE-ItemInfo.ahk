@@ -147,9 +147,6 @@ class ItemInfoOptions extends UserOptions {
 	; Explain abbreviations and special notation symbols at the end of the tooltip when they are used
 	ShowExplanationForUsedNotation := 1
 	
-	; отображение аффиксов в укороченном виде
-	;ShortAffix := 0
-	
 	; If the mirrored affix text is longer than the field length the affix line will be cut off and
 	;   this text will be appended at the end to indicate that the line was truncated.
 	; Usually this is set to the ASCII or Unicode value of the three dot ellipsis (alt code: 0133).
@@ -543,11 +540,11 @@ Menu, PreviewTextFiles, Add, Additional Macros, PreviewAdditionalMacros
 
 ; Menu tooltip
 RelVer := Globals.Get("ReleaseVersion")
-Menu, Tray, Tip, Path of Exile Item Info ru %RelVer%
+Menu, Tray, Tip, Path of Exile Item Info %RelVer%
 
 Menu, Tray, NoStandard
 ;Menu, Tray, Add, Reload Script (Use only this), ReloadScript
-Menu, Tray, Add, Перезапустить, ReloadScript
+Menu, Tray, Add, Перезапустить(Используйте этот способ), ReloadScript
 Menu, Tray, Add ; Separator
 ;Menu, Tray, Add, About..., MenuTray_About
 Menu, Tray, Add, О скрипте..., MenuTray_About
@@ -760,6 +757,7 @@ CheckRarityLevel(RarityString)
 			}
 			;GripType	:= (RegExMatch(match1, "i)\b(Two Handed|Staff|Bow)\b")) ? "2H" : "1H"
 			GripType	:= (RegExMatch(match1, "i)Двуручный|Двуручная|Посох|Лук|Воинский посох")) ? "2H" : "1H"
+			return
 		}
 	}
 
@@ -1952,12 +1950,6 @@ AssembleAffixDetails()
 	
 	;TextLineWidth := 23
 	TextLineWidth := 40
-	/*
-	; ширина строки аффикса - будем определять в зависимости от настроек, либо полную, либо краткую
-	If (!Opts.ShortAffix){
-		TextLineWidth := ParseModLength(ItemData.Affixes, false)
-	}
-	*/
 	TextLineWidthUnique := TextLineWidth + 10
 	TextLineWidthJewel  := TextLineWidth + 10
 	
@@ -7963,6 +7955,25 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 					}
 				}
 			}
+			;Базовое имя волшебных флаконов
+			Else If (Item.IsFlask && (Item.RarityLevel=2)) {
+				;Отбросим префикс
+				RegExReplace(ItemName, "([А-ЯЁ])", "", matchCount)
+				If (matchCount>1){
+					ItemBaseName := RegExReplace(ItemName, "^[А-ЯЁ][а-яё]+ ", "")
+				}
+				;Отбросим суффикс по словарю
+				SufFlaskList:=["адреналина", "алчности", "железной кожи", "заземления", "исцеления", "кровопускания", "оберега", "обжорства", "оживления", "осущения", "отпора", "охлаждения", "причинения", "проворства", "рефлексов", "рубцевания", "скорости", "согревания", "сопротивления", "твердолобости", "эффективности"]
+				qSufFlask:=SufFlaskList.MaxIndex()
+				Loop, %qSufFlask%
+				{
+				If RegExMatch(ItemBaseName, SufFlaskList[A_Index]) {
+					ItemBaseName := Trim(RegExReplace(ItemBaseName, SufFlaskList[A_Index]))
+					Return
+					}
+				}
+				Return
+			}
 			; Magic items don't have a third line.
 			; Sanitizing the item name is a bit more complicated but should work with the following assumptions:
 			;   1. The suffix always begins with " of".
@@ -8692,8 +8703,9 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	Item.IsCurrency:= (InStr(ItemData.Rarity, "Валюта"))
 	;Item.IsFossil	:= (RegExMatch(ItemData.NamePlate, "i)Fossil$")) ? true : false
 	Item.IsFossil	:= (RegExMatch(ItemData.NamePlate, "i)ископаемое")) ? true : false
+	;В русскоязычной версии слово скарабей используется для наименования редких предметов, по этому будем определять скарабеи с учетом редкости
 	;Item.IsScarab	:= (RegExMatch(ItemData.NamePlate, "i)Scarab$")) ? true : false
-	Item.IsScarab	:= (RegExMatch(ItemData.NamePlate, "i)скарабей")) ? true : false
+	Item.IsScarab	:= (InStr(ItemData.Rarity, "Обычный") && RegExMatch(ItemData.NamePlate, "i)скарабей")) ? true : false
 	
 	;regex := ["^Sacrifice At", "^Fragment of", "^Mortal ", "^Offering to ", "'s Key$", "Ancient Reliquary Key", "Timeworn Reliquary Key", "Breachstone", "Divine Vessel"]
 	regex := ["^Жертва в", "^Жертва на", "^Фрагмент ", "Смертное уныние", "Смертное невежество", "Смертный гнев", "Смертная надежда", "Подношение Богине", "Ключ Эвера", "Ключ Иньи", "Ключ Ириэла", "Ключ Волкуур", "Ключ от Древнего Реликвария", "Ключ от Ветхого Реликвария"]
@@ -8864,7 +8876,9 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 		
 		; Check that there is no ":" in the retrieved text = can only be an implicit mod
-		_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, ":")
+		;_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, ":")
+		_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, "Уровень предмета:") ;В русской локализации присутствуют собственные свойства с :
+		console.log("Собственное свойство: " ItemDataParts%ItemDataIndexImplicit%)
 		If (_implicitFound) {
 			tempImplicit	:= ItemDataParts%ItemDataIndexImplicit%
 			Loop, Parse, tempImplicit, `n, `r
@@ -8879,7 +8893,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 
 		; Check if there is a second "possible implicit" which means the first one is actually an enchantmet
 		_ItemDataIndexImplicit := ItemDataIndexImplicit - 1
-		If (_implicitFound and !InStr(ItemDataParts%_ItemDataIndexImplicit%, ":")) {			
+		;If (_implicitFound and !InStr(ItemDataParts%_ItemDataIndexImplicit%, ":")) {			
+		If (_implicitFound and !InStr(ItemDataParts%_ItemDataIndexImplicit%, "Уровень предмета:")) { ;В русской локализации присутствуют зачарования с :
 			tempImplicit	:= ItemDataParts%_ItemDataIndexImplicit%
 			Loop, Parse, tempImplicit, `n, `r
 			{
@@ -9232,12 +9247,6 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		
 		maxIndex 	:= Item.Implicit.MaxIndex()
 		TextLineWidth := ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]) ? 20 : 50
-		/*
-		; ширина поля для собственного свойства предмета - будем определять в зависимости от настроек, либо полную, либо краткую
-		If (!Opts.ShortAffix){
-			TextLineWidth := ParseModLength(Item.Implicit, true, ImplicitValueArray.MaxIndex() and StrLen(ImplicitValueArray[1]))
-		}
-		*/
 		Ellipsis := Opts.AffixTextEllipsis
 		
 		Loop, % maxIndex {
@@ -10828,12 +10837,6 @@ CreateSettingsUI()
 	;AddToolTip(ShowExplanationForUsedNotationH, "Explain abbreviations and special notation symbols at`nthe end of the tooltip when they are used")
 	AddToolTip(ShowExplanationForUsedNotationH, "Расшифровка аббревиатуры и специальных обозначений`nв конце подсказки, когда они используются")
 	
-	/*
-	; краткие, либо полные аффиксы
-	GuiAddCheckbox("Краткие аффиксы", "xs10 yp+30 w260 h30", Opts.ShortAffix, "ShortAffix", "ShortAffixH", "", "", "SettingsUI")
-	AddToolTip(ShortAffixH, "Включает отображение укороченных описаний аффиксов, например:`n50% увеличение урона…`n`nДанная настройка есть только в адаптированной версии`nи не сохраняется при перезапуске макроса!")
-	*/
-	
 	GuiAddEdit(Opts.AffixTextEllipsis, "xs260 y+5 w40 h20", "AffixTextEllipsis", "", "", "", "SettingsUI")
 	;GuiAddText("Affix text ellipsis:", "xs10 yp+3 w120 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH", "", "", "SettingsUI")
 	GuiAddText("Многоточие в конце аффикса:", "xs10 yp+3 w200 h20 0x0100", "LblAffixTextEllipsis", "AffixTextEllipsisH", "", "", "SettingsUI")
@@ -11124,7 +11127,6 @@ UpdateSettingsUI()
 	; Display
 	GuiControl,, ShowHeaderForAffixOverview, % Opts.ShowHeaderForAffixOverview
 	GuiControl,, ShowExplanationForUsedNotation, % Opts.ShowExplanationForUsedNotation
-	;GuiControl,, ShortAffix, % Opts.ShortAffix
 	GuiControl,, AffixTextEllipsis, % Opts.AffixTextEllipsis
 	GuiControl,, AffixColumnSeparator, % Opts.AffixColumnSeparator
 	GuiControl,, DoubleRangeSeparator, % Opts.DoubleRangeSeparator
@@ -11323,7 +11325,6 @@ ReadConfig(ConfigDir = "", ConfigFile = "config.ini")
 		; Display
 		Opts.ShowHeaderForAffixOverview		:= IniRead("Display", "ShowHeaderForAffixOverview", Opts.ShowHeaderForAffixOverview, ItemInfoConfigObj)
 		Opts.ShowExplanationForUsedNotation	:= IniRead("Display", "ShowExplanationForUsedNotation", Opts.ShowExplanationForUsedNotation, ItemInfoConfigObj)
-		;Opts.ShortAffix		:= IniRead("Display", "ShortAffix", Opts.ShortAffix, ItemInfoConfigObj)
 		Opts.AffixTextEllipsis				:= IniRead("Display", "AffixTextEllipsis", Opts.AffixTextEllipsis, ItemInfoConfigObj)
 		Opts.AffixColumnSeparator			:= IniRead("Display", "AffixColumnSeparator", Opts.AffixColumnSeparator, ItemInfoConfigObj)
 		Opts.DoubleRangeSeparator			:= IniRead("Display", "DoubleRangeSeparator", Opts.DoubleRangeSeparator, ItemInfoConfigObj)
@@ -11382,7 +11383,6 @@ WriteConfig(ConfigDir = "", ConfigFile = "config.ini")
 	; Display
 	IniWrite(Opts.ShowHeaderForAffixOverview, "Display", "ShowHeaderForAffixOverview", ItemInfoConfigObj)
 	IniWrite(Opts.ShowExplanationForUsedNotation, "Display", "ShowExplanationForUsedNotation", ItemInfoConfigObj)
-	;IniWrite(Opts.ShortAffix, "Display", "ShortAffix", ItemInfoConfigObj)
 	IniWrite("" . Opts.AffixTextEllipsis . "", "Display", "AffixTextEllipsis", ItemInfoConfigObj)
 	IniWrite("" . Opts.AffixColumnSeparator . "", "Display", "AffixColumnSeparator", ItemInfoConfigObj)
 	IniWrite("" . Opts.DoubleRangeSeparator . "", "Display", "DoubleRangeSeparator", ItemInfoConfigObj)
@@ -11621,11 +11621,12 @@ ShowAssignedHotkeys(returnList = false) {
 			val.Push(PrettyKeyName(_keyName))
 		}
 	}
-	
+
+
 	If (returnList) {
 		Return hotkeys
 	}
-	
+
 	Gui, ShowHotkeys:Color, ffffff, ffffff
 	Gui, ShowHotkeys:Add, Text, , List of this scripts assigned hotkeys.
 	Gui, ShowHotkeys:Default
@@ -11657,7 +11658,7 @@ ShowAssignedHotkeys(returnList = false) {
 
 	Gui, ShowHotkeys:Add, Text, , % text
 	Gui, ShowHotkeys:Add, Link, x10 y+10 w210 h20 cBlue BackgroundTrans, <a href="http://www.autohotkey.com/docs/Hotkeys.htm">Hotkey Options</a>	
-
+	
 	Gui, ShowHotkeys:Show, w820 xCenter yCenter, Assigned Hotkeys
 	Gui, SettingsUI:Default
 	Gui, Font
@@ -12383,45 +12384,6 @@ LookUpAffixes() {
 	}
 }
 
-;-------------------------
-; Вычисляем максимальную длину аффикса
-; В одном из релизов английской версии была удалена возможность выбора между отображением полных и кратких аффиксов, оставив только краткие
-; Данная функция позволит отображать полные аффиксы в зависимости от их размера
-ParseModLength(modStr, impl=false, isImplVal=false)
-{
-	Global Item
-
-	maxLen :=0
-	
-	If (!impl)
-	{
-		modStr := StrSplit(modStr, "`n")
-	}
-
-	For i, modString in modStr {
-		strLength := StrLen(modString)
-		If (strLength > maxLen){
-			maxLen := strLength
-		}
-	}
-
-	; из-за отсутствия дополнительных столбцов у обычных самоцветов большое пустое поле между аффиксом и значением, 
-	; поэтому немного уменьшим длину
-	If (Item.IsJewel and not Item.IsAbyssJewel)
-	{
-		maxLen := maxLen - 10
-	}
-
-	; у собственных свойств без значений немного увеличим длину поля
-	If (impl and !isImplVal)
-	{
-		maxLen := maxLen + 10
-	}
-
-	return maxLen 
-}
-;-------------------------
-
 ; ########### TIMERS ############
 
 ; Tick every 100 ms
@@ -13104,13 +13066,13 @@ PoENinjaPriceDataDownloadURLtoJSON(url, category, critical = false, isFallbackRe
 	Try {
 		options := ""
 		options	.= "`n" "TimeOut: " CurlTimeout
-
+		
 		reqHeaders.push("Connection: keep-alive")
 		reqHeaders.push("Cache-Control: max-age=0")
 		reqHeaders.push("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")	
 		reqHeaders.push("User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36")
 		priceData := PoEScripts_Download(url, postData, reqHeaders, options, true, true, false, "", reqHeadersCurl)
-
+		
 		deleteError := PoEScripts_SaveWriteTextFile(A_ScriptDir "\temp\" category "History_" league ".txt", priceData, "utf-8", true, true)
 
 		Try {
@@ -13136,7 +13098,7 @@ FetchCurrencyData:
 	loggedTempLeagueCurrencyRequest := loggedTempLeagueCurrencyRequest ? loggedTempLeagueCurrencyRequest : false
 	
 	Loop, % currencyLeagues.Length() {
-		currencyLeague := currencyLeagues[A_Index]
+		currencyLeague := currencyLeagues[A_Index]	
 		url	:= "https://poe.ninja/api/data/ItemOverview?league=" . currencyLeague . "&type=Currency"
 		file := A_ScriptDir . "\temp\currencyData_" . currencyLeague . ".json"
 
@@ -13981,11 +13943,10 @@ CheckForLutBotHotkeyConflicts(hotkeys, config) {
 	}
 }
 
-
 ConvertGameIniAsciiKeysToVK(value) {
 	values := StrSplit(value, " ")	; split string on spaces, which signals the combination of multiple keys
 	vkey := ""
-
+	
 	Loop, % values.MaxIndex() {
 		If (values[A_Index] < 32) {
 			If (values.MaxIndex() <= 1) {				
@@ -14013,7 +13974,7 @@ ConvertGameIniAsciiKeysToVK(value) {
 			vkey .= StrReplace(FHex(values[A_Index]), "0x", "VK")
 		}
 	}
-
+	
 	Return vkey
 }
 
@@ -14040,7 +14001,7 @@ CheckForGameHotkeyConflicts() {
 	configs 		:= []
 	productionIni	:= iniPath . "production_Config.ini"
 	betaIni		:= iniPath . "beta_Config.ini"	
-
+	
 	configs.push(productionIni)
 	configs.push(betaIni)
 	If (not FileExist(productionIni) and not FileExist(betaIni)) {
@@ -14054,7 +14015,7 @@ CheckForGameHotkeyConflicts() {
 	For config in configs {
 		current_config := class_EasyIni(configs[config])
 		convertedKeys := []
-
+		
 		For iniKey, iniValue in current_config["ACTION_KEYS"] {
 			convertedKey := { "label" : iniKey, "value" : ConvertGameIniAsciiKeysToVK(iniValue)}
 			convertedKeys.push(convertedKey)
@@ -14071,10 +14032,10 @@ CheckForGameHotkeyConflicts() {
 			}
 		} 
 	}
-
+	
 	If (conflicts.MaxIndex()) {
 		project := Globals.Get("ProjectName")
-
+		
 		Gui, ShowGameHotkeyConflicts:Color, ffffff, ffffff
 		;msg := project " detected a hotkey conflict with the Path of Exile keybindings, "
 		msg := project " обнаружил сочетания клавиш конфликтующие с Path of Exile, "
@@ -14084,7 +14045,7 @@ CheckForGameHotkeyConflicts() {
 		msg .= "`nИначе " project " может заблокировать некоторые функции игры."
 		;Gui, ShowGameHotkeyConflicts:Add, Text, w600, % msg
 		Gui, ShowGameHotkeyConflicts:Add, Text, w800, % msg
-
+		
 		Gui, ShowGameHotkeyConflicts:Default
 		Gui, ShowGameHotkeyConflicts:Font, , Courier New		
 		Gui, ShowGameHotkeyConflicts:Font, , Consolas
@@ -14099,9 +14060,8 @@ CheckForGameHotkeyConflicts() {
 		;Gui, ShowGameHotkeyConflicts:Add, Text, x+20 yp+0 h20 w250, Key combination (pretty name
 		Gui, ShowGameHotkeyConflicts:Add, Text, x+20 yp+0 h20 w250, Комбинация(Расшифровка)
 		Gui, ShowGameHotkeyConflicts:Font, norm
-
-		_height := 35
 		
+		_height := 35
 		For key, val in conflicts {
 			_height := _height + 25
 			Gui, ShowGameHotkeyConflicts:Add, Text, x20  y+2 h20 w200, % val.game_label
@@ -14111,7 +14071,7 @@ CheckForGameHotkeyConflicts() {
 		}
 		;Gui, ShowGameHotkeyConflicts:Add, GroupBox, w850 h%_height% y40 x10, Conflicts
 		Gui, ShowGameHotkeyConflicts:Add, GroupBox, w850 h%_height% y40 x10, Конфликты
-
+	
 		;text := " ^ : ctrl key modifier" . "`n"
 		;text .= " ! : alt key modifier" . "`n"
 		;text .= " + : shift key modifier" . "`n"
@@ -14202,7 +14162,7 @@ AssignHotKey(Label, key, vkey, enabledState = "on") {
 			; only assign it when it's enabled
 			Hotkey, %VKey%, %Label%, UseErrorLevel %stateValue%
 			SaveAssignedHotkey(Label, key, vkey, enabledState)
-		}		
+		}
 	}
 
 	If (ErrorLevel) {
