@@ -7967,7 +7967,7 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 				qSufFlask:=SufFlaskList.MaxIndex()
 				Loop, %qSufFlask%
 				{
-				If RegExMatch(ItemBaseName, SufFlaskList[A_Index]) {
+				If RegExMatch(ItemBaseName, SufFlaskList[A_Index] "$") {
 					ItemBaseName := Trim(RegExReplace(ItemBaseName, SufFlaskList[A_Index]))
 					Return
 					}
