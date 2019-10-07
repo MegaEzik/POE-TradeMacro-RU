@@ -7958,15 +7958,15 @@ ParseItemName(ItemDataChunk, ByRef ItemName, ByRef ItemBaseName, AffixCount = ""
 			;Базовое имя волшебных флаконов
 			Else If (Item.IsFlask && (Item.RarityLevel=2)) {
 				;Отбросим префикс
-				RegExReplace(ItemName, "([А-ЯЁ])", "", matchCount)
-				If (matchCount>1){
-					ItemBaseName := RegExReplace(ItemName, "^[А-ЯЁ][а-яё]+ ", "")
+				ItemBaseName:=ItemName
+				RegExReplace(ItemBaseName, "([А-ЯЁ])", "", matchCount)
+				If (matchCount>1) {
+					ItemBaseName := RegExReplace(ItemBaseName, "^[А-ЯЁ][а-яё]+ ", "")
 				}
 				;Отбросим суффикс по словарю
 				SufFlaskList:=["адреналина", "алчности", "железной кожи", "заземления", "исцеления", "кровопускания", "оберега", "обжорства", "оживления", "осущения", "отпора", "охлаждения", "причинения", "проворства", "рефлексов", "рубцевания", "скорости", "согревания", "сопротивления", "твердолобости", "эффективности"]
 				qSufFlask:=SufFlaskList.MaxIndex()
-				Loop, %qSufFlask%
-				{
+				Loop, %qSufFlask% {
 				If RegExMatch(ItemBaseName, SufFlaskList[A_Index] "$") {
 					ItemBaseName := Trim(RegExReplace(ItemBaseName, SufFlaskList[A_Index]))
 					Return

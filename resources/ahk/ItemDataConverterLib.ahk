@@ -25,9 +25,18 @@ IDCL_Init() {
 	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json", "resources\stats.json")
 	FileRead, stats_list, resources\stats.json
 	Globals.Set("item_stats", JSON.Load(stats_list))
+	
 	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json", "resources\names.json")
 	FileRead, names_list, resources\names.json
 	Globals.Set("item_names", JSON.Load(names_list))
+	
+	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ruPrefSufFlask.json", "resources\presufflask.json")
+	FileRead, presufflask_list, resources\presufflask.json
+	Globals.Set("item_presufflask", JSON.Load(presufflask_list))
+	
+	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/sameNameItem.json", "resources\samename.json")
+	FileRead, samename_list, resources\samename.json
+	Globals.Set("item_samename", JSON.Load(samename_list))
 }
 
 ;Получение информации c предмета
@@ -43,14 +52,16 @@ IDCL_lvlRarity(itemdata) {
 	rlvl:=0
 	rlvl:=inStr(itemdata, "Редкость: Обычный")?1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Волшебный")?2:rlvl
+	rlvl:=(inStr(itemdata, "Редкость: Волшебный")&&inStr(itemdata, " флакон"))?2.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Редкий")?3:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Уникальный")?4:rlvl
-	rlvl:=inStr(itemdata, "Уникальная Реликвия")?5:rlvl
+	rlvl:=inStr(itemdata, "Уникальная Реликвия")?4.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Валюта")?10:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Камень")?11:rlvl
 	rlvl:=(inStr(itemdata, "Редкость: Камень")&&inStr(itemdata, " ваал`r`n"))?11.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Гадальная карта")?12:rlvl
 	rlvl:=(inStr(itemdata, "Редкость: Обычный")&&inStr(itemdata, "Нажмите ПКМ, чтобы добавить это пророчество вашему персонажу."))?13:rlvl
+	
 	return %rlvl%
 }
 
@@ -102,7 +113,7 @@ IDCL_ConvertMain(itemdata){
 	;Определяем уровень редкости
 	rlvl:=IDCL_lvlRarity(itemdata)	
 	;Если предмет соответствует критериям, то выполняем попытку конвертировать его, иначе выдаем уведомление
-	if (rlvl=1 || rlvl=3 || rlvl=4 || rlvl=5 || rlvl=10 || rlvl=11 || rlvl=12 || rlvl=13) {
+	if (rlvl!=0 && rlvl!=2 && rlvl!=11.1) {
 		itemdata:=IDCL_ConvertItem(itemdata, rlvl)
 		IDCL_writeLogFile(itemdata)
 	} else {
@@ -114,31 +125,24 @@ IDCL_ConvertMain(itemdata){
 ;Конвертация имен
 IDCL_ConvertName(name, rlvl){
 	names:=Globals.Get("item_names")
-	new_name:=StrReplace(name, " высокого качества", "")	
-	;Обработаем случаи с дублирующимися названиями
-	if ((rlvl=4 || rlvl=5) && new_name="Договор") {
-		return "The Covenant"
+	samename:=Globals.Get("item_samename")
+	new_name:=StrReplace(name, " высокого качества", "")
+	;Обработаем особые случаи с дублирующимися названиями
+	If (rlvl=12 && samename.DivinationCard[name]) {
+		return samename.DivinationCard[name]
 	}
-	if (rlvl=12 && new_name="Договор") {
-		return "The Pact"
+	Else If (rlvl=11 && samename.Gem[name]) {
+		return samename.Gem[name]
 	}
-	if (rlvl=11 && new_name="Наставник") {
-		return "Enlighten Support"
+	Else If ((rlvl=4 || rlvl=4.1) && samename.Unique[name]) {
+		return samename.Unique[name]
 	}
-	if (rlvl=13 && new_name="Наставник") {
-		return "The Mentor"
+	Else If (rlvl=13 && samename.Prophecy[name]) {
+		return samename.Prophecy[name]
 	}
-	if ((rlvl=4 || rlvl=5) && new_name="Отшельник") {
-		return "The Ascetic"
-	}
-	if (rlvl=12 && new_name="Отшельник") {
-		return "The Hermit"
-	}
-	if (rlvl=11 && new_name="Удар молнии") {
-		return "Lightning Strike"
-	}
-	if (rlvl=12 && new_name="Удар молнии") {
-		return "Struck by Lightning"
+	;Обработаем имя волшебных флаконов
+	if (rlvl=2.1) {
+		return IDCL_ConvertNameMFlask(name)
 	}
 	;Измененные, древние и зараженные карты
 	if RegExMatch(new_name, "(Древняя|Изменённая|Заражённая)", mapre) and inStr(new_name, "Карта") {
@@ -163,6 +167,28 @@ IDCL_ConvertName(name, rlvl){
 	;Если имя не конвертировалось, то назначим неопределенное
 	new_name:=(new_name="")?"Undefined Name":new_name
 	return new_name
+}
+
+;Конвертирование имен волшебных флаконов
+IDCL_ConvertNameMFlask(ItemName){
+	presufflask:=Globals.Get("item_presufflask")
+	
+	RegExReplace(ItemName, "([А-ЯЁ])", "", matchCount)
+	If (matchCount>1){
+		RegExMatch(ItemName, "^[А-ЯЁ][а-яё]+", FPrefix)
+		ItemName:=Trim(RegExReplace(ItemName, FPrefix))
+	}
+	
+	SufFlaskList:=["адреналина", "алчности", "железной кожи", "заземления", "исцеления", "кровопускания", "оберега", "обжорства", "оживления", "осущения", "отпора", "охлаждения", "причинения", "проворства", "рефлексов", "рубцевания", "скорости", "согревания", "сопротивления", "твердолобости", "эффективности"]
+	qSufFlask:=SufFlaskList.MaxIndex()
+	Loop, %qSufFlask% {
+		If RegExMatch(ItemName, SufFlaskList[A_Index] "$") {
+			FSuffix:=SufFlaskList[A_Index]
+			ItemName:=Trim(RegExReplace(ItemName, FSuffix))
+		}
+	}
+
+	return Trim(presufflask[FPrefix] " " IDCL_ConvertName(ItemName, 1) " " presufflask[FSuffix])
 }
 
 ;Конвертация стата
@@ -238,7 +264,7 @@ IDCL_ConvertItem(itemdata, rlvl){
 	sid:=StrSplit(itemdata, "`r`n")
 	;Попытаемся сконвертировать имя предмета, а так же имя базы для редких и уникальных предметов
 	sid[2]:=IDCL_ConvertName(sid[2], rlvl)	
-	if (rlvl=3 || rlvl=4 || rlvl=5) {
+	if (rlvl=3 || rlvl=4 || rlvl=4.1) {
 		sid[3]:=IDCL_ConvertName(sid[3], rlvl)
 	}
 	;На гадальных картах в 6ой строке иногда написан предмет, попробуем конвертировать его

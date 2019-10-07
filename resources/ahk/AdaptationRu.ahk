@@ -672,4 +672,8 @@ AdpRu_DownloadJSONList(url, file) {
 AdpRu_IDCLInit() {
 	Globals.Set("item_stats", Globals.Get("ru_en_stats"))	
 	Globals.Set("item_names", Globals.Get("nameItemRuToEn"))
+	FileRead, presufflask_list, data_trade\ru\ruPrefSufFlask.json
+	Globals.Set("item_presufflask", JSON.Load(presufflask_list))	
+	FileRead, samename_list, data\ru\sameNameItem.json
+	Globals.Set("item_samename", JSON.Load(samename_list))
 }
