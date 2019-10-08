@@ -2,7 +2,7 @@
 /*
 	Набор функций для конвертации предметов и их свойств
 	Автор: MegaEzik
-	Последнее изменение: 04.09.2019
+	Последнее изменение: 08.10.2019
 */
 
 ;Загрузка указанных JSON файлов
@@ -10,11 +10,11 @@ IDCL_DownloadJSONList(url, file) {
 	FileCopy, %file%, %file%.bak
 	FileDelete, %file%
 	UrlDownloadToFile, %url%, %file%
-	sleep 50
+	sleep 35
 	FileReadLine, line, %file%, 1	
 	if (line!="{") {
 		FileDelete, %file%
-		sleep 50
+		sleep 35
 		FileCopy, %file%.bak, %file%
 	}
 	FileDelete, %file%.bak
@@ -43,7 +43,7 @@ IDCL_Init() {
 IDCL_loadInfo() {
 	Clipboard:=""
 	Send ^{C}
-	sleep 50
+	sleep 35
 	return Clipboard
 }
 
@@ -73,7 +73,7 @@ IDCL_splashMsg(mh, mt, t, a){
 	widthMsg:=0
 	heightMsg:=20*mtArray.MaxIndex()
 	For k, val in mtArray {
-		newLen:=StrLen(mtArray[k])*8+10
+		newLen:=StrLen(mtArray[k])*8
 		widthMsg:=(widthMsg<newLen)?newLen:widthMsg
 	}
 	widthMsg:=(widthMsg<240)?240:widthMsg
@@ -117,7 +117,7 @@ IDCL_ConvertMain(itemdata){
 		itemdata:=IDCL_ConvertItem(itemdata, rlvl)
 		IDCL_writeLogFile(itemdata)
 	} else {
-		IDCL_splashMsg("IDCL - Уведомление!", "Библиотека IDCL не умеет работать с данным типом предметов!", 1500, false)
+		IDCL_splashMsg("IDCL - Уведомление!", "Библиотека IDCL не умеет работать с данным типом предметов!", 1200, false)
 	}
 	return itemdata
 }
@@ -245,6 +245,13 @@ IDCL_ConvertAllStats(idft) {
 			lidft[k]:= IDCL_ConvertStat(lidft[k])
 			lidft[k]:= StrReplace(lidft[k], "#", v)
 		}
+		If RegExMatch(lidft[k], "Восстанавливает (ману|здоровье): ", tflask) && InStr(lidft[k], " за ") {
+			lidft[k]:=RegExReplace(lidft[k], tflask, "Recovers ")
+			tflask:=inStr(tflask, "ману")?"Mana":"Life"
+			lidft[k]:=RegExReplace(lidft[k], "сек.", "Seconds")
+			lidft[k]:=RegExReplace(lidft[k], " за", slidft " " tflask " over")
+			slidft:=""
+		}
 		;Собираем результат
 		idtfen.=lidft[k] slidft "`r`n"
 	}
@@ -297,7 +304,7 @@ IDCL_CheckResult(idft){
 	}
 	;Уведомление о не конвертированных строках
 	if(idtferl!="") {
-		IDCL_splashMsg("IDCL - Не удалось конвертировать!", idtferl, 3000, false)
+		IDCL_splashMsg("IDCL - Не удалось конвертировать!", idtferl, 1500, false)
 	}
 	return idtfen
 }
