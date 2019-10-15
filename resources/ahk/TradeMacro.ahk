@@ -5910,7 +5910,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	Gui, SelectModsGui:Add, Link, x+5 yp+0 cBlue, <a href="https://poe.trade">посетить</a>
 	;Gui, SelectModsGui:Add, Text, x+10 yp+0 cGray, (Use Alt + S/E to submit a button)	
 	;Gui, SelectModsGui:Add, Link, x10 yp+18 cBlue, <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZVTWJNH6GSME">Support PoE-TradeMacro</a>
-	Gui, SelectModsGui:Add, Link, x10 yp+18 cBlue, <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZVTWJNH6GSME">Поддержать PoE-TradeMacro</a>
+	Gui, SelectModsGui:Add, Link, x10 yp+18 cBlue, <a href="https://qiwi.me/megaezik">Поддержать PoE-TradeMacro_ru</a>
 
 	windowWidth := modGroupBox + 40 + 5 + 45 + 10 + 45 + 10 + 40 + 5 + 45 + 10 + 65
 	windowWidth := (advItem.specialBase and !advItem.isFracturedBase) ? windowWidth + 25 : windowWidth
@@ -6410,9 +6410,6 @@ Return
 CheckForUpdatesTimer:
 	;PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug, true)
 	HasUpdate := PoEScripts_Update("MegaEzik", "PoE-TradeMacro_ru", globalUpdateInfo.releaseVersionRu, ShowUpdateNotification, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup, SplashScreenTitle, TradeOpts.Debug, true)
-	If (hasUpdate != "no update") {
-		Menu, Tray, Icon, %A_ScriptDir%\resources\images\poe-trade-bl-update.ico
-	}
 Return
 
 BringPoEWindowToFrontAfterInit:
@@ -6434,7 +6431,7 @@ CheckUpdatesFromMenu:
 Return
 
 OpenMegaEzik:
-	url := "https://money.yandex.ru/to/410018859988844"
+	url := "https://qiwi.me/megaezik"
 	TradeFunc_OpenUrlInBrowser(url)
 Return
 
