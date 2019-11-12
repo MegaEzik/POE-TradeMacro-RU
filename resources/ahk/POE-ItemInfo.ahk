@@ -564,7 +564,7 @@ Menu, Tray, Add, Редактирование файлов, :TextFiles
 ;Menu, Tray, Add, Preview Files, :PreviewTextFiles
 Menu, Tray, Add, Просмотр файлов, :PreviewTextFiles
 ;Menu, Tray, Add, Open User Folder, EditOpenUserSettings
-Menu, Tray, Add, Открыть папку пользователя, EditOpenUserSettings
+Menu, Tray, Add, Открыть папку настроек, EditOpenUserSettings
 Menu, Tray, Add ; Separator
 Menu, Tray, Standard
 Menu, Tray, Default, % Globals.Get("SettingsUITitle", "PoE ItemInfo Settings")
@@ -11257,7 +11257,8 @@ ShowChangedUserFiles()
 	Gui, ChangedUserFiles:Destroy
 	Gui, ChangedUserFiles:Color, ffffff, ffffff
 
-	Gui, ChangedUserFiles:Add, Text, , Following user files were changed in the last update and `nwere overwritten (old files were backed up):
+	;Gui, ChangedUserFiles:Add, Text, , Following user files were changed in the last update and `nwere overwritten (old files were backed up):
+	Gui, ChangedUserFiles:Add, Text, , Пользовательские файлы были обновлены в последнем обновлении и`nбыли перезаписаны (для устаревших выполнено резервное копирование):
 
 	Loop, Parse, overwrittenUserFiles, `n
 	{
@@ -11265,10 +11266,14 @@ ShowChangedUserFiles()
 			Gui, ChangedUserFiles:Add, Text, y+5, %A_LoopField%
 		}
 	}
-	Gui, ChangedUserFiles:Add, Button, y+10 gChangedUserFilesWindow_Cancel, Close
-	Gui, ChangedUserFiles:Add, Button, x+10 yp+0 gChangedUserFilesWindow_OpenFolder, Open user folder
-	Gui, ChangedUserFiles:Show, w300, Changed User Files
-	ControlFocus, Close, Changed User Files
+	;Gui, ChangedUserFiles:Add, Button, y+10 gChangedUserFilesWindow_Cancel, Close
+	Gui, ChangedUserFiles:Add, Button, y+10 gChangedUserFilesWindow_Cancel, Закрыть
+	;Gui, ChangedUserFiles:Add, Button, x+10 yp+0 gChangedUserFilesWindow_OpenFolder, Open user folder
+	Gui, ChangedUserFiles:Add, Button, x+10 yp+0 gChangedUserFilesWindow_OpenFolder, Открыть папку настроек
+	;Gui, ChangedUserFiles:Show, w300, Changed User Files
+	Gui, ChangedUserFiles:Show, w420, Изменение пользовательских файлов
+	;ControlFocus, Close, Changed User Files
+	ControlFocus, Close, Изменение пользовательских файлов
 }
 
 IniRead(SectionName, KeyName, DefaultVal, ConfigObj)

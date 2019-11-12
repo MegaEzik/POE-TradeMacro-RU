@@ -131,10 +131,10 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 				;Gui, UpdateNotification:Add, Text, x20 yp+20, Warning: This is a pre-release.
 				;Gui, UpdateNotification:Add, Text, x20 y+10, Installed version:
 				Gui, UpdateNotification:Add, Text, x20 yp+20 cRed, Внимание: Это предварительный релиз!
-				Gui, UpdateNotification:Add, Text, x20 y+10, Установленная версия:
+				Gui, UpdateNotification:Add, Text, x20 y+10, Установлена версия:
 			} Else {
 				;Gui, UpdateNotification:Add, Text, x20 yp+30, Installed version:
-				Gui, UpdateNotification:Add, Text, x20 yp+30, Установленная версия:
+				Gui, UpdateNotification:Add, Text, x20 yp+30, Установлена версия:
 			}
 			
 			currentLabel := versions.current.label
@@ -143,11 +143,11 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 			Gui, UpdateNotification:Add, Text, x150 yp+0,  %currentLabel%	
 			
 			;Gui, UpdateNotification:Add, Text, x20 y+0, Latest version:
-			Gui, UpdateNotification:Add, Text, x20 y+0, Доступная версия:
+			Gui, UpdateNotification:Add, Text, x20 y+0, Доступна версия:
 
 			Gui, UpdateNotification:Add, Text, x150 yp+0,  %latestLabel%
 			;Gui, UpdateNotification:Add, Link, x+20 yp+0 cBlue, <a href="%releaseURL%">Download it here</a>
-			Gui, UpdateNotification:Add, Link, x+20 yp+0 cBlue, <a href="%releaseURL%">Загрузить здесь</a>
+			Gui, UpdateNotification:Add, Link, x+20 yp+0 cBlue, <a href="%releaseURL%">Скачать здесь</a>
 			;Gui, UpdateNotification:Add, Button, x+20 yp-5 gUpdateScript, Update
 			Gui, UpdateNotification:Add, Button, x+20 yp-5 gUpdateScript, Обновить
 			
