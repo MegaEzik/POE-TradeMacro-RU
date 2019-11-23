@@ -183,26 +183,19 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 	; массив соответствий базовых имен предметов на русском языке их английским вариантам
 	nameItemRuToEn := Globals.Get("nameItemRuToEn")		
 	
-	;Конвертирование имен Древних карт
-	If (Item.IsMap) {
-		If (RegExMatch(itemRu_, "i)Древняя")) {
-			mapBaseRu:=Trim(StrReplace(itemRu_, "Древняя", ""))
-			If (nameItemRuToEn[mapBaseRu]) {
-				itemEn := "Elder " nameItemRuToEn[mapBaseRu]
-				return itemEn
-			}
-		}
+	;Конвертирование имен Древних и Зараженных карт
+	If (Item.IsMap && RegExMatch(itemRu_, "(Древняя|Заражённая)", mapre)) {
+		mapres:={"Древняя":"Elder", "Заражённая":"Blighted"}
+		mapBaseRu:=Trim(StrReplace(itemRu_, mapre, ""))
+		If nameItemRuToEn[mapBaseRu]
+			return mapres[mapre] " " nameItemRuToEn[mapBaseRu]
 	}
 	
-	;Конвертирование имен Зараженных карт
-	If (Item.IsMap) {
-		If (RegExMatch(itemRu_, "i)Заражённая")) {
-			mapBaseRu:=Trim(StrReplace(itemRu_, "Заражённая", ""))
-			If (nameItemRuToEn[mapBaseRu]) {
-				itemEn := "Blighted " nameItemRuToEn[mapBaseRu]
-				return itemEn
-			}
-		}
+	;Камни поддержки плюс
+	If (Item.IsGem && RegExMatch(itemRu_, " плюс$")) {
+		gem_name:=AdpRu_ConvertRuItemNameToEn(StrReplace(itemRu_, " плюс", ""))
+		if RegExMatch(gem_name, "Support$")
+			return StrReplace(gem_name, "Support", "Plus Support")
 	}
 	
 	itemEn := ""
