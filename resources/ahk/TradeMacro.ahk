@@ -419,6 +419,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 
 	Stats := {}
 	Stats.Quality := Item.Quality
+	Stats.QualityType := Item.QualityType
 	DamageDetails := Item.DamageDetails
 	;Name := Item.Name
 	Name := Item.Name_En	
@@ -508,26 +509,17 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		preparedItem.veiledSuffixCount := Item.veiledSuffixCount
 		preparedItem.Enchantment := Enchantment
 		
-		If (Item.isShaperBase or Item.isElderBase or Item.IsAbyssJewel or Item.isFracturedBase or Item.isSynthesisedBase) {
-			If (Item.isShaperBase) {
-				preparedItem.specialBase	:= "Shaper Base"
-				preparedItem.specialBaseRu	:= "База Создателя"
-			} Else If (Item.isElderBase) {
-				preparedItem.specialBase	:= "Elder Base"
-				preparedItem.specialBaseRu	:= "База Древнего"
+		If (Item.HasInfluence.length() or Item.IsAbyssJewel or Item.isFracturedBase or Item.isSynthesisedBase) {
+			If (Item.HasInfluence.length()) {
+				preparedItem.specialBase	:= ""
+				For key, val in Item.HasInfluence {
+					preparedItem.specialBase	.= key == 1 ? val : ", " val
+				}
 			} Else If (Item.isFracturedBase) {
 				preparedItem.specialBase	:= "Fractured Base"
-				preparedItem.specialBaseRu	:= "Расколотая"
 			} Else If (Item.isSynthesisedBase) {
 				preparedItem.specialBase	:= "Synthesised Base"
-				preparedItem.specialBaseRu	:= "Синтезированная"
 			}
-			/*
-			preparedItem.specialBase	:= Item.isShaperBase ? "Shaper Base" : ""
-			preparedItem.specialBaseRu	:= Item.isShaperBase ? "База Создателя" : ""
-			preparedItem.specialBase	:= Item.isElderBase ? "Elder Base" : preparedItem.specialBase
-			preparedItem.specialBaseRu	:= Item.isElderBase ? "База Древнего" : preparedItem.specialBaseRu
-			*/
 		}
 		If (Item.isFracturedBase) {
 			preparedItem.isFracturedBase	:= true
@@ -539,12 +531,6 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		Stats.Offense := TradeFunc_ParseItemOffenseStats(DamageDetails, preparedItem)
 
 		If (isAdvancedPriceCheck and hasAdvancedSearch) {
-			/*
-			If (Enchantment.Length()) {				
-				TradeFunc_AdvancedPriceCheckGui(preparedItem, Stats, ItemData.Sockets, ItemData.Links, "", Enchantment)
-			}
-			Else If (Corruption.Length()) {
-			*/
 			If (Corruption.Length()) {
 				TradeFunc_AdvancedPriceCheckGui(preparedItem, Stats, ItemData.Sockets, ItemData.Links, "", Corruption)
 			}
@@ -615,11 +601,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			If (Item.isFracturedBase or Item.isSynthesisedBase) {
 				If (Item.isFracturedBase) {
 					preparedItem.specialBase	:= "Fractured Base"
-					preparedItem.specialBaseRu	:= "Расколотая"
 					preparedItem.isFracturedBase	:= true
 				} Else If (Item.isSynthesisedBase) {
 					preparedItem.specialBase	:= "Synthesised Base"					
-					preparedItem.specialBaseRu	:= "Синтезированная"					
 					preparedItem.IsSynthesisedBase:= true
 				}
 			}
@@ -678,37 +662,33 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.iLvl.max := 34
 		}
 
-		; set links to max for corrupted items with 3/4 max sockets if the own item is fully linked
+		; set links to max for corrupted items with 3/4 max sockets if the own item is fully linked		
+		; poe.trade doesn't count abyssal sockets as "normal sockets"
 		If (Item.IsCorrupted and TradeOpts.ForceMaxLinks) {
-			If (Item.MaxSockets = 4 and ItemData.Links = 4) {
+			If (Item.MaxSocketsNormal = 4 and ItemData.Links = 4) {
 				RequestParams.link_min := 4
 			}
-			Else If (Item.MaxSockets = 3 and ItemData.Links = 3) {
+			Else If (Item.MaxSocketsNormal = 3 and ItemData.Links = 3) {
 				RequestParams.link_min := 3
 			}
 		}
 		
-		; special bases (elder/shaper/fractured/synthesised)
-		If (Item.IsShaperBase or Item.IsElderBase) {
-			If (Item.IsShaperBase) {
-				RequestParams.Shaper := 1
-				Item.UsedInSearch.specialBase := "Shaper"
-				Item.UsedInSearch.specialBaseRu := "Создателя"
-			}
-			Else If (Item.IsElderBase) {
-				RequestParams.Elder := 1
-				Item.UsedInSearch.specialBase := "Elder"
-				Item.UsedInSearch.specialBaseRu := "Древнего"
+		; special bases (elder/shaper/fractured/synthesised/redeemer/hunter/conquerer/warlord)
+		If (Item.HasInfluence.length() or Item.isFracturedBase or Item.isSynthesisedBase) {
+		If (Item.HasInfluence.length()) {
+		Item.UsedInSearch.specialBase := ""
+		For key, val in Item.HasInfluence {
+			RequestParams[val] := 1
+			Item.UsedInSearch.specialBase .= key == 1 ? val : ", " val
+		}
 			}
 			Else If (Item.IsFracturedBase) {
 				RequestParams.Fractured := 1
 				Item.UsedInSearch.specialBase := "Fractured"
-				Item.UsedInSearch.specialBaseRu := "Расколотая"
 			}
 			Else If (Item.IsSynthesisedBase) {
 				RequestParams.Synthesised := 1
 				Item.UsedInSearch.specialBase := "Synthesised"
-				Item.UsedInSearch.specialBaseRu := "Синтезированная"
 			}
 		}
 	}
@@ -779,19 +759,25 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				}
 			}
 		}
-
+		
+		; min quality for catalysed jewelry
+		If (s.minQuality and s.UseQualityType) {
+			RequestParams.q_min			:= s.minQuality
+			Item.UsedInSearch.Quality	:= s.minQuality
+		}
+		
 		; handle item sockets
 		If (s.UseSockets) {
-			RequestParams.sockets_min := ItemData.Sockets
-			Item.UsedInSearch.Sockets := ItemData.Sockets
+			RequestParams.sockets_min := ItemData.Sockets - Item.AbyssalSockets
+			Item.UsedInSearch.Sockets := ItemData.Sockets - Item.AbyssalSockets
 		}
 		If (s.UseSocketsMaxFour) {
-			RequestParams.sockets_min := 4
-			Item.UsedInSearch.Sockets := 4
+			RequestParams.sockets_min := 4 - Item.AbyssalSockets
+			Item.UsedInSearch.Sockets := 4 - Item.AbyssalSockets
 		}
 		If (s.UseSocketsMaxThree) {
-			RequestParams.sockets_min := 3
-			Item.UsedInSearch.Sockets := 3
+			RequestParams.sockets_min := 3 - Item.AbyssalSockets
+			Item.UsedInSearch.Sockets := 3 - Item.AbyssalSockets
 		}
 
 		; handle item links
@@ -800,12 +786,12 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.Links	:= ItemData.Links
 		}
 		If (s.UseLinksMaxFour) {
-			RequestParams.link_min	:= 4
-			Item.UsedInSearch.Links	:= 4
+			RequestParams.link_min	:= 4 - Item.AbyssalSockets
+			Item.UsedInSearch.Links	:= 4 - Item.AbyssalSockets
 		}
 		If (s.UseLinksMaxThree) {
-			RequestParams.link_min	:= 3
-			Item.UsedInSearch.Links	:= 3
+			RequestParams.link_min	:= 3 - Item.AbyssalSockets
+			Item.UsedInSearch.Links	:= 3 - Item.AbyssalSockets
 		}
 
 		If (s.UsedInSearch) {
@@ -844,13 +830,12 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			RequestParams.corrupted := "0"
 		}
 		
-		; special bases (elder/shaper/synthesised/fractured)
+		; special bases (elder/shaper/synthesised/fractured/conquerer/warlord/redeemer/hunter)
 		If (s.useSpecialBase) {
-			If (Item.IsShaperBase) {
-				RequestParams.Shaper := 1
-			}
-			Else If (Item.IsElderBase) {
-				RequestParams.Elder := 1
+			If (Item.HasInfluence.length()) {
+				For key, val in Item.HasInfluence {
+					RequestParams[val] := 1
+				}
 			}
 			Else If (Item.IsFracturedBase) {
 				RequestParams.Fractured := 1
@@ -859,10 +844,14 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				RequestParams.Synthesised := 1
 			}
 		} Else {
-			RequestParams.Shaper := ""
-			RequestParams.Elder := ""
-			RequestParams.Fractured := ""
-			RequestParams.Synthesised := ""
+			RequestParams.Shaper	:= ""
+			RequestParams.Elder		:= ""
+			RequestParams.Conquerer	:= ""
+			RequestParams.Warlord	:= ""
+			RequestParams.Redeemer	:= ""
+			RequestParams.Hunter	:= ""			
+			RequestParams.Fractured	:= ""
+			RequestParams.Synthesised:= ""
 		}
 
 		; abyssal sockets 
@@ -913,6 +902,17 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		Else {
 			Item.xtype := "Two Hand " . Item.SubType
 		}
+	}
+	
+	/*
+		"workaround" for poe.trade missing the warstaff/rune dagger item types
+		todo: remove when types are available
+	*/
+	If (RegExMatch(Item.SubType, "i)Warstaff")) {
+		Item.xtype := "Staff"
+	}
+	If (RegExMatch(Item.SubType, "i)Rune Dagger")) {
+		Item.xtype := "Dagger"
 	}
 
 	; Fix Body Armour subtype
@@ -996,15 +996,28 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		}
 		
 		If (isAdvancedPriceCheckRedirect and not TradeGlobals.Get("AdvancedPriceCheckItem").useSpecialBase) {
-			RequestParams.Shaper := ""
-			RequestParams.Elder := ""
-			RequestParams.Fractured := ""
-			RequestParams.Synthesised := ""
+			RequestParams.Shaper	:= ""
+			RequestParams.Elder		:= ""
+			RequestParams.Conquerer	:= ""
+			RequestParams.Warlord	:= ""
+			RequestParams.Redeemer	:= ""
+			RequestParams.Hunter	:= ""
+			RequestParams.Fractured 	:= ""
+			RequestParams.Synthesised:= ""
 		} Else {
+			If (Item.HasInfluence.length()) {
+				For key, val in Item.HasInfluence {
+					RequestParams[val] := 0
+				}
+				For key, val in Item.HasInfluence {
+					RequestParams[val] := 1
+					Item.UsedInSearch.specialBase .= key == 1 ? val : ", " val
+				}
+			}
+			/*
 			If (Item.IsShaperBase) {
 				RequestParams.Shaper := 1
 				Item.UsedInSearch.specialBase := "Shaper"
-				Item.UsedInSearch.specialBaseRu := "Создателя"
 			}
 			Else {		
 				RequestParams.Shaper := 0
@@ -1013,16 +1026,14 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			If (Item.IsElderBase) {
 				RequestParams.Elder := 1
 				Item.UsedInSearch.specialBase := "Elder"
-				Item.UsedInSearch.specialBaseRu := "Древнего"
 			}
 			Else {			
 				RequestParams.Elder := 0
 			}
-			
+			*/
 			If (Item.IsFracturedBase) {
 				RequestParams.Fractured := 1
 				Item.UsedInSearch.specialBase := "Fractured"
-				Item.UsedInSearch.specialBaseRu := "Расколотая"
 			}
 			Else {			
 				RequestParams.Fractured := 0
@@ -1031,7 +1042,6 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			If (Item.IsSynthesisedBase) {
 				RequestParams.Synthesised := 1
 				Item.UsedInSearch.specialBase := "Synthesised"
-				Item.UsedInSearch.specialBaseRu := "Синтезированная"
 			}
 			Else {			
 				RequestParams.Synthesised := 0
@@ -1306,8 +1316,6 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			}
 		} Else If (Item.IsUnique and isHarbingerMap) {
 			RequestParams.corrupted := "1"
-			RequestParams.level_min := Item.MapTier
-			RequestParams.level_max := Item.MapTier
 		}
 	
 		If (StrLen(isUnknownMap)) {
@@ -1317,6 +1325,9 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 			Item.UsedInSearch.type := Item.BaseName_En
 			Item.UsedInSearch.typeRu := Item.BaseName
 		}
+		
+		RequestParams.level_min := Item.MapTier
+		RequestParams.level_max := Item.MapTier
 		
 		Item.priceHistory := TradeFunc_FindMapHistoryData(Item.SubType, Item.MapTier)
 	}
@@ -1627,7 +1638,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		
 		; add second request for payload_alt (exact currency search fallback request)		
 		searchResults := TradeFunc_ParseHtmlToObj(Html, Payload, iLvl, Enchantment, isItemAgeRequest, isAdvancedPriceCheckRedirect)
-		If (not searchResults.results and StrLen(Payload_alt)) {
+		If (not searchResults.results.length and StrLen(Payload_alt)) {
 			Html := TradeFunc_DoPostRequest(Payload_alt, openSearchInBrowser)
 			ParsedData := TradeFunc_ParseHtml(Html, Payload_alt, iLvl, Enchantment, isItemAgeRequest, isAdvancedPriceCheckRedirect)
 		}
@@ -3203,6 +3214,11 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	If (Item.IsUnique or Item.IsDivinationCard or Item.IsCurrency or Item.IsMapFragment or Item.IsProphecy or Item.RarityLevel = 1 or (Item.IsFlask and Item.RarityLevel = 2)) {
 		Title := Title . " (англ. " Item.Name_En ")"
 	}
+	
+	; catalysed quality for jewelry 
+	If (Item.IsRing or Item.IsAmulet) {
+		Title .= Item.UsedInSearch.Quality ? " (" Item.UsedInSearch.Quality "% Q) " : ""
+	}	
 
 	If (Item.IsMap && !Item.isUnique) {
 		; map fix (wrong Item.name on magic/rare maps)
@@ -3304,7 +3320,7 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 			;Title .= (Item.UsedInSearch.ItemBase and ShowFullNameNote) ? "| Base (" . Item.UsedInSearch.ItemBase . ") " : ""
 			Title .= (Item.UsedInSearch.ItemBase and ShowFullNameNote) ? "| База (" . Item.UsedInSearch.ItemBaseRu . ") " : ""
 			;Title .= (Item.UsedInSearch.specialBase) ? "| " . Item.UsedInSearch.specialBase . " Base " : ""
-			Title .= (Item.UsedInSearch.specialBase) ? "| " . "База: " . Item.UsedInSearch.specialBaseRu . " " : ""
+			Title .= (Item.UsedInSearch.specialBase) ? "| " . "База: " . Item.UsedInSearch.specialBase . " " : ""
 			Title .= (Item.UsedInSearch.Charges) ? "`n" . Item.UsedInSearch.Charges . " " : ""
 			Title .= (Item.UsedInSearch.AreaMonsterLvl) ? "| " . Item.UsedInSearch.AreaMonsterLvl . " " : ""
 			
@@ -3505,8 +3521,8 @@ TradeFunc_ParseHtml(html, payload, iLvl = "", ench = "", isItemAgeRequest = fals
 	}
 	;Title .= (itemsListed > 0) ? "" : "`nNo item found.`n"
 	Title .= (itemsListed > 0) ? "" : "`nНичего не найдено.`n"
-	;Title .= (isAdvancedSearch) ? "" : "`n`n" "Use Ctrl + Alt + D (default) instead for a more thorough search."
-	Title .= (isAdvancedSearch) ? "" : "`n`n" "Нажмите Ctrl + Alt + D (по умолчанию) для расширенного поиска."
+	;Title .= (isAdvancedSearch) ? "" : "`n`n" "Use Shift + Alt + D (default) instead for a more thorough search."
+	Title .= (isAdvancedSearch) ? "" : "`n`n" "Нажмите Alt + Shift + D (по умолчанию) для расширенного поиска."
 
 	Return, Title
 }
@@ -3728,6 +3744,10 @@ class RequestParams_ {
 	sockets_a_max	:= ""
 	shaper		:= ""
 	elder		:= ""
+	hunter		:= ""	; check todo
+	conquerer		:= ""	; check
+	redeemer		:= ""	; check
+	warlord		:= ""	; check
 	synthesised	:= ""
 	fractured		:= ""
 	map_series 	:= ""
@@ -4334,6 +4354,26 @@ TradeFunc_GetItemsPoeTradeMods(_item, isMap = false) {
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["elder"], _item.mods[k])
 			}
+			/*
+				todo check / validate
+				*/
+			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["hunter"], _item.mods[k])
+			}
+			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["conquerer"], _item.mods[k])
+			}
+			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["redeemer"], _item.mods[k])
+			}
+			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["warlord"], _item.mods[k])
+			}
+			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
+				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["influence"], _item.mods[k])
+			}
+			/*
+				*/
 			If (StrLen(_item.mods[k]["param"]) < 1 and not isMap) {
 				_item.mods[k]["param"] := TradeFunc_FindInModGroup(mods["abyss jewels"], _item.mods[k])
 			}			
@@ -5723,6 +5763,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 		Gui, SelectModsGui:Add, Edit, x+0 yp+0 w0 vTradeAdvancedAbyssalSockets, % abyssalSockets
 	}	
 	
+	Sockets := Sockets - abyssalSockets
 	If (Sockets >= 5) {
 		m++
 		;text := "Sockets: " . Trim(Sockets)
@@ -5735,14 +5776,14 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	}
 	Else If (Sockets <= 4 and advItem.maxSockets = 4) {
 		m++
-		;text := "Sockets (max): 4"
-		text := "Гнезд (макс): 4"
+		;text := "Sockets (max): "  4 - abyssalSockets
+		text := "Гнезд (макс): "  4 - abyssalSockets
 		Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseSocketsMaxFour, % text
 	}
 	Else If (Sockets <= 3 and advItem.maxSockets = 3) {
 		m++
-		;text := "Sockets (max): 3"
-		text := "Гнезд (макс): 3"
+		;text := "Sockets (max): "  3 - abyssalSockets
+		text := "Гнезд (макс): "  3 - abyssalSockets
 		Gui, SelectModsGui:Add, CheckBox, x15 y+10 vTradeAdvancedUseSocketsMaxThree, % text
 	}
 
@@ -5756,15 +5797,15 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	Else If (Links <= 4 and advItem.maxSockets = 4) {
 		offset := (m > 1 ) ? "+10" : "15"
 		m++
-		;text := "Links (max): 4"
-		text := "Связи (макс): 4"
+		;text := "Links (max): " advItem.maxSockets - abyssalSockets
+		text := "Связи (макс): " advItem.maxSockets - abyssalSockets
 		Gui, SelectModsGui:Add, CheckBox, x%offset% yp+0 vTradeAdvancedUseLinksMaxFour, % text
 	}
 	Else If (Links <= 3 and advItem.maxSockets = 3) {
 		offset := (m > 1 ) ? "+10" : "15"
 		m++
-		;text := "Links (max): 3"
-		text := "Связи (макс): 3"
+		;text := "Links (max): " advItem.maxSockets - abyssalSockets
+		text := "Связи (макс): " advItem.maxSockets - abyssalSockets
 		Gui, SelectModsGui:Add, CheckBox, x%offset% yp+0 vTradeAdvancedUseLinksMaxThree, % text
 	}
 
@@ -5777,7 +5818,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	iLvlValue		:= ""
 	If (advItem.specialBase or advItem.IsBeast) {
 		iLvlCheckState := TradeOpts.AdvancedSearchCheckILVL ? "Checked" : ""
-		iLvlValue := advItem.iLvl ; use itemlevel to fill the box in any case (elder/shaper)
+		advItem.iLvl 											; use itemlevel to fill the box in any case (elder/shaper/conquerer/redeemer/hunter/warlord
 	}
 	Else If (TradeOpts.AdvancedSearchCheckILVL) {
 		iLvlCheckState := "Checked"
@@ -5817,16 +5858,18 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	}
 
 	If (advItem.specialBase) {
-		;Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBaseRu
+		;Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBase
 		If (not RegExMatch(advItem.specialBase,"i)fractured")) {
-			;Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBase 	
-			Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBaseRu
+			Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBase
 		} Else If (advItem.isFracturedBase) {
-			;Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBase
-			Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBaseRu
+			Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedSpecialBase Checked, % advItem.specialBase
 		}		
 	}
-
+	
+	If (Stats.QualityType) {
+		Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedQualityType, % "Quality min % (" Stats.QualityType "): "
+		Gui, SelectModsGui:Add, Edit    , x+1 yp-3 w30 vTradeAdvancedMinQuality, % Stats.Quality
+	}
 
 	;	veiled mods
 
@@ -5877,7 +5920,9 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	Gui, SelectModsGui:Add, Text, x%RightPosText% yp+0 right w130, Выбрать обычные
 	Gui, SelectModsGui:Add, CheckBox, x%RightPos% yp+0 %PreCheckNormalMods% vTradeAdvancedSelectedCheckAllMods gAdvancedCheckAllMods, % ""
 	
-	; fractured mods
+	/*
+		fractured mods
+		*/
 	If (advItem.isFracturedBase) {
 		;GuiAddText("Include fractured states", "x" RightPosText " y+10 right w130 0x0100", "LblFracturedInfo", "LblFracturedInfoH", "", "", "SelectModsGui")
 		GuiAddText("Выбрать расколотые", "x" RightPosText " y+10 right w130 0x0100", "LblFracturedInfo", "LblFracturedInfoH", "", "", "SelectModsGui")
@@ -6069,7 +6114,9 @@ TradeFunc_ResetGUI() {
 	TradeAdvancedVeiledSuffixCount	:=	
 	TradeAdvancedSelectedIncludeFractured	:=	
 	TradeAdvancedSelectedFracturedCount	:=	
-	TradeAdvancedFracturedCount	:=	
+	TradeAdvancedFracturedCount		:=	
+	TradeAdvancedSelectedQualityType	:=	
+	TradeAdvancedMinQuality			:=	
 
 	TradeGlobals.Set("AdvancedPriceCheckItem", {})
 }
@@ -6149,6 +6196,8 @@ TradeFunc_HandleGuiSubmit() {
 	newItem.includeFractured		:= TradeAdvancedSelectedIncludeFractured
 	newItem.includeFracturedCount	:= TradeAdvancedSelectedFracturedCount
 	newItem.fracturedCount		:= TradeAdvancedFracturedCount
+	newItem.minQuality			:= TradeAdvancedMinQuality
+	newItem.useQualityType		:= TradeAdvancedSelectedQualityType
 
 	TradeGlobals.Set("AdvancedPriceCheckItem", newItem)
 	Gui, SelectModsGui:Destroy

@@ -221,7 +221,6 @@ class Fonts {
 		this.FontSizeUI	:= FontSizeUI
 		this.FixedFont		:= this.CreateFixedFont(this.FontSizeFixed)
 		this.UIFont		:= this.CreateUIFont(this.FontSizeUI)
-		;debugprintarray(this)
 	}
 
 	CreateFixedFont(FontSize_, Options = "")
@@ -341,6 +340,7 @@ class Item_ {
 		This.BaseName		:= ""
 		This.BaseName_En		:= ""
 		This.Quality		:= ""
+		This.QualityType	:= ""
 		This.BaseLevel		:= ""
 		This.RarityLevel	:= ""
 		This.BaseType		:= ""
@@ -351,6 +351,7 @@ class Item_ {
 		This.MapLevel		:= ""
 		This.MapTier		:= ""
 		This.MaxSockets	:= ""
+		This.MaxSocketsNormal := ""
 		This.Sockets		:= ""
 		This.AbyssalSockets	:= ""
 		This.SocketGroups	:= []
@@ -401,10 +402,18 @@ class Item_ {
 		This.IsMapFragment	:= False
 		This.IsEssence		:= False
 		This.IsRelic		:= False
+		
 		This.IsElderBase	:= False
 		This.IsShaperBase	:= False
+		This.IsCrusaderBase := False
+		This.IsHunterBase	:= False
+		This.IsWarlordBase	:= False
+		This.IsRedeemerBase	:= False
+		Item.HasInfluence	:= []
+		
 		This.IsSynthesisedBase:= False
 		This.IsFracturedBase:= False
+		
 		This.IsAbyssJewel	:= False
 		This.IsBeast		:= False
 		This.IsHideoutObject:= False
@@ -744,9 +753,9 @@ CheckRarityLevel(RarityString)
 	; Check stats section first as weapons usually have their sub type as first line
 	Loop, Parse, ItemDataStats, `n, `r
 	{
-		typeWeaponRuToEn := {"Одноручный топор":"One Handed Axe","Двуручный топор":"Two Handed Axe","Одноручный меч":"One Handed Sword","Двуручный меч":"Two Handed Sword","Одноручная булава":"One Handed Mace","Двуручная булава":"Two Handed Mace","топор":"Axe","меч":"Sword","булава":"Mace","Скипетр":"Sceptre","Посох":"Staff","Кинжал":"Dagger","Когти":"Claw","Лук":"Bow","Жезл":"Wand","Рунический кинжал":"Rune Dagger","Воинский посох":"Warstaff"}
-		;If (RegExMatch(A_LoopField, "i)\b((One Handed|Two Handed) (Axe|Sword|Mace)|Sceptre|Warstaff|Staff|Dagger|Claw|Bow|Wand)\b", match))
-		If (RegExMatch(A_LoopField, "i)(Одноручный топор|Двуручный топор|Одноручный меч|Двуручный меч|Одноручная булава|Двуручная булава|Скипетр|Воинский посох|Посох|Кинжал|Когти|Лук|Жезл)", match))
+		typeWeaponRuToEn := {"Одноручный топор":"One Handed Axe","Двуручный топор":"Two Handed Axe","Одноручный меч":"One Handed Sword","Двуручный меч":"Two Handed Sword","Одноручная булава":"One Handed Mace","Двуручная булава":"Two Handed Mace","топор":"Axe","меч":"Sword","булава":"Mace","Скипетр":"Sceptre","Посох":"Staff","Кинжал":"Dagger","Когти":"Claw","Лук":"Bow","Жезл":"Wand","Рунический кинжал":"Rune Dagger","Воинский посох":"Warstaff","Удочка":"Fishing Rod"}
+		;If (RegExMatch(A_LoopField, "i)\b((One Handed|Two Handed) (Axe|Sword|Mace)|Sceptre|Warstaff|Staff|Rune Dagger|Dagger|Claw|Bow|Wand|Fishing Rod)\b", match))
+		If (RegExMatch(A_LoopField, "i)(Одноручный топор|Двуручный топор|Одноручный меч|Двуручный меч|Одноручная булава|Двуручная булава|Скипетр|Воинский посох|Посох|Кинжал|Когти|Лук|Жезл|Рунический кинжал|Удочка)", match))
 		{
 			BaseType	:= "Weapon"
 			;If (RegExMatch(match1, "i)(Sword|Axe|Mace)", subMatch)) {
@@ -1387,7 +1396,7 @@ GetItemDataChunk(ItemDataText, MatchWord)
 	}
 }
 
-ParseQuality(ItemDataNamePlate)
+ParseQuality(ItemDataNamePlate, ByRef QualityType)
 {
 	ItemQuality := 0
 	Loop, Parse, ItemDataNamePlate, `n, `r
@@ -1401,11 +1410,12 @@ ParseQuality(ItemDataNamePlate)
 		{
 			Break
 		}
-		;IfInString, A_LoopField, Quality:
-		IfInString, A_LoopField, Качество:
-		{
-			;ItemQuality := RegExReplace(A_LoopField, "Quality: \+(\d+)% .*", "$1")
-			ItemQuality := RegExReplace(A_LoopField, "Качество: \+(\d+)% .*", "$1")
+		;3.9 Нужно проверить
+		;RegExMatch(A_LoopField, "Quality(?: \((.*?)\))?: \+(\d+)% .*", qmatch)
+		RegExMatch(A_LoopField, "Качество(?: \((.*?)\))?: \+(\d+)% .*", qmatch)
+		If (qmatch)		{
+			ItemQuality := qmatch2
+			QualityType := qmatch1
 			Break
 		}
 	}
@@ -8099,9 +8109,7 @@ ParseSockets(ItemDataText, ByRef AbyssalSockets)
 		If (RegExMatch(A_LoopField, "i)^Гнезда\s?+:"))
 		{
 			LinksString	:= GetColonValue(A_LoopField)
-			;RegExReplace(LinksString, "i)[RGBWDA]", "", SocketsCount) 	; "D" is being used for Resonator sockets, "A" for Abyssal Sockets
-			;Исправление подсчета гнезд на предметах с гнездами бездны при быстром поиске! Проверять на исправление!!!
-			RegExReplace(LinksString, "i)[RGBWD]", "", SocketsCount)
+			RegExReplace(LinksString, "i)[RGBWDA]", "", SocketsCount) 	; "D" is being used for Resonator sockets, "A" for Abyssal Sockets
 			RegExReplace(LinksString, "i)[A]", "", AbyssalSockets) 	; "A" for Abyssal Sockets
 			Break
 		}
@@ -8578,11 +8586,13 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		If (corrMatch) {
 			Item.IsCorrupted := True
 		}
-		;RegExMatch(Trim(A_LoopField), "i)^(Elder|Shaper|Synthesised|Fractured) Item$", match)
+		;RegExMatch(Trim(A_LoopField), "i)^(Elder|Shaper|Synthesised|Fractured|Crusader|Hunter|Warlord|Redeemer) Item$", match) ;3.9 Нужно дополнить русскоязычный список
 		RegExMatch(Trim(A_LoopField), "i)^(Предмет Создателя|Древний предмет|Синтезированный предмет|Расколотый предмет)$", match)
 		If (match) {
 			;Item["Is" match1 "Base"] := True			
 			Item["Is" itemEldShRuEn[match1] "Base"] := True
+			;Item.HasInfluence.push(match1)
+			Item.HasInfluence.push(itemEldShRuEn[match1])
 		}
 	}
 	
@@ -8604,7 +8614,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	}
 	ItemData.PartsLast := ItemDataPartsLast
 	ItemData.IndexLast := ItemDataIndexLast
-	
+
 	; ItemData.Requirements := GetItemDataChunk(ItemDataText, "Requirements:")
 	; ParseRequirements(ItemData.Requirements, RequiredLevel, RequiredAttributes, RequiredAttributeValues)
 
@@ -8633,7 +8643,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 	}
 	
-	Item.Quality := ParseQuality(ItemData.Stats)
+	Item.Quality := ParseQuality(ItemData.Stats, QualityType)
+	Item.QualityType := QualityType
 	
 	; This function should return the second part of the "Rarity: ..." line
 	; in the case of "Rarity: Unique" it should return "Unique"
@@ -8819,7 +8830,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	TempStr := ItemData.PartsLast
 	Loop, Parse, TempStr, `n, `r
 	{
-		;RegExMatch(Trim(A_LoopField), "i)^Has ", match)
+		;RegExMatch(Trim(A_LoopField), "^Has .*(Effect|Skin\.)", match)
 		RegExMatch(Trim(A_LoopField), "i)Внешний вид:", match)
 		If (match) {
 			Item.HasEffect := True
@@ -8874,7 +8885,9 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		Else {
 			ItemDataIndexImplicit := ItemData.IndexLast - GetNegativeAffixOffset(Item)
 		}
-		
+		/*
+			TODO: rework this after 3.9 hits, implicits are now flagged,  not sure about enchantments
+		*/
 		; Check that there is no ":" in the retrieved text = can only be an implicit mod
 		;_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, ":")
 		_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, "Уровень предмета:") ;В русской локализации присутствуют собственные свойства с :
@@ -8883,10 +8896,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			tempImplicit	:= ItemDataParts%ItemDataIndexImplicit%
 			Loop, Parse, tempImplicit, `n, `r
 			{
-				;Item.Implicit.push(A_LoopField)
-				If (A_LoopField) { ; иногда на обычных предметах к имплициту добавляется пустая строка
-					Item.Implicit.push(A_LoopField)
-				}
+				Item.Implicit.push(RegExReplace(A_LoopField, "i)(.*)\(Implicit\)", "$1"))
 			}
 			Item.hasImplicit := True
 		}
@@ -8898,7 +8908,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			tempImplicit	:= ItemDataParts%_ItemDataIndexImplicit%
 			Loop, Parse, tempImplicit, `n, `r
 			{
-				Item.Enchantment.push(A_LoopField)
+				Item.Enchantment.push(RegExReplace(A_LoopField, "i)(.*)\(Implicit\)", "$1"))
 			}
 			Item.hasImplicit := True
 			Item.hasEnchantment := True
@@ -9084,6 +9094,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			;TT := TT . "Sockets:        " . Item.SocketString
 			TT := TT . "Гнезда:        " . Item.SocketString
 		}
+		
+		Item.MaxSocketsNormal := Item.MaxSockets - Item.AbyssalSockets	; poe.trade doesn't count abyssal sockets as "normal sockets"
 	}
 	
 	If (Item.IsWeapon)
@@ -9363,6 +9375,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 	}
 
+	; parsing end
 	return TT
 }
 
@@ -9399,7 +9412,7 @@ GetNegativeAffixOffset(Item)
 	{
 		NegativeAffixOffset += 1
 	}
-	If (Item.IsElderBase or Item.IsShaperBase or Item.IsSynthesisedBase or Item.IsFracturedBase)
+	If (Item.IsElderBase or Item.IsShaperBase or Item.IsSynthesisedBase or Item.IsFracturedBase or Item.IsCrusaderBase or Item.IsHunterBase or Item.IsWarlordBase or Item.IsRedeemerBase)
 	{
 		NegativeAffixOffset += 1
 	}
@@ -12324,7 +12337,7 @@ OpenWebPageWith(application, url) {
 	Return
 }
 
-LookUpAffixes() {
+LookUpAffixes_old() {
 	/*
 		Opens item base on poeaffix.net
 	*/
@@ -12377,6 +12390,113 @@ LookUpAffixes() {
 
 				url		.= prefix "-" suffix ".html"
 			}
+			openWith := AssociatedProgram("html")
+			OpenWebPageWith(openWith, Url)
+		}
+
+		Sleep, 10
+		If (!dontRestoreClipboard) {
+			Clipboard := ClipBoardTemp
+		}
+		SuspendPOEItemScript = 0 ; Allow Item info to handle clipboard change event
+	}
+}
+
+LookUpAffixes() {
+	/*
+		Opens item base on poeaffix.net
+	*/
+	IfWinActive, ahk_group PoEWindowGrp
+	{
+		Global Item, Opts, Globals, ItemData
+
+		ClipBoardTemp := ClipboardAll
+		SuspendPOEItemScript = 1 ; This allows us to handle the clipboard change event
+
+		Clipboard :=
+		scancode_c := Globals.Get("Scancodes").c
+		Send ^{%scancode_c%}	; ^{c}
+		Sleep 100
+
+		CBContents := GetClipboardContents()
+		CBContents := PreProcessContents(CBContents)
+		Globals.Set("ItemText", CBContents)
+		ParsedData := ParseItemData(CBContents)
+		If (Item.Name) {
+			dontRestoreClipboard := true
+		}
+
+		If (Item.Name) {
+			url := "https://poedb.tw/us/mod.php"
+
+			ev		:= RegExMatch(ItemData.Stats, "i)Evasion Rating") ? true : false
+			ar		:= RegExMatch(ItemData.Stats, "i)Armour") ? true : false
+			es		:= RegExMatch(ItemData.Stats, "i)Energy Shield") ? true : false
+			RegExMatch(Item.SubType, "i)Axe|Sword|Mace|Sceptre|Bow|Wand|Claw|Wand|Rune Dagger|Dagger|Fishing Rod|Warstaff|Staff", weapon)
+			RegExMatch(Item.Subtype, "i)Amulet|Ring|Belt|Quiver|Flask", accessory)
+			RegExMatch(Item.Subtype, "i)Cobalt|Viridian|Crimson|Prismatic|Murderous Eye|Searching Eye|Ghastly Eye|Hypnotic Eye|Timeless", jewel)
+
+			boots	:= RegExMatch(Item.Subtype, "i)Boots") ? "?cn=Boots" : ""
+			chest 	:= RegExMatch(Item.Subtype, "i)BodyArmour") ? "?cn=Body+Armour" : ""
+			gloves 	:= RegExMatch(Item.Subtype, "i)Gloves") ? "?cn=Gloves" : ""
+			helmet 	:= RegExMatch(Item.Subtype, "i)Helmet") ? "?cn=Helmet" : ""
+			shield 	:= RegExMatch(Item.Subtype, "i)Shield") ? "?cn=Shield" : ""
+
+			If (StrLen(weapon)) {
+				If (RegExMatch(weapon, "i)Axe|Sword|Mace")) {
+					gripType 	:= Item.GripType == "1H" ? "One%20Hand%20" : "Two%20Hand%20"
+				}					
+				If (weapon = "Fishing Rod") {
+					weapon := "FishingRod"
+				}
+				weapon := RegExReplace(weapon, "i)\s", "%20")
+
+				url		.= "?cn=" gripType . weapon
+			} 
+			Else If (Item.BaseType == "Armour") {
+				url		.= boots . chest . gloves . helmet . shield					
+				If (ar and ev and es) {
+					url	.= "&an=str_dex_int_armour"
+				} Else If (ar and ev) {
+					url	.= "&an=str_dex_armour"
+					url	.= StrLen(shield) ? ",str_dex_shield" : ""
+				} Else If (ar and es) {
+					url	.= "&an=str_int_armour"
+					url	.= StrLen(shield) ? ",str_int_shield" : "" 
+				} Else If (ev and es) {
+					url	.= "&an=dex_int_armour"
+					url	.= StrLen(shield) ? ",dex_int_shield" : ""
+				} Else If (ar) {
+					url	.= "&an=str_armour"
+					url	.= StrLen(shield) ? ",str_shield" : ""
+				} Else If (ev) {
+					url	.= "&an=dex_armour"
+					url	.= StrLen(shield) ? ",dex_shield" : ""
+				} Else If (es) {
+					url	.= "&an=int_armour"
+					url	.= StrLen(shield) ? ",int_shield" : ""
+				}
+			}
+			Else If (StrLen(accessory)) {
+				If (accessory = "ring") {
+					url	.= "?cn=" accessory "&an=unset_ring"
+				} Else If (RegExMatch(accessory, "i)Life Flask")) {
+					url	.= "?cn=LifeFlask"
+				} Else If (RegExMatch(accessory, "i)Mana Flask")) {
+					url	.= "?cn=ManFlask"
+				} Else If (RegExMatch(accessory, "i)Diamond Flask")) {
+					url	.= "?cn=CriticalUtilityFlask"
+				} Else If (RegExMatch(accessory, "i)Flask")) {
+					url	.= "?cn=UtilityFlask"
+				} Else {
+					url	.= "?cn=" accessory
+				}
+			}
+			Else If (StrLen(jewel)) {
+				url	.= "?cn=BaseItemTypes"
+				url	.= "&an=" RegExReplace(jewel, "i)\s", "+") "Jewel"
+			}
+
 			openWith := AssociatedProgram("html")
 			OpenWebPageWith(openWith, Url)
 		}
@@ -12961,10 +13081,12 @@ CheckForUpdates:
 
 	hasUpdate := PoEScripts_Update(globalUpdateInfo.user, globalUpdateInfo.repo, globalUpdateInfo.releaseVersion, globalUpdateInfo.skipUpdateCheck, userDirectory, isDevVersion, globalUpdateInfo.skipSelection, globalUpdateInfo.skipBackup)
 	If (hasUpdate = "no update" and not firstUpdateCheck) {
-		;SplashUI.SetSubMessage("No update available")
-		SplashUI.SetSubMessage("Нет доступных обновлений")
+		_repo := globalUpdateInfo.repo
 		Sleep 2000
+		_version := globalUpdateInfo.releaseVersion
 		SplashUI.DestroyUI()
+		;TrayTip, %_repo%, No updates available.`nVersion: %_version%
+		TrayTip, %_repo%, Обновлений не найдено.`nВерсия: %_version%
 	}
 	return
 
@@ -13309,6 +13431,12 @@ ShowItemFilterFormatting(Item, advanced = false) {
 	search.LinkedSockets := Item.Links
 	search.ShaperItem := Item.IsShaperBase
 	search.ElderItem := Item.IsElderBase
+	
+	search.CrusaderItem := Item.IsCrusaderBase
+	search.HunterItem := Item.IsHunterBase
+	search.WarlordItem := Item.IsWarlordBase
+	search.RedeemerItem := Item.IsRedeemerBase
+	
 	search.FracturedItem := Item.IsFracturedBase
 	search.SynthesisedItem := Item.IsSynthesisedBase
 	search.ItemLevel := Item.Level
@@ -13663,7 +13791,7 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 					rules[rules.MaxIndex()].conditions.push(condition)
 				}
 				
-				Else If (RegExMatch(line, "i)^.*?(Identified|Corrupted|ElderItem|SynthesisedItem|FracturedItem|ShaperItem|ShapedMap|ElderMap|BlightedMap)\s")) {
+				Else If (RegExMatch(line, "i)^.*?(Identified|Corrupted|ElderItem|SynthesisedItem|FracturedItem|ShaperItem|ShapedMap|ElderMap|BlightedMap|CrusaderItem|HunterItem|WarlordItem|RedeemerItem)\s")) {
 					RegExMatch(line, "i)(.*?)\s(.*)", match)		
 					
 					condition := {}
@@ -13714,7 +13842,7 @@ ParseItemLootFilter(filter, item, parsingNeeded, advanced = false) {
 					}
 				}
 			}
-			Else If (RegExMatch(condition.name, "i)(Identified|Corrupted|ElderItem|SynthesisedItem|FracturedItem|ShaperItem|ShapedMap|BlightedMap|ElderMap)", match1)) {
+			Else If (RegExMatch(condition.name, "i)(Identified|Corrupted|ElderItem|SynthesisedItem|FracturedItem|ShaperItem|ShapedMap|BlightedMap|ElderMap|CrusaderItem|HunterItem|WarlordItem|RedeemerItem)", match1)) {
 				If (item[match1] == condition.value) {
 					matchingConditions++
 					matching_rules.push(condition.name)
