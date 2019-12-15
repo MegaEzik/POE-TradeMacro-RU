@@ -191,13 +191,6 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 			return mapres[mapre] " " nameItemRuToEn[mapBaseRu]
 	}
 	
-	;Камни поддержки плюс
-	If (Item.IsGem && RegExMatch(itemRu_, " плюс$")) {
-		gem_name:=AdpRu_ConvertRuItemNameToEn(StrReplace(itemRu_, " плюс", ""))
-		if RegExMatch(gem_name, "Support$")
-			return StrReplace(gem_name, "Support", "Plus Support")
-	}
-	
 	itemEn := ""
 	itemEn := nameItemRuToEn[itemRu_]
 	

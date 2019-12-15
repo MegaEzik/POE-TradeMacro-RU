@@ -144,12 +144,6 @@ IDCL_ConvertName(name, rlvl){
 	if (rlvl=2.1) {
 		return IDCL_ConvertNameMFlask(name)
 	}
-	;Камни поддержки плюс
-	if (rlvl=11 && RegExMatch(new_name, " плюс$")) {
-		gem_name:=IDCL_ConvertName(StrReplace(new_name, " плюс", ""), rlvl)
-		if RegExMatch(gem_name, "Support$")
-			return StrReplace(gem_name, "Support", "Plus Support")
-	}
 	;Измененные, древние и зараженные карты
 	if RegExMatch(new_name, "(Древняя|Изменённая|Заражённая)", mapre) and inStr(new_name, "Карта") {
 		mapres:={"Древняя":"Elder", "Изменённая":"Shaped", "Заражённая":"Blighted"}
@@ -228,7 +222,7 @@ IDCL_ConvertAllStats(idft) {
 	lidft:=StrSplit(idft, "`r`n")	
 	For k, val in lidft {
 		;Извлекаем часть строки не требующую перевода и препятствующую ему, при сборе вернем ее на место
-		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)", slidft)
+		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)| \(implicit\)", slidft)
 		lidft[k]:=StrReplace(lidft[k], slidft, "")
 		;Попытка конвертировать стат
 		lidft[k]:= IDCL_ConvertStat(lidft[k])
