@@ -8577,7 +8577,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 	
 	ItemData.FullText := ItemDataText
 	
-	itemEldShRuEn := {"Древний предмет":"Elder","Предмет Создателя":"Shaper","Синтезированный предмет":"Synthesised","Расколотый предмет":"Fractured"}
+	itemEldShRuEn := {"Древний предмет":"Elder","Предмет Создателя":"Shaper","Синтезированный предмет":"Synthesised","Расколотый предмет":"Fractured","Предмет Крестоносца":"Crusader","Предмет Вождя":"Warlord","Предмет Избавительницы":"Redeemer","Предмет Охотника": "Hunter"}
 	
 	Loop, Parse, ItemDataText, `n, `r
 	{
@@ -8587,7 +8587,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			Item.IsCorrupted := True
 		}
 		;RegExMatch(Trim(A_LoopField), "i)^(Elder|Shaper|Synthesised|Fractured|Crusader|Hunter|Warlord|Redeemer) Item$", match) ;3.9 Нужно дополнить русскоязычный список
-		RegExMatch(Trim(A_LoopField), "i)^(Предмет Создателя|Древний предмет|Синтезированный предмет|Расколотый предмет)$", match)
+		RegExMatch(Trim(A_LoopField), "i)^(Предмет Создателя|Древний предмет|Синтезированный предмет|Расколотый предмет|Предмет Крестоносца|Предмет Вождя|Предмет Избавительницы|Предмет Охотника)$", match)
 		If (match) {
 			;Item["Is" match1 "Base"] := True			
 			Item["Is" itemEldShRuEn[match1] "Base"] := True
