@@ -1014,23 +1014,7 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 					Item.UsedInSearch.specialBase .= key == 1 ? val : ", " val
 				}
 			}
-			/*
-			If (Item.IsShaperBase) {
-				RequestParams.Shaper := 1
-				Item.UsedInSearch.specialBase := "Shaper"
-			}
-			Else {		
-				RequestParams.Shaper := 0
-			}
-			
-			If (Item.IsElderBase) {
-				RequestParams.Elder := 1
-				Item.UsedInSearch.specialBase := "Elder"
-			}
-			Else {			
-				RequestParams.Elder := 0
-			}
-			*/
+
 			If (Item.IsFracturedBase) {
 				RequestParams.Fractured := 1
 				Item.UsedInSearch.specialBase := "Fractured"
@@ -1174,6 +1158,17 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 				}
 			}			
 		}
+	}
+	
+	/*
+		metamorph samples
+	*/
+	If (Item.IsMetamorphSample) {
+		;RequestParams.xtype := "Metamorph"
+		RequestParams.xBase	:= Item.SubType
+		UsedInSearch.Type	:= Item.SubType
+		RequestParams.Name	:= Item.Name
+		UsedInSearch.Name	:= Item.Name
 	}
 	
 	; league stones
@@ -5867,7 +5862,8 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	}
 	
 	If (Stats.QualityType) {
-		Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedQualityType, % "Quality min % (" Stats.QualityType "): "
+		;Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedQualityType, % "Quality min % (" Stats.QualityType "): "
+		Gui, SelectModsGui:Add, CheckBox, x+15 yp+0 vTradeAdvancedSelectedQualityType, % "Качество % (" Stats.QualityType "): "
 		Gui, SelectModsGui:Add, Edit    , x+1 yp-3 w30 vTradeAdvancedMinQuality, % Stats.Quality
 	}
 

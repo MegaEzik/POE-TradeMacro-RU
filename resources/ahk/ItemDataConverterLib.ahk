@@ -61,6 +61,7 @@ IDCL_lvlRarity(itemdata) {
 	rlvl:=(inStr(itemdata, "Редкость: Камень")&&inStr(itemdata, " ваал`r`n"))?11.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Гадальная карта")?12:rlvl
 	rlvl:=(inStr(itemdata, "Редкость: Обычный")&&inStr(itemdata, "Нажмите ПКМ, чтобы добавить это пророчество вашему персонажу."))?13:rlvl
+	rlvl:=(inStr(itemdata, "Редкость: Уникальный")&&inStr(itemdata, "Объедините эту часть с четырьмя другими в Лаборатории Танэ."))?14:rlvl
 	
 	return %rlvl%
 }
@@ -143,6 +144,11 @@ IDCL_ConvertName(name, rlvl){
 	;Обработаем имя волшебных флаконов
 	if (rlvl=2.1) {
 		return IDCL_ConvertNameMFlask(name)
+	}
+	;Обработаем органы метаморфов
+	if (rlvl=14 && RegExMatch(new_name, "(Лёгкое|Печень|Сердце|Мозг|Глаз)", organ)) {
+		metamorphRuToEn := {"Лёгкое":"Lung","Печень":"Liver","Сердце":"Heart","Мозг":"Brain","Глаз":"Eye"}
+		return "Metamorph " metamorphRuToEn[organ]
 	}
 	;Измененные, древние и зараженные карты
 	if RegExMatch(new_name, "(Древняя|Изменённая|Заражённая)", mapre) and inStr(new_name, "Карта") {

@@ -111,6 +111,9 @@ Globals.Set("sameNameItem", JSON.Load(sameNameItem_file))
 ; Инициализация переменных для библиотеки IDCL
 AdpRu_IDCLInit()
 
+; Parse metamorph data
+global MetamorphData := { "mapToOrgan" : ReadJSONDataFromFile(A_ScriptDir "\data\metamorph_mapToOrgan.json", "mapToOrgan"), "organToMap" : ReadJSONDataFromFile(A_ScriptDir "\data\metamorph_organToMap.json", "organToMap")}
+
 class UserOptions {	
 	ScanUI()
 	{
@@ -402,6 +405,7 @@ class Item_ {
 		This.IsMapFragment	:= False
 		This.IsEssence		:= False
 		This.IsRelic		:= False
+		This.IsMetamorphSample := False
 		
 		This.IsElderBase	:= False
 		This.IsShaperBase	:= False
@@ -744,7 +748,7 @@ CheckRarityLevel(RarityString)
 	return 0 ; unknown rarity. shouldn't happen!
 }
 
- ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, ByRef GripType,  RarityLevel) 
+ ParseItemType(ItemDataStats, ItemDataNamePlate, ByRef BaseType, ByRef SubType, ByRef GripType, RarityLevel, IsMetamorphSample) 
 {
 	; Grip type only matters for weapons at this point. For all others it will be 'None'.
 	; Note that shields are armour and not weapons, they are not 1H.
@@ -857,6 +861,15 @@ CheckRarityLevel(RarityString)
 		If (RegExMatch(LoopField, "i)Самоцвет (гипнотического|кровожадного|призрачного|пытливого) глаза", match)) {
 			BaseType = Jewel
 			SubType := jewelRuToEn[match1] " Eye Jewel"
+			return
+		}
+		
+		metamorphRuToEn := {"Лёгкое":"Lung","Печень":"Liver","Сердце":"Heart","Мозг":"Brain","Глаз":"Eye"}
+		;If (IsMetamorphSample and RegExMatch(Loopfield, "i)(Eye|Liver|Heart|Lung|Brain)$", match)) {
+		If (IsMetamorphSample and RegExMatch(Loopfield, "(Лёгкое|Печень|Сердце|Мозг|Глаз)", match)) {
+			BaseType := "Metamorph"
+			;SubType := "Metamorph " match1
+			SubType := "Metamorph " metamorphRuToEn[match1]
 			return
 		}
 		
@@ -1618,6 +1631,72 @@ ParseMapTier(ItemDataText)
 			return Result
 		}
 	}
+}
+
+
+MapMetamorphOrganToMap(ItemName) {
+	organ := RegExReplace(ItemName, "i).*(Brain|Liver|Lung|Eye|Heart)$", "$1")	
+	mapList := ""
+	For key, val in MetamorphData.organToMap {
+		If (key = organ) {
+			i := 0
+			For Index, Value In val {
+				i++
+				mapList .= ", " . RegExReplace(Value, "i)\s?Map")				
+				If (i >= 7) {
+					mapList .= "`n"
+					i := 0
+				}
+			}
+			mapList := LTrim(mapList, ", ")
+		}
+	}
+	Return { "default" : mapList, "sorted" : MapMetamorphOrganToMapSorted(ItemName)}
+}
+
+MapMetamorphOrganToMapSorted(ItemName) {
+	organ := RegExReplace(ItemName, "i).*(Brain|Liver|Lung|Eye|Heart)$", "$1")
+	mapList := ""
+
+	sortedList := [[],[],[],[]]
+	For key, val in MetamorphData.mapToOrgan {
+		If (IsInArray(organ, val)) {
+			sortedList[val.MaxIndex()-1].push(key)
+		}
+	}
+
+	listStr := ""
+	For i, organLimit in sortedList {
+		k := 0
+		lineStr := ""
+		For j, map in organLimit {
+			k++
+			lineStr .= RegExReplace(map, "i)\s?Map") ", "
+			If (k >= 8) {				
+				If (j > 1) {
+					lineStr .= "`n" . "       "
+				} Else {
+					lineStr .= "`n"
+				}
+				k := 0
+			}		
+		}
+		listStr .= "`n`n" . "[ " i " ]: " RegExReplace(lineStr,"i),\s+?$")
+	}
+
+	Return listStr
+}
+
+MapMetamorphMapToOrgan(map) {
+	organList := ""
+	For key, val in MetamorphData.mapToOrgan {
+		If (key = map) {
+			For Index, Value In val
+				organList .= ", " . Value
+			organList := LTrim(organList, ", ")
+		}
+	}
+	Return organList
 }
 
 ;ParseGemLevel(ItemDataText, PartialString="Level:")
@@ -8594,6 +8673,11 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			;Item.HasInfluence.push(match1)
 			Item.HasInfluence.push(itemEldShRuEn[match1])
 		}
+		;RegExMatch(Trim(A_LoopField), "i)^Combine this with four other different samples in Tane's Laboratory.", match)
+		RegExMatch(Trim(A_LoopField), "Объедините эту часть с четырьмя другими в Лаборатории Танэ.", match)
+		If (match) {
+			Item.IsMetamorphSample := True
+		}
 	}
 	
 	; AHK only allows splitting on single chars, so first
@@ -8788,7 +8872,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 				ItemLevelWord	:= "Уровень предмета:"
 			}			
 			If (Not Item.IsBeast) {
-				ParseItemType(ItemData.Stats, ItemData.NamePlate, ItemBaseType, ItemSubType, ItemGripType, RarityLevel)
+				ParseItemType(ItemData.Stats, ItemData.NamePlate, ItemBaseType, ItemSubType, ItemGripType, RarityLevel, Item.IsMetamorphSample)
 				Item.BaseType	:= ItemBaseType
 				Item.SubType	:= ItemSubType
 				Item.GripType	:= ItemGripType
@@ -9156,6 +9240,10 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		If (MapDescription)
 		{
 			TT .= MapDescription
+			Metamorph := MapMetamorphMapToOrgan(Item.SubType)
+			If (Metamorph) {
+				TT .= "`n`nMetamorph organs (boss):`n    " Metamorph
+			}	
 		}
 		
 		If (RarityLevel > 1 and RarityLevel < 4 and Not Item.IsUnidentified)
@@ -9286,8 +9374,8 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 		}
 	}
 	
-	;Else If (ItemData.Rarity == "Unique")
-	Else If (ItemData.Rarity == "Уникальный")
+	;Else If (ItemData.Rarity == "Unique" and not Item.IsMetamorphSample)
+	Else If (ItemData.Rarity == "Уникальный" and not Item.IsMetamorphSample)
 	{
 		;If (FindUnique(Item.Name) == False and Not Item.IsUnidentified)
 		If (FindUnique(Item.Name_En) == False and Not Item.IsUnidentified)
@@ -9302,7 +9390,13 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			TT = %TT%`n--------%AffixDetails%
 		}
 	}
-
+	
+	If (Item.IsMetamorphSample) {
+		;Metamorph := MapMetamorphOrganToMap(Item.Name)	; object
+		Metamorph := MapMetamorphOrganToMap(Item.Name_En)
+		TT .= "`n--------`n" . "Where to find this organ type, sorted by number of additional types of organs in the drop pool: `n" Metamorph.sorted
+	}
+	
 	If (pseudoMods.Length())
 	{
 		TT = %TT%`n--------
@@ -11067,7 +11161,7 @@ CreateSettingsUI()
 	;lb_desc := "- " Globals.Get("Projectname") " starting the lutbot script or checking for conflicts report here:"
 	lb_desc := "- " Globals.Get("Projectname") " при запуске скрипта lutbot или проверке конфликтов, то сообщите сюда:"
 	GuiAddText(lb_desc, "x17 y+0 w600 h20 0x0100", "", "", "", "", "SettingsUI")
-	Gui, SettingsUI:Add, Link, x35 y+5 cBlue h20, - <a href="https://ru.pathofexile.com/forum/view-thread/27741">РУ-форум</a>
+	Gui, SettingsUI:Add, Link, x35 y+5 cBlue h20, - <a href="https://ru.pathofexile.com/forum/view-thread/2694683">РУ-форум</a>
 	Gui, SettingsUI:Add, Link, x35 y+5 cBlue h20, - <a href="https://github.com/PoE-TradeMacro/POE-TradeMacro/issues">Github</a>
 	Gui, SettingsUI:Add, Link, x35 y+0 cBlue h20, - <a href="https://discord.gg/taKZqWw">Discord</a>
 	Gui, SettingsUI:Add, Link, x35 y+0 cBlue h20, - <a href="https://www.pathofexile.com/forum/view-thread/1757730">Forum</a>
@@ -12474,7 +12568,7 @@ LookUpAffixes() {
 					url	.= StrLen(shield) ? ",dex_shield" : ""
 				} Else If (es) {
 					url	.= "&an=int_armour"
-					url	.= StrLen(shield) ? ",int_shield" : ""
+					url	.= StrLen(shield) ? ",focus" : ""
 				}
 			}
 			Else If (StrLen(accessory)) {

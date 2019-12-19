@@ -293,7 +293,7 @@ ShowErrorUI:
 	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://www.pathofexile.com/forum/view-thread/1757730">- Forum</a>
 	;Ссылка на форум по русскоязычной версии
 	Gui, Add, Text, x15 y+5 BackgroundTrans, % "Ресурс для отчетов по русскоязычной версии:"
-	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://ru.pathofexile.com/forum/view-thread/27741">- РУ-форум</a>
+	Gui, Add, Link, x25 y+5 cBlue BackgroundTrans, <a href="https://ru.pathofexile.com/forum/view-thread/2694683">- РУ-форум</a>
 	
 	If (StrLen(errorWindowText)) {
 		Gui, Font, bold s8 c000000, Verdana
