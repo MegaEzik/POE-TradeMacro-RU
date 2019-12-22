@@ -148,7 +148,7 @@ IDCL_ConvertName(name, rlvl){
 	;Обработаем органы метаморфов
 	if (rlvl=14 && RegExMatch(new_name, "(Лёгкое|Печень|Сердце|Мозг|Глаз)", organ)) {
 		metamorphRuToEn := {"Лёгкое":"Lung","Печень":"Liver","Сердце":"Heart","Мозг":"Brain","Глаз":"Eye"}
-		return "Metamorph " metamorphRuToEn[organ]
+		return metamorphRuToEn[organ]
 	}
 	;Измененные, древние и зараженные карты
 	if RegExMatch(new_name, "(Древняя|Изменённая|Заражённая)", mapre) and inStr(new_name, "Карта") {

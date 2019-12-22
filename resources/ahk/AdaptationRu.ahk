@@ -155,7 +155,7 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 	;Обработаем органы метаморфов
 	If (Item.IsMetamorphSample && RegExMatch(itemRu_, "(Лёгкое|Печень|Сердце|Мозг|Глаз)", organ)) {
 		metamorphRuToEn := {"Лёгкое":"Lung","Печень":"Liver","Сердце":"Heart","Мозг":"Brain","Глаз":"Eye"}
-		return "Metamorph " metamorphRuToEn[organ]
+		return metamorphRuToEn[organ]
 	}
 	
 	; обработаем особые случаи предметов с одинаковыми названиями

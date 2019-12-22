@@ -1167,8 +1167,10 @@ TradeFunc_Main(openSearchInBrowser = false, isAdvancedPriceCheck = false, isAdva
 		;RequestParams.xtype := "Metamorph"
 		RequestParams.xBase	:= Item.SubType
 		UsedInSearch.Type	:= Item.SubType
-		RequestParams.Name	:= Item.Name
-		UsedInSearch.Name	:= Item.Name
+		;RequestParams.Name	:= Item.Name
+		;UsedInSearch.Name	:= Item.Name
+		RequestParams.Name	:= Item.Name_En
+		UsedInSearch.Name	:= Item.Name_En
 	}
 	
 	; league stones
