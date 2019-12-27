@@ -2,7 +2,6 @@
 /*
 	Набор функций для конвертации предметов и их свойств
 	Автор: MegaEzik
-	Последнее изменение: 08.10.2019
 */
 
 ;Загрузка указанных JSON файлов
@@ -129,21 +128,27 @@ IDCL_ConvertName(name, rlvl){
 	samename:=Globals.Get("item_samename")
 	new_name:=StrReplace(name, " высокого качества", "")
 	;Обработаем особые случаи с дублирующимися названиями
-	If (rlvl=12 && samename.DivinationCard[name]) {
-		return samename.DivinationCard[name]
+	If (rlvl=12 && samename.DivinationCard[new_name]) {
+		return samename.DivinationCard[new_name]
 	}
-	Else If (rlvl=11 && samename.Gem[name]) {
-		return samename.Gem[name]
+	Else If (rlvl=11 && samename.Gem[new_name]) {
+		return samename.Gem[new_name]
 	}
-	Else If ((rlvl=4 || rlvl=4.1) && samename.Unique[name]) {
-		return samename.Unique[name]
+	Else If ((rlvl=4 || rlvl=4.1) && samename.Unique[new_name]) {
+		return samename.Unique[new_name]
 	}
-	Else If (rlvl=13 && samename.Prophecy[name]) {
-		return samename.Prophecy[name]
+	Else If (rlvl=13 && samename.Prophecy[new_name]) {
+		return samename.Prophecy[new_name]
 	}
 	;Обработаем имя волшебных флаконов
 	if (rlvl=2.1) {
-		return IDCL_ConvertNameMFlask(name)
+		return IDCL_ConvertNameMFlask(new_name)
+	}
+	;Конвертирование имен Пробужденных камней поддержки
+	if (rlvl=11 && RegExMatch(new_name, "Пробужденный: ")) {
+		gemBaseRu:=Trim(strReplace(new_name, "Пробужденный: ", ""))
+		If names[gemBaseRu]
+			return "Awakened " names[gemBaseRu]
 	}
 	;Обработаем органы метаморфов
 	if (rlvl=14 && RegExMatch(new_name, "(Лёгкое|Печень|Сердце|Мозг|Глаз)", organ)) {

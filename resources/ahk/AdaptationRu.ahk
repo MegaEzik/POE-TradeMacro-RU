@@ -190,11 +190,18 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 	nameItemRuToEn := Globals.Get("nameItemRuToEn")		
 	
 	;Конвертирование имен Древних и Зараженных карт
-	If (Item.IsMap && RegExMatch(itemRu_, "(Древняя|Заражённая)", mapre)) {
-		mapres:={"Древняя":"Elder", "Заражённая":"Blighted"}
+	If (Item.IsMap && RegExMatch(itemRu_, "(Древняя|Изменённая|Заражённая)", mapre)) {
+		mapres:={"Древняя":"Elder", "Изменённая":"Shaped", "Заражённая":"Blighted"}
 		mapBaseRu:=Trim(StrReplace(itemRu_, mapre, ""))
 		If nameItemRuToEn[mapBaseRu]
 			return mapres[mapre] " " nameItemRuToEn[mapBaseRu]
+	}
+	
+	;Конвертирование имен Пробужденных камней поддержки
+	If (Item.IsGem && RegExMatch(itemRu_, "Пробужденный: ")) {
+		gemBaseRu:=Trim(strReplace(itemRu_, "Пробужденный: ", ""))
+		If nameItemRuToEn[gemBaseRu]
+			return "Awakened " nameItemRuToEn[gemBaseRu]
 	}
 	
 	itemEn := ""
