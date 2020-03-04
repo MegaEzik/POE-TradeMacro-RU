@@ -127,6 +127,8 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 		return itemRu
 	}
 	
+	itemRu:=RegExReplace(itemRu, chr(0xA0), " ")
+	
 	;itemRu_ := Trim(RegExReplace(itemRu, "i)высокого качества", ""))
 	itemRu_ := Trim(StrReplace(itemRu, "высокого качества", ""))
 	
