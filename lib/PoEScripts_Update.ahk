@@ -224,7 +224,9 @@ CompareVersions(latest, current) {
 		Return false
 	}
 	Else {
-		equal := latest.major . latest.minor . latest.patch . "" == current.major . current.minor . current.patch . ""
+		;equal := latest.major . latest.minor . latest.patch . "" == current.major . current.minor . current.patch . ""
+		equal := latest.major . latest.minor . latest.patch . latest.ru_patch . "" == current.major . current.minor . current.patch . current.ru_patch . ""
+
 		
 		Loop,  1 {
 			majorSmaller := RemoveLeadingZeros(latest.major) < RemoveLeadingZeros(current.major)
@@ -240,6 +242,12 @@ CompareVersions(latest, current) {
 			}
 			
 			If (RemoveLeadingZeros(latest.patch) > RemoveLeadingZeros(current.patch) and not (minorSmaller or majorSmaller)) {
+				versionHigher := true
+				break
+			}
+			
+			;Цифра для русскоязычных патчей
+			If (RemoveLeadingZeros(latest.ru_patch) > RemoveLeadingZeros(current.ru_patch) and not (minorSmaller or majorSmaller)) {
 				versionHigher := true
 				break
 			}
@@ -286,8 +294,10 @@ ParseVersionStringsToObject(latest, current, repo) {
 	; x.x.x-alpha.x
 	; also possible: beta, rc
 	; priority: normal release (no sub version) > rc > beta > alpha
-	RegExMatch(latest, "(\d+).(\d+).(\d+)(.*)", latestVersion)
-	RegExMatch(current, "(\d+).(\d+).(\d+)(.*)", currentVersion)
+	;RegExMatch(latest, "(\d+).(\d+).(\d+)(.*)", latestVersion)
+	;RegExMatch(current, "(\d+).(\d+).(\d+)(.*)", currentVersion)
+	RegExMatch(latest, "(\d+).(\d+).(\d+).(\d+)(.*)", latestVersion)
+	RegExMatch(current, "(\d+).(\d+).(\d+).(\d+)(.*)", currentVersion)
 
 	If (StrLen(latest) < 1) {
 		Gui, UpdateVersionException:New
@@ -313,6 +323,7 @@ ParseVersionStringsToObject(latest, current, repo) {
 		versions[val].major := %val%Version1
 		versions[val].minor := %val%Version2
 		versions[val].patch := %val%Version3
+		versions[val].ru_patch := %val%Version4 ;цифра ру-патча
 		versions[val].label := %val%Version
 
 		If (match_%val%) {	
