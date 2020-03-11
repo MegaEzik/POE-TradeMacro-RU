@@ -33,9 +33,11 @@ IDCL_Init() {
 	FileRead, presufflask_list, resources\presufflask.json
 	Globals.Set("item_presufflask", JSON.Load(presufflask_list))
 	
+	/*
 	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/sameNameItem.json", "resources\samename.json")
 	FileRead, samename_list, resources\samename.json
 	Globals.Set("item_samename", JSON.Load(samename_list))
+	*/
 }
 
 ;Получение информации c предмета
@@ -125,8 +127,10 @@ IDCL_ConvertMain(itemdata){
 ;Конвертация имен
 IDCL_ConvertName(name, rlvl){
 	names:=Globals.Get("item_names")
-	samename:=Globals.Get("item_samename")
+	;samename:=Globals.Get("item_samename")
 	new_name:=StrReplace(name, " высокого качества", "")
+	/*
+	;Пока(лига 3.10) более не актульно
 	;Обработаем особые случаи с дублирующимися названиями
 	If (rlvl=12 && samename.DivinationCard[new_name]) {
 		return samename.DivinationCard[new_name]
@@ -140,6 +144,7 @@ IDCL_ConvertName(name, rlvl){
 	Else If (rlvl=13 && samename.Prophecy[new_name]) {
 		return samename.Prophecy[new_name]
 	}
+	*/
 	;Обработаем имя волшебных флаконов
 	if (rlvl=2.1) {
 		return IDCL_ConvertNameMFlask(new_name)

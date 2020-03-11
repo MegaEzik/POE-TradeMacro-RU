@@ -160,6 +160,8 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 		return metamorphRuToEn[organ]
 	}
 	
+	/*
+	; пока(лига 3.10) более не актульно
 	; обработаем особые случаи предметов с одинаковыми названиями
 	sameNameItem  := Globals.Get("sameNameItem")
 	itemEn := ""
@@ -187,6 +189,7 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 			return itemEn
 		}
 	}
+	*/
 
 	; массив соответствий базовых имен предметов на русском языке их английским вариантам
 	nameItemRuToEn := Globals.Get("nameItemRuToEn")		
@@ -650,7 +653,7 @@ AdpRu_DownloadAssociationLists() {
 	SplashUI.SetSubMessage("Получение актуальных списков соответствий с github...")
 	
 	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json", "data\ru\nameItemRuToEn.json")
-	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/sameNameItem.json", "data\ru\sameNameItem.json")
+	;AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/sameNameItem.json", "data\ru\sameNameItem.json")
 	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json", "data_trade\ru\ru_en_stats.json")
 }
 
