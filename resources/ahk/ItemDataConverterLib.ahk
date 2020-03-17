@@ -238,7 +238,7 @@ IDCL_ConvertAllStats(idft) {
 	lidft:=StrSplit(idft, "`r`n")	
 	For k, val in lidft {
 		;Извлекаем часть строки не требующую перевода и препятствующую ему, при сборе вернем ее на место
-		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)| \(implicit\)", slidft)
+		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)| \(implicit\)| \(enchant\)", slidft)
 		lidft[k]:=StrReplace(lidft[k], slidft, "")
 		;Попытка конвертировать стат
 		lidft[k]:= IDCL_ConvertStat(lidft[k])
@@ -261,12 +261,22 @@ IDCL_ConvertAllStats(idft) {
 			lidft[k]:= IDCL_ConvertStat(lidft[k])
 			lidft[k]:= StrReplace(lidft[k], "#", v)
 		}
+		;Флаконы
 		If RegExMatch(lidft[k], "Восстанавливает (ману|здоровье): ", tflask) && InStr(lidft[k], " за ") {
 			lidft[k]:=RegExReplace(lidft[k], tflask, "Recovers ")
 			tflask:=inStr(tflask, "ману")?"Mana":"Life"
 			lidft[k]:=RegExReplace(lidft[k], "сек.", "Seconds")
 			lidft[k]:=RegExReplace(lidft[k], " за", slidft " " tflask " over")
 			slidft:=""
+		}
+		;Кластерные смоцветы
+		If RegExMatch(lidft[k], "Добавленные малые пассивные умения даруют: ") {
+			pstring:=Trim(StrReplace(lidft[k], "Добавленные малые пассивные умения даруют: ", ""))
+			v:=IDCL_Value(pstring)
+			pstring:=StrReplace(pstring, v, "#")
+			pstring:=IDCL_ConvertStat(pstring)
+			pstring:=StrReplace(pstring, "#", v)
+			lidft[k]:="Added Small Passive Skills grant: " pstring
 		}
 		;Собираем результат
 		idtfen.=lidft[k] slidft "`r`n"

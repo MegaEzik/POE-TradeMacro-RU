@@ -15,7 +15,7 @@ AdpRu_ConvertRuModToEn(_item)
 ;console_log(_item, "_item")	
 	For k, imod in _item.mods {
 		
-		_item.mods[k].name:=RegExReplace(Trim(_item.mods[k].name), " \(fractured\)| \(crafted\)")
+		_item.mods[k].name:=RegExReplace(Trim(_item.mods[k].name), " \(fractured\)| \(crafted\)| \(enchant\)")
 		_item.mods[k].name_ru := _item.mods[k].name
 		result1 := AdpRu_Ru_En_Stats_Value(_item.mods[k].name)
 		_item.mods[k].name := result1.name
@@ -44,10 +44,9 @@ AdpRu_ConvertRuModToEn(_item)
 
 
 ; конвертирование для одной строки мода
-AdpRu_ConvertRuOneModToEn(smod)
-{
+AdpRu_ConvertRuOneModToEn(smod) {
+	smod:=StrReplace(smod, " (enchant)", "")
 	result := AdpRu_Ru_En_Stats_Value(smod)
-		
 	; если мод не был конвертирован		
 	If (not result.IsName) {		
 		; в массиве соответствий названия модов без плюса перед #, поэтому если он присутствует, то избавляемся от него

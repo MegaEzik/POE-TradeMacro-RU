@@ -76,6 +76,8 @@
  "Щелкните ПКМ, чтобы выпить. Содержит заряды только когда висит на поясе. Пополняется по мере убийства монстров.": "Right click to drink. Can only hold charges while in belt. Refills as you kill monsters.",
  "Энерг. щит: #": "Energy Shield: #",
  
+ "1 добавленное пассивное умение - гнездо для самоцветов": "1 Added Passive Skill is a Jewel Socket",
+ "Поместите в доступное большое гнездо на дереве пассивных умений. Чтобы вынуть самоцвет, щёлкните по нему правой кнопкой мыши. Добавленные пассивные умения не взаимодействуют с радиусом действия самоцветов. ": "Place into an allocated Large Jewel Socket on the Passive Skill Tree. Added passives do not interact with jewel radiuses. Right click to remove from the Socket.",
  "# к затратам маны умений": "# to Total Mana Cost of Skills",
  "# к общим затратам маны умений под действием Ясности ума": "# to Total Mana Cost of Skills while affected by Clarity",
  "# физического урона, получаемого от атак": "# Physical Damage taken from Attacks",
