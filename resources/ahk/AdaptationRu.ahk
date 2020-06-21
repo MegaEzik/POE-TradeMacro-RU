@@ -45,7 +45,7 @@ AdpRu_ConvertRuModToEn(_item)
 
 ; конвертирование для одной строки мода
 AdpRu_ConvertRuOneModToEn(smod) {
-	smod:=StrReplace(smod, " (enchant)", "")
+	;smod:=StrReplace(smod, " (enchant)", "")
 	result := AdpRu_Ru_En_Stats_Value(smod)
 	; если мод не был конвертирован		
 	If (not result.IsName) {		
