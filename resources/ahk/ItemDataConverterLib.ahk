@@ -43,7 +43,9 @@ IDCL_Init() {
 ;Получение информации c предмета
 IDCL_loadInfo() {
 	Clipboard:=""
-	Send ^{C}
+	BlockInput On
+	SendInput, ^c
+	BlockInput Off
 	sleep 35
 	return Clipboard
 }
@@ -333,4 +335,13 @@ IDCL_CheckResult(idft){
 		IDCL_splashMsg("IDCL - Не удалось конвертировать!", idtferl, 1500, false)
 	}
 	return idtfen
+}
+
+;Конвертирование описания с предмета из игры
+IDCL_ConvertFromGame() {
+	sleep 35
+	itemdata:=IDCL_loadInfo()
+	itemdata:=IDCL_ConvertMain(itemdata)
+	Clipboard:=itemdata
+	msgbox, 0x1040, Cкопировано в буфер обмена!, %itemdata%, 2
 }
