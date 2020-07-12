@@ -8986,7 +8986,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			TODO: rework this after 3.9 hits, implicits are now flagged,  not sure about enchantments
 		*/
 		; Check that there is no ":" in the retrieved text = can only be an implicit mod
-		/*
+		
 		;_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, ":")
 		_implicitFound := !InStr(ItemDataParts%ItemDataIndexImplicit%, "Уровень предмета:") ;В русской локализации присутствуют собственные свойства с :
 		console.log("Собственное свойство: " ItemDataParts%ItemDataIndexImplicit%)
@@ -9011,9 +9011,9 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 			Item.hasImplicit := True
 			Item.hasEnchantment := True
 		}
-		*/
 		
 		;Нужно проверить 3.11
+		/*
 		_ItemDataIndexImplicit := ItemDataIndexImplicit - 1
 		_implicitsArr := [ItemDataParts%ItemDataIndexImplicit%, ItemDataParts%_ItemDataIndexImplicit%]
 
@@ -9033,6 +9033,7 @@ ParseItemData(ItemDataText, ByRef RarityLevel="")
 				}
 			}
 		}
+		*/
 	}
 	
 	ItemData.Stats := ItemDataParts2
