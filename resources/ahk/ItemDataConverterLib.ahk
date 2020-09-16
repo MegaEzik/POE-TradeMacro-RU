@@ -130,7 +130,11 @@ IDCL_ConvertMain(itemdata){
 IDCL_ConvertName(name, rlvl){
 	names:=Globals.Get("item_names")
 	;samename:=Globals.Get("item_samename")
-	new_name:=StrReplace(name, " высокого качества", "")
+	new_name:=name
+	if inStr(new_name, " высокого качества")
+		new_name:=StrReplace(name, " высокого качества", "")
+	if inStr(new_name, " исключительного качества")
+		new_name:=StrReplace(name, " исключительного качества", "")
 	/*
 	;Пока(лига 3.10) более не актульно
 	;Обработаем особые случаи с дублирующимися названиями
@@ -150,6 +154,12 @@ IDCL_ConvertName(name, rlvl){
 	;Обработаем имя волшебных флаконов
 	if (rlvl=2.1) {
 		return IDCL_ConvertNameMFlask(new_name)
+	}
+	;Конвертирование Копий уникальных предметов 3.12
+	if (rlvl=4 && inStr(new_name, "Копия ")) {
+		replicaName:=Trim(strReplace(new_name, "Копия ", ""))
+		If names[replicaName]
+			return "Replica " names[replicaName]
 	}
 	;Конвертирование имен Пробужденных камней поддержки
 	if (rlvl=11 && RegExMatch(new_name, "Пробужденный: ")) {
