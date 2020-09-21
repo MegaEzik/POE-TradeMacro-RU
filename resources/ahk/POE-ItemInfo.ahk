@@ -29,9 +29,11 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 #Include, %A_ScriptDir%\lib\AdvancedHotkey.ahk
 IfNotExist, %A_ScriptDir%\temp
 FileCreateDir, %A_ScriptDir%\temp
+#Include, %A_ScriptDir%\resources\ahk\jsonData.ahk ;Нужная для решения проблем с ItemInfo
 
 ;Подключение библиотеки IDCL
 #Include, %A_ScriptDir%\resources\ahk\ItemDataConverterLib.ahk
+
 
 ; Instead of polluting the default namespace with Globals, create our own Globals "namespace".
 class Globals {
