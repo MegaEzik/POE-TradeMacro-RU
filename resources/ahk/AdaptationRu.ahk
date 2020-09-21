@@ -201,11 +201,12 @@ AdpRu_ConvertRuItemNameToEn(itemRu, currency=false)
 			return mapres[mapre] " " nameItemRuToEn[mapBaseRu]
 	}
 	
-	;Конвертирование имен Пробужденных камней поддержки
-	If (Item.IsGem && RegExMatch(itemRu_, "Пробужденный: ")) {
-		gemBaseRu:=Trim(strReplace(itemRu_, "Пробужденный: ", ""))
+	;Конвертирование имен альтернативных камней
+	If (Item.IsGem && RegExMatch(itemRu_, "(Пробужденный|Аномальный|Искривлённый|Фантомный):", tGem)) {
+		typeGemsRuToEn:={"Пробужденный:":"Awakened","Аномальный:":"Anomalous","Искривлённый:":"Divergent","Фантомный:":"Phantasmal"}
+		gemBaseRu:=Trim(strReplace(itemRu_, tGem, ""))
 		If nameItemRuToEn[gemBaseRu]
-			return "Awakened " nameItemRuToEn[gemBaseRu]
+			return typeGemsRuToEn[tGem] " " nameItemRuToEn[gemBaseRu]
 	}
 	
 	itemEn := ""

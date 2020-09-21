@@ -161,11 +161,12 @@ IDCL_ConvertName(name, rlvl){
 		If names[replicaName]
 			return "Replica " names[replicaName]
 	}
-	;Конвертирование имен Пробужденных камней поддержки
-	if (rlvl=11 && RegExMatch(new_name, "Пробужденный: ")) {
-		gemBaseRu:=Trim(strReplace(new_name, "Пробужденный: ", ""))
+	;Конвертирование имен альтернативных камней
+	if (rlvl=11 && RegExMatch(new_name, "(Пробужденный|Аномальный|Искривлённый|Фантомный):", tGem)) {
+		typeGemsRuToEn:={"Пробужденный:":"Awakened","Аномальный:":"Anomalous","Искривлённый:":"Divergent","Фантомный:":"Phantasmal"}
+		gemBaseRu:=Trim(strReplace(new_name, tGem, ""))
 		If names[gemBaseRu]
-			return "Awakened " names[gemBaseRu]
+			return typeGemsRuToEn[tGem] " " names[gemBaseRu]
 	}
 	;Обработаем органы метаморфов
 	if (rlvl=14 && RegExMatch(new_name, "(Лёгкое|Печень|Сердце|Мозг|Глаз)", organ)) {
