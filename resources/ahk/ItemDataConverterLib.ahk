@@ -61,7 +61,7 @@ IDCL_lvlRarity(itemdata) {
 	rlvl:=inStr(itemdata, "Уникальная Реликвия")?4.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Валюта")?10:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Камень")?11:rlvl
-	rlvl:=(inStr(itemdata, "Редкость: Камень")&&inStr(itemdata, " ваал`r`n"))?11.1:rlvl
+	rlvl:=(inStr(itemdata, "Редкость: Камень")&&inStr(itemdata, " ваал`n"))?11.1:rlvl
 	rlvl:=inStr(itemdata, "Редкость: Гадальная карта")?12:rlvl
 	rlvl:=(inStr(itemdata, "Редкость: Обычный")&&inStr(itemdata, "Нажмите ПКМ, чтобы добавить это пророчество вашему персонажу."))?13:rlvl
 	rlvl:=(inStr(itemdata, "Редкость: Уникальный")&&inStr(itemdata, "Объедините эту часть с четырьмя другими в Лаборатории Танэ."))?14:rlvl
@@ -72,7 +72,6 @@ IDCL_lvlRarity(itemdata) {
 ;Вывод сообщения
 IDCL_splashMsg(mh, mt, t, a){
 	IDCL_splashMsgDestroy()
-	mt:=StrReplace(mt, "`r", "")
 	mtArray:=StrSplit(mt, "`n")
 	widthMsg:=0
 	heightMsg:=20*mtArray.MaxIndex()
@@ -105,7 +104,9 @@ IDCL_writeLogFile(datatext){
 ;Очистка предмета от лишнего
 IDCL_CleanerItem(itemdata){
 	itemdata:=RegExReplace(itemdata, chr(0xA0), "")
-	itemdata:=RegExReplace(itemdata, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n--------`r`n", "")
+	itemdata:=RegExReplace(itemdata, "`r", "")
+	itemdata:=RegExReplace(itemdata, " высокого качества`n", "`n")
+	itemdata:=RegExReplace(itemdata, "Вы не можете использовать этот предмет, его параметры не будут учтены`n--------`n", "")
 	itemdata:=RegExReplace(itemdata, "<<.*>>", "")
 	return itemdata
 }
@@ -131,10 +132,12 @@ IDCL_ConvertName(name, rlvl){
 	names:=Globals.Get("item_names")
 	;samename:=Globals.Get("item_samename")
 	new_name:=name
+	/*
 	if inStr(new_name, " высокого качества")
 		new_name:=StrReplace(name, " высокого качества", "")
 	if inStr(new_name, " исключительного качества")
 		new_name:=StrReplace(name, " исключительного качества", "")
+	*/
 	/*
 	;Пока(лига 3.10) более не актульно
 	;Обработаем особые случаи с дублирующимися названиями
@@ -248,7 +251,7 @@ IDCL_ConvertAllStats(idft) {
 	idft:=StrReplace(idft, "(макс.)", "(Max)")
 	idft:=StrReplace(idft, "Опыт:", "Experience:")	
 	;Разбиваем строку
-	lidft:=StrSplit(idft, "`r`n")	
+	lidft:=StrSplit(idft, "`n")	
 	For k, val in lidft {
 		;Извлекаем часть строки не требующую перевода и препятствующую ему, при сборе вернем ее на место
 		RegExMatch(lidft[k], " \(augmented\)| \(unmet\)| \(fractured\)| \(crafted\)| \(Max\)| \(implicit\)| \(enchant\)", slidft)
@@ -292,7 +295,7 @@ IDCL_ConvertAllStats(idft) {
 			lidft[k]:="Added Small Passive Skills grant: " pstring
 		}
 		;Собираем результат
-		idtfen.=lidft[k] slidft "`r`n"
+		idtfen.=lidft[k] slidft "`n"
 	}
 	return idtfen
 }
@@ -307,7 +310,7 @@ IDCL_Value(ActualValueLine)
 ;Конвертация обычных, редких, уникальных, реликтовых предметов, гадальных карт, камней умений или валюты
 IDCL_ConvertItem(itemdata, rlvl){
 	;Разобьем информацию на подстроки
-	sid:=StrSplit(itemdata, "`r`n")
+	sid:=StrSplit(itemdata, "`n")
 	;Попытаемся сконвертировать имя предмета, а так же имя базы для редких и уникальных предметов
 	sid[2]:=IDCL_ConvertName(sid[2], rlvl)	
 	if (rlvl=3 || rlvl=4 || rlvl=4.1) {
@@ -319,7 +322,7 @@ IDCL_ConvertItem(itemdata, rlvl){
 	}
 	;Соберем результат
 	For k, val in sid {
-		new_itemdata.=sid[k] "`r`n"
+		new_itemdata.=sid[k] "`n"
 	}	
 	;Конвертируем статы и проверяем конвертацию
 	new_itemdata:=IDCL_ConvertAllStats(new_itemdata)
@@ -331,15 +334,15 @@ IDCL_ConvertItem(itemdata, rlvl){
 ;Проверка подстрок на русские символы
 IDCL_CheckResult(idft){
 	;Разбиваем текст на подстроки
-	lidft:=StrSplit(idft, "`r`n")
+	lidft:=StrSplit(idft, "`n")
 	For k, val in lidft {
 		;Если что-то не конвертировалось, то заменим на пустую строку.
 		If(RegExMatch(lidft[k], "[А-Яа-яЁё]+")) {
-				idtferl.=StrReplace(lidft[k], " to ", " до ") "`r`n"
+				idtferl.=StrReplace(lidft[k], " to ", " до ") "`n"
 				lidft[k]:=""
 		}
 		;Собираем результат
-		idtfen.=lidft[k] slidft "`r`n"
+		idtfen.=lidft[k] slidft "`n"
 	}
 	;Уведомление о не конвертированных строках
 	if(idtferl!="") {
