@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) [2018-2020] [Melnychuk Evgeny]
+Copyright (c) [2018-2021] [Melnychuk Evgeny]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
