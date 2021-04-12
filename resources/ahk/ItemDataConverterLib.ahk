@@ -21,21 +21,21 @@ IDCL_DownloadJSONList(url, file) {
 
 ;Инициализация библиотеки и дополнительных компонентов
 IDCL_Init() {
-	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json", "resources\stats.json")
-	FileRead, stats_list, resources\stats.json
+	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/LeagueOverlay_ru/master/resources/data/stats.json", "data_trade\ru\ru_en_stats.json")
+	FileRead, stats_list, data_trade\ru\ru_en_stats.json
 	Globals.Set("item_stats", JSON.Load(stats_list))
 	
-	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json", "resources\names.json")
-	FileRead, names_list, resources\names.json
+	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/LeagueOverlay_ru/master/resources/data/names.json", "data\ru\nameItemRuToEn.json")
+	FileRead, names_list, data\ru\nameItemRuToEn.json
 	Globals.Set("item_names", JSON.Load(names_list))
 	
-	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ruPrefSufFlask.json", "resources\presufflask.json")
-	FileRead, presufflask_list, resources\presufflask.json
+	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/LeagueOverlay_ru/master/resources/data/presufflask.json", "data_trade\ru\ruPrefSufFlask.json")
+	FileRead, presufflask_list, data_trade\ru\ruPrefSufFlask.json
 	Globals.Set("item_presufflask", JSON.Load(presufflask_list))
 	
 	/*
-	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/sameNameItem.json", "resources\samename.json")
-	FileRead, samename_list, resources\samename.json
+	IDCL_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/LeagueOverlay_ru/master/resources/data/samename.json", "data\ru\sameNameItem.json")
+	FileRead, samename_list, data\ru\sameNameItem.json
 	Globals.Set("item_samename", JSON.Load(samename_list))
 	*/
 }
