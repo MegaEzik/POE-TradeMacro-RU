@@ -312,9 +312,9 @@ IDCL_ConvertItem(itemdata, rlvl){
 	;Разобьем информацию на подстроки
 	sid:=StrSplit(itemdata, "`n")
 	;Попытаемся сконвертировать имя предмета, а так же имя базы для редких и уникальных предметов
-	sid[2]:=IDCL_ConvertName(sid[2], rlvl)	
+	sid[3]:=IDCL_ConvertName(sid[3], rlvl)
 	if (rlvl=3 || rlvl=4 || rlvl=4.1) {
-		sid[3]:=IDCL_ConvertName(sid[3], rlvl)
+		sid[4]:=IDCL_ConvertName(sid[4], rlvl)
 	}
 	;На гадальных картах в 6ой строке иногда написан предмет, попробуем конвертировать его
 	if (rlvl=12) {

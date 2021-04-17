@@ -623,8 +623,11 @@ AdpRu_ConvertItemDataEnToRu(idft) {
 
 ;Имена предметов содержащих "{" и "}" иногда вызывают проблемы, да и выглядят не эстетично. Заменим такие имена шаблонами!
 ;Так же из базы уберем слова Синтезированный(ая/ое/ые)
+;Так же уберем "Класс предмета"
 AdpRu_FixNames(item){
 	item:=StrReplace(item, "Вы не можете использовать этот предмет, его параметры не будут учтены`r`n--------`r`n", "")
+	RegExMatch(item, "Класс предмета: (.*)`r`n", class_item)
+	item:=StrReplace(item, class_item, "")
 	sitem:=StrSplit(item, "`r`n")
 	if RegExMatch(sitem[1], "Редкость: Редкий") {
 		if (RegExMatch(sitem[2], "{") or RegExMatch(sitem[2], "}")) {
