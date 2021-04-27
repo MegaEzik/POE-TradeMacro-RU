@@ -655,9 +655,9 @@ AdpRu_DownloadAssociationLists() {
 	
 	SplashUI.SetSubMessage("Получение актуальных списков соответствий с github...")
 	
-	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/nameItemRuToEn.json", "data\ru\nameItemRuToEn.json")
+	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/LeagueOverlay_ru/master/resources/data/names.json", "data\ru\nameItemRuToEn.json")
 	;AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data/ru/sameNameItem.json", "data\ru\sameNameItem.json")
-	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/PoE-TradeMacro_ru/master/data_trade/ru/ru_en_stats.json", "data_trade\ru\ru_en_stats.json")
+	AdpRu_DownloadJSONList("https://raw.githubusercontent.com/MegaEzik/LeagueOverlay_ru/master/resources/data/stats.json", "data_trade\ru\ru_en_stats.json")
 }
 
 ;Загрузка указанных JSON файлов
