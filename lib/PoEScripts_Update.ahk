@@ -165,9 +165,7 @@ GetLatestRelease(user, repo, ReleaseVersion, ShowUpdateNotification, userDirecto
 			}
 			
 			If (repo = "PoE-TradeMacro_ru") {
-				payPalUrl := "https://qiwi.me/megaezik"
-				Gui, UpdateNotification:Add, Picture, x460 y17 w107 h-1, %A_ScriptDir%\resources\images\qiwi-logo.png
-				Gui, UpdateNotification:Add, Link, x450 y63 cBlue, <a href="%payPalUrl%">Поддержать PoE-TradeMacro_ru</a>
+				Gui, UpdateNotification:Add, Button, x460 y17 w150 h60 gAdpRu_ShowDonateUI, Поддержать`n%repo%`n(%user%)
 			}
 			
 			;Gui, UpdateNotification:Show, w650 xCenter yCenter, Update

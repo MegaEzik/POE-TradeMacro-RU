@@ -5975,7 +5975,7 @@ TradeFunc_AdvancedPriceCheckGui(advItem, Stats, Sockets, Links, UniqueStats = ""
 	Gui, SelectModsGui:Add, Link, x+5 yp+0 cBlue, <a href="https://poe.trade">посетить</a>
 	;Gui, SelectModsGui:Add, Text, x+10 yp+0 cGray, (Use Alt + S/E to submit a button)	
 	;Gui, SelectModsGui:Add, Link, x10 yp+18 cBlue, <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZVTWJNH6GSME">Support PoE-TradeMacro</a>
-	Gui, SelectModsGui:Add, Link, x10 yp+18 cBlue, <a href="https://qiwi.me/megaezik">Поддержать PoE-TradeMacro_ru</a>
+	;Gui, SelectModsGui:Add, Link, x10 yp+18 cBlue, <a href="https://qiwi.me/megaezik">Поддержать PoE-TradeMacro_ru</a>
 
 	windowWidth := modGroupBox + 40 + 5 + 45 + 10 + 45 + 10 + 40 + 5 + 45 + 10 + 65
 	windowWidth := (advItem.specialBase and !advItem.isFracturedBase) ? windowWidth + 25 : windowWidth
@@ -6500,8 +6500,7 @@ CheckUpdatesFromMenu:
 Return
 
 OpenMegaEzik:
-	url := "https://qiwi.me/megaezik"
-	TradeFunc_OpenUrlInBrowser(url)
+	AdpRu_ShowDonateUI()
 Return
 
 OpenPayPal:

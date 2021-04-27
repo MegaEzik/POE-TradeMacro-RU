@@ -684,3 +684,20 @@ AdpRu_IDCLInit() {
 	FileRead, samename_list, data\ru\sameNameItem.json
 	Globals.Set("item_samename", JSON.Load(samename_list))
 }
+
+AdpRu_ShowDonateUI() {
+	Gui, DonateUI:Destroy
+	Gui, DonateUI:Add, Edit, x0 y0 w0 h0
+	Gui, DonateUI:Add, Text, x10 y7 w300 +Center, Перевод на карту Visa: 
+	Gui, DonateUI:Add, Edit, x10 y+3 w300 h18 +ReadOnly, 4276 0400 2866 1739
+	Gui, DonateUI:Add, Text, x10 y+7 w300 +Center, Перевод по номеру телефона для клиентов Сбербанка: 
+	Gui, DonateUI:Add, Edit, x10 y+3 w300 h18 +ReadOnly, +7 965 731 83 13
+	
+	Gui, DonateUI:Add, Text, x0 y+10 w400 h2 0x10
+	Gui, DonateUI:Add, Text, x30 y+7 w260 +Center, Спасибо за вашу поддержку) 
+	Gui, DonateUI:Add, Text, x0 y+10 w400 h2 0x10
+	Gui, DonateUI:Add, Link, x30 yp+7 w260 +Center, Если хотите попасть на экран загрузки, то после совершения пожертвования напишите <a href="https://ru.pathofexile.com/private-messages/compose/to/MegaEzik@pc">мне в ЛС</a>)
+	
+	Gui, DonateUI:+AlwaysOnTop -MinimizeBox -MaximizeBox
+	Gui, DonateUI:Show, w320 h165, Поддержать/Задонатить MegaEzik
+}
